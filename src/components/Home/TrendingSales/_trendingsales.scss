@@ -1,0 +1,23 @@
+.trending-sales-wrapper{
+    background: rgba(35, 36, 78, 0.50);
+    backdrop-filter: blur(10px);
+    .trending-tab{
+        cursor: pointer;
+        border-radius: 13px;
+        h6{
+            color: #FFF;
+text-align: center;
+font-size: 18px;
+font-style: normal;
+font-weight: 700;
+line-height: normal;
+text-transform: capitalize;
+        }
+    }
+
+    .trending-tab-active{
+        border-radius: 12px;
+border: 1px solid #2F80ED;
+background: #2F80ED;
+    }
+}

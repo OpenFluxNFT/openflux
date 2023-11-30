@@ -1,0 +1,55 @@
+.main-hero-wrapper {
+
+    
+    border-radius: 30px;
+    background: linear-gradient(148deg, rgba(35, 36, 78, 0.10) 0%, rgba(47, 128, 237, 0.05) 100%);
+    backdrop-filter: blur(10px);
+
+
+  .main-hero-title {
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 50px; /* 145.37% */
+    letter-spacing: 1.35px;
+    text-transform: capitalize;
+    background: -webkit-linear-gradient(
+      45deg,
+      #69eacb 0%,
+      #eaccf8 48%,
+      #6654f1 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .main-hero-desc {
+    color: #fff;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-transform: capitalize;
+    width: 75%;
+
+    @media screen and (max-width: 786px) {
+      width: 100%;
+    }
+
+  }
+
+  .gradient-btn {
+    border-radius: 12px;
+    background: linear-gradient(90deg, #2f80ed 0%, #5514a7 100%);
+    color: #fff;
+    text-align: center;
+    font-size: 22px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    text-transform: capitalize;
+    width: fit-content;
+    outline: none;
+    border: none;
+  }
+}

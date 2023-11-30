@@ -1,0 +1,30 @@
+.homestats-wrapper{
+    background-image: url('./milkyWay.svg');
+    background-size: 100%;
+    background-position: bottom;
+
+}
+
+.hero-stats-item {
+  width: 32%;
+  border-radius: 30px;
+  background: linear-gradient(97deg, #171f4c 0%, rgba(47, 128, 237, 0.05) 100%);
+  backdrop-filter: blur(10px);
+  .stats-item-amount {
+    color: #fff;
+    text-align: center;
+    font-size: 54px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+  }
+
+  .stats-item-desc {
+    color: #fff;
+    text-align: center;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 16px; /* 100% */
+  }
+}

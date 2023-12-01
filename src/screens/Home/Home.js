@@ -4,6 +4,7 @@ import './_home.scss'
 import HomeStats from '../../components/Home/HomeStats/HomeStats';
 import HomeInfo from '../../components/Home/HomeInfo/HomeInfo';
 import TrendingSales from '../../components/Home/TrendingSales/TrendingSales';
+import RecentlyListed from '../../components/Home/RecentlyListed/RecentlyListed';
 
 const Home = () => {
   return (
@@ -12,6 +13,7 @@ const Home = () => {
       <HomeStats />
       <HomeInfo />
       <TrendingSales />
+      <RecentlyListed />
     </div>
   )
 }

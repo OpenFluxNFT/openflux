@@ -6,12 +6,16 @@ input:focus{
     outline: none;
 }
 
+.hidescroll{
+  overflow: hidden;
+  pointer-events: none;
+}
+
 .info-title {
   color: #f5fbf2;
-  font-size: 54px;
+  font-size: 44px;
   font-style: normal;
   font-weight: 700;
-  line-height: 130px; /* 240.741% */
 }
 
 

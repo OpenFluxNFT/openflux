@@ -27,16 +27,25 @@
   }
 
   .trending-cards-grid {
-    display: grid;
+    display: grid !important;
     grid-template-columns: repeat(3, 1fr);
     gap: 35px;
 
+    @media screen and (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+      
+    }
+    @media screen and (max-width: 786px) {
+    grid-template-columns: repeat(1, 1fr);
+    padding-bottom: 30px;
+      
+    }
     .trending-card {
       border-radius: 10px;
       background: #23244e;
       .trending-card-title {
         color: #fff;
-        font-size: 25px;
+        font-size: 20px;
         font-style: normal;
         font-weight: 700;
         line-height: normal;
@@ -46,7 +55,7 @@
 
       .trending-card-cfx-price {
         color: #fff;
-        font-size: 20px;
+        font-size: 16px;
         font-style: normal;
         font-weight: 500;
         line-height: normal;

@@ -2,7 +2,7 @@
     background-image: url('./milkyWay.svg');
     background-size: 100%;
     background-position: bottom;
-
+    background-repeat: no-repeat;
 }
 
 .hero-stats-item {
@@ -10,6 +10,8 @@
   border-radius: 30px;
   background: linear-gradient(97deg, #171f4c 0%, rgba(47, 128, 237, 0.05) 100%);
   backdrop-filter: blur(10px);
+
+ 
   .stats-item-amount {
     color: #fff;
     text-align: center;
@@ -26,5 +28,12 @@
     font-style: normal;
     font-weight: 300;
     line-height: 16px; /* 100% */
+  }
+}
+
+@media screen and (max-width: 786px) {
+
+  .hero-stats-item{
+    width: 100%;
   }
 }

@@ -5,13 +5,17 @@ import cartIcon from './assets/cartIcon.svg'
 import walletIcon from './assets/walletIcon.svg'
 import userIcon from './assets/userIcon.svg'
 import searchIcon from './assets/searchIcon.svg';
+import { shortAddress } from '../../hooks/shortAddress'
+import { useEffect } from 'react'
 
 
 
 
-const Header = () => {
+const Header = ({handleSignup, coinbase}) => {
+  
+
   return (
-    <div className="container-fluid py-4 header-wrapper">
+    <div className="container-fluid py-4 header-wrapper" >
       <div className="container-lg">
         <div className="row align-items-center justify-content-center">
           <div className="col-1">
@@ -31,9 +35,11 @@ const Header = () => {
               <h6 className="header-link mb-0">Support</h6>
               </div>
             <div className="d-flex align-items-center gap-3">
-              <button className="btn blue-btn d-flex align-items-center gap-2">
+              <button className="btn blue-btn d-flex align-items-center gap-2" 
+                  onClick={handleSignup}
+              >
                 <img src={walletIcon} alt="" />
-                Login
+                {!coinbase ? "Connect Wallet" : shortAddress(coinbase)}
               </button>
               <button className="btn blue-btn">
                 <img src={userIcon} alt="" />

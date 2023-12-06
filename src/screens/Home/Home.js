@@ -8,7 +8,7 @@ import RecentlyListed from '../../components/Home/RecentlyListed/RecentlyListed'
 
 const Home = () => {
   return (
-    <div className="container-fluid py-4 home-wrapper  px-0">
+    <div className="container-fluid py-4 home-wrapper px-0">
       <MainHero />
       <HomeStats />
       <HomeInfo />

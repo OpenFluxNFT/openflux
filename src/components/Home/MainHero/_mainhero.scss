@@ -6,22 +6,7 @@
     backdrop-filter: blur(10px);
 
 
-  .main-hero-title {
-    font-size: 40px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: 50px; /* 145.37% */
-    letter-spacing: 1.35px;
-    text-transform: capitalize;
-    background: -webkit-linear-gradient(
-      45deg,
-      #69eacb 0%,
-      #eaccf8 48%,
-      #6654f1 100%
-    );
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
+ 
 
   .main-hero-desc {
     color: #fff;

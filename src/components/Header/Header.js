@@ -7,6 +7,7 @@ import userIcon from './assets/userIcon.svg'
 import searchIcon from './assets/searchIcon.svg';
 import { shortAddress } from '../../hooks/shortAddress'
 import { useEffect } from 'react'
+import { NavLink } from 'react-router-dom'
 
 
 
@@ -19,7 +20,9 @@ const Header = ({handleSignup, coinbase}) => {
       <div className="container-lg">
         <div className="row align-items-center justify-content-center">
           <div className="col-1">
-            <img src={dypiusLogo} alt="" />
+           <NavLink to={'/'}>
+           <img src={dypiusLogo} alt="" />
+           </NavLink>
           </div>
           <div className="col-5">
             <div className="position-relative">
@@ -30,9 +33,16 @@ const Header = ({handleSignup, coinbase}) => {
           <div className="col-6 px-0">
             <div className="d-flex align-items-center justify-content-between">
               <div className="d-flex align-items-center gap-4">
-              <h6 className="header-link mb-0">Collections</h6>
-              <h6 className="header-link mb-0">Mint</h6>
-              <h6 className="header-link mb-0">Support</h6>
+              <NavLink className={"header-link mb-0"} to={'/collections'}>
+              Collections
+              </NavLink>
+              <NavLink className={"header-link mb-0"} to={'/mint'}>
+              Mint
+              </NavLink>
+              <NavLink className={"header-link mb-0"} to={'/support'}>
+              Support
+              </NavLink>
+        
               </div>
             <div className="d-flex align-items-center gap-3">
               <button className="btn blue-btn d-flex align-items-center gap-2" 

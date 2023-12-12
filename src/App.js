@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./screens/Home/Home";
+import Collections from "./screens/Collections/Collections";
 import Header from "./components/Header/Header";
 import './App.css'
 import { useState } from "react";
@@ -13,6 +14,8 @@ import axios from "axios";
 import WalletModal from "./components/WalletModal/WalletModal";
 import useWindowSize from "./hooks/useWindowSize";
 import MobileHeader from "./components/Header/MobileHeader/MobileHeader";
+import Support from "./screens/Support/Support";
+import Mint from "./screens/Mint/Mint";
 
 function App() {
 
@@ -98,6 +101,9 @@ function App() {
 
       <Routes>
         <Route exact path="/" element={<Home />} />
+        <Route exact path="/collections" element={<Collections />} />
+        <Route exact path="/mint" element={<Mint />} />
+        <Route exact path="/support" element={<Support />} />
       </Routes>
       {walletModal === true && (
           <WalletModal

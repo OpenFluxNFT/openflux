@@ -1,9 +1,9 @@
-*{
-    font-family: 'Poppins', sans-serif !important;
+* {
+  font-family: "Poppins", sans-serif !important;
 }
 
-input:focus{
-    outline: none;
+input:focus {
+  outline: none;
 }
 
 .main-hero-title {
@@ -23,15 +23,13 @@ input:focus{
   -webkit-text-fill-color: transparent;
 }
 
-
-
 .trending-divider {
   background: #828fbb;
   height: 4px;
   width: 100%;
 }
 
-.hidescroll{
+.hidescroll {
   overflow: hidden;
   pointer-events: none;
 }
@@ -41,44 +39,56 @@ input:focus{
   font-size: 44px;
   font-style: normal;
   font-weight: 700;
+  @media only screen and (max-width: 991px) {
+    font-size: 30px;
+  }
 }
 
-
 .button__bar {
-    display: flex !important;
-    justify-content: center;
-    align-items: center;
-    vertical-align: middle;
-    margin: auto;
-    padding: 0;
-    border-radius: 40px;
-    width: 70px;
-    text-align: center;
-    margin-top: 20px;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  vertical-align: middle;
+  margin: auto;
+  padding: 0;
+  border-radius: 40px;
+  width: 70px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.button__bar li {
+  list-style: none;
+  cursor: pointer;
+  display: inline-block;
+  margin: 0 3px;
+  padding: 0;
+}
+
+.button__bar li button {
+  border: none;
+  border-radius: 8px;
+  background: rgba(47, 128, 237, 0.25);
+  color: transparent;
+  cursor: pointer;
+  display: block;
+  height: 4px;
+  width: 64px;
+}
+
+.button__bar li.slick-active button {
+  height: 4px;
+  width: 64px;
+  opacity: 1;
+  background: #2f80ed;
+}
+
+.main-wrapper {
+  overflow-x: hidden;
+}
+
+@media only screen and (max-width: 991px) {
+  .main-hero-title {
+    font-size: 30px;
   }
-  
-  .button__bar li {
-    list-style: none;
-    cursor: pointer;
-    display: inline-block;
-    margin: 0 3px;
-    padding: 0;
-  }
-  
-  .button__bar li button {
-    border: none;
-    border-radius: 8px;
-    background: rgba(47, 128, 237, 0.25);
-    color: transparent;
-    cursor: pointer;
-    display: block;
-    height: 4px;
-    width: 64px;
-  }
-  
-  .button__bar li.slick-active button {
-    height: 4px;
-    width: 64px;
-    opacity: 1;
-    background: #2F80ED;
-  }
+}

@@ -1,0 +1,47 @@
+.footer-outer-wrapper{
+    background: #141843;
+}
+
+.footer-wrapper {
+  border-radius: 40px 40px 0px 0px;
+  background: rgba(27, 27, 45, 0.5);
+
+  .footer-title {
+    color: #fff;
+    font-size: 26px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    letter-spacing: 0.631px;
+    text-transform: capitalize;
+  }
+
+  .footer-desc {
+    color: #fff;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 206%; /* 41.2px */
+    text-transform: capitalize;
+    width: 50%;
+  }
+
+  .footer-link {
+    color: #e0e0e0;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-transform: capitalize;
+    text-decoration: none;
+  }
+
+  .copyright-text {
+    color: #FFF;
+font-size: 12px;
+font-style: normal;
+font-weight: 400;
+line-height: 206%; /* 32.96px */
+text-transform: capitalize;
+  }
+}

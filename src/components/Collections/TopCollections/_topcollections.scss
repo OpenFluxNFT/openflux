@@ -1,0 +1,49 @@
+.top-collections-grid {
+
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+
+  .top-collection-image {
+    border-radius: 30px;
+    width: 100%;
+  }
+
+  .top-collection-info {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    border-radius: 0px 0px 30px 30px;
+    background: linear-gradient(
+      148deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.05) 100%
+    );
+    backdrop-filter: blur(10px);
+    .top-collection-title {
+      color: #fff;
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+      letter-spacing: 0.8px;
+      text-transform: capitalize;
+    }
+
+    .floor-placeholder {
+      color: #fff;
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 12px; /* 100% */
+    }
+
+    .floor-price {
+      color: #fff;
+      font-size: 12px;
+      font-style: italic;
+      font-weight: 300;
+      line-height: 12px;
+    }
+  }
+}

@@ -1,0 +1,71 @@
+.trending-tag {
+  border-radius: 0px 10px;
+  border: 1px solid #2f80ed;
+  background: rgba(47, 128, 237, 0.05);
+  display: flex;
+  width: 30px;
+  height: 30px;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  right: 0;
+  top: 0;
+  span {
+    color: #fff;
+    text-align: center;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    text-transform: capitalize;
+  }
+}
+
+.trending-collections-grid{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    row-gap: 16px;
+    column-gap: 50px;
+}
+
+.trending-collection-card {
+    width: 100%;
+    border-radius: 12px;
+    background: #23244E;
+  .trending-collection-title {
+    color: #fff;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    letter-spacing: 0.8px;
+    text-transform: capitalize;
+  }
+
+  .trending-price-holder {
+    color: #828fbb;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 12px; /* 100% */
+  }
+
+  .trending-price-wrapper {
+    border-radius: 0px 15px;
+    background: linear-gradient(
+      148deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.05) 100%
+    );
+    backdrop-filter: blur(10px);
+    .trending-price {
+      color: #fff;
+      font-size: 14px;
+      font-style: italic;
+      font-weight: 500;
+      line-height: normal;
+      letter-spacing: 0.8px;
+      text-transform: capitalize;
+    }
+  }
+}

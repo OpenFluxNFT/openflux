@@ -1,27 +1,37 @@
 .walletmodal-wrapper {
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    background: #2f80ed;
-  }
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  border: 1px solid #828fbb;
+  background: linear-gradient(
+    168deg,
+    #161c4a -11.33%,
+    #161c4b -11.32%,
+    #141843 116.32%,
+    #1b1e49 116.32%
+  );
+}
 
+.walletbutton {
+  border-radius: 15px;
+  background: rgba(35, 36, 78, 0.5);
+  outline: currentcolor none medium;
+  border: 1px solid #828fbb;
+  width: 93% !important;
+  display: flex;
+  flex-direction: row;
+  -moz-box-align: center;
+  align-items: center;
+  -moz-box-pack: justify;
+  padding: 1rem;
+  margin: auto;
+  opacity: 1;
+  height: 64px;
+}
 
-  .walletbutton {
-    background: #2f80ed;
-    outline: currentcolor none medium;
-    border: 1px solid rgb(237, 238, 242);
-    border-radius: 12px;
-    width: 93% !important;
-    display: flex;
-    flex-direction: row;
-    -moz-box-align: center;
-    align-items: center;
-    -moz-box-pack: justify;
-    padding: 1rem;
-    margin: auto;
-    opacity: 1;
-  }
-
-  .walletbutton:hover {
-    border: 1px solid rgb(140, 86, 255);
-  }
+.walletbutton:hover {
+  border-radius: 15px;
+  border: 1px solid #2f80ed;
+  background: rgba(47, 128, 237, 0.1);
+}

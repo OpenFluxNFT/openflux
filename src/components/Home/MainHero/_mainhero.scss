@@ -1,12 +1,14 @@
 .main-hero-wrapper {
-
-    
-    border-radius: 30px;
-    background: linear-gradient(148deg, rgba(35, 36, 78, 0.10) 0%, rgba(47, 128, 237, 0.05) 100%);
-    backdrop-filter: blur(10px);
-
-
- 
+  border-radius: 30px;
+  background: linear-gradient(
+    148deg,
+    rgba(35, 36, 78, 0.1) 0%,
+    rgba(47, 128, 237, 0.05) 100%
+  );
+  // backdrop-filter: blur(10px);
+  @media only screen and (max-width: 991px) {
+    margin-top: 3rem;
+  }
 
   .main-hero-desc {
     color: #fff;
@@ -20,7 +22,6 @@
     @media screen and (max-width: 786px) {
       width: 100%;
     }
-
   }
 
   .gradient-btn {

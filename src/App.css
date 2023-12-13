@@ -59,6 +59,9 @@ input:focus {
   font-size: 44px;
   font-style: normal;
   font-weight: 700;
+  @media only screen and (max-width: 991px) {
+    font-size: 30px;
+  }
 }
 
 .button__bar {
@@ -98,4 +101,14 @@ input:focus {
   width: 64px;
   opacity: 1;
   background: #2f80ed;
+}
+
+.main-wrapper {
+  overflow-x: hidden;
+}
+
+@media only screen and (max-width: 991px) {
+  .main-hero-title {
+    font-size: 30px;
+  }
 }

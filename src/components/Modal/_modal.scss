@@ -4,7 +4,11 @@
 
 
   .walletclose{
-    background: #2f80ed;
+    position: absolute;
+    background: transparent;
+    right: 20px;
+    top: 16px;
+    cursor: pointer;
   }
   .modal-dialog {
     // margin-top: 260px;
@@ -14,7 +18,7 @@
     .modal-content {
       padding: 0;
       border: none;
-      border-radius: 8px;
+      border-radius: 20px;
       padding-top: 66px;
       @include medium {
         padding-top: 88px;

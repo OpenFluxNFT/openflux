@@ -23,6 +23,26 @@ input:focus {
   -webkit-text-fill-color: transparent;
 }
 
+.trending-tab {
+  cursor: pointer;
+  border-radius: 13px;
+}
+
+.trending-tab > h6 {
+  color: #fff;
+  text-align: center;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  text-transform: capitalize;
+}
+
+.trending-tab-active {
+  border-radius: 12px;
+  background: #2f80ed;
+}
+
 .trending-divider {
   background: #828fbb;
   height: 4px;

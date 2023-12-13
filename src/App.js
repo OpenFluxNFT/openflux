@@ -16,6 +16,7 @@ import useWindowSize from "./hooks/useWindowSize";
 import MobileHeader from "./components/Header/MobileHeader/MobileHeader";
 import Support from "./screens/Support/Support";
 import Mint from "./screens/Mint/Mint";
+import Footer from "./components/Footer/Footer";
 
 function App() {
 
@@ -116,7 +117,7 @@ function App() {
             }}
           />
         )}
-
+    <Footer />
     </>
   );
 }

@@ -23,6 +23,14 @@ input:focus{
   -webkit-text-fill-color: transparent;
 }
 
+
+
+.trending-divider {
+  background: #828fbb;
+  height: 4px;
+  width: 100%;
+}
+
 .hidescroll{
   overflow: hidden;
   pointer-events: none;

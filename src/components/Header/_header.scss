@@ -4,6 +4,11 @@
   stroke: #828fbb;
   backdrop-filter: blur(20.833332061767578px);
   border-bottom: 2px solid #828fbb;
+  position: sticky;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 7;
   .header-link {
     color: #fff;
     text-align: center;

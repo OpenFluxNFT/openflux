@@ -28,6 +28,7 @@ input:focus {
   border-radius: 13px;
 }
 
+
 .trending-tab > h6 {
   color: #fff;
   text-align: center;
@@ -103,9 +104,7 @@ input:focus {
   background: #2f80ed;
 }
 
-.main-wrapper {
-  overflow-x: hidden;
-}
+
 
 @media only screen and (max-width: 991px) {
   .main-hero-title {

@@ -12,6 +12,7 @@ import MobileHeader from "./components/Header/MobileHeader/MobileHeader";
 import Support from "./screens/Support/Support";
 import Mint from "./screens/Mint/Mint";
 import Footer from "./components/Footer/Footer";
+import CollectionPage from './screens/CollectionPage/CollectionPage'
 
 function App() {
   const [walletModal, setWalletModal] = useState(false);
@@ -172,6 +173,7 @@ function App() {
         <Route exact path="/collections" element={<Collections />} />
         <Route exact path="/mint" element={<Mint />} />
         <Route exact path="/support" element={<Support />} />
+        <Route exact path="/collection/:id" element={<CollectionPage />} />
       </Routes>
       {walletModal === true && (
         <WalletModal

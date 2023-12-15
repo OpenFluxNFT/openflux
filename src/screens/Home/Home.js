@@ -1,10 +1,11 @@
-import React from 'react'
-import MainHero from '../../components/Home/MainHero/MainHero';
-import './_home.scss'
-import HomeStats from '../../components/Home/HomeStats/HomeStats';
-import HomeInfo from '../../components/Home/HomeInfo/HomeInfo';
-import TrendingSales from '../../components/Home/TrendingSales/TrendingSales';
-import RecentlyListed from '../../components/Home/RecentlyListed/RecentlyListed';
+import React from "react";
+import MainHero from "../../components/Home/MainHero/MainHero";
+import "./_home.scss";
+import HomeStats from "../../components/Home/HomeStats/HomeStats";
+import HomeInfo from "../../components/Home/HomeInfo/HomeInfo";
+import TrendingSales from "../../components/Home/TrendingSales/TrendingSales";
+import RecentlyListed from "../../components/Home/RecentlyListed/RecentlyListed";
+import TrendingCollections from "../../components/Home/TrendingCollections/TrendingCollections";
 
 const Home = () => {
   return (
@@ -14,8 +15,9 @@ const Home = () => {
       <HomeInfo />
       <TrendingSales />
       <RecentlyListed />
+      <TrendingCollections />
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

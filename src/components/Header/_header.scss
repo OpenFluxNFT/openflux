@@ -3,7 +3,12 @@
   stroke-width: 1px;
   stroke: #828fbb;
   backdrop-filter: blur(20.833332061767578px);
-  border-bottom: 2px solid #828FBB;
+  border-bottom: 2px solid #828fbb;
+  position: sticky;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 7;
   .header-link {
     color: #fff;
     text-align: center;
@@ -17,7 +22,7 @@
   .blue-btn {
     border-radius: 10px;
     background: #2f80ed;
-    height: 50px;
+    height: 40px;
     color: #fff;
     font-size: 12px;
     font-style: normal;
@@ -25,16 +30,11 @@
     line-height: normal;
   }
 
-  .blue-btn:active{
-    background: #2f80ed !important;
-
-  }
-
-  .search-input{
+  .search-input {
     width: 80%;
     background: #141843;
     border: 1px solid #828fbb;
-    height: 50px;
+    height: 40px;
     padding-left: 50px;
     border-radius: 12px;
     color: #fff;
@@ -44,18 +44,60 @@
     line-height: normal;
   }
 
-  .search-input::placeholder{
-    color: #828FBB;
-font-size: 12px;
-font-style: normal;
-font-weight: 500;
-line-height: normal;
+  .search-input::placeholder {
+    color: #828fbb;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
   }
-  .search-icon{
+  .search-icon {
     position: absolute;
     left: 20px;
     top: 0;
     bottom: 0;
     margin: auto;
   }
+}
+
+.error-btn {
+  border-radius: 15px;
+  border: 1px solid #e54d25;
+  color: #e54d25;
+  text-align: center;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  background: transparent;
+  height: 40px;
+}
+
+.error-btn:hover {
+  color: #fff;
+  background: #e54d25;
+}
+
+.account-btn {
+  border-radius: 15px;
+  background: transparent;
+  border: 1px solid #2f80ed;
+  height: 40px;
+  color: #fff;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.blue-btn:active {
+  background: #2f80ed !important;
+}
+
+.blue-btn:hover {
+  background: linear-gradient(135deg, #8967c8 0%, #2f80ed 100%) !important;
+}
+
+.account-btn:hover {
+  background: #2f80ed !important;
 }

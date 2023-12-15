@@ -1,0 +1,59 @@
+.collection-card {
+  border-radius: 30px;
+  backdrop-filter: blur(10px);
+
+  img {
+  }
+
+  .collection-card-bottom {
+    background: linear-gradient(
+      148deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.05) 100%
+    );
+    border-radius: 0 0 30px 30px;
+
+    .collection-card-title {
+      color: #fff;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+      letter-spacing: 1.25px;
+      text-transform: capitalize;
+
+      @media screen and (max-width: 1200px) {
+        font-size: 12px;
+            
+        }
+    }
+
+    .collection-price-holder {
+      color: #828fbb;
+      font-size: 9px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 12px; /* 100% */
+    }
+
+    .collection-price-wrapper {
+      border-radius: 0px 15px;
+      background: linear-gradient(
+        148deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.05) 100%
+      );
+      backdrop-filter: blur(10px);
+
+      .collection-price {
+        color: #FFF;
+font-size: 10px;
+font-style: normal;
+font-weight: 700;
+line-height: normal;
+letter-spacing: 1px;
+text-transform: capitalize;
+      }
+    }
+  }
+}

@@ -15,7 +15,7 @@ const Footer = () => {
       <div className="container-lg">
         <div className="row">
           <hr className="trending-divider mb-5"></hr>
-          <div className="d-flex align-items-start justify-content-between">
+          <div className="d-flex flex-column flex-lg-row align-items-start justify-content-between gap-2">
             <div className="d-flex flex-column gap-3">
               <div className="d-flex align-items-center gap-2">
                 <img src={dypiusLogo} alt="" />

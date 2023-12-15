@@ -1,5 +1,5 @@
-.footer-outer-wrapper{
-    background: #141843;
+.footer-outer-wrapper {
+  background: #141843;
 }
 
 .footer-wrapper {
@@ -24,6 +24,9 @@
     line-height: 206%; /* 41.2px */
     text-transform: capitalize;
     width: 50%;
+    @media only screen and (max-width: 991px) {
+      width: 100%;
+    }
   }
 
   .footer-link {
@@ -37,11 +40,11 @@
   }
 
   .copyright-text {
-    color: #FFF;
-font-size: 12px;
-font-style: normal;
-font-weight: 400;
-line-height: 206%; /* 32.96px */
-text-transform: capitalize;
+    color: #fff;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 206%; /* 32.96px */
+    text-transform: capitalize;
   }
 }

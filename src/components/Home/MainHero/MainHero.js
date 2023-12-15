@@ -39,7 +39,7 @@ const MainHero = () => {
       <Slider {...settings}>
         {mainHeroItems.map((item, index) => (
           <div className="row d-flex align-items-center">
-            <div className="col-12 col-lg-7">
+            <div className="col-12 col-lg-7 mb-2">
               <div className="d-flex flex-column gap-4">
                 <h6 className="main-hero-title mb-0">{item.title}</h6>
                 <p className="main-hero-desc mb-0">{item.desc}</p>

@@ -1,0 +1,150 @@
+.nft-banner-wrapper {
+  border-radius: 30px;
+  background: linear-gradient(
+    148deg,
+    rgba(35, 36, 78, 0.1) 0%,
+    rgba(47, 128, 237, 0.05) 100%
+  );
+  .nft-image {
+    border-radius: 15px;
+    width: 290px;
+    height: 290px;
+  }
+  .nft-collection-logo {
+    width: 24px;
+    height: 24px;
+  }
+  .collection-name {
+    color: #fff;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 24px; /* 200% */
+    letter-spacing: 0.3px;
+    text-transform: capitalize;
+  }
+
+  .collection-info-owner-wrapper {
+    border-radius: 0px 15px;
+    border: 1px solid rgba(47, 128, 237, 0.2);
+    background: rgba(47, 128, 237, 0.05);
+  }
+
+  .nft-info-left {
+    color: #828fbb;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    text-transform: capitalize;
+  }
+
+  .nft-info-right {
+    color: #fff;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-transform: capitalize;
+  }
+
+  .nft-collection-name {
+    color: #fff;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 24px;
+    letter-spacing: 0.3px;
+    text-transform: capitalize;
+  }
+
+  .border-bottom-div {
+    border-bottom: 2px solid rgba(47, 128, 237, 0.2);
+  }
+
+  .single-nft-right-info-wrapper {
+    border-radius: 15px;
+    border: 1px solid rgba(47, 128, 237, 0.2);
+    background: rgba(47, 128, 237, 0.05);
+  }
+
+  .nft-item-name-right {
+    color: #fff;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 24px; /* 150% */
+    letter-spacing: 0.4px;
+    text-transform: capitalize;
+  }
+
+  .nft-price-wrapper {
+    border-radius: 10px;
+    background: rgba(47, 128, 237, 0.1);
+  }
+
+  .current-price-text {
+    color: #828fbb;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 12px;
+  }
+
+  .nft-price-crypto {
+    color: #fff;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+    letter-spacing: 1.2px;
+    text-transform: capitalize;
+  }
+
+  .nft-price-usd {
+    color: #3dbda7;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+    letter-spacing: 0.6px;
+    text-transform: capitalize;
+  }
+
+  .error-status-text {
+    color: #e2502a;
+    font-size: 8px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    text-align: center;
+  }
+
+  .make-offer-btn {
+    background: linear-gradient(90deg, #830e47 0%, #a6519b 100%);
+    color: #fff;
+    text-align: center;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    text-transform: capitalize;
+    border-radius: 15px;
+    border: none;
+    outline: none;
+  }
+
+  .buy-nft-btn {
+    background: linear-gradient(90deg, #2f80ed 0%, #00e0b9 100%);
+    color: #fff;
+    text-align: center;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    text-transform: capitalize;
+    border-radius: 15px;
+    border: none;
+    outline: none;
+  }
+}

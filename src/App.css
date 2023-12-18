@@ -29,6 +29,71 @@ input:focus {
 }
 
 
+
+
+
+.buy-btn {
+  border-radius: 24px;
+  border: 1px solid #2f80ed;
+  background: rgba(47, 128, 237, 0.05);
+  color: #fff;
+  text-align: center;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  text-transform: capitalize;
+  transition: all 0.35s ease;
+}
+
+.buy-btn:hover {
+  background: #2f80ed;
+}
+
+
+.recently-listed-card {
+  border-radius: 30px;
+  background: linear-gradient(
+    148deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  backdrop-filter: blur(10px);
+
+  .card-img {
+    border-radius: 30px;
+  }
+  .recently-listed-title {
+    color: #fff;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    letter-spacing: 1.25px;
+    text-transform: capitalize;
+  }
+  .cfx-price {
+    color: #fff;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    letter-spacing: 1px;
+    text-transform: capitalize;
+  }
+  .usd-price {
+    color: #3dbda7;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+    letter-spacing: 0.5px;
+    text-transform: capitalize;
+  }
+ 
+}
+
+
 .trending-tab > h6 {
   color: #fff;
   text-align: center;

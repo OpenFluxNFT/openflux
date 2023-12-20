@@ -3,6 +3,8 @@ import SingleNftBanner from "../../components/SingleNft/SingleNftBanner/SingleNf
 import SingleNftHistory from "../../components/SingleNft/SingleNftHistory/SingleNftHistory";
 import SingleNftTraits from "../../components/SingleNft/SingleNftTraits/SingleNftTraits";
 import "./_singlenft.scss";
+import NftTraits from "../../components/SingleNft/NftTraits/NftTraits";
+import MoreFromCollection from "../../components/SingleNft/MoreFromCollection/MoreFromCollection";
 
 const SingleNft = ({
   isConnected,
@@ -16,6 +18,8 @@ const SingleNft = ({
       <SingleNftBanner />
       <SingleNftHistory />
       <SingleNftTraits />
+      <NftTraits />
+      <MoreFromCollection />
     </div>
   );
 };

@@ -227,3 +227,39 @@ background: rgba(130, 143, 187, 0.20);
   grid-template-columns: repeat(1,1fr);
   gap: 20px;
 }
+
+
+.table{
+  background-color: #161c49 !important;
+  --bs-table-bg: #161c49 !important;
+}
+
+.nft-table-row{
+  border-radius: 10px;
+  background: #23244E !important;
+  border-bottom: 1px solid #161c49;
+  --bs-table-bg: #23244E !important;
+
+}
+
+.table-header{
+  color: #828FBB !important;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  text-transform: capitalize;
+ text-align: center;
+
+}
+
+.table-item{
+  color: #FFF !important;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  text-transform: capitalize;
+ text-align: center;
+ vertical-align: middle;
+}

@@ -26,6 +26,10 @@
     grid-template-columns: repeat(2,1fr);
     row-gap: 16px;
     column-gap: 50px;
+
+    @media screen and (max-width: 990px) {
+      grid-template-columns: repeat(1,1fr);
+    }
 }
 
 .trending-collection-card {
@@ -40,6 +44,10 @@
     line-height: normal;
     letter-spacing: 0.8px;
     text-transform: capitalize;
+
+    @media screen and (max-width: 786px) {
+      font-size: 9px;
+    }
   }
 
   .trending-price-holder {
@@ -66,6 +74,9 @@
       line-height: normal;
       letter-spacing: 0.8px;
       text-transform: capitalize;
+      @media screen and (max-width: 786px) {
+        font-size: 9px;
+      }
     }
   }
 }

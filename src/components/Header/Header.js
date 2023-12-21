@@ -36,7 +36,7 @@ const Header = ({
   };
 
   return (
-    <div className="container-fluid py-4 header-wrapper">
+    <div className="container-fluid py-3 header-wrapper">
       <div className="container-lg px-0
       ">
         <div className="row mx-0 align-items-center justify-content-center">

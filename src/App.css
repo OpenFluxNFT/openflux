@@ -26,6 +26,8 @@ input:focus {
 .trending-tab {
   cursor: pointer;
   border-radius: 13px;
+  width: fit-content;
+  white-space: nowrap;
 }
 
 

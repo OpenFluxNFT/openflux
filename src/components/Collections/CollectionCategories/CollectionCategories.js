@@ -79,7 +79,7 @@ const CollectionCategories = () => {
   return (
     <div className="container-lg py-5">
       <div className="row">
-        <div className="d-flex align-items center gap-3 mb-5">
+        <div className="d-flex align-items center gap-3 pb-3 pb-lg-0 mb-5 categories-tabs">
           <div
             className={`trending-tab ${
               category === "all" && "trending-tab-active"

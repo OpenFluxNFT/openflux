@@ -1,0 +1,35 @@
+.traits-wrapper {
+  border-radius: 24px;
+  background: rgba(35, 36, 78, 0.5);
+  backdrop-filter: blur(10px);
+  .traits-title {
+    color: #fff;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 24px; /* 150% */
+    letter-spacing: 0.4px;
+    text-transform: capitalize;
+  }
+
+  .nft-trait {
+    border-bottom: 2px solid rgba(47, 128, 237, 0.2);
+    .trait-key {
+      color: #828fbb;
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: normal;
+      text-transform: capitalize;
+    }
+
+    .trait-value {
+      color: #fff;
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: normal;
+      text-transform: capitalize;
+    }
+  }
+}

@@ -36,41 +36,73 @@ const CollectionList = () => {
       title: "CAWS #1125",
       cfxPrice: 1254.89,
       usdPrice: 654874.86,
+      bestOffer: 100.00,
+      lastSale: 120.00,
+      owner: "0x50c4",
+      timeListed: "11d Ago",
     },
     {
       title: "CAWS #1125",
       cfxPrice: 1254.89,
       usdPrice: 654874.86,
+      bestOffer: 100.00,
+      lastSale: 120.00,
+      owner: "0x50c4",
+      timeListed: "11d Ago",
     },
     {
       title: "CAWS #1125",
       cfxPrice: 1254.89,
       usdPrice: 654874.86,
+      bestOffer: 100.00,
+      lastSale: 120.00,
+      owner: "0x50c4",
+      timeListed: "11d Ago",
     },
     {
       title: "Timepiece #1125",
       cfxPrice: 1254.89,
       usdPrice: 654874.86,
+      bestOffer: 100.00,
+      lastSale: 120.00,
+      owner: "0x50c4",
+      timeListed: "11d Ago",
     },
     {
       title: "Timepiece #1125",
       cfxPrice: 1254.89,
       usdPrice: 654874.86,
+      bestOffer: 100.00,
+      lastSale: 120.00,
+      owner: "0x50c4",
+      timeListed: "11d Ago",
     },
     {
       title: "Timepiece #1125",
       cfxPrice: 1254.89,
       usdPrice: 654874.86,
+      bestOffer: 100.00,
+      lastSale: 120.00,
+      owner: "0x50c4",
+      timeListed: "11d Ago",
     },
     {
       title: "Land #9999",
       cfxPrice: 1254.89,
       usdPrice: 654874.86,
+      bestOffer: 100.00,
+      lastSale: 120.00,
+      owner: "0x50c4",
+      timeListed: "11d Ago",
     },
     {
       title: "Land #9999",
       cfxPrice: 1254.89,
       usdPrice: 654874.86,
+      bestOffer: 100.00,
+      lastSale: 120.00,
+      owner: "0x50c4",
+      timeListed: "11d Ago",
     },
   ];
 
@@ -79,7 +111,7 @@ const CollectionList = () => {
   return (
     <div className="container-lg">
       <div className="row collection-list-wrapper py-4 px-2">
-        <div className="col-2 mt-2">
+        <div className="col-2 mt-2" style={{overflow: "hidden"}}>
           <div className="d-flex align-items-center justify-content-between">
             <div className="d-flex align-items-center gap-1">
               <img src={liveIcon} alt="" />
@@ -90,7 +122,7 @@ const CollectionList = () => {
               <span className="collection-info-span mb-0">Results</span>
             </div>
           </div>
-          <div className="filters-wrapper mt-4 p-3 d-flex flex-column gap-3">
+          <div className="filters-wrapper mt-4 p-3 h-100 d-flex flex-column gap-3">
             <div class="" id="accordionExample">
               <div class="accordion-item">
                 <h2 class="accordion-header" id="headingOne">
@@ -375,33 +407,38 @@ const CollectionList = () => {
             } mt-3`}
           >
            {gridView === "list" ? 
-          <table class="table">
+          <table class="table nft-table">
           <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">First</th>
-              <th scope="col">Last</th>
-              <th scope="col">Handle</th>
+            <tr style={{borderBottom: "2px solid #828FBB"}}>
+              <th className="table-header" style={{textAlign: "left"}} scope="col">Item</th>
+              <th className="table-header" scope="col">Current Price</th>
+              <th className="table-header" scope="col">Best Offer</th>
+              <th className="table-header" scope="col">Last Sale</th>
+              <th className="table-header" scope="col">Owner</th> 
+              <th className="table-header" scope="col">Time Listed</th> 
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <th scope="row">1</th>
-              <td>Mark</td>
-              <td>Otto</td>
-              <td>@mdo</td>
+            {dummyCards.map((item, index) => (
+              <tr className="nft-table-row p-1">
+              <td className="table-item col-2 d-flex align-items-center gap-1 w-100"  scope="row">
+              <img
+                src={require(`./assets/nftPlaceholder${index + 1}.png`)}
+                className="table-img"
+                height={36}
+                width={36}
+                alt=""
+              />
+              {item.title}
+              </td>
+              <td className="table-item col-2">{item.cfxPrice} CFX</td>
+              <td className="table-item col-2">{item.bestOffer} CFX</td>
+              <td className="table-item col-2">{item.lastSale} CFX </td>
+              <td className="table-item col-2">{item.owner}</td>
+              <td className="table-item col-2">{item.timeListed}</td>
             </tr>
-            <tr>
-              <th scope="row">2</th>
-              <td>Jacob</td>
-              <td>Thornton</td>
-              <td>@fat</td>
-            </tr>
-            <tr>
-              <th scope="row">3</th>
-              <td colspan="2">Larry the Bird</td>
-              <td>@twitter</td>
-            </tr>
+            ))}
+            
           </tbody>
         </table>
           :

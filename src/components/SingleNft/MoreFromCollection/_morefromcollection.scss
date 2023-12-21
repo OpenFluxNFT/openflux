@@ -1,0 +1,21 @@
+.slick-list {
+  margin: 0 -5px;
+}
+.slick-slide > div {
+  padding: 0 5px;
+}
+
+.more-collection-wrapper {
+  border-radius: 24px;
+  background: rgba(35, 36, 78, 0.5);
+  backdrop-filter: blur(10px);
+  .more-collection-title {
+    color: #fff;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 24px; /* 150% */
+    letter-spacing: 0.4px;
+    text-transform: capitalize;
+  }
+}

@@ -162,7 +162,7 @@ const TrendingCollections = () => {
           <div className="trending-collections-grid">
             {dummyCards.map((item, index) => (
                 <div className="d-flex align-items-center gap-3" key={index}>
-                <div className="trending-tag position-relative">
+                <div className="trending-tag d-none d-lg-flex position-relative">
                   <span className="mb-0">{index + 1}</span>
                 </div>
                 <div className="trending-collection-card d-flex align-items-center gap-2">

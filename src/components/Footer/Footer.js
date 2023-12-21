@@ -11,10 +11,10 @@ import { NavLink } from "react-router-dom";
 const Footer = () => {
   return (
     <div className="container-fluid footer-outer-wrapper px-0">
-           <div className="container-fluid pb-4 pt-5 footer-wrapper">
+           <div className="container-fluid pb-4 pt-4 footer-wrapper">
       <div className="container-lg">
         <div className="row">
-          <hr className="trending-divider mb-5"></hr>
+          <hr className="trending-divider mb-4"></hr>
           <div className="d-flex flex-column flex-lg-row align-items-start justify-content-between gap-2">
             <div className="d-flex flex-column gap-3">
               <div className="d-flex align-items-center gap-2">
@@ -59,7 +59,7 @@ const Footer = () => {
               </div>
             </div>
           </div>
-          <div className="d-flex align-items-center justify-content-center w-100 gap-1 mt-5">
+          <div className="d-flex align-items-center justify-content-center w-100 gap-1">
             <img src={copyrightIcon} width={16} height={16} alt="" />
             <span className="copyright-text mb-0">2024 Company. all Right Reserved.</span>
           </div>

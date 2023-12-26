@@ -1,0 +1,25 @@
+.profile-option-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+
+
+  h6 {
+    color: #828fbb;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    text-transform: capitalize;
+  }
+
+}
+
+
+.active {
+    background: rgba(35, 36, 78, 0.5);
+    h6{
+        color: #fff !important;
+    }
+}

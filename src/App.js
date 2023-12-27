@@ -14,6 +14,7 @@ import Mint from "./screens/Mint/Mint";
 import Footer from "./components/Footer/Footer";
 import CollectionPage from "./screens/CollectionPage/CollectionPage";
 import SingleNft from "./screens/SingleNft/SingleNft";
+import Profile from "./screens/Profile/Profile";
 
 function App() {
   const [walletModal, setWalletModal] = useState(false);
@@ -175,6 +176,7 @@ function App() {
         <Route exact path="/mint" element={<Mint />} />
         <Route exact path="/support" element={<Support />} />
         <Route exact path="/collection/:id" element={<CollectionPage />} />
+        <Route exact path="/profile/:id" element={<Profile />} />
         <Route
           exact
           path="/nft/:nftId/:nftAddress"

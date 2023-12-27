@@ -1,0 +1,15 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="grid-horizontal">
+<g id="Icon">
+<path d="M4 7H7V4H4V7Z" stroke="#828FBB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M4 13H7V10H4V13Z" stroke="#828FBB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M11 7H14V4H11V7Z" stroke="#828FBB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M11 13H14V10H11V13Z" stroke="#828FBB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M18 7H21V4H18V7Z" stroke="#828FBB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M18 13H21V10H18V13Z" stroke="#828FBB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M4 19H7V16H4V19Z" stroke="#828FBB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M11 19H14V16H11V19Z" stroke="#828FBB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M18 19H21V16H18V19Z" stroke="#828FBB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+</svg>

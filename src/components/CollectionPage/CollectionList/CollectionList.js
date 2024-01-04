@@ -12,10 +12,18 @@ import statusIcon from "./assets/statusIcon.svg";
 import traitsIcon from "./assets/traitsIcon.svg";
 import searchIcon from "../../Header/assets/searchIcon.svg";
 import checkIcon from "../../Home/RecentlyListed/assets/checkIcon.svg";
+import useWindowSize from '../../../hooks/useWindowSize';
+import filterIcon from './assets/filterIcon.svg'
+import xMark from './assets/xMark.svg'
 
 import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
 
 const CollectionList = () => {
+
+
+  const windowSize = useWindowSize();
+  const [openFilters, setOpenFilters] = useState(false)
+
   const dummyTraits = [
     {
       title: "Background",
@@ -109,9 +117,10 @@ const CollectionList = () => {
   const [gridView, setGridView] = useState("small-grid");
 
   return (
+   <>
     <div className="container-lg">
       <div className="row collection-list-wrapper py-4 px-2">
-        <div className="col-2 mt-2" style={{overflow: "hidden"}}>
+        <div className="col-2 mt-2 d-none d-lg-block" style={{overflow: "hidden"}}>
           <div className="d-flex align-items-center justify-content-between">
             <div className="d-flex align-items-center gap-1">
               <img src={liveIcon} alt="" />
@@ -315,9 +324,14 @@ const CollectionList = () => {
             </div>
           </div>
         </div>
-        <div className="col-10">
+        <div className="col-12 col-lg-10">
           <div className="row">
-            <div className="col-7">
+            <div className="col-2 d-flex d-lg-none">
+              <div className="categories-dropdown p-3  d-flex align-items-center justify-content-center" style={{cursor: "pointer", width: "34px"}} onClick={() => setOpenFilters(true)}>
+                <img src={filterIcon} width={20} height={20} alt="" />
+              </div>
+            </div>
+            <div className="col-8 col-lg-7">
               <div className="position-relative">
                 <img src={searchIcon} alt="" className="search-icon" />
                 <input
@@ -327,15 +341,20 @@ const CollectionList = () => {
                 />
               </div>
             </div>
-            <div className="col-3">
+            <div className="col-2 col-lg-3">
               <div class="dropdown">
                 <button
-                  class="btn btn-secondary categories-dropdown p-3 dropdown-toggle w-100 d-flex align-items-center justify-content-between"
+                  class="btn btn-secondary categories-dropdown p-3 dropdown-toggle  d-flex align-items-center justify-content-center justify-content-lg-between"
                   type="button"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
+                  style={{width: windowSize.width > 786 ? "100%" : "34px"}}
                 >
-                  Price: Low to High
+                  {windowSize.width > 786 ? 
+                  "Price: Low to High"
+                  :
+                  <img src={priceIcon} width={20} height={20} alt="" />  
+                }
                 </button>
                 <ul class="dropdown-menu categories-dropdown-menu w-100">
                   <li>
@@ -356,7 +375,7 @@ const CollectionList = () => {
                 </ul>
               </div>
             </div>
-            <div className="col-2">
+            <div className="col-2 d-none d-lg-block">
               <div className="grid-types-wrapper d-flex align-items-center justify-content-between">
                 
                 <div
@@ -476,6 +495,205 @@ const CollectionList = () => {
         </div>
       </div>
     </div>
+    <div className={`mobile-filters-container ${openFilters && "filters-container-open"} d-block d-lg-none`}>
+    <div className="filters-wrapper mt-4 p-3 h-100 d-flex flex-column gap-3">
+      <div className="d-flex align-items-center justify-content-between">
+        <h6 className="filter-popup-title mb-0">Filters</h6>
+        <img src={xMark} width={24} height={24} alt="" style={{cursor: "pointer"}} onClick={() => setOpenFilters(false)} />
+      </div>
+            <div class="" id="accordionExample">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                  <button
+                    class="accordion-button collection-filter py-3 d-flex align-items-center gap-2 collapsed"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapseOne"
+                    aria-expanded="false"
+                    aria-controls="collapseOne"
+                  >
+                    <img src={statusIcon} alt="" />
+                    Status
+                  </button>
+                </h2>
+                <div
+                  id="collapseOne"
+                  class="accordion-collapse collapse"
+                  aria-labelledby="headingOne"
+                  data-bs-parent="#accordionExample"
+                >
+                  <div class="accordion-body">
+                    <FormGroup>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            size="small"
+                            sx={{
+                              color: "white",
+                              "&.Mui-checked": {
+                                color: "#3DBDA7",
+                              },
+                            }}
+                          />
+                        }
+                        label="Label"
+                      />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            size="small"
+                            sx={{
+                              color: "white",
+                              "&.Mui-checked": {
+                                color: "#3DBDA7",
+                              },
+                            }}
+                          />
+                        }
+                        label="Required"
+                        sx={{
+                          color: "#FFF",
+                          fontSize: "10px",
+                          fontStyle: "normal",
+                          fontWeight: "500",
+                          lineHeight: "normal",
+                        }}
+                      />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            size="small"
+                            sx={{
+                              color: "white",
+                              "&.Mui-checked": {
+                                color: "#3DBDA7",
+                              },
+                            }}
+                          />
+                        }
+                        label="Disabled"
+                      />
+                    </FormGroup>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                  <button
+                    class="accordion-button collection-filter py-3  d-flex align-items-center gap-2 collapsed"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapseTwo"
+                    aria-expanded="false"
+                    aria-controls="collapseTwo"
+                  >
+                    <img src={priceIcon} alt="" />
+                    Price
+                  </button>
+                </h2>
+                <div
+                  id="collapseTwo"
+                  class="accordion-collapse collapse"
+                  aria-labelledby="headingTwo"
+                  data-bs-parent="#accordionExample"
+                >
+                  <div class="accordion-body">
+                    <div className="d-flex flex-column gap-2">
+                      <div className="d-flex align-items-center gap-2">
+                        <input
+                          type="text"
+                          placeholder="$ Min"
+                          className="price-input"
+                        />
+                        <span className="MuiTypography-root mb-0">to</span>
+                        <input
+                          type="text"
+                          placeholder="$ Max"
+                          className="price-input"
+                        />
+                      </div>
+                      <button className="buy-btn">Apply</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingThree">
+                  <button
+                    class="accordion-button collection-filter py-3 d-flex align-items-center gap-2 collapsed"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapseThree"
+                    aria-expanded="false"
+                    aria-controls="collapseThree"
+                  >
+                    <img src={traitsIcon} alt="" />
+                    Traits
+                  </button>
+                </h2>
+                <div
+                  id="collapseThree"
+                  class="accordion-collapse collapse"
+                  aria-labelledby="headingThree"
+                  data-bs-parent="#accordionExample"
+                >
+                  <div class="accordion-body">
+                    <div class="" id="accordionExample2">
+                      {dummyTraits.map((item, index) => (
+                        <div class="accordion-item">
+                          <h2
+                            class="accordion-header"
+                            id={`headingOne${item.title}`}
+                          >
+                            <button
+                              class="accordion-button collection-filter px-2 py-2 d-flex align-items-center gap-2 collapsed"
+                              type="button"
+                              data-bs-toggle="collapse"
+                              data-bs-target={`#collapseOne${item.title}`}
+                              aria-expanded="false"
+                              aria-controls={`collapseOne${item.title}`}
+                              style={{ fontSize: "10px" }}
+                            >
+                              {item.title}
+                            </button>
+                          </h2>
+                          <div
+                            id={`collapseOne${item.title}`}
+                            class="accordion-collapse collapse"
+                            aria-labelledby={`headingOne${item.title}`}
+                            data-bs-parent="#accordionExample2"
+                          >
+                            <div class="accordion-body px-2">
+                              <FormGroup>
+                                {item.traits.map((trait, index) => (
+                                  <FormControlLabel
+                                    control={
+                                      <Checkbox
+                                        size="small"
+                                        sx={{
+                                          color: "white",
+                                          "&.Mui-checked": {
+                                            color: "#3DBDA7",
+                                          },
+                                        }}
+                                      />
+                                    }
+                                    label={trait}
+                                  />
+                                ))}
+                              </FormGroup>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+    </div>
+   </>
   );
 };
 

@@ -150,7 +150,7 @@ const ProfileNFTList = ({ option }) => {
   return (
     <div className="container-lg">
       <div className="row collection-list-wrapper py-4 px-2">
-        <div className="col-2 mt-2" style={{ overflow: "hidden" }}>
+        <div className="col-2 mt-2 d-none d-lg-block" style={{ overflow: "hidden" }}>
           <div className="d-flex align-items-center justify-content-between">
             <div className="d-flex align-items-center gap-1">
               <img src={liveIcon} alt="" />
@@ -354,7 +354,7 @@ const ProfileNFTList = ({ option }) => {
             </div>
           </div>
         </div>
-        <div className="col-10">
+        <div className="col-12 col-lg-10">
           <div className="row">
             <div className="col-7">
               <div className="position-relative">

@@ -23,20 +23,20 @@ const CollectionBanner = ({
   info,
 }) => {
   return (
-    <div className="container-lg py-5">
+    <div className="container-lg py-0 py-lg-5">
       <div className="row px-0">
         <div className="collection-banner d-flex flex-column px-0">
           <div className="collection-banner-up position-relative">
-            <img src={banner} className="w-100" alt="" />
-            <div className="ps-5 collection-position">
-              <div className="collection-banner-main-info d-flex flex-column flex-lg-row gap-3 gap-lg-0 align-items-start ps-3 py- ps-lg-5 pe-3 py-3 justify-content-between">
+            <img src={banner} className="w-100 d-none d-lg-flex" alt="" />
+            <div className="ps-0 ps-lg-5 collection-position">
+              <div className="collection-banner-main-info d-flex flex-column flex-lg-row gap-3 gap-lg-0 align-items-start ps-3 ps-lg-5 pe-3 py-3 justify-content-between">
                 <div className="d-flex flex-column gap-3">
                   <div className="d-flex align-items-center gap-2 position-relative">
                     <img src={logo} className="collection-logo" alt="" />
                     <h6 className="collection-title mb-0">{title}</h6>
                     <img src={checkIcon} alt="" />
                   </div>
-                  <div className="d-flex align-items-center gap-3">
+                  <div className="d-flex align-items-center gap-3 flex-wrap">
                     {credentials.map((item, index) => (
                       <div className="d-flex align-items-center gap-1">
                         <span className="collection-info-span mb-0">{item.key}</span>
@@ -61,7 +61,7 @@ const CollectionBanner = ({
               </div>
             </div>
           </div>
-          <div className="collection-banner-down py-3 ps-3 ps-lg-5">
+          <div className="collection-banner-down py-3 ps-0 ps-lg-5">
             <div className="d-flex align-items-start flex-column flex-lg-row gap-3 gap-lg-0 justify-content-between ps-3 ps-lg-5 pe-3">
               <p className="collection-desc mb-0">
               {desc}

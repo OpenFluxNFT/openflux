@@ -104,3 +104,24 @@
   line-height: normal;
   text-transform: capitalize;
 }
+
+.notification-setting-item {
+  border-radius: 10px;
+  background: #23244e;
+  .setting-title {
+    color: #fff;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    text-transform: capitalize;
+  }
+
+  .setting-desc {
+    color: #828fbb;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+  }
+}

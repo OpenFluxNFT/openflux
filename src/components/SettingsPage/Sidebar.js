@@ -8,7 +8,7 @@ import securityIcon from './assets/securityIcon.svg'
 
 const Sidebar = ({onChangeCategory, category}) => {
   return (
-    <div className="col-2">
+    <div className="col-12 col-lg-2 mb-4 mb-lg-0">
       <div className="sidebar-wrapper py-3 d-flex flex-column gap-3" style={{height: "100%"}}>
         <div className={`sidebar-item ${category === "profile" && "sidebar-item-active"} px-3 py-2 d-flex align-items-center gap-2`} onClick={() => onChangeCategory("profile")}>
             <img src={profileIcon} alt="" />

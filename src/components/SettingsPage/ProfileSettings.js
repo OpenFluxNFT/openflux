@@ -9,7 +9,7 @@ const ProfileSettings = () => {
     <div className="col-12 col-lg-10">
       <div className="row">
         <h6 className="settings-header mb-3">Profile Details</h6>
-        <div className="col-6">
+        <div className="col-12 col-lg-6">
           <div className="d-flex flex-column gap-4">
             <div className="d-flex flex-column gap-2">
               <h6 className="input-label mb-0">Username</h6>
@@ -40,8 +40,8 @@ const ProfileSettings = () => {
             </div>
           </div>
         </div>
-        <div className="col-6">
-          <div className="d-flex flex-column justify-content-between h-100">
+        <div className="col-12 col-lg-6">
+          <div className="d-flex flex-column justify-content-between mt-4 mt-lg-0 h-100">
             <div className="d-flex align-items-center">
               <div className="col-4">
                 <div className="d-flex flex-column gap-2">
@@ -73,7 +73,7 @@ const ProfileSettings = () => {
           </div>
         </div>
         <div className="col-12 mt-4">
-          <div className="d-flex flex-column gap-2">
+          <div className="d-flex flex-column gap-2 mt-4 mt-lg-0">
             <h6 className="input-label mb-0">Bio</h6>
             <textarea
               type="text"
@@ -83,7 +83,7 @@ const ProfileSettings = () => {
               rows={5}
             />
           </div>
-          <div className="mt-4 d-flex align-items-center justify-content-between">
+          <div className="mt-4 d-flex flex-column flex-lg-row align-items-start align-items-lg-center justify-content-between">
             <div className="d-flex flex-column gap-2">
               <h6 className="input-label mb-0">Social Connections</h6>
               <span className="social-connections-span">
@@ -91,8 +91,8 @@ const ProfileSettings = () => {
                 accounts
               </span>
             </div>
-            <div className="d-flex align-items-center gap-3">
-              <div className="social-connection-item p-2 d-flex align-items-center gap-5">
+            <div className="d-flex align-items-center flex-column flex-lg-row gap-3 mt-4 mt-lg-0">
+              <div className="social-connection-item p-2 d-flex align-items-center justify-content-between gap-5 w-100">
                 <div className="d-flex align-items-center gap-2">
                   <img src={twitterIcon} alt="" />
                   <h6 className="mb-0 input-label">Twitter</h6>

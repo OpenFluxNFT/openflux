@@ -61,9 +61,9 @@ const Header = ({
                 <NavLink className={"header-link mb-0"} to={"/collections"}>
                   Collections
                 </NavLink>
-                <NavLink className={"header-link mb-0"} to={"/mint"}>
+                {/* <NavLink className={"header-link mb-0"} to={"/mint"}>
                   Mint
-                </NavLink>
+                </NavLink> */}
                 <NavLink className={"header-link mb-0"} to={"/support"}>
                   Support
                 </NavLink>

@@ -47,9 +47,9 @@ const Footer = () => {
                 <NavLink to={"/"} className="footer-link mb-0">
                   Collections
                 </NavLink>
-                <NavLink to={"/"} className="footer-link mb-0">
+                {/* <NavLink to={"/"} className="footer-link mb-0">
                   Mint
-                </NavLink>
+                </NavLink> */}
                 <NavLink to={"/"} className="footer-link mb-0">
                   Become Partners
                 </NavLink>

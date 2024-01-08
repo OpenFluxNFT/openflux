@@ -174,7 +174,7 @@ function App() {
       <Routes>
         <Route exact path="/" element={<Home />} />
         <Route exact path="/collections" element={<Collections />} />
-        <Route exact path="/mint" element={<Mint />} />
+        {/* <Route exact path="/mint" element={<Mint />} /> */}
         <Route exact path="/support" element={<Support />} />
         <Route exact path="/collection/:id" element={<CollectionPage />} />
         <Route exact path="/profile/:id" element={<Profile />} />

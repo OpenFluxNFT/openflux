@@ -83,7 +83,7 @@ const MobileHeader = ({
           className={
             "mobile-menu-item d-flex align-items-center justify-content-between p-3"
           }
-          to={"/collections"}
+        to={"/collections"}
           onClick={() => {
             setMenu(false);
           }}
@@ -92,10 +92,10 @@ const MobileHeader = ({
           <img src={mobileNavArrow} alt="" />
         </NavLink>
 
-        <div className="mobile-menu-item d-flex align-items-center justify-content-between p-3">
+        {/* <div className="mobile-menu-item d-flex align-items-center justify-content-between p-3">
           <h6 className="mb-0 text-white">Mint</h6>
           <img src={mobileNavArrow} alt="" />
-        </div>
+        </div> */}
         <div className="mobile-menu-item d-flex align-items-center justify-content-between p-3">
           <h6 className="mb-0 text-white">Support</h6>
           <img src={mobileNavArrow} alt="" />

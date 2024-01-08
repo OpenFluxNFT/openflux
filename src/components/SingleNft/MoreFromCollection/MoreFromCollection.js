@@ -2,6 +2,7 @@ import React from "react";
 import "./_morefromcollection.scss";
 import Slider from "react-slick";
 import checkIcon from "../../Collections/TopCollections/assets/checkIcon.svg";
+import { NavLink } from "react-router-dom";
 
 const MoreFromCollection = () => {
   const settings = {
@@ -121,7 +122,11 @@ const MoreFromCollection = () => {
           <h6 className="more-collection-title">More From This Collection</h6>
           <Slider {...settings}>
             {dummyCards.map((item, index) => (
-              <div className="recently-listed-card p-3 d-flex flex-column">
+              <div className="recently-listed-card p-3 d-flex flex-column" key={index}>
+                 <NavLink
+                  to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
+                  style={{ textDecoration: "none" }}
+                >
                 <img
                   src={require(`./assets/nftPlaceholder${index + 1}.png`)}
                   className="card-img"
@@ -146,7 +151,7 @@ const MoreFromCollection = () => {
                 </div>
                 <div className="mt-3">
                   <button className="buy-btn w-100">Buy</button>
-                </div>
+                </div></NavLink>
               </div>
             ))}
           </Slider>

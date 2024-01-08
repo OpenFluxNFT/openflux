@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import '../../components/SettingsPage/_settingspage.scss'
 import Sidebar from '../../components/SettingsPage/Sidebar'
 import ProfileSettings from '../../components/SettingsPage/ProfileSettings'
@@ -9,6 +9,10 @@ import CollectionSettings from '../../components/SettingsPage/CollectionSettings
 const SettingsPage = () => {
 
   const [category, setCategory] = useState("profile")
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
 
   return (
     <div className="container-fluid py-4 home-wrapper px-0">

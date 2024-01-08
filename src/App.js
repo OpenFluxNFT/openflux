@@ -25,9 +25,13 @@ function App() {
   const [showForms, setShowForms] = useState(false);
   const [showForms2, setShowForms2] = useState(false);
   const [coinbase, setCoinbase] = useState();
-  const [username, setUsername] = useState("");
+  const [userData, setuserData] = useState([]);
+  const [allCollections, setAllCollections] = useState([]);
+
   const windowSize = useWindowSize();
   const { ethereum } = window;
+  const baseURL = 'https://confluxapi.worldofdypians.com'
+
 
   const handleShowWalletModal = () => {
     setWalletModal(true);
@@ -36,15 +40,7 @@ function App() {
   const checkConnection = async () => {
     await window.getCoinbase().then((data) => {
       setCoinbase(data);
-      axios
-        .get(`https://api-image.dyp.finance/api/v1/username/${data}`)
-        .then((res) => {
-          if (res.data?.username) {
-            setUsername(res.data?.username);
-          } else {
-            setUsername("");
-          }
-        });
+     
     });
   };
 
@@ -107,6 +103,134 @@ function App() {
     }
   };
 
+  const getAllCollections = async()=>{
+    const result = await  axios.get(`${baseURL}/api/collections`).catch((e)=>{console.error(e)})
+
+    if(result && result.status === 200) {
+      setAllCollections(result.data)
+    }
+  }
+
+  const getUserData = async(walletAddr)=>{
+    const result = await axios.get(`${baseURL}/api/users/${walletAddr}`).catch((e)=>{console.error(e)})
+
+    if(result && result.status === 200) {
+      console.log(result)
+    }
+
+    if(result && result.status === 404) {
+      setuserData([])
+    }
+  }
+
+  //const message = I am updating my profile with wallet address ${walletAddress}
+  /*
+
+  retrieving all collections:
+  app.get('/api/collections', async (req, res) => {
+    
+
+  to edit a certain collection (only if owner):
+  app.post('/api/collections/edit/:id'
+
+  and you have the following fields for this
+
+  upload.fields([
+    { name: 'collectionProfilePic', maxCount: 1 },
+    { name: 'collectionBackgroundPic', maxCount: 1 }
+
+  const { id } = req.params;
+  const { signature, contractAddress, collectionName, symbol, tags, ...updateData } = req.body;
+
+  i separated contractAddress, collectionName, symbol, because these will never be changed by a user
+  
+  only tags and ...updateData (which includes: 
+
+  websiteLink: String,
+    twitterLink: String,
+    tgLink: String,
+    discordLink: String,
+    instagramLink: String,
+
+  and tags can only be from this: 
+  enum: ['Art', 'Gaming', 'Virtual World', 'Music', 'Sports'],
+
+
+
+  app.post('/api/users')
+
+  this is the endpoint which you will use if the user is not in the database already
+  in order for him to add himself to the db and modify the profile pic/banner pic
+
+  const { walletAddress, signature } = req.body;
+
+  userUpload.fields([
+    { name: 'profilePicture', maxCount: 1 },
+    { name: 'bannerPicture', maxCount: 1 }
+
+
+  app.get('/api/users/:walletAddress') to get users
+
+
+  app.post('/api/users/edit/:walletAddress', userUpload.fields([
+    { name: 'profilePicture', maxCount: 1 },
+    { name: 'bannerPicture', maxCount: 1 }
+
+  this is the api you will use in order to edit the profile picture/profile banner of a user that is already in the database
+
+    const walletAddress = req.params.walletAddress;
+    const { signature } = req.body;
+
+
+    also for the adding/editing of a user this is the message u will need to get him to sign:
+
+      const message = I am updating my profile with wallet address ${walletAddress};
+
+      instead of ${walletAddress} you make him sign exactly with the walletAddress you are passing to me
+
+    dimension limit as we discussed, max file size 512KB
+    tags must be passed as an array btw, like ['Art', 'Virtual Worlds'], etc
+
+
+    *****Favorite Collection and Favorite NFT********
+
+    app.post('/api/users/addCollectionFavorite/:walletAddress', async (req, res) => {
+    const { walletAddress } = req.params;
+    const { contractAddress } = req.body;
+
+
+  app.post('/api/users/removeCollectionFavorite/:walletAddress', async (req, res) => {
+    const { walletAddress } = req.params;
+    const { contractAddress } = req.body;
+  
+
+  app.post('/api/users/addNftFavorite/:walletAddress', async (req, res) => {
+  const { walletAddress } = req.params;
+  const { contractAddress, tokenId } = req.body;
+
+  app.post('/api/users/removeNftFavorite/:walletAddress', async (req, res) => {
+    const { walletAddress } = req.params;
+    const { contractAddress, tokenId } = req.body;
+
+    base url is: https://confluxapi.worldofdypians.com
+
+    also for all details about a user:
+    https://confluxapi.worldofdypians.com/api/users/0x65C3d0F9438644945dF5BF321c9F0fCf333302b8
+
+
+  for welcome notif
+    /api/users/:walletAddress/welcomeNotification
+
+  to read a notif
+  /api/users/:walletAddress/notifications/read/:notificationId
+
+  to delete a notif
+  /api/users/:walletAddress/notifications/:notificationId
+
+
+    
+    */
+
   const logout = localStorage.getItem("logout");
   useEffect(() => {
     if (ethereum) {
@@ -149,10 +273,19 @@ function App() {
 
   useEffect(() => {
     checkNetworkId();
+    getUserData('0xBF8BC0660F96b1068E21e0f28614148dfA758cEC')
   }, [isConnected, coinbase]);
 
+  useEffect(()=>{
+    getAllCollections()
+  },[])
+
+
   return (
-    <div className="container-fluid p-0 main-wrapper position-relative" style={{minHeight: "100vh", background: "#141843"}}>
+    <div
+      className="container-fluid p-0 main-wrapper position-relative"
+      style={{ minHeight: "100vh", background: "#141843" }}
+    >
       {windowSize.width > 992 ? (
         <Header
           handleSignup={handleShowWalletModal}

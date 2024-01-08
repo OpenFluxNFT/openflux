@@ -94,9 +94,9 @@ const Header = ({
                     {shortAddress(coinbase)}
                   </button>
                 )}
-                <button className="btn blue-btn">
+                <NavLink className="btn blue-btn" to='/settings'>
                   <img src={userIcon} alt="" />
-                </button>
+                </NavLink>
               </div>
             </div>
           </div>

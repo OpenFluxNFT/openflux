@@ -15,6 +15,7 @@ import Footer from "./components/Footer/Footer";
 import CollectionPage from "./screens/CollectionPage/CollectionPage";
 import SingleNft from "./screens/SingleNft/SingleNft";
 import Profile from "./screens/Profile/Profile";
+import SettingsPage from "./screens/SettingsPage/SettingsPage";
 
 function App() {
   const [walletModal, setWalletModal] = useState(false);
@@ -151,7 +152,7 @@ function App() {
   }, [isConnected, coinbase]);
 
   return (
-    <div className="container-fluid p-0 main-wrapper position-relative">
+    <div className="container-fluid p-0 main-wrapper position-relative" style={{minHeight: "100vh", background: "#141843"}}>
       {windowSize.width > 992 ? (
         <Header
           handleSignup={handleShowWalletModal}
@@ -177,6 +178,7 @@ function App() {
         <Route exact path="/support" element={<Support />} />
         <Route exact path="/collection/:id" element={<CollectionPage />} />
         <Route exact path="/profile/:id" element={<Profile />} />
+        <Route exact path="/settings" element={<SettingsPage />} />
         <Route
           exact
           path="/nft/:nftId/:nftAddress"

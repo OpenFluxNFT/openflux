@@ -30,6 +30,11 @@
     text-transform: capitalize;
   }
 
+  .filters-wrapper {
+    border-radius: 10px;
+    background: #23244e;
+  }
+
   .search-input {
     width: 80%;
     background: #141843;
@@ -62,10 +67,6 @@
   }
 }
 
-.filters-wrapper {
-  border-radius: 10px;
-  background: #23244e;
-}
 .accordion-button:not(.collapsed) {
   color: #fff;
   font-size: 12px;
@@ -159,12 +160,6 @@
   line-height: normal;
 }
 
-@media screen and (max-width: 786px) {
-  .categories-dropdown::after {
-    display: none !important;
-  }
-}
-
 .categories-dropdown:hover {
   background: #141843;
   border: 1px solid #828fbb;
@@ -204,10 +199,17 @@
   width: 33%;
   border-radius: 10px;
   cursor: pointer;
+  color: #828fbb;
+  text-align: center;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
 }
 
 .grid-icon-wrapper-active {
   background: rgba(130, 143, 187, 0.2);
+  color: #fff !important;
 }
 
 .big-cards-grid {
@@ -220,11 +222,11 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
-
   @media screen and (max-width: 786px) {
     grid-template-columns: repeat(1, 1fr);
-    gap: 10px;
   }
+  gap: 10px;
+
 }
 
 .list-view-grid {
@@ -266,28 +268,24 @@
   vertical-align: middle;
 }
 
-.mobile-filters-container{
+.collection-card {
+  border-radius: 20px;
+  background: linear-gradient(
+    148deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  backdrop-filter: blur(10px);
+  .collection-lower {
+    h6 {
+      color: #fff;
 
-  position: fixed;
-    height: 100vh !important;
-    z-index: 9999;
-    width: 100%;
-    top: 100%;
-    transition: all .3s ease-in;
-    .filters-wrapper{
-      overflow-y: scroll;
+      font-size: 10px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+      letter-spacing: 0.6px;
+      text-transform: capitalize;
     }
-}
-
-.filter-popup-title{
-  color: #fff;
-  font-size: 24px;
-  font-style: normal;
-  font-weight: 700;
-  letter-spacing: 0.6px;
-  text-transform: capitalize;
-}
-
-.filters-container-open{
-  top: 0;
+  }
 }

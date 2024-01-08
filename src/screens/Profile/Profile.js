@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import "./_profile.scss";
 import CollectionBanner from "../../components/CollectionPage/CollectionBanner/CollectionBanner";
 import profileIcon from "./assets/profileIcon.png";
 import profileBanner from "./assets/profileBanner.png";
+import ProfileNFTList from "../../components/Profile/ProfileNFTList";
 
 const Profile = () => {
+
+  const [option, setOption] = useState("collected")
   const profileSocials = ["website", "twitter", "instagram"];
 
   const profileCredenrtials = [
@@ -57,25 +60,28 @@ const Profile = () => {
       />
       <div className="container-lg py-5">
         <div className="row">
-          <div className="d-flex align-items-center gap-5">
-            <div className="profile-option-item active px-3 py-2">
+          <div className="d-flex align-items-center gap-5 px-0">
+            <div className={`profile-option-item ${option === "collected" && "active"} px-3 py-2`} onClick={() => setOption("collected")}>
               <h6 className="mb-0">Collected</h6>
             </div>
-            <div className="profile-option-item px-3 py-2">
+            <div className={`profile-option-item ${option === "favorites" && "active"} px-3 py-2`} onClick={() => setOption("favorites")}>
               <h6 className="mb-0">Favorites</h6>
             </div>
-            <div className="profile-option-item px-3 py-2">
+            <div className={`profile-option-item ${option === "listed" && "active"} px-3 py-2`} onClick={() => setOption("listed")}>
               <h6 className="mb-0">Listed</h6>
             </div>
-            <div className="profile-option-item px-3 py-2">
+            <div className={`profile-option-item ${option === "offersMade" && "active"} px-3 py-2`} onClick={() => setOption("offersMade")}>
               <h6 className="mb-0">Offers Made</h6>
             </div>
-            <div className="profile-option-item px-3 py-2">
+            <div className={`profile-option-item ${option === "hasOffers" && "active"} px-3 py-2`} onClick={() => setOption("hasOffers")}>
               <h6 className="mb-0">Has Offers</h6>
             </div>
           </div>
+            <hr className="profile-divider mt-2" />
+            <ProfileNFTList option={option} /> 
         </div>
       </div>
+
     </div>
   );
 };

@@ -18,6 +18,7 @@ const MobileHeader = ({
   isConnected,
   chainId,
   handleSwitchNetwork,
+  handleSignupAndRedirectToAccount,
 }) => {
   const [menu, setMenu] = useState(false);
 
@@ -125,9 +126,18 @@ const MobileHeader = ({
               {shortAddress(coinbase)}
             </button>
           )}
-          <NavLink className="btn blue-btn" to="/settings">
-            <img src={userIcon} alt="" />
-          </NavLink>
+          {coinbase && isConnected ? (
+            <NavLink className="btn blue-btn" to={`/profile/${coinbase}`}>
+              <img src={userIcon} alt="" />
+            </NavLink>
+          ) : (
+            <button
+              className="btn blue-btn"
+              onClick={handleSignupAndRedirectToAccount}
+            >
+              <img src={userIcon} alt="" />
+            </button>
+          )}
         </div>
       </div>
     </>

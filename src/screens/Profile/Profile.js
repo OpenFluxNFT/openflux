@@ -64,8 +64,8 @@ const Profile = () => {
         info={profileInfo}
       />
       <div className="container-lg py-5">
-        <div className="row">
-          <div className="d-flex align-items-center gap-5 px-0">
+        <div className="row mx-0">
+          <div className="d-flex align-items-center gap-5 px-0 profile-filter-wrapper">
             <div className={`profile-option-item ${option === "collected" && "active"} px-3 py-2`} onClick={() => setOption("collected")}>
               <h6 className="mb-0">Collected</h6>
             </div>

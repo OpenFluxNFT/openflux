@@ -16,6 +16,7 @@ import CollectionPage from "./screens/CollectionPage/CollectionPage";
 import SingleNft from "./screens/SingleNft/SingleNft";
 import Profile from "./screens/Profile/Profile";
 import SettingsPage from "./screens/SettingsPage/SettingsPage";
+import { useNavigate } from "react-router-dom";
 
 function App() {
   const [walletModal, setWalletModal] = useState(false);
@@ -27,11 +28,12 @@ function App() {
   const [coinbase, setCoinbase] = useState();
   const [userData, setuserData] = useState([]);
   const [allCollections, setAllCollections] = useState([]);
+  const [isRedirect, setIsRedirect] = useState(false);
 
   const windowSize = useWindowSize();
   const { ethereum } = window;
-  const baseURL = 'https://confluxapi.worldofdypians.com'
-
+  const baseURL = "https://confluxapi.worldofdypians.com";
+  const navigate = useNavigate();
 
   const handleShowWalletModal = () => {
     setWalletModal(true);
@@ -40,7 +42,6 @@ function App() {
   const checkConnection = async () => {
     await window.getCoinbase().then((data) => {
       setCoinbase(data);
-     
     });
   };
 
@@ -63,15 +64,21 @@ function App() {
       await window.connectWallet().then((data) => {
         setIsConnected(data);
       });
-
+      let wallet = "";
       await window.getCoinbase().then((data) => {
+        wallet = data;
         setCoinbase(data);
       });
       setWalletModal(false);
       setShowForms2(true);
       setSuccess(true);
       checkConnection();
+      if (isRedirect) {
+        navigate(`/profile/${wallet}`);
+        setIsRedirect(false);
+      }
     } catch (e) {
+      setIsRedirect(false);
       window.alertify.error(String(e) || "Cannot connect wallet!");
       console.log(e);
       return;
@@ -103,25 +110,31 @@ function App() {
     }
   };
 
-  const getAllCollections = async()=>{
-    const result = await  axios.get(`${baseURL}/api/collections`).catch((e)=>{console.error(e)})
+  const getAllCollections = async () => {
+    const result = await axios.get(`${baseURL}/api/collections`).catch((e) => {
+      console.error(e);
+    });
 
-    if(result && result.status === 200) {
-      setAllCollections(result.data)
+    if (result && result.status === 200) {
+      setAllCollections(result.data);
     }
-  }
+  };
 
-  const getUserData = async(walletAddr)=>{
-    const result = await axios.get(`${baseURL}/api/users/${walletAddr}`).catch((e)=>{console.error(e)})
+  const getUserData = async (walletAddr) => {
+    const result = await axios
+      .get(`${baseURL}/api/users/${walletAddr}`)
+      .catch((e) => {
+        console.error(e);
+      });
 
-    if(result && result.status === 200) {
-      console.log(result)
+    if (result && result.status === 200) {
+      console.log(result);
     }
 
-    if(result && result.status === 404) {
-      setuserData([])
+    if (result && result.status === 404) {
+      setuserData([]);
     }
-  }
+  };
 
   //const message = I am updating my profile with wallet address ${walletAddress}
   /*
@@ -273,13 +286,12 @@ function App() {
 
   useEffect(() => {
     checkNetworkId();
-    getUserData('0xBF8BC0660F96b1068E21e0f28614148dfA758cEC')
+    getUserData("0xBF8BC0660F96b1068E21e0f28614148dfA758cEC");
   }, [isConnected, coinbase]);
 
-  useEffect(()=>{
-    getAllCollections()
-  },[])
-
+  useEffect(() => {
+    getAllCollections();
+  }, []);
 
   return (
     <div
@@ -293,6 +305,10 @@ function App() {
           isConnected={isConnected}
           chainId={chainId}
           handleSwitchNetwork={handleSwitchNetwork}
+          handleSignupAndRedirectToAccount={() => {
+            handleShowWalletModal();
+            setIsRedirect(true);
+          }}
         />
       ) : (
         <MobileHeader
@@ -301,6 +317,10 @@ function App() {
           isConnected={isConnected}
           chainId={chainId}
           handleSwitchNetwork={handleSwitchNetwork}
+          handleSignupAndRedirectToAccount={() => {
+            handleShowWalletModal();
+            setIsRedirect(true);
+          }}
         />
       )}
 

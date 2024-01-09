@@ -18,6 +18,7 @@ const Header = ({
   isConnected,
   chainId,
   handleSwitchNetwork,
+  handleSignupAndRedirectToAccount,
 }) => {
   const handleConfluxPool = async () => {
     if (window.ethereum) {
@@ -37,8 +38,10 @@ const Header = ({
 
   return (
     <div className="container-fluid py-3 header-wrapper">
-      <div className="container-lg px-0
-      ">
+      <div
+        className="container-lg px-0
+      "
+      >
         <div className="row mx-0 align-items-center justify-content-center">
           <div className="col-1">
             <NavLink to={"/"}>
@@ -94,9 +97,18 @@ const Header = ({
                     {shortAddress(coinbase)}
                   </button>
                 )}
-                <NavLink className="btn blue-btn" to='/settings'>
-                  <img src={userIcon} alt="" />
-                </NavLink>
+                {coinbase && isConnected ? (
+                  <NavLink className="btn blue-btn" to={`/profile/${coinbase}`}>
+                    <img src={userIcon} alt="" />
+                  </NavLink>
+                ) : (
+                  <button
+                    className="btn blue-btn"
+                    onClick={handleSignupAndRedirectToAccount}
+                  >
+                    <img src={userIcon} alt="" />
+                  </button>
+                )}
               </div>
             </div>
           </div>

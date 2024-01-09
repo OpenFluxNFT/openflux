@@ -21,6 +21,7 @@
       line-height: normal;
       letter-spacing: 1.25px;
       text-transform: capitalize;
+      white-space: nowrap;
 
       @media screen and (max-width: 1200px) {
         font-size: 12px;

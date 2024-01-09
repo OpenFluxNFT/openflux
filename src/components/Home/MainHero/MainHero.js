@@ -32,6 +32,11 @@ const mainHeroItems = [
     desc: "The leading NFT Marketplace on Conflux NetworkHome to the next generation of digital creators. Discover the best NFT collections.",
     button: "explore",
   },
+  {
+    title: "World of Dypians Land",
+    desc: "The leading NFT Marketplace on Conflux NetworkHome to the next generation of digital creators. Discover the best NFT collections.",
+    button: "explore",
+  },
 ];
 
 const MainHero = () => {

@@ -36,6 +36,7 @@
     width: 100%;
     border-radius: 12px;
     background: #23244E;
+    border: 1px solid transparent;
   .trending-collection-title {
     color: #fff;
     font-size: 16px;
@@ -79,4 +80,8 @@
       }
     }
   }
+}
+
+.trending-collection-card:hover {
+  border: 1px solid #2f80ed;
 }

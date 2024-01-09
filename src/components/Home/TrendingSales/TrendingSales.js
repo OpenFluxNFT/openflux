@@ -201,8 +201,9 @@ const TrendingSales = () => {
                   >
                     <NavLink
                       to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
-                      className="trending-card w-100 d-flex align-items-center position-relative gap-2"
+                      className="w-100 d-flex align-items-center position-relative gap-2"
                       key={index}
+                      style={{ textDecoration: "none" }}
                     >
                       <div className="trending-tag">
                         <span className="mb-0">{index + 1}</span>
@@ -243,7 +244,8 @@ const TrendingSales = () => {
                     >
                       <NavLink
                         to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
-                        className="trending-card w-100 d-flex align-items-center position-relative gap-2"
+                        className="w-100 d-flex align-items-center position-relative gap-2"
+                        style={{ textDecoration: "none" }}
                       >
                         <div className="trending-tag">
                           <span className="mb-0">{index + 1}</span>
@@ -283,7 +285,8 @@ const TrendingSales = () => {
                     >
                       <NavLink
                         to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
-                        className="trending-card w-100 d-flex align-items-center position-relative gap-2"
+                        className="w-100 d-flex align-items-center position-relative gap-2"
+                        style={{ textDecoration: "none" }}
                       >
                         <div className="trending-tag">
                           <span className="mb-0">{index + 1}</span>
@@ -323,7 +326,8 @@ const TrendingSales = () => {
                     >
                       <NavLink
                         to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
-                        className="trending-card w-100 d-flex align-items-center position-relative gap-2"
+                        className=" w-100 d-flex align-items-center position-relative gap-2"
+                        style={{ textDecoration: "none" }}
                       >
                         <div className="trending-tag">
                           <span className="mb-0">{index + 1}</span>

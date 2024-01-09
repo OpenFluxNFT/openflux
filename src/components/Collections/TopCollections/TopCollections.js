@@ -65,7 +65,7 @@ const TopCollections = () => {
           <div className="top-collections-grid pe-0">
             {dummyCollections.map((item, index) => (
               <div
-                className="position-relative"
+                className="position-relative top-collection-wrapper"
                 key={index}
                 style={{ width: "fit-content" }}
               >
@@ -93,7 +93,7 @@ const TopCollections = () => {
           <Slider {...settings}>
             {dummyCollections.map((item, index) => (
               <div
-                className="position-relative"
+                className="position-relative top-collection-wrapper"
                 key={index}
                 // style={{ width: "fit-content" }}
               >

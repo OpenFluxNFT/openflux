@@ -7,6 +7,7 @@ import confluxScanIcon from "./assets/confluxScanIcon.svg";
 import discordIcon from "./assets/discordIcon.svg";
 import telegramIcon from "./assets/telegramIcon.svg";
 import penIcon from "./assets/penIcon.svg";
+import editIcon from './assets/editIcon.svg'
 import collectionSettingsIcon from "./assets/collectionSettingsIcon.svg";
 
 const CollectionSettings = () => {
@@ -110,7 +111,10 @@ const CollectionSettings = () => {
                         <h6 className="input-label mb-0">Profile Image</h6>
                         <img src={infoIcon} width={16} height={16} alt="" />
                       </div>
-                      <div className="profile-image-placeholder"></div>
+                      <div className="profile-image-placeholder">
+                      <img src={editIcon} alt="" className="edit-image" />
+
+                      </div>
                     </div>
                   </div>
                   <div className="col-8">
@@ -119,7 +123,9 @@ const CollectionSettings = () => {
                         <h6 className="input-label mb-0">Profile Banner</h6>
                         <img src={infoIcon} width={16} height={16} alt="" />
                       </div>
-                      <div className="profile-banner-placeholder"></div>
+                      <div className="profile-banner-placeholder">
+                        <img src={editIcon} alt="" className="edit-image" />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -134,7 +140,10 @@ const CollectionSettings = () => {
                         <h6 className="input-label mb-0">Featured Banner</h6>
                         <img src={infoIcon} width={16} height={16} alt="" />
                       </div>
-                      <div className="featured-banner-placeholder"></div>
+                      <div className="featured-banner-placeholder">
+                      <img src={editIcon} alt="" className="edit-image" />
+
+                      </div>
                     </div>
                   </div>
                   <div className="col-4">
@@ -143,7 +152,10 @@ const CollectionSettings = () => {
                         <h6 className="input-label mb-0">Collection Banner</h6>
                         <img src={infoIcon} width={16} height={16} alt="" />
                       </div>
-                      <div className="collection-banner-placeholder"></div>
+                      <div className="collection-banner-placeholder">
+                      <img src={editIcon} alt="" className="edit-image" />
+
+                      </div>
                     </div>
                   </div>
                 </div>

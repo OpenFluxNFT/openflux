@@ -4,6 +4,8 @@ import CollectionBanner from "../../components/CollectionPage/CollectionBanner/C
 import profileIcon from "./assets/profileIcon.png";
 import profileBanner from "./assets/profileBanner.png";
 import ProfileNFTList from "../../components/Profile/ProfileNFTList";
+import ProfileBanner from "../../components/Profile/ProfileBanner/ProfileBanner";
+
 
 const Profile = () => {
 
@@ -54,7 +56,7 @@ const Profile = () => {
     
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
-      <CollectionBanner
+      <ProfileBanner
         title={"DarkSliffer"}
         logo={profileIcon}
         banner={profileBanner}

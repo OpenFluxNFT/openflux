@@ -98,7 +98,10 @@ const MobileHeader = ({
           <img src={mobileNavArrow} alt="" />
         </div> */}
         <div className="mobile-menu-item d-flex align-items-center justify-content-between p-3">
-          <h6 className="mb-0 text-white">Support</h6>
+          <a className={"mb-0 text-white"} href="mailto:someone@support.com">
+            Support
+          </a>
+
           <img src={mobileNavArrow} alt="" />
         </div>
         <div className="d-flex align-items-center gap-3">

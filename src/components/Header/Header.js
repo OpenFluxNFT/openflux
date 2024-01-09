@@ -87,9 +87,12 @@ const Header = ({
                 {/* <NavLink className={"header-link mb-0"} to={"/mint"}>
                   Mint
                 </NavLink> */}
-                <NavLink className={"header-link mb-0"} to={"/support"}>
+                <a
+                  className={"header-link mb-0"}
+                  href="mailto:someone@support.com"
+                >
                   Support
-                </NavLink>
+                </a>
               </div>
               <div className="d-flex align-items-center gap-3">
                 {coinbase && isConnected && chainId === 1030 && (
@@ -113,9 +116,12 @@ const Header = ({
                   </button>
                 )}
                 {coinbase && isConnected && (
-                  <button className="btn account-btn d-flex align-items-center gap-2" onClick={() => {
-                    setShowMenu(true);
-                  }}>
+                  <button
+                    className="btn account-btn d-flex align-items-center gap-2"
+                    onClick={() => {
+                      setShowMenu(true);
+                    }}
+                  >
                     {shortAddress(coinbase)}
                     <img src={dropdown} alt="" />
                   </button>

@@ -97,7 +97,6 @@ const TrendingSales = () => {
     }
 
     setChunkedArray(myArray);
-    console.log(myArray);
   };
 
   useEffect(() => {

@@ -53,9 +53,12 @@ const Footer = () => {
                   <NavLink to={"/"} className="footer-link mb-0">
                     Become Partners
                   </NavLink>
-                  <NavLink to={"/"} className="footer-link mb-0">
+                  <a
+                    className={"footer-link mb-0"}
+                    href="mailto:someone@support.com"
+                  >
                     Support
-                  </NavLink>
+                  </a>
                 </div>
               </div>
             </div>

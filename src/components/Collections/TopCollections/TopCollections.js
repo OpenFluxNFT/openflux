@@ -29,24 +29,31 @@ const TopCollections = () => {
       img: collectionPlaceholder1,
       floorPrice: 122.8,
       collectionName: "catsandwatchessocietycaws",
+      collectionAddress: window.config.nft_caws_address
     },
     {
       title: "World of Dypians Land",
       img: collectionPlaceholder2,
       floorPrice: 142.7,
       collectionName: "worldofdypians",
+      collectionAddress: window.config.nft_land_address
+
     },
     {
       title: "CAWS Timepiece",
       img: collectionPlaceholder3,
       floorPrice: "--",
       collectionName: "cawstimepiece",
+      collectionAddress: window.config.nft_timepiece_address
+
     },
     {
       title: "Cats and Watches Society",
       img: collectionPlaceholder4,
       floorPrice: "--",
       collectionName: "catsandwatchessocietycaws",
+      collectionAddress: window.config.nft_caws_address
+
     },
   ];
 
@@ -62,7 +69,7 @@ const TopCollections = () => {
                 key={index}
                 style={{ width: "fit-content" }}
               >
-                <NavLink to={`/collection/${item.collectionName}`}>
+                <NavLink to={`/collection/${item.collectionAddress}/${item.collectionName}`}>
                   <img src={item.img} className="top-collection-image" alt="" />
                   <div className="top-collection-info d-flex flex-column p-3 gap-2">
                     <div className="d-flex align-items-center gap-1">
@@ -90,7 +97,7 @@ const TopCollections = () => {
                 key={index}
                 // style={{ width: "fit-content" }}
               >
-                <NavLink to={`/collection/${item.collectionName}`}>
+                <NavLink to={`/collection/${item.collectionAddress}/${item.collectionName}`}>
                   <img src={item.img} className="top-collection-image" alt="" />
                   <div className="top-collection-info d-flex flex-column p-3 gap-2">
                     <div className="d-flex align-items-center gap-1">

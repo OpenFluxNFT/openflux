@@ -17,6 +17,7 @@ import SingleNft from "./screens/SingleNft/SingleNft";
 import Profile from "./screens/Profile/Profile";
 import SettingsPage from "./screens/SettingsPage/SettingsPage";
 import { useNavigate } from "react-router-dom";
+import Toast from "./components/Toast/Toast";
 
 function App() {
   const [walletModal, setWalletModal] = useState(false);
@@ -29,6 +30,10 @@ function App() {
   const [userData, setuserData] = useState([]);
   const [allCollections, setAllCollections] = useState([]);
   const [isRedirect, setIsRedirect] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, settoastMessage] = useState();
+  const [isErrorToast, setisErrorToast] = useState(false);
+  const [isSuccestToast, setisSuccestToast] = useState(false);
 
   const windowSize = useWindowSize();
   const { ethereum } = window;
@@ -43,6 +48,9 @@ function App() {
     await window.getCoinbase().then((data) => {
       setCoinbase(data);
     });
+    if (window.ethereum.isFluent) {
+      window.WALLET_TYPE = "fluent";
+    }
   };
 
   const checkNetworkId = async () => {
@@ -72,15 +80,31 @@ function App() {
       setWalletModal(false);
       setShowForms2(true);
       setSuccess(true);
+
       checkConnection();
       if (isRedirect) {
         navigate(`/profile/${wallet}`);
         setIsRedirect(false);
       }
+
+      setShowToast(true);
+      settoastMessage("Wallet connected");
+      setisErrorToast(false);
+      setisSuccestToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+      }, 5000);
     } catch (e) {
       setIsRedirect(false);
       window.alertify.error(String(e) || "Cannot connect wallet!");
       console.log(e);
+      setShowToast(true);
+      settoastMessage("Cannot connect wallet!");
+      setisErrorToast(true);
+      setisSuccestToast(false);
+      setTimeout(() => {
+        setShowToast(false);
+      }, 5000);
       return;
     }
     return isConnected;
@@ -110,6 +134,16 @@ function App() {
     }
   };
 
+  const handleDisconnect = async () => {
+    if (!window.gatewallet) {
+      await window.disconnectWallet();
+      localStorage.setItem("logout", "true");
+      setSuccess(false);
+      setCoinbase();
+      setIsConnected(false);
+    }
+  };
+
   const getAllCollections = async () => {
     const result = await axios.get(`${baseURL}/api/collections`).catch((e) => {
       console.error(e);
@@ -121,18 +155,20 @@ function App() {
   };
 
   const getUserData = async (walletAddr) => {
-    const result = await axios
-      .get(`${baseURL}/api/users/${walletAddr}`)
-      .catch((e) => {
-        console.error(e);
-      });
+    if (walletAddr) {
+      const result = await axios
+        .get(`${baseURL}/api/users/${walletAddr}`)
+        .catch((e) => {
+          console.error(e);
+        });
 
-    if (result && result.status === 200) {
-      console.log(result);
-    }
+      if (result && result.status === 200) {
+        console.log(result);
+      }
 
-    if (result && result.status === 404) {
-      setuserData([]);
+      if (result && result.status === 404) {
+        setuserData([]);
+      }
     }
   };
 
@@ -286,7 +322,7 @@ function App() {
 
   useEffect(() => {
     checkNetworkId();
-    getUserData("0xBF8BC0660F96b1068E21e0f28614148dfA758cEC");
+    getUserData(coinbase);
   }, [isConnected, coinbase]);
 
   useEffect(() => {
@@ -298,6 +334,12 @@ function App() {
       className="container-fluid p-0 main-wrapper position-relative"
       style={{ minHeight: "100vh", background: "#141843" }}
     >
+      {/* <Toast
+        message={toastMessage}
+        isError={isErrorToast}
+        isSuccess={isSuccestToast}
+      /> */}
+
       {windowSize.width > 992 ? (
         <Header
           handleSignup={handleShowWalletModal}
@@ -309,6 +351,7 @@ function App() {
             handleShowWalletModal();
             setIsRedirect(true);
           }}
+          handleDisconnect={handleDisconnect}
         />
       ) : (
         <MobileHeader
@@ -329,7 +372,12 @@ function App() {
         <Route exact path="/collections" element={<Collections />} />
         {/* <Route exact path="/mint" element={<Mint />} /> */}
         <Route exact path="/support" element={<Support />} />
-        <Route exact path="/collection/:id" element={<CollectionPage />} />
+
+        <Route
+          exact
+          path="/collection/:collectionAddress/:id"
+          element={<CollectionPage coinbase={coinbase} />}
+        />
         <Route exact path="/profile/:id" element={<Profile />} />
         <Route exact path="/settings" element={<SettingsPage />} />
         <Route

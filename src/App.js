@@ -378,7 +378,7 @@ function App() {
           path="/collection/:collectionAddress/:id"
           element={<CollectionPage coinbase={coinbase} />}
         />
-        <Route exact path="/profile/:id" element={<Profile />} />
+        <Route exact path="/profile/:id" element={<Profile coinbase={coinbase}/>} />
         <Route exact path="/settings" element={<SettingsPage />} />
         <Route
           exact

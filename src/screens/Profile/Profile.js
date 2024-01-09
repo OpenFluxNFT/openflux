@@ -5,9 +5,9 @@ import profileIcon from "./assets/profileIcon.png";
 import profileBanner from "./assets/profileBanner.png";
 import ProfileNFTList from "../../components/Profile/ProfileNFTList";
 import ProfileBanner from "../../components/Profile/ProfileBanner/ProfileBanner";
+import { shortAddress } from "../../hooks/shortAddress";
 
-
-const Profile = () => {
+const Profile = ({coinbase}) => {
 
   const [option, setOption] = useState("collected")
   const profileSocials = ["website", "twitter", "instagram"];
@@ -15,7 +15,7 @@ const Profile = () => {
   const profileCredenrtials = [
     {
       key: "Wallet",
-      value: "0xce...64",
+      value: shortAddress(coinbase),
     },
     {
       key: "Joined",

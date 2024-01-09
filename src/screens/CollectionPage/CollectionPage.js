@@ -1,14 +1,21 @@
-import React, {useEffect} from "react";
+import React, { useEffect, useState } from "react";
 import "./_collectionpage.scss";
 import CollectionBanner from "../../components/CollectionPage/CollectionBanner/CollectionBanner";
 import CollectionList from "../../components/CollectionPage/CollectionList/CollectionList";
-import banner from '../../components/CollectionPage/CollectionBanner/assets/bannerPlaceholder.png';
-import collectionIcon from '../../components/CollectionPage/CollectionBanner/assets/cawsIcon.png';
+import banner from "../../components/CollectionPage/CollectionBanner/assets/bannerPlaceholder.png";
+import collectionIcon from "../../components/CollectionPage/CollectionBanner/assets/cawsIcon.png";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 
-
-
-const CollectionPage = () => {
-  const collectionSocials = ["website", "twitter", "instagram", "discord", "telegram", "confluxScan"];
+const CollectionPage = ({ coinbase }) => {
+  const collectionSocials = [
+    "website",
+    "twitter",
+    "instagram",
+    "discord",
+    "telegram",
+    "confluxScan",
+  ];
 
   const collectionCredenrtials = [
     {
@@ -52,9 +59,53 @@ const CollectionPage = () => {
     },
   ];
 
-  const collectionDesc = "Cats And Watches Society (CAWS) Is A Collection Of 10,000 NFTs Developed By Dypius, One Of The Most Experienced And Innovative Projects In Decentralized Finance. Through The Adoption Process, Your Cat Will Be Fitted With A Cool Luxury Watch And Will Also Grant You Access To The Members-Only Society Benefits Zone. As A New Cat Owner, You Can Join The CAWS Staking Pool To Earn 50% APR In ETH Rewards. Cats And Watches Society Is Also Building Its Own Metaverse With An Exciting Play-To-Earn (P2E) Game Still In Development.";
+  const collectionDesc =
+    "Cats And Watches Society (CAWS) Is A Collection Of 10,000 NFTs Developed By Dypius, One Of The Most Experienced And Innovative Projects In Decentralized Finance. Through The Adoption Process, Your Cat Will Be Fitted With A Cool Luxury Watch And Will Also Grant You Access To The Members-Only Society Benefits Zone. As A New Cat Owner, You Can Join The CAWS Staking Pool To Earn 50% APR In ETH Rewards. Cats And Watches Society Is Also Building Its Own Metaverse With An Exciting Play-To-Earn (P2E) Game Still In Development.";
 
-  
+  const [favorite, setFavorite] = useState(false);
+  const { collectionAddress } = useParams();
+
+  const handleAddFavorite = async () => {
+    if (coinbase && collectionAddress) {
+      const data = {
+        contractAddress: collectionAddress,
+      };
+
+      await axios
+        .post(
+          `https://confluxapi.worldofdypians.com/api/users/addCollectionFavorite/${coinbase}`,
+          data
+        )
+        .then(() => {
+          setFavorite(true);
+        })
+        .catch((e) => {
+          console.error(e);
+          setFavorite(false);
+        });
+    }
+  };
+
+  const handleRemoveFavorite = async () => {
+    if (coinbase && collectionAddress) {
+      const data = {
+        contractAddress: collectionAddress,
+      };
+
+      await axios
+        .post(
+          `https://confluxapi.worldofdypians.com/api/users/removeCollectionFavorite/${coinbase}`,
+          data
+        )
+        .then(() => {
+          setFavorite(false);
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    }
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -62,13 +113,15 @@ const CollectionPage = () => {
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
       <CollectionBanner
-         title={"Cats And Watches Society"}
-         logo={collectionIcon}
-         banner={banner}
-         socials={collectionSocials}
-         credentials={collectionCredenrtials}
-         desc={collectionDesc}
-         info={collectionInfo}
+        title={"Cats And Watches Society"}
+        logo={collectionIcon}
+        banner={banner}
+        socials={collectionSocials}
+        credentials={collectionCredenrtials}
+        desc={collectionDesc}
+        info={collectionInfo}
+        isFavorite={favorite}
+        handleFavorite={handleAddFavorite}
       />
       <CollectionList />
     </div>

@@ -16,6 +16,7 @@ import searchIcon from "../Header/assets/searchIcon.svg";
 import checkIcon from "../Home/RecentlyListed/assets/checkIcon.svg";
 
 import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
+import { NavLink } from "react-router-dom";
 
 const ProfileNFTList = ({ option }) => {
   const [favoritesOption, setfavoritesOption] = useState("items");
@@ -150,7 +151,10 @@ const ProfileNFTList = ({ option }) => {
   return (
     <div className="container-lg">
       <div className="row collection-list-wrapper py-4 px-2">
-        <div className="col-2 mt-2 d-none d-lg-block" style={{ overflow: "hidden" }}>
+        <div
+          className="col-2 mt-2 d-none d-lg-block"
+          style={{ overflow: "hidden" }}
+        >
           <div className="d-flex align-items-center justify-content-between">
             <div className="d-flex align-items-center gap-1">
               <img src={liveIcon} alt="" />
@@ -388,53 +392,76 @@ const ProfileNFTList = ({ option }) => {
           </div>
           {option === "favorites" ? (
             <div className={`small-cards-grid mt-3`}>
-              {favoritesOption === "items" ? (
-                dummyCards.map((item, index) => (
-                  <div className="recently-listed-card p-3 d-flex flex-column">
-                    <img
-                      src={require(`./assets/nftPlaceholder${index + 1}.png`)}
-                      className="card-img"
-                      alt=""
-                    />
-                    <div className="d-flex align-items-center gap-2 mt-2">
-                      <h6
-                        className="recently-listed-title mb-0"
-                        style={{ fontSize: "12px" }}
+              {favoritesOption === "items"
+                ? dummyCards.map((item, index) => (
+                    <div
+                      className="recently-listed-card p-3 d-flex flex-column"
+                      key={index}
+                    >
+                      <NavLink
+                        to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
+                        style={{ textDecoration: "none" }}
                       >
-                        CAWS #1125
-                      </h6>
-                      <img src={checkIcon} alt="" />
+                        <img
+                          src={require(`./assets/nftPlaceholder${
+                            index + 1
+                          }.png`)}
+                          className="card-img"
+                          alt=""
+                        />
+                        <div className="d-flex align-items-center gap-2 mt-2">
+                          <h6
+                            className="recently-listed-title mb-0"
+                            style={{ fontSize: "12px" }}
+                          >
+                            CAWS #1125
+                          </h6>
+                          <img src={checkIcon} alt="" />
+                        </div>
+                        <div className="d-flex align-items-center mt-2 gap-3">
+                          <h6
+                            className="cfx-price mb-0"
+                            style={{ fontSize: "10px" }}
+                          >
+                            1254.89 CFX
+                          </h6>
+                          <span
+                            className="usd-price"
+                            style={{ fontSize: "9px" }}
+                          >
+                            ($ 654,874.86)
+                          </span>
+                        </div>
+                        <div className="mt-3">
+                          <button className="buy-btn w-100">Buy</button>
+                        </div>
+                      </NavLink>
                     </div>
-                    <div className="d-flex align-items-center mt-2 gap-3">
-                      <h6
-                        className="cfx-price mb-0"
-                        style={{ fontSize: "10px" }}
+                  ))
+                : dummyFavorites.map((item, index) => (
+                    <div
+                      className="collection-card d-flex flex-column"
+                      key={index}
+                    >
+                      <NavLink
+                        to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
+                        style={{ textDecoration: "none" }}
                       >
-                        1254.89 CFX
-                      </h6>
-                      <span className="usd-price" style={{ fontSize: "9px" }}>
-                        ($ 654,874.86)
-                      </span>
-                    </div>
-                    <div className="mt-3">
-                      <button className="buy-btn w-100">Buy</button>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                dummyFavorites.map((item, index) => (
-                    <div className="collection-card d-flex flex-column">
-                    <img src={require(`./assets/${item.image}.png`)} className="w-100" alt="" />
-                    <div className="p-3 collection-lower d-flex align-items-center justify-content-between">
-                        <div className="d-flex align-items-center gap-2">
+                        <img
+                          src={require(`./assets/${item.image}.png`)}
+                          className="w-100"
+                          alt=""
+                        />
+                        <div className="p-3 collection-lower d-flex align-items-center justify-content-between">
+                          <div className="d-flex align-items-center gap-2">
                             <h6 className="mb-0">{item.title}</h6>
                             <img src={checkIcon} alt="" />
+                          </div>
+                          <img src={star} alt="" />
                         </div>
-                        <img src={star} alt="" />
+                      </NavLink>
                     </div>
-                </div>
-                ))
-              )}
+                  ))}
             </div>
           ) : (
             <div
@@ -510,34 +537,39 @@ const ProfileNFTList = ({ option }) => {
               ) : (
                 dummyCards.map((item, index) => (
                   <div className="recently-listed-card p-3 d-flex flex-column">
-                    <img
-                      src={require(`./assets/nftPlaceholder${index + 1}.png`)}
-                      className="card-img"
-                      alt=""
-                    />
-                    <div className="d-flex align-items-center gap-2 mt-2">
-                      <h6
-                        className="recently-listed-title mb-0"
-                        style={{ fontSize: "12px" }}
-                      >
-                        CAWS #1125
-                      </h6>
-                      <img src={checkIcon} alt="" />
-                    </div>
-                    <div className="d-flex align-items-center mt-2 gap-3">
-                      <h6
-                        className="cfx-price mb-0"
-                        style={{ fontSize: "10px" }}
-                      >
-                        1254.89 CFX
-                      </h6>
-                      <span className="usd-price" style={{ fontSize: "9px" }}>
-                        ($ 654,874.86)
-                      </span>
-                    </div>
-                    <div className="mt-3">
-                      <button className="buy-btn w-100">Buy</button>
-                    </div>
+                    <NavLink
+                      to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
+                      style={{ textDecoration: "none" }}
+                    >
+                      <img
+                        src={require(`./assets/nftPlaceholder${index + 1}.png`)}
+                        className="card-img"
+                        alt=""
+                      />
+                      <div className="d-flex align-items-center gap-2 mt-2">
+                        <h6
+                          className="recently-listed-title mb-0"
+                          style={{ fontSize: "12px" }}
+                        >
+                          CAWS #1125
+                        </h6>
+                        <img src={checkIcon} alt="" />
+                      </div>
+                      <div className="d-flex align-items-center mt-2 gap-3">
+                        <h6
+                          className="cfx-price mb-0"
+                          style={{ fontSize: "10px" }}
+                        >
+                          1254.89 CFX
+                        </h6>
+                        <span className="usd-price" style={{ fontSize: "9px" }}>
+                          ($ 654,874.86)
+                        </span>
+                      </div>
+                      <div className="mt-3">
+                        <button className="buy-btn w-100">Buy</button>
+                      </div>
+                    </NavLink>
                   </div>
                 ))
               )}

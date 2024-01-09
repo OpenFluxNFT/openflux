@@ -1,16 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import "./_header.scss";
 import dypiusLogo from "./assets/dypiusLogo.svg";
 import cartIcon from "./assets/cartIcon.svg";
 import walletIcon from "./assets/walletIcon.svg";
 import userIcon from "./assets/userIcon.svg";
 import conflux from "./assets/conflux.svg";
+import copy from "./assets/copy.svg";
+import check from "./assets/check.svg";
+import logout from "./assets/logout.svg";
 
 import searchIcon from "./assets/searchIcon.svg";
 import { shortAddress } from "../../hooks/shortAddress";
 import { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { handleSwitchNetworkhook } from "../../hooks/switchNetwork";
+import OutsideClickHandler from "react-outside-click-handler";
+import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import dropdown from "./assets/dropdown.svg";
 
 const Header = ({
   handleSignup,
@@ -19,7 +26,13 @@ const Header = ({
   chainId,
   handleSwitchNetwork,
   handleSignupAndRedirectToAccount,
+  handleDisconnect,
 }) => {
+  const [showmenu, setShowMenu] = useState(false);
+  const [tooltip, setTooltip] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const handleConfluxPool = async () => {
     if (window.ethereum) {
       if (!window.gatewallet) {
@@ -34,6 +47,13 @@ const Header = ({
     } else {
       window.alertify.error("No web3 detected. Please install Metamask!");
     }
+  };
+
+  const manageDisconnect = () => {
+    if (location.pathname.includes("/profile")) {
+      handleDisconnect();
+      navigate("/");
+    } else handleDisconnect();
   };
 
   return (
@@ -67,9 +87,12 @@ const Header = ({
                 {/* <NavLink className={"header-link mb-0"} to={"/mint"}>
                   Mint
                 </NavLink> */}
-                <NavLink className={"header-link mb-0"} to={"/support"}>
+                <a
+                  className={"header-link mb-0"}
+                  href="mailto:someone@support.com"
+                >
                   Support
-                </NavLink>
+                </a>
               </div>
               <div className="d-flex align-items-center gap-3">
                 {coinbase && isConnected && chainId === 1030 && (
@@ -93,8 +116,14 @@ const Header = ({
                   </button>
                 )}
                 {coinbase && isConnected && (
-                  <button className="btn account-btn d-flex align-items-center gap-2">
+                  <button
+                    className="btn account-btn d-flex align-items-center gap-2"
+                    onClick={() => {
+                      setShowMenu(true);
+                    }}
+                  >
                     {shortAddress(coinbase)}
+                    <img src={dropdown} alt="" />
                   </button>
                 )}
                 {coinbase && isConnected ? (
@@ -108,6 +137,40 @@ const Header = ({
                   >
                     <img src={userIcon} alt="" />
                   </button>
+                )}
+                {showmenu === true && (
+                  <div className="position-absolute" style={{ width: "210px" }}>
+                    <OutsideClickHandler
+                      onOutsideClick={() => {
+                        setShowMenu(false);
+                      }}
+                    >
+                      <div className="menuwrapper">
+                        <div className="d-flex flex-column gap-2">
+                          <span
+                            className="menuitem2"
+                            onClick={() => {
+                              navigator.clipboard.writeText(coinbase)
+                              setTooltip(true);
+                              setTimeout(() => setTooltip(false), 2000);
+                            }}
+                          >
+                            <img src={tooltip ? check : copy} alt="" /> Copy{" "}
+                          </span>
+
+                          <span
+                            className="menuitem2"
+                            onClick={() => {
+                              setShowMenu(false);
+                              manageDisconnect();
+                            }}
+                          >
+                            <img src={logout} alt="" /> Disconnect{" "}
+                          </span>
+                        </div>
+                      </div>
+                    </OutsideClickHandler>
+                  </div>
                 )}
               </div>
             </div>

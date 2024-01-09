@@ -101,3 +101,38 @@
 .account-btn:hover {
   background: #2f80ed !important;
 }
+
+
+.menuwrapper {
+  border-radius: 10px;
+  border: 1px solid #b8b8e0;
+  background: linear-gradient(168deg, #161c4a -11.33%, #161c4b -11.32%, #141843 116.32%, #1b1e49 116.32%);
+  padding: 10px;
+  position: absolute;
+  top: 22px;
+  right: -53px;
+  width: 145px;
+}
+
+.menuitem2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 10px;
+}
+
+.menuitem2:hover {
+  background: linear-gradient(
+    268deg,
+    rgba(255, 255, 255, 0.21) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  color: #11fed2;
+}

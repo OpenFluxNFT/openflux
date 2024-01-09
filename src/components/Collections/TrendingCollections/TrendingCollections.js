@@ -10,6 +10,7 @@ import trendingIconActive from "../../Home/TrendingSales/assets/trendingIconActi
 import cawsPlaceholder from "./assets/cawsPlaceholder.png";
 import wodPlaceholder from "./assets/wodPlaceholder.png";
 import timepiecePlaceholder from "./assets/timepiecePlaceholder.png";
+import { NavLink } from "react-router-dom";
 
 const TrendingCollections = () => {
   const windowSize = useWindowSize();
@@ -34,60 +35,80 @@ const TrendingCollections = () => {
       image: cawsPlaceholder,
       floorPrice: 125254.89,
       totalVolume: "23.8M",
+      collectionName: "catsandwatchessocietycaws",
+      collectionAddress: window.config.nft_caws_address,
     },
     {
       title: "CAWS Timepiece",
       image: timepiecePlaceholder,
       floorPrice: 125254.89,
       totalVolume: "23.8M",
+      collectionName: "cawstimepiece",
+      collectionAddress: window.config.nft_timepiece_address,
     },
     {
       title: "World of Dypians Land",
       image: wodPlaceholder,
       floorPrice: 125254.89,
       totalVolume: "23.8M",
+      collectionName: "worldofdypians",
+      collectionAddress: window.config.nft_land_address,
     },
     {
       title: "Cats And Watches Society",
       image: cawsPlaceholder,
       floorPrice: 125254.89,
       totalVolume: "23.8M",
+      collectionName: "catsandwatchessocietycaws",
+      collectionAddress: window.config.nft_caws_address,
     },
     {
       title: "CAWS Timepiece",
       image: timepiecePlaceholder,
       floorPrice: 125254.89,
       totalVolume: "23.8M",
+      collectionName: "cawstimepiece",
+      collectionAddress: window.config.nft_timepiece_address,
     },
     {
       title: "World of Dypians Land",
       image: wodPlaceholder,
       floorPrice: 125254.89,
       totalVolume: "23.8M",
+      collectionName: "worldofdypians",
+      collectionAddress: window.config.nft_land_address,
     },
     {
       title: "Cats And Watches Society",
       image: cawsPlaceholder,
       floorPrice: 125254.89,
       totalVolume: "23.8M",
+      collectionName: "catsandwatchessocietycaws",
+      collectionAddress: window.config.nft_caws_address,
     },
     {
       title: "CAWS Timepiece",
       image: timepiecePlaceholder,
       floorPrice: 125254.89,
       totalVolume: "23.8M",
+      collectionName: "cawstimepiece",
+      collectionAddress: window.config.nft_timepiece_address,
     },
     {
       title: "World of Dypians Land",
       image: wodPlaceholder,
       floorPrice: 125254.89,
       totalVolume: "23.8M",
+      collectionName: "worldofdypians",
+      collectionAddress: window.config.nft_land_address,
     },
     {
       title: "World of Dypians Land",
       image: wodPlaceholder,
       floorPrice: 125254.89,
       totalVolume: "23.8M",
+      collectionName: "worldofdypians",
+      collectionAddress: window.config.nft_land_address,
     },
   ];
 
@@ -161,37 +182,49 @@ const TrendingCollections = () => {
         <div className="row">
           <div className="trending-collections-grid">
             {dummyCards.map((item, index) => (
-                <div className="d-flex align-items-center gap-3" key={index}>
+              <div className="d-flex align-items-center gap-3" key={index}>
                 <div className="trending-tag d-none d-lg-flex position-relative">
                   <span className="mb-0">{index + 1}</span>
                 </div>
-                <div className="trending-collection-card d-flex align-items-center gap-2">
-                  <img src={item.image} alt="" />
-                  <div className="d-flex flex-column gap-2 p-3">
-                    <div className="d-flex align-items-center gap-2">
-                      <h6 className="trending-collection-title mb-0">
-                        {item.title}
-                      </h6>
-                      <img src={checkIcon} alt="" />
-                    </div>
-                    <div className="d-flex align-items-center gap-3">
-                      <div className="d-flex flex-column">
-                        <span className="trending-price-holder mb-1">Floor</span>
-                        <div className="trending-price-wrapper d-flex align-items-center justify-content-center p-2">
-                          <h6 className="trending-price mb-0">{item.floorPrice} CFX</h6>
-                        </div>
+                <NavLink
+                  to={`/collection/${item.collectionAddress}/${item.collectionName}`}
+                  className={'w-100'}
+                  style={{textDecoration: 'none'}}
+                >
+                  <div className="trending-collection-card d-flex align-items-center gap-2">
+                    <img src={item.image} alt="" />
+                    <div className="d-flex flex-column gap-2 p-3">
+                      <div className="d-flex align-items-center gap-2">
+                        <h6 className="trending-collection-title mb-0">
+                          {item.title}
+                        </h6>
+                        <img src={checkIcon} alt="" />
                       </div>
-                      <div className="d-flex flex-column">
-                        <span className="trending-price-holder mb-1">
-                          Total Volume
-                        </span>
-                        <div className="trending-price-wrapper d-flex align-items-center justify-content-center p-2">
-                          <h6 className="trending-price mb-0">{item.totalVolume} CFX</h6>
+                      <div className="d-flex align-items-center gap-3">
+                        <div className="d-flex flex-column">
+                          <span className="trending-price-holder mb-1">
+                            Floor
+                          </span>
+                          <div className="trending-price-wrapper d-flex align-items-center justify-content-center p-2">
+                            <h6 className="trending-price mb-0">
+                              {item.floorPrice} CFX
+                            </h6>
+                          </div>
+                        </div>
+                        <div className="d-flex flex-column">
+                          <span className="trending-price-holder mb-1">
+                            Total Volume
+                          </span>
+                          <div className="trending-price-wrapper d-flex align-items-center justify-content-center p-2">
+                            <h6 className="trending-price mb-0">
+                              {item.totalVolume} CFX
+                            </h6>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                </NavLink>
               </div>
             ))}
           </div>

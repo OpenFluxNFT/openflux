@@ -4,6 +4,7 @@ import SingleNftHistory from "../../components/SingleNft/SingleNftHistory/Single
 import "./_singlenft.scss";
 import NftTraits from "../../components/SingleNft/NftTraits/NftTraits";
 import MoreFromCollection from "../../components/SingleNft/MoreFromCollection/MoreFromCollection";
+import MakeOffer from "../../components/MakeOffer/MakeOffer";
 
 const SingleNft = ({
   isConnected,
@@ -12,18 +13,24 @@ const SingleNft = ({
   handleShowWalletModal,
   handleSwitchNetwork,
 }) => {
+  const [showOfferPopup, setShowOfferPopup] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
-      <SingleNftBanner />
+      <SingleNftBanner
+        chainId={chainId}
+        onShowMakeOfferPopup={() => {
+          setShowOfferPopup(true);
+        }}
+      />
       <SingleNftHistory />
       <NftTraits />
       <MoreFromCollection />
+      {showOfferPopup && <></>}
     </div>
   );
 };

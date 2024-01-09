@@ -13,6 +13,7 @@ import telegramIcon from "./assets/telegramIcon.svg";
 import uploadIcon from "./assets/uploadIcon.svg";
 import settingsIcon from "./assets/settingsIcon.svg";
 import checkIcon from "../../Collections/TopCollections/assets/checkIcon.svg";
+import { NavLink } from "react-router-dom";
 
 const ProfileBanner = ({
   title,
@@ -43,45 +44,49 @@ const ProfileBanner = ({
                   <div className="d-flex align-items-center gap-3 flex-wrap">
                     {credentials.map((item, index) => (
                       <div className="d-flex align-items-center gap-1">
-                        <span className="collection-info-span mb-0">{item.key}</span>
-                        <span className="collection-info mb-0">{item.value}</span>
+                        <span className="collection-info-span mb-0">
+                          {item.key}
+                        </span>
+                        <span className="collection-info mb-0">
+                          {item.value}
+                        </span>
                       </div>
                     ))}
                   </div>
                 </div>
                 <div className="d-flex align-items-center gap-2">
-                    {socials.map((item, index) => (
-                       <a href="#" target="_blank">
-                       <img src={require(`./assets/${item}Icon.svg`)} alt="" />
-                     </a>
-                    ))}
+                  {socials.map((item, index) => (
+                    <a href="#" target="_blank">
+                      <img src={require(`./assets/${item}Icon.svg`)} alt="" />
+                    </a>
+                  ))}
                   <div
                     className="info-divider"
                     style={{ height: "25px" }}
                   ></div>
                   <img src={uploadIcon} alt="" />
-                  <img src={settingsIcon} alt="" />
+                  <NavLink to="/settings">
+                    <img src={settingsIcon} alt="" />
+                  </NavLink>
                 </div>
               </div>
             </div>
           </div>
           <div className="collection-banner-down py-3 ps-0 ps-lg-5">
             <div className="d-flex align-items-start flex-column flex-lg-row gap-3 gap-lg-0 justify-content-between ps-3 ps-lg-5 pe-3">
-              <p className="collection-desc mb-0">
-              {desc}
-              </p>
+              <p className="collection-desc mb-0">{desc}</p>
               <div className="collection-amounts-grid">
-             {info.map((item, index) => (
-                <div className="d-flex flex-column gap-1">
-                <span className="collection-amount-span mb-0">
-                 {item.title}
-                </span>
-                <div className="collection-amount-wrapper p-2 d-flex align-items-center justify-content-between">
-                  <h6 className="collection-amount">{item.value}</h6>
-                  <h6 className="collection-amount">{item.valueType}</h6>
-                </div>
-              </div>
-             ))}
+                {info.map((item, index) => (
+                  <div className="d-flex flex-column gap-1">
+                    <span className="collection-amount-span mb-0">
+                      {item.title}
+                    </span>
+                    <div className="collection-amount-wrapper p-2 d-flex align-items-center justify-content-between">
+                      <h6 className="collection-amount">{item.value}</h6>
+                      <h6 className="collection-amount">{item.valueType}</h6>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

@@ -8,7 +8,7 @@ const CollectionCard = ({ data }) => {
     <div className="d-flex flex-column collection-card ">
       <img src={data.img} className="w-100" alt="" />
       <div className="collection-card-bottom d-flex flex-column gap-3 p-3">
-        <div className="d-flex align-items-center gap-2">
+        <div className="d-flex align-items-center gap-2 overflow-hidden">
           <h6 className="collection-card-title mb-0">{data.title}</h6>
           <img src={checkIcon} alt="" />
         </div>

@@ -7,6 +7,7 @@ import collectionCardPlaceholder2 from "./assets/collectionCardPlaceholder2.png"
 import collectionCardPlaceholder3 from "./assets/collectionCardPlaceholder3.png";
 import collectionCardPlaceholder4 from "./assets/collectionCardPlaceholder4.png";
 import useWindowSize from "../../../hooks/useWindowSize";
+import { NavLink } from "react-router-dom";
 
 const CollectionCategories = () => {
   const [category, setCategory] = useState("all");
@@ -31,48 +32,64 @@ const CollectionCategories = () => {
       img: collectionCardPlaceholder1,
       floorPrice: "128,254.8",
       totalVolume: "23.6M+",
+      collectionName: "catsandwatchessocietycaws",
+      collectionAddress: window.config.nft_caws_address,
     },
     {
       title: "World of Dypians Land",
       img: collectionCardPlaceholder2,
       floorPrice: "128,254.8",
       totalVolume: "23.6M+",
+      collectionName: "worldofdypians",
+      collectionAddress: window.config.nft_land_address,
     },
     {
       title: "CAWS Timepiece",
       img: collectionCardPlaceholder3,
       floorPrice: "128,254.8",
       totalVolume: "23.6M+",
+      collectionName: "cawstimepiece",
+      collectionAddress: window.config.nft_timepiece_address,
     },
     {
       title: "Cats and Watches Society",
       img: collectionCardPlaceholder4,
       floorPrice: "128,254.8",
       totalVolume: "23.6M+",
+      collectionName: "catsandwatchessocietycaws",
+      collectionAddress: window.config.nft_caws_address,
     },
     {
       title: "Cats and Watches Society",
       img: collectionCardPlaceholder1,
       floorPrice: "128,254.8",
       totalVolume: "23.6M+",
+      collectionName: "catsandwatchessocietycaws",
+      collectionAddress: window.config.nft_caws_address,
     },
     {
       title: "World of Dypians Land",
       img: collectionCardPlaceholder2,
       floorPrice: "128,254.8",
       totalVolume: "23.6M+",
+      collectionName: "worldofdypians",
+      collectionAddress: window.config.nft_land_address,
     },
     {
       title: "CAWS Timepiece",
       img: collectionCardPlaceholder3,
       floorPrice: "128,254.8",
       totalVolume: "23.6M+",
+      collectionName: "cawstimepiece",
+      collectionAddress: window.config.nft_timepiece_address,
     },
     {
       title: "Cats and Watches Society",
       img: collectionCardPlaceholder4,
       floorPrice: "128,254.8",
       totalVolume: "23.6M+",
+      collectionName: "catsandwatchessocietycaws",
+      collectionAddress: window.config.nft_caws_address,
     },
   ];
 
@@ -137,13 +154,23 @@ const CollectionCategories = () => {
         {windowSize.width > 786 ? (
           <div className="collection-categories-grid">
             {dummyCollections.slice(0, 4).map((item, index) => (
+               <NavLink
+               to={`/collection/${item.collectionAddress}/${item.collectionName}`}
+               style={{textDecoration: 'none'}}
+             >
               <CollectionCard key={index} data={item} />
+              </NavLink>
             ))}
           </div>
         ) : (
           <Slider ref={sliderRef} {...settings}>
             {dummyCollections.map((item, index) => (
+               <NavLink
+               to={`/collection/${item.collectionAddress}/${item.collectionName}`}
+               style={{textDecoration: 'none'}}
+             >
               <CollectionCard key={index} data={item} />
+              </NavLink>
             ))}
           </Slider>
         )}

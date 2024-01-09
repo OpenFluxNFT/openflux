@@ -146,7 +146,7 @@ const TrendingSales = () => {
                   />
                   <h6 className="mb-0">Top Sales</h6>
                 </div>
-                <div
+                {/* <div
                   className={`trending-tab ${
                     option === "mints" && "trending-tab-active"
                   } p-2 d-flex align-items-center gap-2`}
@@ -157,7 +157,7 @@ const TrendingSales = () => {
                     alt=""
                   />
                   <h6 className="mb-0">Mints</h6>
-                </div>
+                </div> */}
               </div>
               <div
                 className="trending-tab d-flex align-items-center"

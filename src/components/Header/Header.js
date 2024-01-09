@@ -150,6 +150,7 @@ const Header = ({
                           <span
                             className="menuitem2"
                             onClick={() => {
+                              navigator.clipboard.writeText(coinbase)
                               setTooltip(true);
                               setTimeout(() => setTooltip(false), 2000);
                             }}

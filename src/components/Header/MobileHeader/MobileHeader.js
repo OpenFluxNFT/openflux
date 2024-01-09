@@ -18,6 +18,7 @@ const MobileHeader = ({
   isConnected,
   chainId,
   handleSwitchNetwork,
+  handleSignupAndRedirectToAccount,
 }) => {
   const [menu, setMenu] = useState(false);
 
@@ -66,8 +67,8 @@ const MobileHeader = ({
                     setMenu(!menu);
                   }}
                 />
-                <label class="menu-button-container" for="menu-toggle">
-                  <div class="menu-button"></div>
+                <label className="menu-button-container" htmlFor="menu-toggle">
+                  <div className="menu-button"></div>
                 </label>
               </>
             </div>
@@ -83,7 +84,7 @@ const MobileHeader = ({
           className={
             "mobile-menu-item d-flex align-items-center justify-content-between p-3"
           }
-        to={"/collections"}
+          to={"/collections"}
           onClick={() => {
             setMenu(false);
           }}
@@ -125,9 +126,18 @@ const MobileHeader = ({
               {shortAddress(coinbase)}
             </button>
           )}
-          <button className="btn blue-btn" onClick={() => console.log("hello")}>
-            <img src={userIcon} alt="" />
-          </button>
+          {coinbase && isConnected ? (
+            <NavLink className="btn blue-btn" to={`/profile/${coinbase}`}>
+              <img src={userIcon} alt="" />
+            </NavLink>
+          ) : (
+            <button
+              className="btn blue-btn"
+              onClick={handleSignupAndRedirectToAccount}
+            >
+              <img src={userIcon} alt="" />
+            </button>
+          )}
         </div>
       </div>
     </>

@@ -14,7 +14,7 @@ const TrendingCollections = () => {
         dots: false,
         arrows: false,
         infinite: true,
-        autoplay: true,
+        autoplay: false,
         autoplaySpeed: 6000,
         speed: 500,
         slidesToShow: 4,
@@ -108,7 +108,7 @@ const sliderRef = useRef()
         </h6>
         <Slider ref={sliderRef} {...settings}>
             {dummyCollections.map((item, index) => (
-              <div className="px-2">
+              <div className="px-2" key={index}>
                 <CollectionCard key={index} data={item} />
               </div>
             ))}

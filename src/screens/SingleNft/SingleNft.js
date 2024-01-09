@@ -12,6 +12,12 @@ const SingleNft = ({
   handleShowWalletModal,
   handleSwitchNetwork,
 }) => {
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
       <SingleNftBanner />

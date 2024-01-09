@@ -16,6 +16,14 @@
 
 }
 
+.profile-filter-wrapper {
+  @media only screen and (max-width: 991px) {
+    display: grid !important;
+    grid-template-columns: repeat(3,1fr);
+    gap: 10px !important;
+  }
+}
+
 
 .active {
     background: rgba(35, 36, 78, 0.5);

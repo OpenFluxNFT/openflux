@@ -13,9 +13,10 @@ import trendingIcon from "./assets/trendingIcon.svg";
 import trendingIconActive from "./assets/trendingIconActive.svg";
 import useWindowSize from "../../../hooks/useWindowSize";
 import Slider from "react-slick";
+import { NavLink } from "react-router-dom";
 
 const TrendingSales = () => {
-  const [chunkedArray, setChunkedArray] = useState([])
+  const [chunkedArray, setChunkedArray] = useState([]);
   const [option, setOption] = useState("trending");
   const [time, setTime] = useState("24h");
   const windowSize = useWindowSize();
@@ -91,20 +92,17 @@ const TrendingSales = () => {
 
   const chunkArray = (arr, size) => {
     var myArray = [];
-    for(var i = 0; i < arr.length; i += size) {
-      myArray.push(arr.slice(i, i+size));
+    for (var i = 0; i < arr.length; i += size) {
+      myArray.push(arr.slice(i, i + size));
     }
 
-      setChunkedArray(myArray)
-      console.log(myArray);
-  }
-
-   
+    setChunkedArray(myArray);
+    console.log(myArray);
+  };
 
   useEffect(() => {
-    chunkArray(dummyCards, 3)
-  }, [])
-  
+    chunkArray(dummyCards, 3);
+  }, []);
 
   return (
     <>
@@ -148,7 +146,7 @@ const TrendingSales = () => {
                   />
                   <h6 className="mb-0">Top Sales</h6>
                 </div>
-                <div
+                {/* <div
                   className={`trending-tab ${
                     option === "mints" && "trending-tab-active"
                   } p-2 d-flex align-items-center gap-2`}
@@ -159,7 +157,7 @@ const TrendingSales = () => {
                     alt=""
                   />
                   <h6 className="mb-0">Mints</h6>
-                </div>
+                </div> */}
               </div>
               <div
                 className="trending-tab d-flex align-items-center"
@@ -194,130 +192,170 @@ const TrendingSales = () => {
           </div>
           <hr className="trending-divider my-4" />
           <div className="row">
-            {windowSize.width > 786 ?
-            <div className="trending-cards-grid">
-            {dummyCards.map((item, index) => (
-              <div className="trending-card p-3 d-flex align-items-center position-relative gap-2">
-                <div className="trending-tag">
-                  <span className="mb-0">{index + 1}</span>
-                </div>
-                <img src={item.image} width={100} height={100} alt="" />
-                <div className="d-flex flex-column">
-                  <div className="d-flex align-items-center gap-1">
-                    <h6 className="trending-card-title mb-0">{item.title}</h6>
-                    <img src={checkIcon} alt="" />
+            {windowSize.width > 786 ? (
+              <div className="trending-cards-grid">
+                {dummyCards.map((item, index) => (
+                  <div
+                    className="trending-card p-3 d-flex align-items-center position-relative gap-2"
+                    key={index}
+                  >
+                    <NavLink
+                      to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
+                      className="trending-card w-100 d-flex align-items-center position-relative gap-2"
+                      key={index}
+                    >
+                      <div className="trending-tag">
+                        <span className="mb-0">{index + 1}</span>
+                      </div>
+                      <img src={item.image} width={100} height={100} alt="" />
+                      <div className="d-flex flex-column">
+                        <div className="d-flex align-items-center gap-1">
+                          <h6 className="trending-card-title mb-0">
+                            {item.title}
+                          </h6>
+                          <img src={checkIcon} alt="" />
+                        </div>
+                        <div className="d-flex flex-column">
+                          <h6 className="trending-card-cfx-price mb-0">
+                            {item.cfxPrice} CFX
+                          </h6>
+                          <span className="trending-card-usd-price mb-0">
+                            ($ {item.usdPrice})
+                          </span>
+                        </div>
+                      </div>
+                      <div className="sale-tag d-flex align-items-center gap-1">
+                        <span className="mb-0">On Sale</span>
+                        <img src={fireIcon} alt="" />
+                      </div>
+                    </NavLink>
+                    <span className="list-date">Listed 2 hours ago</span>
                   </div>
-                  <div className="d-flex flex-column">
-                    <h6 className="trending-card-cfx-price mb-0">
-                      {item.cfxPrice} CFX
-                    </h6>
-                    <span className="trending-card-usd-price mb-0">
-                      ($ {item.usdPrice})
-                    </span>
-                  </div>
-                </div>
-                <div className="sale-tag d-flex align-items-center gap-1">
-                  <span className="mb-0">On Sale</span>
-                  <img src={fireIcon} alt="" />
-                </div>
-                <span className="list-date">Listed 2 hours ago</span>
+                ))}
               </div>
-            ))}
-          </div>
-          :
-          <Slider {...settings}>
-           <div className="trending-cards-grid">
-           {dummyCards.slice(0,3).map((item, index) => (
-             <div className="trending-card p-3 d-flex align-items-center position-relative gap-2">
-             <div className="trending-tag">
-               <span className="mb-0">{index + 1}</span>
-             </div>
-             <img src={item.image} width={100} height={100} alt="" />
-             <div className="d-flex flex-column">
-               <div className="d-flex align-items-center gap-1">
-                 <h6 className="trending-card-title mb-0">{item.title}</h6>
-                 <img src={checkIcon} alt="" />
-               </div>
-               <div className="d-flex flex-column">
-                 <h6 className="trending-card-cfx-price mb-0">
-                   {item.cfxPrice} CFX
-                 </h6>
-                 <span className="trending-card-usd-price mb-0">
-                   ($ {item.usdPrice})
-                 </span>
-               </div>
-             </div>
-             <div className="sale-tag d-flex align-items-center gap-1">
-               <span className="mb-0">On Sale</span>
-               <img src={fireIcon} alt="" />
-             </div>
-             <span className="list-date">Listed 2 hours ago</span>
-           </div>
-            ))}
-            </div>
-           
-           <div className="trending-cards-grid">
-           {dummyCards.slice(3,6).map((item, index) => (
-             <div className="trending-card p-3 d-flex align-items-center position-relative gap-2">
-             <div className="trending-tag">
-               <span className="mb-0">{index + 1}</span>
-             </div>
-             <img src={item.image} width={100} height={100} alt="" />
-             <div className="d-flex flex-column">
-               <div className="d-flex align-items-center gap-1">
-                 <h6 className="trending-card-title mb-0">{item.title}</h6>
-                 <img src={checkIcon} alt="" />
-               </div>
-               <div className="d-flex flex-column">
-                 <h6 className="trending-card-cfx-price mb-0">
-                   {item.cfxPrice} CFX
-                 </h6>
-                 <span className="trending-card-usd-price mb-0">
-                   ($ {item.usdPrice})
-                 </span>
-               </div>
-             </div>
-             <div className="sale-tag d-flex align-items-center gap-1">
-               <span className="mb-0">On Sale</span>
-               <img src={fireIcon} alt="" />
-             </div>
-             <span className="list-date">Listed 2 hours ago</span>
-           </div>
-            ))}
-            </div>
-           
-           <div className="trending-cards-grid">
-           {dummyCards.slice(6,9).map((item, index) => (
-             <div className="trending-card p-3 d-flex align-items-center position-relative gap-2">
-             <div className="trending-tag">
-               <span className="mb-0">{index + 1}</span>
-             </div>
-             <img src={item.image} width={100} height={100} alt="" />
-             <div className="d-flex flex-column">
-               <div className="d-flex align-items-center gap-1">
-                 <h6 className="trending-card-title mb-0">{item.title}</h6>
-                 <img src={checkIcon} alt="" />
-               </div>
-               <div className="d-flex flex-column">
-                 <h6 className="trending-card-cfx-price mb-0">
-                   {item.cfxPrice} CFX
-                 </h6>
-                 <span className="trending-card-usd-price mb-0">
-                   ($ {item.usdPrice})
-                 </span>
-               </div>
-             </div>
-             <div className="sale-tag d-flex align-items-center gap-1">
-               <span className="mb-0">On Sale</span>
-               <img src={fireIcon} alt="" />
-             </div>
-             <span className="list-date">Listed 2 hours ago</span>
-           </div>
-            ))}
-            </div>
-           
-          </Slider>  
-          }
+            ) : (
+              <Slider {...settings}>
+                <div className="trending-cards-grid">
+                  {dummyCards.slice(0, 3).map((item, index) => (
+                    <div
+                      className="trending-card p-3 d-flex align-items-center position-relative gap-2"
+                      key={index}
+                    >
+                      <NavLink
+                        to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
+                        className="trending-card w-100 d-flex align-items-center position-relative gap-2"
+                      >
+                        <div className="trending-tag">
+                          <span className="mb-0">{index + 1}</span>
+                        </div>
+                        <img src={item.image} width={100} height={100} alt="" />
+                        <div className="d-flex flex-column">
+                          <div className="d-flex align-items-center gap-1">
+                            <h6 className="trending-card-title mb-0">
+                              {item.title}
+                            </h6>
+                            <img src={checkIcon} alt="" />
+                          </div>
+                          <div className="d-flex flex-column">
+                            <h6 className="trending-card-cfx-price mb-0">
+                              {item.cfxPrice} CFX
+                            </h6>
+                            <span className="trending-card-usd-price mb-0">
+                              ($ {item.usdPrice})
+                            </span>
+                          </div>
+                        </div>
+                        <div className="sale-tag d-flex align-items-center gap-1">
+                          <span className="mb-0">On Sale</span>
+                          <img src={fireIcon} alt="" />
+                        </div>
+                      </NavLink>
+                      <span className="list-date">Listed 2 hours ago</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="trending-cards-grid">
+                  {dummyCards.slice(3, 6).map((item, index) => (
+                    <div
+                      className="trending-card p-3 d-flex align-items-center position-relative gap-2"
+                      key={index}
+                    >
+                      <NavLink
+                        to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
+                        className="trending-card w-100 d-flex align-items-center position-relative gap-2"
+                      >
+                        <div className="trending-tag">
+                          <span className="mb-0">{index + 1}</span>
+                        </div>
+                        <img src={item.image} width={100} height={100} alt="" />
+                        <div className="d-flex flex-column">
+                          <div className="d-flex align-items-center gap-1">
+                            <h6 className="trending-card-title mb-0">
+                              {item.title}
+                            </h6>
+                            <img src={checkIcon} alt="" />
+                          </div>
+                          <div className="d-flex flex-column">
+                            <h6 className="trending-card-cfx-price mb-0">
+                              {item.cfxPrice} CFX
+                            </h6>
+                            <span className="trending-card-usd-price mb-0">
+                              ($ {item.usdPrice})
+                            </span>
+                          </div>
+                        </div>
+                        <div className="sale-tag d-flex align-items-center gap-1">
+                          <span className="mb-0">On Sale</span>
+                          <img src={fireIcon} alt="" />
+                        </div>
+                      </NavLink>
+                      <span className="list-date">Listed 2 hours ago</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="trending-cards-grid">
+                  {dummyCards.slice(6, 9).map((item, index) => (
+                    <div
+                      className="trending-card p-3 d-flex align-items-center position-relative gap-2"
+                      key={index}
+                    >
+                      <NavLink
+                        to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
+                        className="trending-card w-100 d-flex align-items-center position-relative gap-2"
+                      >
+                        <div className="trending-tag">
+                          <span className="mb-0">{index + 1}</span>
+                        </div>
+                        <img src={item.image} width={100} height={100} alt="" />
+                        <div className="d-flex flex-column">
+                          <div className="d-flex align-items-center gap-1">
+                            <h6 className="trending-card-title mb-0">
+                              {item.title}
+                            </h6>
+                            <img src={checkIcon} alt="" />
+                          </div>
+                          <div className="d-flex flex-column">
+                            <h6 className="trending-card-cfx-price mb-0">
+                              {item.cfxPrice} CFX
+                            </h6>
+                            <span className="trending-card-usd-price mb-0">
+                              ($ {item.usdPrice})
+                            </span>
+                          </div>
+                        </div>
+                        <div className="sale-tag d-flex align-items-center gap-1">
+                          <span className="mb-0">On Sale</span>
+                          <img src={fireIcon} alt="" />
+                        </div>
+                      </NavLink>
+                      <span className="list-date">Listed 2 hours ago</span>
+                    </div>
+                  ))}
+                </div>
+              </Slider>
+            )}
           </div>
         </div>
       </div>

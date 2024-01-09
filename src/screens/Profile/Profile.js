@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./_profile.scss";
 import CollectionBanner from "../../components/CollectionPage/CollectionBanner/CollectionBanner";
 import profileIcon from "./assets/profileIcon.png";
@@ -47,6 +47,11 @@ const Profile = () => {
   const profileDesc =
     "I'm NFTExplorer21, a digital art enthusiast and blockchain advocate. I collect diverse NFTs, reflecting global creativity. Believing in NFTs' power to reshape ownership, I'm into building an inclusive community. Join me in exploring the metaverse, navigating NFT market trends, and shaping the future of digital ownership. Let's connect for insightful discussions and collaborations in the dynamic world of NFTs.";
 
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
+  
+    
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
       <CollectionBanner
@@ -59,8 +64,8 @@ const Profile = () => {
         info={profileInfo}
       />
       <div className="container-lg py-5">
-        <div className="row">
-          <div className="d-flex align-items-center gap-5 px-0">
+        <div className="row mx-0">
+          <div className="d-flex align-items-center gap-5 px-0 profile-filter-wrapper">
             <div className={`profile-option-item ${option === "collected" && "active"} px-3 py-2`} onClick={() => setOption("collected")}>
               <h6 className="mb-0">Collected</h6>
             </div>

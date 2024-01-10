@@ -28,12 +28,12 @@ const Profile = ({ coinbase, userData, userTotalNftsOwned, onViewShared }) => {
       const bannerpic = userData.bannerPicture
 
       if (!profilepic) {
-        setprofilePicture('https://timepiece.worldofdypians.com/thumbs50/0.png');
+        setprofilePicture();
       } else {
         setprofilePicture(profilepic);
       }
       if (!bannerpic) {
-        setbannerPicturePicture('https://i.seadn.io/gcs/files/56f5c2f5911405748b0fafae81c0e701.png?auto=format&dpr=1&w=1920');
+        setbannerPicturePicture();
       } else {
         setbannerPicturePicture(bannerpic);
       }

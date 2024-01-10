@@ -83,6 +83,35 @@
   }
 }
 
+
+.profile-image-placeholder-small {
+  background: #23244e;
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  position: relative;
+  transition: all 0.3s;
+  cursor: pointer;
+ 
+}
+
+
+.profile-image-small {
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  position: relative;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.profile-image-placeholder-small:hover,.profile-image-small:hover {
+  box-shadow: inset 0px 0px 1000px rgba(0, 0, 0, 0.9);
+  .edit-image{
+    opacity: 1;
+  }
+}
+
 .edit-image{
   position: absolute;
   left: 0;
@@ -92,6 +121,8 @@
   margin: auto;
   opacity: 0;
   transition: all .3s;
+  background: rgba(0,0,0,0.5);
+  border-radius: 50%;
 }
 
 .profile-banner-placeholder {

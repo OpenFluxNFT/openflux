@@ -18,6 +18,7 @@ import Profile from "./screens/Profile/Profile";
 import SettingsPage from "./screens/SettingsPage/SettingsPage";
 import { useNavigate } from "react-router-dom";
 import Toast from "./components/Toast/Toast";
+import { ethers } from "ethers";
 
 function App() {
   const [walletModal, setWalletModal] = useState(false);
@@ -34,6 +35,7 @@ function App() {
   const [toastMessage, settoastMessage] = useState();
   const [isErrorToast, setisErrorToast] = useState(false);
   const [isSuccestToast, setisSuccestToast] = useState(false);
+  const [userTotalNftsOwned, setUserTotalNftsOwned] = useState(0);
 
   const windowSize = useWindowSize();
   const { ethereum } = window;
@@ -145,30 +147,120 @@ function App() {
   };
 
   const getAllCollections = async () => {
-    const result = await axios.get(`${baseURL}/api/collections`).catch((e) => {
-      console.error(e);
-    });
+    const result = await axios
+      .get(`${baseURL}/api/collections`, {
+        headers: {
+          "x-api-key":
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
+      .catch((e) => {
+        console.error(e);
+      });
 
     if (result && result.status === 200) {
       setAllCollections(result.data);
     }
   };
 
-  const getUserData = async (walletAddr) => {
+  const fetchTotalNftOwned = async (walletAddr) => {
+    const result = await axios
+      .get(`${baseURL}/nft-amount/${walletAddr}`, {
+        headers: {
+          "x-api-key":
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+
+    if (result && result.status === 200) {
+      setUserTotalNftsOwned(result.data.totalAmount);
+    }
+  };
+
+  const handleAdduserWithSignature = async (walletAddr) => {
     if (walletAddr) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner(walletAddr);
+      const signature = await signer
+        .signMessage(
+          `I am creating my profile with wallet address ${walletAddr}`
+        )
+        .catch((e) => {
+          console.error(e);
+        });
+
+      const body = {
+        walletAddress: walletAddr,
+        signature: signature,
+      };
+
       const result = await axios
-        .get(`${baseURL}/api/users/${walletAddr}`)
+        .post(`${baseURL}/api/users/addWithSignature`, body, {
+          headers: {
+            "x-api-key":
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        })
         .catch((e) => {
           console.error(e);
         });
 
       if (result && result.status === 200) {
-        console.log(result);
+        getUserData(walletAddr);
+        fetchTotalNftOwned(walletAddr);
       }
+    }
+  };
 
-      if (result && result.status === 404) {
-        setuserData([]);
-      }
+  const getUserData = async (walletAddr) => {
+    if (walletAddr && isConnected) {
+      const result = await axios
+        .get(`${baseURL}/api/users/${walletAddr}`, {
+          headers: {
+            "x-api-key":
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+
+      if (result && result.status === 200) {
+        if (result.data === "User not found") {
+          handleAdduserWithSignature(walletAddr);
+        } else {
+          setuserData(result.data);
+          fetchTotalNftOwned(walletAddr);
+        }
+      } else setuserData([]);
+    }
+  };
+
+  const getOtherUserData = async (walletAddr) => {
+    if (walletAddr) {
+      const result = await axios
+        .get(`${baseURL}/api/users/${walletAddr}`, {
+          headers: {
+            "x-api-key":
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+
+      if (result && result.status === 200) {
+        if (result.data === "User not found") {
+          setuserData([]);
+        } else {
+          setuserData(result.data);
+          fetchTotalNftOwned(walletAddr);
+          console.log('yes')
+        }
+      } else setuserData([]);
     }
   };
 
@@ -378,7 +470,20 @@ function App() {
           path="/collection/:collectionAddress/:id"
           element={<CollectionPage coinbase={coinbase} />}
         />
-        <Route exact path="/profile/:id" element={<Profile coinbase={coinbase}/>} />
+        <Route
+          exact
+          path="/profile/:id"
+          element={
+            <Profile
+              coinbase={coinbase}
+              userData={userData}
+              userTotalNftsOwned={userTotalNftsOwned}
+              onViewShared={(value) => {
+                getOtherUserData(value);
+              }}
+            />
+          }
+        />
         <Route exact path="/settings" element={<SettingsPage />} />
         <Route
           exact

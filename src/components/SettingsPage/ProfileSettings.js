@@ -3,6 +3,7 @@ import "./_settingspage.scss";
 import infoIcon from "./assets/infoIcon.svg";
 import twitterIcon from "./assets/twitterIcon.svg";
 import instagramIcon from "./assets/instagramIcon.svg";
+import editIcon from "./assets/editIcon.svg";
 
 const ProfileSettings = () => {
   return (
@@ -49,7 +50,9 @@ const ProfileSettings = () => {
                     <h6 className="input-label mb-0">Profile Image</h6>
                     <img src={infoIcon} width={16} height={16} alt="" />
                   </div>
-                  <div className="profile-image-placeholder"></div>
+                  <div className="profile-image-placeholder">
+                    <img src={editIcon} alt="" className="edit-image" />
+                  </div>
                 </div>
               </div>
               <div className="col-8">
@@ -58,7 +61,9 @@ const ProfileSettings = () => {
                     <h6 className="input-label mb-0">Profile Banner</h6>
                     <img src={infoIcon} width={16} height={16} alt="" />
                   </div>
-                  <div className="profile-banner-placeholder"></div>
+                  <div className="profile-banner-placeholder">
+                    <img src={editIcon} alt="" className="edit-image" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -109,8 +114,12 @@ const ProfileSettings = () => {
             </div>
           </div>
           <div className="d-flex align-items-center justify-content-center mt-4">
-          <button className="connect-social-btn px-3 py-1" style={{fontSize: "16px"}}>Save</button>
-
+            <button
+              className="connect-social-btn px-3 py-1"
+              style={{ fontSize: "16px" }}
+            >
+              Save
+            </button>
           </div>
         </div>
       </div>

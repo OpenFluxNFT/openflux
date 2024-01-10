@@ -166,11 +166,11 @@ const ProfileNFTList = ({ option }) => {
             </div>
           </div>
           <div className="filters-wrapper mt-4 p-3 h-100 d-flex flex-column gap-3">
-            <div class="" id="accordionExample">
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="headingOne">
+            <div className="" id="accordionExample">
+              <div className="accordion-item">
+                <h2 className="accordion-header" id="headingOne">
                   <button
-                    class="accordion-button collection-filter py-3 d-flex align-items-center gap-2 collapsed"
+                    className="accordion-button collection-filter py-3 d-flex align-items-center gap-2 collapsed"
                     type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#collapseOne"
@@ -183,11 +183,11 @@ const ProfileNFTList = ({ option }) => {
                 </h2>
                 <div
                   id="collapseOne"
-                  class="accordion-collapse collapse"
+                  className="accordion-collapse collapse"
                   aria-labelledby="headingOne"
                   data-bs-parent="#accordionExample"
                 >
-                  <div class="accordion-body">
+                  <div className="accordion-body">
                     <FormGroup>
                       <FormControlLabel
                         control={
@@ -242,10 +242,10 @@ const ProfileNFTList = ({ option }) => {
                   </div>
                 </div>
               </div>
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="headingTwo">
+              <div className="accordion-item">
+                <h2 className="accordion-header" id="headingTwo">
                   <button
-                    class="accordion-button collection-filter py-3  d-flex align-items-center gap-2 collapsed"
+                    className="accordion-button collection-filter py-3  d-flex align-items-center gap-2 collapsed"
                     type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#collapseTwo"
@@ -258,11 +258,11 @@ const ProfileNFTList = ({ option }) => {
                 </h2>
                 <div
                   id="collapseTwo"
-                  class="accordion-collapse collapse"
+                  className="accordion-collapse collapse"
                   aria-labelledby="headingTwo"
                   data-bs-parent="#accordionExample"
                 >
-                  <div class="accordion-body">
+                  <div className="accordion-body">
                     <div className="d-flex flex-column gap-2">
                       <div className="d-flex align-items-center gap-2">
                         <input
@@ -298,28 +298,28 @@ const ProfileNFTList = ({ option }) => {
               </div>
             </div>
             <div className="col-3">
-              <div class="dropdown">
+              <div className="dropdown">
                 <button
-                  class="btn btn-secondary categories-dropdown p-3 dropdown-toggle w-100 d-flex align-items-center justify-content-between"
+                  className="btn btn-secondary categories-dropdown p-3 dropdown-toggle w-100 d-flex align-items-center justify-content-between"
                   type="button"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
                   Price: Low to High
                 </button>
-                <ul class="dropdown-menu categories-dropdown-menu w-100">
+                <ul className="dropdown-menu categories-dropdown-menu w-100">
                   <li>
-                    <a class="dropdown-item categories-dropdown-item" href="#">
+                    <a className="dropdown-item categories-dropdown-item" href="#">
                       Low to High
                     </a>
                   </li>
                   <li>
-                    <a class="dropdown-item categories-dropdown-item" href="#">
+                    <a className="dropdown-item categories-dropdown-item" href="#">
                       High to Low
                     </a>
                   </li>
                   <li>
-                    <a class="dropdown-item categories-dropdown-item" href="#">
+                    <a className="dropdown-item categories-dropdown-item" href="#">
                       Recently Listed
                     </a>
                   </li>
@@ -474,7 +474,7 @@ const ProfileNFTList = ({ option }) => {
               } mt-3`}
             >
               {gridView === "list" ? (
-                <table class="table nft-table">
+                <table className="table nft-table">
                   <thead>
                     <tr style={{ borderBottom: "2px solid #828FBB" }}>
                       <th
@@ -503,7 +503,7 @@ const ProfileNFTList = ({ option }) => {
                   </thead>
                   <tbody>
                     {dummyCards.map((item, index) => (
-                      <tr className="nft-table-row p-1">
+                      <tr className="nft-table-row p-1" key={index}>
                         <td
                           className="table-item col-2 d-flex align-items-center gap-1 w-100"
                           scope="row"
@@ -536,7 +536,7 @@ const ProfileNFTList = ({ option }) => {
                 </table>
               ) : (
                 dummyCards.map((item, index) => (
-                  <div className="recently-listed-card p-3 d-flex flex-column">
+                  <div className="recently-listed-card p-3 d-flex flex-column" key={index}>
                     <NavLink
                       to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
                       style={{ textDecoration: "none" }}

@@ -52,7 +52,7 @@ const Header = ({
   const manageDisconnect = () => {
     if (location.pathname.includes("/profile")) {
       handleDisconnect();
-      navigate("/");
+      // navigate("/");
     } else handleDisconnect();
   };
 

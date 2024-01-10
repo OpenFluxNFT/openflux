@@ -9,12 +9,10 @@ const ProfileSettings = () => {
   const [profileImage, setProfileImage] = useState();
   const [bannerImage, setBannerImage] = useState();
 
-  const isImage = async(file) => {
+  const isImage = async (file) => {
     const acceptedImageTypes = ["image/png", "image/jpeg", "image/jpg"];
     return acceptedImageTypes.includes(file.type);
   };
-
- 
 
   const isAspectRatioValidProfile = async (file, targetWidth, targetHeight) => {
     return new Promise((resolve) => {
@@ -26,7 +24,7 @@ const ProfileSettings = () => {
     });
   };
 
-  const uploadProfileImage =  async (e) => {
+  const uploadProfileImage = async (e) => {
     const maxSizeInBytes = 500 * 1024; // 500KB
 
     const files = e.target.files;
@@ -36,10 +34,10 @@ const ProfileSettings = () => {
 
       if (
         file &&
-         await isImage(file) &&
+        (await isImage(file)) &&
         //  isSizeValid(file) &&
-        file.size <=  maxSizeInBytes &&
-        await isAspectRatioValidProfile(file, 1, 1)
+        file.size <= maxSizeInBytes &&
+        (await isAspectRatioValidProfile(file, 1, 1))
       ) {
         // Set the selected image
         const reader = new FileReader();
@@ -47,14 +45,13 @@ const ProfileSettings = () => {
         reader.onload = () => {
           // Set the selected image as a data URL
           setProfileImage(reader.result);
-        
         };
         reader.readAsDataURL(file);
       } else {
         // Display an error message or handle invalid file type, size, or aspect ratio
         if (!isImage(file)) {
           alert("Please select a valid image file (PNG, JPG, JPEG)");
-        } else if (file.size >  maxSizeInBytes) {
+        } else if (file.size > maxSizeInBytes) {
           alert("Selected image exceeds the maximum size of 500KB");
         } else {
           alert("Selected image must have an aspect ratio of 1:1");
@@ -62,7 +59,7 @@ const ProfileSettings = () => {
       }
     }
   };
-  const uploadBannerImage =  async (e) => {
+  const uploadBannerImage = async (e) => {
     const maxSizeInBytes = 500 * 1024; // 500KB
 
     const files = e.target.files;
@@ -72,9 +69,9 @@ const ProfileSettings = () => {
 
       if (
         file &&
-         await isImage(file) &&
-        file.size <=  maxSizeInBytes &&
-        await isAspectRatioValidProfile(file, 4, 1)
+        (await isImage(file)) &&
+        file.size <= maxSizeInBytes &&
+        (await isAspectRatioValidProfile(file, 4, 1))
       ) {
         // Set the selected image
         const reader = new FileReader();
@@ -82,14 +79,13 @@ const ProfileSettings = () => {
         reader.onload = () => {
           // Set the selected image as a data URL
           setBannerImage(reader.result);
-        
         };
         reader.readAsDataURL(file);
       } else {
         // Display an error message or handle invalid file type, size, or aspect ratio
         if (!isImage(file)) {
           alert("Please select a valid image file (PNG, JPG, JPEG)");
-        } else if (file.size >  maxSizeInBytes) {
+        } else if (file.size > maxSizeInBytes) {
           alert("Selected image exceeds the maximum size of 500KB");
         } else {
           alert("Selected image must have an aspect ratio of 4:1");
@@ -175,10 +171,7 @@ const ProfileSettings = () => {
                     <img src={infoIcon} width={16} height={16} alt="" />
                   </div>
                   <div className="profile-banner-placeholder">
-                    {
-
-                    }
-                  <input
+                    <input
                       type="file"
                       accept=".png, .jpg, .jpeg"
                       onChange={uploadBannerImage}
@@ -193,11 +186,7 @@ const ProfileSettings = () => {
                       }}
                     />
                     {bannerImage && (
-                      <img
-                        src={bannerImage}
-                        className="banner-image"
-                        alt=""
-                      />
+                      <img src={bannerImage} className="banner-image" alt="" />
                     )}
                     <img src={editIcon} className="edit-image" alt="" />
                   </div>

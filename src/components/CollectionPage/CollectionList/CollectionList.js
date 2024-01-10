@@ -134,11 +134,11 @@ const CollectionList = () => {
               </div>
             </div>
             <div className="filters-wrapper mt-4 p-3 h-100 d-flex flex-column gap-3">
-              <div class="" id="accordionExample">
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="headingOne">
+              <div className="" id="accordionExample">
+                <div className="accordion-item">
+                  <h2 className="accordion-header" id="headingOne">
                     <button
-                      class="accordion-button collection-filter py-3 d-flex align-items-center gap-2 collapsed"
+                      className="accordion-button collection-filter py-3 d-flex align-items-center gap-2 collapsed"
                       type="button"
                       data-bs-toggle="collapse"
                       data-bs-target="#collapseOne"
@@ -151,11 +151,11 @@ const CollectionList = () => {
                   </h2>
                   <div
                     id="collapseOne"
-                    class="accordion-collapse collapse"
+                    className="accordion-collapse collapse"
                     aria-labelledby="headingOne"
                     data-bs-parent="#accordionExample"
                   >
-                    <div class="accordion-body">
+                    <div className="accordion-body">
                       <FormGroup>
                         <FormControlLabel
                           control={
@@ -210,10 +210,10 @@ const CollectionList = () => {
                     </div>
                   </div>
                 </div>
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="headingTwo">
+                <div className="accordion-item">
+                  <h2 className="accordion-header" id="headingTwo">
                     <button
-                      class="accordion-button collection-filter py-3  d-flex align-items-center gap-2 collapsed"
+                      className="accordion-button collection-filter py-3  d-flex align-items-center gap-2 collapsed"
                       type="button"
                       data-bs-toggle="collapse"
                       data-bs-target="#collapseTwo"
@@ -226,11 +226,11 @@ const CollectionList = () => {
                   </h2>
                   <div
                     id="collapseTwo"
-                    class="accordion-collapse collapse"
+                    className="accordion-collapse collapse"
                     aria-labelledby="headingTwo"
                     data-bs-parent="#accordionExample"
                   >
-                    <div class="accordion-body">
+                    <div className="accordion-body">
                       <div className="d-flex flex-column gap-2">
                         <div className="d-flex align-items-center gap-2">
                           <input
@@ -250,10 +250,10 @@ const CollectionList = () => {
                     </div>
                   </div>
                 </div>
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="headingThree">
+                <div className="accordion-item">
+                  <h2 className="accordion-header" id="headingThree">
                     <button
-                      class="accordion-button collection-filter py-3 d-flex align-items-center gap-2 collapsed"
+                      className="accordion-button collection-filter py-3 d-flex align-items-center gap-2 collapsed"
                       type="button"
                       data-bs-toggle="collapse"
                       data-bs-target="#collapseThree"
@@ -266,20 +266,20 @@ const CollectionList = () => {
                   </h2>
                   <div
                     id="collapseThree"
-                    class="accordion-collapse collapse"
+                    className="accordion-collapse collapse"
                     aria-labelledby="headingThree"
                     data-bs-parent="#accordionExample"
                   >
-                    <div class="accordion-body">
-                      <div class="" id="accordionExample2">
+                    <div className="accordion-body">
+                      <div className="" id="accordionExample2">
                         {dummyTraits.map((item, index) => (
-                          <div class="accordion-item">
+                          <div className="accordion-item">
                             <h2
-                              class="accordion-header"
+                              className="accordion-header"
                               id={`headingOne${item.title}`}
                             >
                               <button
-                                class="accordion-button collection-filter px-2 py-2 d-flex align-items-center gap-2 collapsed"
+                                className="accordion-button collection-filter px-2 py-2 d-flex align-items-center gap-2 collapsed"
                                 type="button"
                                 data-bs-toggle="collapse"
                                 data-bs-target={`#collapseOne${item.title}`}
@@ -292,11 +292,11 @@ const CollectionList = () => {
                             </h2>
                             <div
                               id={`collapseOne${item.title}`}
-                              class="accordion-collapse collapse"
+                              className="accordion-collapse collapse"
                               aria-labelledby={`headingOne${item.title}`}
                               data-bs-parent="#accordionExample2"
                             >
-                              <div class="accordion-body px-2">
+                              <div className="accordion-body px-2">
                                 <FormGroup>
                                   {item.traits.map((trait, index) => (
                                     <FormControlLabel
@@ -348,9 +348,9 @@ const CollectionList = () => {
                 </div>
               </div>
               <div className="col-2 col-lg-3">
-                <div class="dropdown">
+                <div className="dropdown">
                   <button
-                    class="btn btn-secondary categories-dropdown p-3 dropdown-toggle  d-flex align-items-center justify-content-center justify-content-lg-between"
+                    className="btn btn-secondary categories-dropdown p-3 dropdown-toggle  d-flex align-items-center justify-content-center justify-content-lg-between"
                     type="button"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
@@ -362,10 +362,10 @@ const CollectionList = () => {
                       <img src={priceIcon} width={20} height={20} alt="" />
                     )}
                   </button>
-                  <ul class="dropdown-menu categories-dropdown-menu w-100">
+                  <ul className="dropdown-menu categories-dropdown-menu w-100">
                     <li>
                       <a
-                        class="dropdown-item categories-dropdown-item"
+                        className="dropdown-item categories-dropdown-item"
                         href="#"
                       >
                         Low to High
@@ -373,7 +373,7 @@ const CollectionList = () => {
                     </li>
                     <li>
                       <a
-                        class="dropdown-item categories-dropdown-item"
+                        className="dropdown-item categories-dropdown-item"
                         href="#"
                       >
                         High to Low
@@ -381,7 +381,7 @@ const CollectionList = () => {
                     </li>
                     <li>
                       <a
-                        class="dropdown-item categories-dropdown-item"
+                        className="dropdown-item categories-dropdown-item"
                         href="#"
                       >
                         Recently Listed
@@ -440,7 +440,7 @@ const CollectionList = () => {
               } mt-3`}
             >
               {gridView === "list" ? (
-                <table class="table nft-table">
+                <table className="table nft-table">
                   <thead>
                     <tr style={{ borderBottom: "2px solid #828FBB" }}>
                       <th
@@ -563,11 +563,11 @@ const CollectionList = () => {
               onClick={() => setOpenFilters(false)}
             />
           </div>
-          <div class="" id="accordionExample">
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="headingOne">
+          <div className="" id="accordionExample">
+            <div className="accordion-item">
+              <h2 className="accordion-header" id="headingOne">
                 <button
-                  class="accordion-button collection-filter py-3 d-flex align-items-center gap-2 collapsed"
+                  className="accordion-button collection-filter py-3 d-flex align-items-center gap-2 collapsed"
                   type="button"
                   data-bs-toggle="collapse"
                   data-bs-target="#collapseOne"
@@ -580,11 +580,11 @@ const CollectionList = () => {
               </h2>
               <div
                 id="collapseOne"
-                class="accordion-collapse collapse"
+                className="accordion-collapse collapse"
                 aria-labelledby="headingOne"
                 data-bs-parent="#accordionExample"
               >
-                <div class="accordion-body">
+                <div className="accordion-body">
                   <FormGroup>
                     <FormControlLabel
                       control={
@@ -639,10 +639,10 @@ const CollectionList = () => {
                 </div>
               </div>
             </div>
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="headingTwo">
+            <div className="accordion-item">
+              <h2 className="accordion-header" id="headingTwo">
                 <button
-                  class="accordion-button collection-filter py-3  d-flex align-items-center gap-2 collapsed"
+                  className="accordion-button collection-filter py-3  d-flex align-items-center gap-2 collapsed"
                   type="button"
                   data-bs-toggle="collapse"
                   data-bs-target="#collapseTwo"
@@ -655,11 +655,11 @@ const CollectionList = () => {
               </h2>
               <div
                 id="collapseTwo"
-                class="accordion-collapse collapse"
+                className="accordion-collapse collapse"
                 aria-labelledby="headingTwo"
                 data-bs-parent="#accordionExample"
               >
-                <div class="accordion-body">
+                <div className="accordion-body">
                   <div className="d-flex flex-column gap-2">
                     <div className="d-flex align-items-center gap-2">
                       <input
@@ -679,10 +679,10 @@ const CollectionList = () => {
                 </div>
               </div>
             </div>
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="headingThree">
+            <div className="accordion-item">
+              <h2 className="accordion-header" id="headingThree">
                 <button
-                  class="accordion-button collection-filter py-3 d-flex align-items-center gap-2 collapsed"
+                  className="accordion-button collection-filter py-3 d-flex align-items-center gap-2 collapsed"
                   type="button"
                   data-bs-toggle="collapse"
                   data-bs-target="#collapseThree"
@@ -695,20 +695,20 @@ const CollectionList = () => {
               </h2>
               <div
                 id="collapseThree"
-                class="accordion-collapse collapse"
+                className="accordion-collapse collapse"
                 aria-labelledby="headingThree"
                 data-bs-parent="#accordionExample"
               >
-                <div class="accordion-body">
-                  <div class="" id="accordionExample2">
+                <div className="accordion-body">
+                  <div className="" id="accordionExample2">
                     {dummyTraits.map((item, index) => (
-                      <div class="accordion-item">
+                      <div className="accordion-item">
                         <h2
-                          class="accordion-header"
+                          className="accordion-header"
                           id={`headingOne${item.title}`}
                         >
                           <button
-                            class="accordion-button collection-filter px-2 py-2 d-flex align-items-center gap-2 collapsed"
+                            className="accordion-button collection-filter px-2 py-2 d-flex align-items-center gap-2 collapsed"
                             type="button"
                             data-bs-toggle="collapse"
                             data-bs-target={`#collapseOne${item.title}`}
@@ -721,11 +721,11 @@ const CollectionList = () => {
                         </h2>
                         <div
                           id={`collapseOne${item.title}`}
-                          class="accordion-collapse collapse"
+                          className="accordion-collapse collapse"
                           aria-labelledby={`headingOne${item.title}`}
                           data-bs-parent="#accordionExample2"
                         >
-                          <div class="accordion-body px-2">
+                          <div className="accordion-body px-2">
                             <FormGroup>
                               {item.traits.map((trait, index) => (
                                 <FormControlLabel

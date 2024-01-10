@@ -6,7 +6,7 @@ import NotificationSettings from '../../components/SettingsPage/NotificationSett
 import SupportSettings from '../../components/SettingsPage/SupportSettings'
 import CollectionSettings from '../../components/SettingsPage/CollectionSettings'
 
-const SettingsPage = () => {
+const SettingsPage = ({coinbase, userData, updateUserData}) => {
 
   const [category, setCategory] = useState("profile")
   useEffect(() => {
@@ -22,7 +22,11 @@ const SettingsPage = () => {
               <div className="row" style={{height: "100%"}}>
               <Sidebar onChangeCategory={setCategory} category={category} />
               {category === "profile" ? 
-            <ProfileSettings />
+            <ProfileSettings
+            coinbase={coinbase}
+            userData={userData}
+            updateUserData={updateUserData}
+            />
             : category === "notifications" ? 
             <NotificationSettings />
             : category === "support" ?

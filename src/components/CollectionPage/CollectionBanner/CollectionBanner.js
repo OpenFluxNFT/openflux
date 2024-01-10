@@ -42,7 +42,7 @@ const CollectionBanner = ({
                   </div>
                   <div className="d-flex align-items-center gap-3 flex-wrap">
                     {credentials.map((item, index) => (
-                      <div className="d-flex align-items-center gap-1">
+                      <div className="d-flex align-items-center gap-1" key={index}>
                         <span className="collection-info-span mb-0">
                           {item.key}
                         </span>
@@ -55,7 +55,7 @@ const CollectionBanner = ({
                 </div>
                 <div className="d-flex align-items-center gap-2">
                   {socials.map((item, index) => (
-                    <a href="#" target="_blank">
+                    <a href="#" target="_blank" key={index}>
                       <img src={require(`./assets/${item}Icon.svg`)} alt="" />
                     </a>
                   ))}

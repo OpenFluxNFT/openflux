@@ -36,6 +36,7 @@ function App() {
   const [isErrorToast, setisErrorToast] = useState(false);
   const [isSuccestToast, setisSuccestToast] = useState(false);
   const [userTotalNftsOwned, setUserTotalNftsOwned] = useState(0);
+  const [count, setCount] = useState(0)
 
   const windowSize = useWindowSize();
   const { ethereum } = window;
@@ -239,6 +240,42 @@ function App() {
     }
   };
 
+  const updateUserData = async (userInfo) => {
+    if (coinbase && isConnected) {
+      const formData = new FormData();
+      for (const [key, value] of Object.entries(userInfo)) {
+        formData.append(key, value);
+      }
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner(coinbase);
+      const signature = await signer
+        .signMessage(
+          `I am updating my profile with wallet address ${coinbase}`
+        )
+        .catch((e) => {
+          console.error(e);
+        });
+
+        formData.append("signature", signature)
+
+      axios.post(`${baseURL}/api/users/edit/${coinbase}`, 
+      userInfo,
+      {
+        headers: {
+          "x-api-key":
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      }
+      ).then((res) => {
+        console.log(res.data);
+        setCount(count + 1)
+      }).catch((err) => {
+        console.log(err);
+      })
+    }
+  }
+
   const getOtherUserData = async (walletAddr) => {
     if (walletAddr) {
       const result = await axios
@@ -415,7 +452,7 @@ function App() {
   useEffect(() => {
     checkNetworkId();
     getUserData(coinbase);
-  }, [isConnected, coinbase]);
+  }, [isConnected, coinbase, count]);
 
   useEffect(() => {
     getAllCollections();
@@ -484,7 +521,11 @@ function App() {
             />
           }
         />
-        <Route exact path="/settings" element={<SettingsPage />} />
+        <Route exact path="/settings" element={<SettingsPage
+        coinbase={coinbase}
+        userData={userData}
+        updateUserData={updateUserData}
+        />} />
         <Route
           exact
           path="/nft/:nftId/:nftAddress"

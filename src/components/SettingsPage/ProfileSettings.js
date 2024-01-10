@@ -5,9 +5,19 @@ import twitterIcon from "./assets/twitterIcon.svg";
 import instagramIcon from "./assets/instagramIcon.svg";
 import editIcon from "./assets/editIcon.svg";
 
-const ProfileSettings = () => {
+const ProfileSettings = ({coinbase, userData, updateUserData}) => {
   const [profileImage, setProfileImage] = useState();
   const [bannerImage, setBannerImage] = useState();
+
+  const [userInfo, setUserInfo] = useState({
+    username: '',
+    email: '',
+    website: '',
+    bio: '',
+    profilePicture: '',
+    bannerPicture: '',
+
+  })
 
   const isImage = async (file) => {
     const acceptedImageTypes = ["image/png", "image/jpeg", "image/jpg"];
@@ -45,6 +55,12 @@ const ProfileSettings = () => {
         reader.onload = () => {
           // Set the selected image as a data URL
           setProfileImage(reader.result);
+          setUserInfo(userInfo => (
+            {
+              ...userInfo,
+              profilePicture: reader.result
+            }
+          ))
         };
         reader.readAsDataURL(file);
       } else {
@@ -79,6 +95,12 @@ const ProfileSettings = () => {
         reader.onload = () => {
           // Set the selected image as a data URL
           setBannerImage(reader.result);
+          setUserInfo(userInfo => (
+            {
+              ...userInfo,
+              bannerPicture: reader.result
+            }
+          ))
         };
         reader.readAsDataURL(file);
       } else {
@@ -94,6 +116,8 @@ const ProfileSettings = () => {
     }
   };
 
+
+
   return (
     <div className="col-12 col-lg-10">
       <div className="row">
@@ -106,6 +130,13 @@ const ProfileSettings = () => {
                 type="text"
                 placeholder="Username"
                 className="settings-input w-100"
+                value={userInfo.username}
+                onChange={(e) => setUserInfo(userInfo => (
+                  {
+                    ...userInfo,
+                    username: e.target.value
+                  }
+                ))}
               />
             </div>
             <div className="d-flex flex-column gap-2">
@@ -114,9 +145,17 @@ const ProfileSettings = () => {
                 <img src={infoIcon} width={16} height={16} alt="" />
               </div>
               <input
-                type="text"
+                type="email"
                 placeholder="Email"
                 className="settings-input w-100"
+                value={userInfo.email}
+                onChange={(e) => setUserInfo(userInfo => (
+                  {
+                    ...userInfo,
+                    email: e.target.value
+                  }
+                ))}
+
               />
             </div>
             <div className="d-flex flex-column gap-2">
@@ -125,6 +164,13 @@ const ProfileSettings = () => {
                 type="text"
                 placeholder="Website"
                 className="settings-input w-100"
+                value={userInfo.website}
+                onChange={(e) => setUserInfo(userInfo => (
+                  {
+                    ...userInfo,
+                    website: e.target.value
+                  }
+                ))}
               />
             </div>
           </div>
@@ -194,11 +240,13 @@ const ProfileSettings = () => {
               </div>
             </div>
             <div className="d-flex flex-column gap-2">
-              <h6 className="input-label mb-0">Website</h6>
+              <h6 className="input-label mb-0">Wallet Address</h6>
               <input
                 type="text"
-                placeholder="Website"
+                // placeholder="Website"
                 className="settings-input w-100"
+                value={coinbase}
+                disabled
               />
             </div>
           </div>
@@ -212,9 +260,16 @@ const ProfileSettings = () => {
               className="settings-input w-100"
               style={{ height: "100%" }}
               rows={5}
+              value={userInfo.bio}
+              onChange={(e) => setUserInfo(userInfo => (
+                {
+                  ...userInfo,
+                  bio: e.target.value
+                }
+              ))}
             />
           </div>
-          <div className="mt-4 d-flex flex-column flex-lg-row align-items-start align-items-lg-center justify-content-between">
+          {/* <div className="mt-4 d-flex flex-column flex-lg-row align-items-start align-items-lg-center justify-content-between">
             <div className="d-flex flex-column gap-2">
               <h6 className="input-label mb-0">Social Connections</h6>
               <span className="social-connections-span">
@@ -238,11 +293,12 @@ const ProfileSettings = () => {
                 <button className="connect-social-btn">Connect</button>
               </div>
             </div>
-          </div>
+          </div> */}
           <div className="d-flex align-items-center justify-content-center mt-4">
             <button
               className="connect-social-btn px-3 py-1"
               style={{ fontSize: "16px" }}
+              onClick={() => updateUserData(userInfo)}
             >
               Save
             </button>

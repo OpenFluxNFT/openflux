@@ -105,7 +105,12 @@ const Header = ({
           <div className="col-7 px-0">
             <div className="d-flex gap-1 align-items-center justify-content-between">
               <div className="d-flex align-items-center gap-4">
-                <NavLink className={"header-link mb-0"} to={"/collections"}>
+                <NavLink
+                  to={"/collections"}
+                  className={({ isActive }) =>
+                    isActive ? "header-link-active mb-0" : "header-link mb-0"
+                  }
+                >
                   Collections
                 </NavLink>
                 {/* <NavLink className={"header-link mb-0"} to={"/mint"}>
@@ -148,7 +153,7 @@ const Header = ({
                     }}
                   >
                     <img src={walletIcon} alt="" />
-                    {getFormattedNumber(balance, 2)}{" "}CFX
+                    {getFormattedNumber(balance, 2)} CFX
                     <img src={dropdown} alt="" />
                   </button>
                 )}

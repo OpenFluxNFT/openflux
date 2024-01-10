@@ -18,6 +18,8 @@ import OutsideClickHandler from "react-outside-click-handler";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import dropdown from "./assets/dropdown.svg";
+import Web3 from "web3";
+import getFormattedNumber from "../../hooks/get-formatted-number";
 
 const Header = ({
   handleSignup,
@@ -30,8 +32,26 @@ const Header = ({
 }) => {
   const [showmenu, setShowMenu] = useState(false);
   const [tooltip, setTooltip] = useState(false);
+  const [balance, setUserBalance] = useState(0);
+
   const location = useLocation();
   const navigate = useNavigate();
+
+  const getUserBalance = async () => {
+    if (isConnected && coinbase && chainId === 1030) {
+      const balance = await window.ethereum.request({
+        method: "eth_getBalance",
+        params: [coinbase, "latest"],
+      });
+
+      if (balance) {
+        const web3cfx = new Web3(window.config.conflux_endpoint);
+        const stringBalance = web3cfx.utils.hexToNumberString(balance);
+        const amount = web3cfx.utils.fromWei(stringBalance, "ether");
+        setUserBalance(amount);
+      }
+    }
+  };
 
   const handleConfluxPool = async () => {
     if (window.ethereum) {
@@ -55,6 +75,10 @@ const Header = ({
       // navigate("/");
     } else handleDisconnect();
   };
+
+  useEffect(() => {
+    getUserBalance();
+  }, [coinbase, isConnected, chainId]);
 
   return (
     <div className="container-fluid py-3 header-wrapper">
@@ -81,7 +105,12 @@ const Header = ({
           <div className="col-7 px-0">
             <div className="d-flex gap-1 align-items-center justify-content-between">
               <div className="d-flex align-items-center gap-4">
-                <NavLink className={"header-link mb-0"} to={"/collections"}>
+                <NavLink
+                  to={"/collections"}
+                  className={({ isActive }) =>
+                    isActive ? "header-link-active mb-0" : "header-link mb-0"
+                  }
+                >
                   Collections
                 </NavLink>
                 {/* <NavLink className={"header-link mb-0"} to={"/mint"}>
@@ -94,6 +123,7 @@ const Header = ({
                   Support
                 </a>
               </div>
+
               <div className="d-flex align-items-center gap-3">
                 {coinbase && isConnected && chainId === 1030 && (
                   <button className="btn account-btn d-flex align-items-center gap-2">
@@ -122,7 +152,8 @@ const Header = ({
                       setShowMenu(true);
                     }}
                   >
-                    {shortAddress(coinbase)}
+                    <img src={walletIcon} alt="" />
+                    {getFormattedNumber(balance, 2)} CFX
                     <img src={dropdown} alt="" />
                   </button>
                 )}
@@ -150,12 +181,13 @@ const Header = ({
                           <span
                             className="menuitem2"
                             onClick={() => {
-                              navigator.clipboard.writeText(coinbase)
+                              navigator.clipboard.writeText(coinbase);
                               setTooltip(true);
                               setTimeout(() => setTooltip(false), 2000);
                             }}
                           >
-                            <img src={tooltip ? check : copy} alt="" /> Copy{" "}
+                            {shortAddress(coinbase)}{" "}
+                            <img src={tooltip ? check : copy} alt="" />
                           </span>
 
                           <span

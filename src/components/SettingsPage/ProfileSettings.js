@@ -4,6 +4,21 @@ import infoIcon from "./assets/infoIcon.svg";
 import twitterIcon from "./assets/twitterIcon.svg";
 import instagramIcon from "./assets/instagramIcon.svg";
 import editIcon from "./assets/editIcon.svg";
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import styled from "@emotion/styled";
+
+
+
+const HtmlTooltip = styled(({ className, ...props }) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: '#141843',
+    maxWidth: 220,
+    border: '1px solid rgba(47, 128, 237, 0.20)',
+  },
+}));
+
 
 const ProfileSettings = ({coinbase, userData, updateUserData}) => {
   const [profileImage, setProfileImage] = useState();
@@ -117,7 +132,6 @@ const ProfileSettings = ({coinbase, userData, updateUserData}) => {
   };
 
 
-
   return (
     <div className="col-12 col-lg-10">
       <div className="row">
@@ -142,7 +156,11 @@ const ProfileSettings = ({coinbase, userData, updateUserData}) => {
             <div className="d-flex flex-column gap-2">
               <div className="d-flex align-items-center gap-2">
                 <h6 className="input-label mb-0">Email</h6>
+                <HtmlTooltip placement="top"  title={
+                  <p className="tooltip-text mb-0">The email address will be used to send various notifications related to activity on the Marketplace.</p>
+                }>
                 <img src={infoIcon} width={16} height={16} alt="" />
+                </HtmlTooltip>
               </div>
               <input
                 type="email"
@@ -182,7 +200,14 @@ const ProfileSettings = ({coinbase, userData, updateUserData}) => {
                 <div className="d-flex flex-column gap-2">
                   <div className="d-flex align-items-center gap-2">
                     <h6 className="input-label mb-0">Profile Image</h6>
-                    <img src={infoIcon} width={16} height={16} alt="" />
+                    <HtmlTooltip placement="top"  title={
+                  <div className="d-flex flex-column gap-2">
+                    <p className="tooltip-text mb-0">Recommended: 400px x 400px</p>
+                    <p className="tooltip-text mb-0">Max size: 500KB</p>
+                  </div>
+                }>
+                <img src={infoIcon} width={16} height={16} alt="" />
+                </HtmlTooltip>
                   </div>
                   <div className="profile-image-placeholder">
                     <input
@@ -214,7 +239,14 @@ const ProfileSettings = ({coinbase, userData, updateUserData}) => {
                 <div className="d-flex flex-column gap-2">
                   <div className="d-flex align-items-center gap-2">
                     <h6 className="input-label mb-0">Profile Banner</h6>
-                    <img src={infoIcon} width={16} height={16} alt="" />
+                    <HtmlTooltip placement="top"  title={
+                  <div className="d-flex flex-column gap-2">
+                    <p className="tooltip-text mb-0">Recommended: 1400px x 350px</p>
+                    <p className="tooltip-text mb-0">Max size: 500KB</p>
+                  </div>
+                }>
+                <img src={infoIcon} width={16} height={16} alt="" />
+                </HtmlTooltip>
                   </div>
                   <div className="profile-banner-placeholder">
                     <input

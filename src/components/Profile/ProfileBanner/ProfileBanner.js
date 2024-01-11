@@ -29,7 +29,7 @@ const ProfileBanner = ({
 }) => {
 
   
-  console.log(logo, banner);
+  // console.log(logo, banner);
   
   return (
 

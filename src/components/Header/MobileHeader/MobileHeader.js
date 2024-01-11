@@ -97,13 +97,13 @@ const MobileHeader = ({
           <h6 className="mb-0 text-white">Mint</h6>
           <img src={mobileNavArrow} alt="" />
         </div> */}
-        <div className="mobile-menu-item d-flex align-items-center justify-content-between p-3">
+        {/* <div className="mobile-menu-item d-flex align-items-center justify-content-between p-3">
           <a className={"mb-0 text-white"} href="mailto:someone@support.com">
             Support
           </a>
 
           <img src={mobileNavArrow} alt="" />
-        </div>
+        </div> */}
         <div className="d-flex align-items-center gap-3">
           {coinbase && isConnected && chainId === 1030 && (
             <button className="btn account-btn d-flex align-items-center gap-2">

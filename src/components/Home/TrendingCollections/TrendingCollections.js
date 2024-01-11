@@ -13,7 +13,7 @@ const TrendingCollections = () => {
     dots: false,
     arrows: false,
     infinite: true,
-    autoplay: false,
+    autoplay: true,
     autoplaySpeed: 6000,
     speed: 500,
     slidesToShow: 4,

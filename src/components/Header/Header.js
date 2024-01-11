@@ -116,18 +116,18 @@ const Header = ({
                 {/* <NavLink className={"header-link mb-0"} to={"/mint"}>
                   Mint
                 </NavLink> */}
-                <a
+                {/* <a
                   className={"header-link mb-0"}
                   href="mailto:someone@support.com"
                 >
                   Support
-                </a>
+                </a> */}
               </div>
 
               <div className="d-flex align-items-center gap-3">
                 {coinbase && isConnected && chainId === 1030 && (
                   <button className="btn account-btn d-flex align-items-center gap-2">
-                    <img src={conflux} alt="" /> Conflux
+                    <img src={conflux} alt="" /> Conflux eSpace
                   </button>
                 )}
                 {coinbase && isConnected && chainId !== 1030 && (

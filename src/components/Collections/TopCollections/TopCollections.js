@@ -60,7 +60,7 @@ const TopCollections = () => {
   return (
     <div className="container-lg pt-0 pb-5 pt-lg-5">
       <div className="row">
-        <h6 className="main-hero-title mb-3">Top Collections</h6>
+        <h6 className="main-hero-title mb-3">New Collections</h6>
         {windowSize.width > 786 ? (
           <div className="top-collections-grid pe-0">
             {dummyCollections.map((item, index) => (

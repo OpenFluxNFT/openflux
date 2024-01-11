@@ -269,11 +269,15 @@ function App() {
 
   const updateUserData = async (userInfo) => {
     if (coinbase && isConnected) {
+      const filteredInfo = Object.fromEntries(
+        Object.entries(userInfo).filter(([key, value]) => value !== '')
+    );
       const formData = new FormData();
-      for (const [key, value] of Object.entries(userInfo)) {
+      for (const [key, value] of Object.entries(filteredInfo)) {
         formData.append(key, value);
       }
 
+    
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner(coinbase);
       const signature = await signer
@@ -301,6 +305,8 @@ function App() {
           console.log(err);
         });
     }
+
+   
   };
 
   const getOtherUserData = async (walletAddr) => {

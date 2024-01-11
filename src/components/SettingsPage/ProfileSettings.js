@@ -1,38 +1,62 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./_settingspage.scss";
 import infoIcon from "./assets/infoIcon.svg";
 import twitterIcon from "./assets/twitterIcon.svg";
 import instagramIcon from "./assets/instagramIcon.svg";
 import editIcon from "./assets/editIcon.svg";
-import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
 import styled from "@emotion/styled";
-
-
 
 const HtmlTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} />
 ))(({ theme }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: '#141843',
+    backgroundColor: "#141843",
     maxWidth: 220,
-    border: '1px solid rgba(47, 128, 237, 0.20)',
+    border: "1px solid rgba(47, 128, 237, 0.20)",
   },
 }));
 
+const ProfileSettings = ({ coinbase, userData, updateUserData }) => {
+const baseUrl = "https://confluxapi.worldofdypians.com/";
 
-const ProfileSettings = ({coinbase, userData, updateUserData}) => {
   const [profileImage, setProfileImage] = useState();
   const [bannerImage, setBannerImage] = useState();
 
-  const [userInfo, setUserInfo] = useState({
-    username: '',
-    email: '',
-    website: '',
-    bio: '',
-    profilePicture: '',
-    bannerPicture: '',
 
-  })
+
+
+
+
+  const [userInfo, setUserInfo] = useState({
+    username: "",
+    email: "",
+    website: "",
+    bio: "",
+    profilePicture: "",
+    bannerPicture: "",
+  });
+
+  const display = () => {
+    if(userData && userData._id){
+      setUserInfo(userInfo => ({
+        ...userInfo,
+        username: userData?.username,
+        email: userData?.email,
+        website: userData?.website,
+        bio: userData?.bio,
+        profilePicture: userData?.profilePicture ? baseUrl + userData?.profilePicture : '',
+        bannerPicture: userData?.bannerPicture ? baseUrl + userData?.bannerPicture : '',
+      }))
+
+      if(userData?.profilePicture){
+        setProfileImage(baseUrl + userData?.profilePicture)
+      }
+      if(userData?.bannerPicture){
+        setBannerImage(baseUrl + userData?.bannerPicture)
+      }
+    }
+  }
 
   const isImage = async (file) => {
     const acceptedImageTypes = ["image/png", "image/jpeg", "image/jpg"];
@@ -43,7 +67,7 @@ const ProfileSettings = ({coinbase, userData, updateUserData}) => {
     return new Promise((resolve) => {
       const img = new Image();
       img.onload = () => {
-        resolve(img.width / img.height === targetWidth / targetHeight);
+        resolve(img.width <= targetWidth || img.height <= targetHeight);
       };
       img.src = URL.createObjectURL(file);
     });
@@ -62,7 +86,7 @@ const ProfileSettings = ({coinbase, userData, updateUserData}) => {
         (await isImage(file)) &&
         //  isSizeValid(file) &&
         file.size <= maxSizeInBytes &&
-        (await isAspectRatioValidProfile(file, 1, 1))
+        (await isAspectRatioValidProfile(file, 400, 400))
       ) {
         // Set the selected image
         const reader = new FileReader();
@@ -70,12 +94,10 @@ const ProfileSettings = ({coinbase, userData, updateUserData}) => {
         reader.onload = () => {
           // Set the selected image as a data URL
           setProfileImage(reader.result);
-          setUserInfo(userInfo => (
-            {
-              ...userInfo,
-              profilePicture: reader.result
-            }
-          ))
+          setUserInfo((userInfo) => ({
+            ...userInfo,
+            profilePicture: file,
+          }));
         };
         reader.readAsDataURL(file);
       } else {
@@ -102,7 +124,7 @@ const ProfileSettings = ({coinbase, userData, updateUserData}) => {
         file &&
         (await isImage(file)) &&
         file.size <= maxSizeInBytes &&
-        (await isAspectRatioValidProfile(file, 4, 1))
+        (await isAspectRatioValidProfile(file, 1400, 350))
       ) {
         // Set the selected image
         const reader = new FileReader();
@@ -110,12 +132,10 @@ const ProfileSettings = ({coinbase, userData, updateUserData}) => {
         reader.onload = () => {
           // Set the selected image as a data URL
           setBannerImage(reader.result);
-          setUserInfo(userInfo => (
-            {
-              ...userInfo,
-              bannerPicture: reader.result
-            }
-          ))
+          setUserInfo((userInfo) => ({
+            ...userInfo,
+            bannerPicture: file,
+          }));
         };
         reader.readAsDataURL(file);
       } else {
@@ -131,6 +151,10 @@ const ProfileSettings = ({coinbase, userData, updateUserData}) => {
     }
   };
 
+  useEffect(() => {
+    display();
+  }, [])
+  
 
   return (
     <div className="col-12 col-lg-10">
@@ -145,21 +169,27 @@ const ProfileSettings = ({coinbase, userData, updateUserData}) => {
                 placeholder="Username"
                 className="settings-input w-100"
                 value={userInfo.username}
-                onChange={(e) => setUserInfo(userInfo => (
-                  {
+                onChange={(e) =>
+                  setUserInfo((userInfo) => ({
                     ...userInfo,
-                    username: e.target.value
-                  }
-                ))}
+                    username: e.target.value,
+                  }))
+                }
               />
             </div>
             <div className="d-flex flex-column gap-2">
               <div className="d-flex align-items-center gap-2">
                 <h6 className="input-label mb-0">Email</h6>
-                <HtmlTooltip placement="top"  title={
-                  <p className="tooltip-text mb-0">The email address will be used to send various notifications related to activity on the Marketplace.</p>
-                }>
-                <img src={infoIcon} width={16} height={16} alt="" />
+                <HtmlTooltip
+                  placement="top"
+                  title={
+                    <p className="tooltip-text mb-0">
+                      The email address will be used to send various
+                      notifications related to activity on the Marketplace.
+                    </p>
+                  }
+                >
+                  <img src={infoIcon} width={16} height={16} alt="" />
                 </HtmlTooltip>
               </div>
               <input
@@ -167,13 +197,12 @@ const ProfileSettings = ({coinbase, userData, updateUserData}) => {
                 placeholder="Email"
                 className="settings-input w-100"
                 value={userInfo.email}
-                onChange={(e) => setUserInfo(userInfo => (
-                  {
+                onChange={(e) =>
+                  setUserInfo((userInfo) => ({
                     ...userInfo,
-                    email: e.target.value
-                  }
-                ))}
-
+                    email: e.target.value,
+                  }))
+                }
               />
             </div>
             <div className="d-flex flex-column gap-2">
@@ -183,12 +212,12 @@ const ProfileSettings = ({coinbase, userData, updateUserData}) => {
                 placeholder="Website"
                 className="settings-input w-100"
                 value={userInfo.website}
-                onChange={(e) => setUserInfo(userInfo => (
-                  {
+                onChange={(e) =>
+                  setUserInfo((userInfo) => ({
                     ...userInfo,
-                    website: e.target.value
-                  }
-                ))}
+                    website: e.target.value,
+                  }))
+                }
               />
             </div>
           </div>
@@ -200,14 +229,19 @@ const ProfileSettings = ({coinbase, userData, updateUserData}) => {
                 <div className="d-flex flex-column gap-2">
                   <div className="d-flex align-items-center gap-2">
                     <h6 className="input-label mb-0">Profile Image</h6>
-                    <HtmlTooltip placement="top"  title={
-                  <div className="d-flex flex-column gap-2">
-                    <p className="tooltip-text mb-0">Recommended: 400px x 400px</p>
-                    <p className="tooltip-text mb-0">Max size: 500KB</p>
-                  </div>
-                }>
-                <img src={infoIcon} width={16} height={16} alt="" />
-                </HtmlTooltip>
+                    <HtmlTooltip
+                      placement="top"
+                      title={
+                        <div className="d-flex flex-column gap-2">
+                          <p className="tooltip-text mb-0">
+                            Recommended: 400px x 400px
+                          </p>
+                          <p className="tooltip-text mb-0">Max size: 500KB</p>
+                        </div>
+                      }
+                    >
+                      <img src={infoIcon} width={16} height={16} alt="" />
+                    </HtmlTooltip>
                   </div>
                   <div className="profile-image-placeholder">
                     <input
@@ -239,14 +273,19 @@ const ProfileSettings = ({coinbase, userData, updateUserData}) => {
                 <div className="d-flex flex-column gap-2">
                   <div className="d-flex align-items-center gap-2">
                     <h6 className="input-label mb-0">Profile Banner</h6>
-                    <HtmlTooltip placement="top"  title={
-                  <div className="d-flex flex-column gap-2">
-                    <p className="tooltip-text mb-0">Recommended: 1400px x 350px</p>
-                    <p className="tooltip-text mb-0">Max size: 500KB</p>
-                  </div>
-                }>
-                <img src={infoIcon} width={16} height={16} alt="" />
-                </HtmlTooltip>
+                    <HtmlTooltip
+                      placement="top"
+                      title={
+                        <div className="d-flex flex-column gap-2">
+                          <p className="tooltip-text mb-0">
+                            Recommended: 1400px x 350px
+                          </p>
+                          <p className="tooltip-text mb-0">Max size: 500KB</p>
+                        </div>
+                      }
+                    >
+                      <img src={infoIcon} width={16} height={16} alt="" />
+                    </HtmlTooltip>
                   </div>
                   <div className="profile-banner-placeholder">
                     <input
@@ -293,12 +332,12 @@ const ProfileSettings = ({coinbase, userData, updateUserData}) => {
               style={{ height: "100%" }}
               rows={5}
               value={userInfo.bio}
-              onChange={(e) => setUserInfo(userInfo => (
-                {
+              onChange={(e) =>
+                setUserInfo((userInfo) => ({
                   ...userInfo,
-                  bio: e.target.value
-                }
-              ))}
+                  bio: e.target.value,
+                }))
+              }
             />
           </div>
           {/* <div className="mt-4 d-flex flex-column flex-lg-row align-items-start align-items-lg-center justify-content-between">

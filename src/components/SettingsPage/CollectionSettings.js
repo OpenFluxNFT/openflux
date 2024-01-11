@@ -7,8 +7,9 @@ import confluxScanIcon from "./assets/confluxScanIcon.svg";
 import discordIcon from "./assets/discordIcon.svg";
 import telegramIcon from "./assets/telegramIcon.svg";
 import penIcon from "./assets/penIcon.svg";
-import editIcon from './assets/editIcon.svg'
+import editIcon from "./assets/editIcon.svg";
 import collectionSettingsIcon from "./assets/collectionSettingsIcon.svg";
+import axios from "axios";
 
 const CollectionSettings = () => {
   const dummyCollections = [
@@ -32,18 +33,38 @@ const CollectionSettings = () => {
 
   const [collection, setCollection] = useState(null);
 
-  const [profileImage, setProfileImage] = useState()
-  const [bannerImage, setBannerImage] = useState()
-  const [featuredImage, setFeaturedImage] = useState()
-  const [collectionsImage, setCollectionsImage] = useState()
+  const [profileImage, setProfileImage] = useState();
+  const [bannerImage, setBannerImage] = useState();
+  const [featuredImage, setFeaturedImage] = useState();
+  const [collectionsImage, setCollectionsImage] = useState();
+  const [collectionOwner, setcollectionOwner] = useState();
 
 
-  const isImage = async(file) => {
+  const getCollectionOwner = async (collectionAddress) => {
+    const result = await axios
+      .get(
+        `https://confluxapi.worldofdypians.com/api/collections/getCollectionOwner/${collectionAddress}`,
+        {
+          headers: {
+            "x-api-key":
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        }
+      )
+      .catch((e) => {
+        console.error(e);
+      });
+
+    if (result && result.status === 200) {
+      setcollectionOwner(result.data);
+    }
+  };
+
+
+  const isImage = async (file) => {
     const acceptedImageTypes = ["image/png", "image/jpeg", "image/jpg"];
     return acceptedImageTypes.includes(file.type);
   };
-
- 
 
   const isAspectRatioValidProfile = async (file, targetWidth, targetHeight) => {
     return new Promise((resolve) => {
@@ -55,7 +76,7 @@ const CollectionSettings = () => {
     });
   };
 
-  const uploadProfileImage =  async (e) => {
+  const uploadProfileImage = async (e) => {
     const maxSizeInBytes = 500 * 1024; // 500KB
 
     const files = e.target.files;
@@ -65,10 +86,10 @@ const CollectionSettings = () => {
 
       if (
         file &&
-         await isImage(file) &&
+        (await isImage(file)) &&
         //  isSizeValid(file) &&
-        file.size <=  maxSizeInBytes &&
-        await isAspectRatioValidProfile(file, 1, 1)
+        file.size <= maxSizeInBytes &&
+        (await isAspectRatioValidProfile(file, 1, 1))
       ) {
         // Set the selected image
         const reader = new FileReader();
@@ -76,14 +97,13 @@ const CollectionSettings = () => {
         reader.onload = () => {
           // Set the selected image as a data URL
           setProfileImage(reader.result);
-        
         };
         reader.readAsDataURL(file);
       } else {
         // Display an error message or handle invalid file type, size, or aspect ratio
         if (!isImage(file)) {
           alert("Please select a valid image file (PNG, JPG, JPEG)");
-        } else if (file.size >  maxSizeInBytes) {
+        } else if (file.size > maxSizeInBytes) {
           alert("Selected image exceeds the maximum size of 500KB");
         } else {
           alert("Selected image must have an aspect ratio of 1:1");
@@ -91,7 +111,7 @@ const CollectionSettings = () => {
       }
     }
   };
-  const uploadCollectionsImage =  async (e) => {
+  const uploadCollectionsImage = async (e) => {
     const maxSizeInBytes = 500 * 1024; // 500KB
 
     const files = e.target.files;
@@ -101,9 +121,9 @@ const CollectionSettings = () => {
 
       if (
         file &&
-         await isImage(file) &&
-        file.size <=  maxSizeInBytes &&
-        await isAspectRatioValidProfile(file, 0.87, 1)
+        (await isImage(file)) &&
+        file.size <= maxSizeInBytes &&
+        (await isAspectRatioValidProfile(file, 0.87, 1))
       ) {
         // Set the selected image
         const reader = new FileReader();
@@ -111,14 +131,13 @@ const CollectionSettings = () => {
         reader.onload = () => {
           // Set the selected image as a data URL
           setCollectionsImage(reader.result);
-        
         };
         reader.readAsDataURL(file);
       } else {
         // Display an error message or handle invalid file type, size, or aspect ratio
         if (!isImage(file)) {
           alert("Please select a valid image file (PNG, JPG, JPEG)");
-        } else if (file.size >  maxSizeInBytes) {
+        } else if (file.size > maxSizeInBytes) {
           alert("Selected image exceeds the maximum size of 500KB");
         } else {
           alert("Selected image must have an aspect ratio of 4:1");
@@ -126,7 +145,7 @@ const CollectionSettings = () => {
       }
     }
   };
-  const uploadFeaturedImage =  async (e) => {
+  const uploadFeaturedImage = async (e) => {
     const maxSizeInBytes = 500 * 1024; // 500KB
 
     const files = e.target.files;
@@ -136,9 +155,9 @@ const CollectionSettings = () => {
 
       if (
         file &&
-         await isImage(file) &&
-        file.size <=  maxSizeInBytes &&
-        await isAspectRatioValidProfile(file, 2, 1)
+        (await isImage(file)) &&
+        file.size <= maxSizeInBytes &&
+        (await isAspectRatioValidProfile(file, 2, 1))
       ) {
         // Set the selected image
         const reader = new FileReader();
@@ -146,14 +165,13 @@ const CollectionSettings = () => {
         reader.onload = () => {
           // Set the selected image as a data URL
           setFeaturedImage(reader.result);
-        
         };
         reader.readAsDataURL(file);
       } else {
         // Display an error message or handle invalid file type, size, or aspect ratio
         if (!isImage(file)) {
           alert("Please select a valid image file (PNG, JPG, JPEG)");
-        } else if (file.size >  maxSizeInBytes) {
+        } else if (file.size > maxSizeInBytes) {
           alert("Selected image exceeds the maximum size of 500KB");
         } else {
           alert("Selected image must have an aspect ratio of 4:1");
@@ -161,7 +179,7 @@ const CollectionSettings = () => {
       }
     }
   };
-  const uploadBannerImage =  async (e) => {
+  const uploadBannerImage = async (e) => {
     const maxSizeInBytes = 500 * 1024; // 500KB
 
     const files = e.target.files;
@@ -171,9 +189,9 @@ const CollectionSettings = () => {
 
       if (
         file &&
-         await isImage(file) &&
-        file.size <=  maxSizeInBytes &&
-        await isAspectRatioValidProfile(file, 4, 1)
+        (await isImage(file)) &&
+        file.size <= maxSizeInBytes &&
+        (await isAspectRatioValidProfile(file, 4, 1))
       ) {
         // Set the selected image
         const reader = new FileReader();
@@ -181,14 +199,13 @@ const CollectionSettings = () => {
         reader.onload = () => {
           // Set the selected image as a data URL
           setBannerImage(reader.result);
-        
         };
         reader.readAsDataURL(file);
       } else {
         // Display an error message or handle invalid file type, size, or aspect ratio
         if (!isImage(file)) {
           alert("Please select a valid image file (PNG, JPG, JPEG)");
-        } else if (file.size >  maxSizeInBytes) {
+        } else if (file.size > maxSizeInBytes) {
           alert("Selected image exceeds the maximum size of 500KB");
         } else {
           alert("Selected image must have an aspect ratio of 4:1");
@@ -196,8 +213,6 @@ const CollectionSettings = () => {
       }
     }
   };
-
-  
 
   return (
     <div className="col-12 col-lg-10">
@@ -218,6 +233,8 @@ const CollectionSettings = () => {
                     type="text"
                     placeholder="Username"
                     className="settings-input w-100"
+                    disabled
+                    value={collection.title}
                   />
                 </div>
                 <div className="d-flex flex-column gap-2">
@@ -236,11 +253,13 @@ const CollectionSettings = () => {
             <div className="col-12 col-lg-6">
               <div className="d-flex flex-column gap-4">
                 <div className="d-flex flex-column gap-2">
-                  <h6 className="input-label mb-0">Content Creator</h6>
+                  <h6 className="input-label mb-0">Contract Owner</h6>
                   <input
                     type="text"
                     placeholder="0xc...3453"
                     className="settings-input w-100"
+                    disabled
+                    value={collectionOwner}
                   />
                 </div>
                 <div className="d-flex flex-column gap-2">
@@ -269,109 +288,107 @@ const CollectionSettings = () => {
               </div>
             </div>
             <div className="row">
-            <div className="col-12 col-lg-6 mt-4">
-              <div className="d-flex flex-column justify-content-between mt-4 mt-lg-0 h-100">
-                <div className="d-flex align-items-center">
-                  <div className="col-3">
-                    <div className="d-flex flex-column gap-2">
-                      <div className="d-flex align-items-center gap-2">
-                        <h6 className="input-label mb-0">Profile Image</h6>
-                        <img src={infoIcon} width={16} height={16} alt="" />
-                      </div>
-                      <div className="profile-image-placeholder">
-                    <input
-                      type="file"
-                      accept=".png, .jpg, .jpeg"
-                      onChange={uploadProfileImage}
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                        opacity: 0,
-                        cursor: "pointer",
-                      }}
-                    />
-                    {profileImage && (
-                      <img
-                        src={profileImage}
-                        className="profile-image"
-                        alt=""
-                      />
-                    )}
-                    <img src={editIcon} className="edit-image" alt="" />
-                  </div>
-                    </div>
-                  </div>
-                  <div className="col-9">
-                    <div className="d-flex flex-column gap-2">
-                      <div className="d-flex align-items-center gap-2">
-                        <h6 className="input-label mb-0">Profile Banner</h6>
-                        <img src={infoIcon} width={16} height={16} alt="" />
-                      </div>
-                      <div className="profile-banner-placeholder">
-                    {
-
-                    }
-                  <input
-                      type="file"
-                      accept=".png, .jpg, .jpeg"
-                      onChange={uploadBannerImage}
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                        opacity: 0,
-                        cursor: "pointer",
-                      }}
-                    />
-                    {bannerImage && (
-                      <img
-                        src={bannerImage}
-                        className="banner-image"
-                        alt=""
-                      />
-                    )}
-                    <img src={editIcon} className="edit-image" alt="" />
-                  </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-12 col-lg-6 mt-4">
-              <div className="d-flex flex-column justify-content-between mt-4 mt-lg-0 h-100">
-                <div className="d-flex align-items-center justify-content-between">
-                  <div className="col-6">
-                    <div className="d-flex flex-column gap-2">
-                      <div className="d-flex align-items-center gap-2">
-                        <h6 className="input-label mb-0">Featured Banner</h6>
-                        <img src={infoIcon} width={16} height={16} alt="" />
-                      </div>
-                      <div className="featured-banner-placeholder">
-                      <img src={editIcon} alt="" className="edit-image" />
-
+              <div className="col-12 col-lg-6 mt-4">
+                <div className="d-flex flex-column justify-content-between mt-4 mt-lg-0 h-100">
+                  <div className="d-flex align-items-center">
+                    <div className="col-3">
+                      <div className="d-flex flex-column gap-2">
+                        <div className="d-flex align-items-center gap-2">
+                          <h6 className="input-label mb-0">Profile Image</h6>
+                          <img src={infoIcon} width={16} height={16} alt="" />
+                        </div>
+                        <div className="profile-image-placeholder">
+                          <input
+                            type="file"
+                            accept=".png, .jpg, .jpeg"
+                            onChange={uploadProfileImage}
+                            style={{
+                              position: "absolute",
+                              top: 0,
+                              left: 0,
+                              width: "100%",
+                              height: "100%",
+                              opacity: 0,
+                              cursor: "pointer",
+                            }}
+                          />
+                          {profileImage && (
+                            <img
+                              src={profileImage}
+                              className="profile-image"
+                              alt=""
+                            />
+                          )}
+                          <img src={editIcon} className="edit-image" alt="" />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="col-4">
-                    <div className="d-flex flex-column gap-2">
-                      <div className="d-flex align-items-center gap-2">
-                        <h6 className="input-label mb-0">Collection Banner</h6>
-                        <img src={infoIcon} width={16} height={16} alt="" />
-                      </div>
-                      <div className="collection-banner-placeholder">
-                      <img src={editIcon} alt="" className="edit-image" />
-
+                    <div className="col-9">
+                      <div className="d-flex flex-column gap-2">
+                        <div className="d-flex align-items-center gap-2">
+                          <h6 className="input-label mb-0">Profile Banner</h6>
+                          <img src={infoIcon} width={16} height={16} alt="" />
+                        </div>
+                        <div className="profile-banner-placeholder">
+                          {}
+                          <input
+                            type="file"
+                            accept=".png, .jpg, .jpeg"
+                            onChange={uploadBannerImage}
+                            style={{
+                              position: "absolute",
+                              top: 0,
+                              left: 0,
+                              width: "100%",
+                              height: "100%",
+                              opacity: 0,
+                              cursor: "pointer",
+                            }}
+                          />
+                          {bannerImage && (
+                            <img
+                              src={bannerImage}
+                              className="banner-image"
+                              alt=""
+                            />
+                          )}
+                          <img src={editIcon} className="edit-image" alt="" />
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+              <div className="col-12 col-lg-6 mt-4">
+                <div className="d-flex flex-column justify-content-between mt-4 mt-lg-0 h-100">
+                  <div className="d-flex align-items-center justify-content-between">
+                    <div className="col-6">
+                      <div className="d-flex flex-column gap-2">
+                        <div className="d-flex align-items-center gap-2">
+                          <h6 className="input-label mb-0">Featured Banner</h6>
+                          <img src={infoIcon} width={16} height={16} alt="" />
+                        </div>
+                        <div className="featured-banner-placeholder">
+                          <img src={editIcon} alt="" className="edit-image" />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-4">
+                      <div className="d-flex flex-column gap-2">
+                        <div className="d-flex align-items-center gap-2">
+                          <h6 className="input-label mb-0">
+                            Collection Banner
+                          </h6>
+                          <img src={infoIcon} width={16} height={16} alt="" />
+                        </div>
+                        <div className="collection-banner-placeholder">
+                          <img src={editIcon} alt="" className="edit-image" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
             <div className="col-12 mt-4">
               <div className="d-flex flex-column gap-2 mt-4 mt-lg-0">

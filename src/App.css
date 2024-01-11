@@ -65,7 +65,11 @@ input:focus {
   border: 1px solid transparent;
 
   .card-img {
-    border-radius: 30px;
+    /* border-radius: 30px; */
+  }
+
+  .card-img2 {
+    border-radius: 16px;
   }
   .recently-listed-title {
     color: #fff;

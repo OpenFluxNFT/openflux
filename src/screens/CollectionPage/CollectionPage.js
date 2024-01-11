@@ -7,7 +7,12 @@ import collectionIcon from "../../components/CollectionPage/CollectionBanner/ass
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
-const CollectionPage = ({ coinbase }) => {
+const CollectionPage = ({
+  coinbase,
+  onFavoriteCollection,
+  userCollectionFavs,
+  userData,
+}) => {
   const collectionSocials = [
     "website",
     "twitter",
@@ -63,7 +68,67 @@ const CollectionPage = ({ coinbase }) => {
     "Cats And Watches Society (CAWS) Is A Collection Of 10,000 NFTs Developed By Dypius, One Of The Most Experienced And Innovative Projects In Decentralized Finance. Through The Adoption Process, Your Cat Will Be Fitted With A Cool Luxury Watch And Will Also Grant You Access To The Members-Only Society Benefits Zone. As A New Cat Owner, You Can Join The CAWS Staking Pool To Earn 50% APR In ETH Rewards. Cats And Watches Society Is Also Building Its Own Metaverse With An Exciting Play-To-Earn (P2E) Game Still In Development.";
 
   const [favorite, setFavorite] = useState(false);
+  const [collectionOwner, setcollectionOwner] = useState();
+  const [isVerified, setisVerified] = useState(false);
+
   const { collectionAddress } = useParams();
+
+  const checkCollectionOwner = async (walletAddr) => {
+    if (walletAddr) {
+      const result = await axios
+        .get(`https://confluxapi.worldofdypians.com/api/users/${walletAddr}`, {
+          headers: {
+            "x-api-key":
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+
+      if (result && result.status === 200) {
+        if (result.data === "User not found") {
+          setisVerified(false)
+        } else {
+          setisVerified(true)
+        }
+      } else setisVerified(false);
+    }
+  };
+
+  const getCollectionOwner = async () => {
+    const result = await axios
+      .get(
+        `https://confluxapi.worldofdypians.com/api/collections/getCollectionOwner/${collectionAddress}`,
+        {
+          headers: {
+            "x-api-key":
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        }
+      )
+      .catch((e) => {
+        console.error(e);
+      });
+
+    if (result && result.status === 200) {
+      setcollectionOwner(result.data);
+      checkCollectionOwner(result.data)
+    }
+  };
+
+
+
+
+  const checkifFavorite = () => {
+    if (userCollectionFavs && userCollectionFavs.length > 0) {
+      if (userCollectionFavs.find((obj) => obj === collectionAddress)) {
+        setFavorite(true);
+      } else {
+        setFavorite(false);
+      }
+    }
+  };
 
   const handleAddFavorite = async () => {
     if (coinbase && collectionAddress) {
@@ -74,10 +139,17 @@ const CollectionPage = ({ coinbase }) => {
       await axios
         .post(
           `https://confluxapi.worldofdypians.com/api/users/addCollectionFavorite/${coinbase}`,
-          data
+          data,
+          {
+            headers: {
+              "x-api-key":
+                "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+            },
+          }
         )
         .then(() => {
           setFavorite(true);
+          onFavoriteCollection();
         })
         .catch((e) => {
           console.error(e);
@@ -95,10 +167,17 @@ const CollectionPage = ({ coinbase }) => {
       await axios
         .post(
           `https://confluxapi.worldofdypians.com/api/users/removeCollectionFavorite/${coinbase}`,
-          data
+          data,
+          {
+            headers: {
+              "x-api-key":
+                "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+            },
+          }
         )
         .then(() => {
           setFavorite(false);
+          onFavoriteCollection();
         })
         .catch((e) => {
           console.error(e);
@@ -109,6 +188,14 @@ const CollectionPage = ({ coinbase }) => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    checkifFavorite();
+  }, [collectionAddress, userCollectionFavs]);
+
+  useEffect(() => {
+    getCollectionOwner();
+  }, [collectionAddress]);
 
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
@@ -121,7 +208,10 @@ const CollectionPage = ({ coinbase }) => {
         desc={collectionDesc}
         info={collectionInfo}
         isFavorite={favorite}
-        handleFavorite={handleAddFavorite}
+        handleFavorite={() => {
+          favorite ? handleRemoveFavorite() : handleAddFavorite();
+        }}
+        isVerified={isVerified}
       />
       <CollectionList />
     </div>

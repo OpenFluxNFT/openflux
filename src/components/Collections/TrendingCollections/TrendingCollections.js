@@ -5,6 +5,10 @@ import checkIcon from "../TopCollections/assets/checkIcon.svg";
 import useWindowSize from "../../../hooks/useWindowSize";
 import topSalesIcon from "../../Home/TrendingSales/assets/topSalesIcon.svg";
 import topSalesIconActive from "../../Home/TrendingSales/assets/topSalesIconActive.svg";
+import recentSalesIconInactive from "../../Home/TrendingSales/assets/recentSalesIconInactive.svg";
+import recentSalesIconActive from "../../Home/TrendingSales/assets/recentSalesIconActive.svg";
+import newIcon from "../../Home/TrendingSales/assets/newIcon.svg";
+import newIconActive from "../../Home/TrendingSales/assets/newIconActive.svg";
 import trendingIcon from "../../Home/TrendingSales/assets/trendingIcon.svg";
 import trendingIconActive from "../../Home/TrendingSales/assets/trendingIconActive.svg";
 import cawsPlaceholder from "./assets/cawsPlaceholder.png";
@@ -146,7 +150,37 @@ const TrendingCollections = () => {
                 />
                 <h6 className="mb-0">Top</h6>
               </div>
+              <div
+                className={`trending-tab ${
+                  option === "new" && "trending-tab-active"
+                } p-2 d-flex align-items-center gap-2`}
+                onClick={() => setOption("new")}
+              >
+                <img
+                  src={
+                    option === "new" ? newIconActive : newIcon
+                  }
+                  alt=""
+                />
+                <h6 className="mb-0">New</h6>
+              </div>
+
+              <div
+                className={`trending-tab ${
+                  option === "recentSales" && "trending-tab-active"
+                } p-2 d-flex align-items-center gap-2`}
+                onClick={() => setOption("recentSales")}
+              >
+                <img
+                  src={
+                    option === "recentSales" ? recentSalesIconActive : recentSalesIconInactive
+                  }
+                  alt=""
+                />
+                <h6 className="mb-0">Recent sales</h6>
+              </div>
             </div>
+
             <div
               className="trending-tab d-flex align-items-center"
               style={{ border: "1px solid #2f80ed" }}
@@ -188,8 +222,8 @@ const TrendingCollections = () => {
                 </div>
                 <NavLink
                   to={`/collection/${item.collectionAddress}/${item.collectionName}`}
-                  className={'w-100'}
-                  style={{textDecoration: 'none'}}
+                  className={"w-100"}
+                  style={{ textDecoration: "none" }}
                 >
                   <div className="trending-collection-card d-flex align-items-center gap-2">
                     <img src={item.image} alt="" />

@@ -9,6 +9,8 @@ import mintIcon from "./assets/mintIcon.svg";
 import mintIconActive from "./assets/mintIconActive.svg";
 import topSalesIcon from "./assets/topSalesIcon.svg";
 import topSalesIconActive from "./assets/topSalesIconActive.svg";
+import recentSalesIconInactive from "./assets/recentSalesIconInactive.svg";
+import recentSalesIconActive from "./assets/recentSalesIconActive.svg";
 import trendingIcon from "./assets/trendingIcon.svg";
 import trendingIconActive from "./assets/trendingIconActive.svg";
 import useWindowSize from "../../../hooks/useWindowSize";
@@ -145,6 +147,21 @@ const TrendingSales = () => {
                   />
                   <h6 className="mb-0">Top Sales</h6>
                 </div>
+                <div
+                  className={`trending-tab ${
+                    option === "recentSales" && "trending-tab-active"
+                  } p-2 d-flex align-items-center gap-2`}
+                  onClick={() => setOption("recentSales")}
+                >
+                  <img
+                    src={
+                      option === "recentSales" ? recentSalesIconActive : recentSalesIconInactive
+                    }
+                    alt=""
+                  />
+                  <h6 className="mb-0">Recent Sales</h6>
+                </div>
+                
                 {/* <div
                   className={`trending-tab ${
                     option === "mints" && "trending-tab-active"

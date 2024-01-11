@@ -6,6 +6,7 @@ import HomeInfo from "../../components/Home/HomeInfo/HomeInfo";
 import TrendingSales from "../../components/Home/TrendingSales/TrendingSales";
 import RecentlyListed from "../../components/Home/RecentlyListed/RecentlyListed";
 import TrendingCollections from "../../components/Home/TrendingCollections/TrendingCollections";
+import CollectionCategories from "../../components/Collections/CollectionCategories/CollectionCategories";
 
 const Home = () => {
   useEffect(() => {
@@ -19,7 +20,7 @@ const Home = () => {
       <HomeInfo />
       <TrendingSales />
       <RecentlyListed />
-      <TrendingCollections />
+      <CollectionCategories />
     </div>
   );
 };

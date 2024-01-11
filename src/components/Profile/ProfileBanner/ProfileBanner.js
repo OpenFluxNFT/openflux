@@ -27,13 +27,18 @@ const ProfileBanner = ({
   desc,
   info,
 }) => {
+
+  
+  console.log(logo, banner);
+  
   return (
+
     <div className="container-lg py-0 py-lg-5">
       <div className="row px-0">
         <div className="collection-banner d-flex flex-column px-0">
           <div className="collection-banner-up position-relative">
             {banner ? (
-              <img src={banner} className="w-100 d-flex user-banner-img " alt=""/>
+              <img src={`https://confluxapi.worldofdypians.com/${banner}`} className="w-100 d-flex user-banner-img " alt=""/>
             ) : (
               <div className="collection-banner-empty"></div>
             )}
@@ -43,7 +48,7 @@ const ProfileBanner = ({
                 <div className="d-flex flex-column gap-3">
                   <div className="d-flex align-items-center gap-2 position-relative">
                     {logo ? (
-                      <img src={logo} className="collection-logo" alt="" />
+                      <img src={`https://confluxapi.worldofdypians.com/${logo}`} className="collection-logo" alt="" />
                     ) : (
                       <div className="profile-image-placeholder-small">
                         <img src={editIcon} alt="" className="edit-image" />

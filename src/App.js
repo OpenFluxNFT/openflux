@@ -283,12 +283,14 @@ function App() {
         });
 
       formData.append("signature", signature);
+      formData.append("walletAddress", coinbase);
 
       axios
-        .post(`${baseURL}/api/users/edit/${coinbase}`, userInfo, {
+        .post(`${baseURL}/api/users/edit`, formData, {
           headers: {
             "x-api-key":
               "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+            "Content-Type": "multipart/form-data",
           },
         })
         .then((res) => {

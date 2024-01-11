@@ -154,22 +154,24 @@ const CollectionCategories = () => {
         {windowSize.width > 786 ? (
           <div className="collection-categories-grid">
             {dummyCollections.slice(0, 4).map((item, index) => (
-               <NavLink
-               to={`/collection/${item.collectionAddress}/${item.collectionName}`}
-               style={{textDecoration: 'none'}}
-             >
-              <CollectionCard key={index} data={item} />
+              <NavLink
+                to={`/collection/${item.collectionAddress}/${item.collectionName}`}
+                style={{ textDecoration: "none" }}
+                key={index}
+              >
+                <CollectionCard key={index} data={item} />
               </NavLink>
             ))}
           </div>
         ) : (
           <Slider ref={sliderRef} {...settings}>
             {dummyCollections.map((item, index) => (
-               <NavLink
-               to={`/collection/${item.collectionAddress}/${item.collectionName}`}
-               style={{textDecoration: 'none'}}
-             >
-              <CollectionCard key={index} data={item} />
+              <NavLink
+                to={`/collection/${item.collectionAddress}/${item.collectionName}`}
+                style={{ textDecoration: "none" }}
+                key={index}
+              >
+                <CollectionCard key={index} data={item} />
               </NavLink>
             ))}
           </Slider>

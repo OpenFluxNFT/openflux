@@ -31,6 +31,8 @@ function App() {
   const [coinbase, setCoinbase] = useState();
   const [userData, setuserData] = useState([]);
   const [allCollections, setAllCollections] = useState([]);
+  const [userCollectionFavs, setuserCollectionFavs] = useState([]);
+
   const [isRedirect, setIsRedirect] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [showSignPopup, setshowSignPopup] = useState(false);
@@ -261,6 +263,7 @@ function App() {
           }, 1000);
         } else {
           setuserData(result.data);
+          setuserCollectionFavs(result.data.collectionFavorites);
           fetchTotalNftOwned(walletAddr);
         }
       } else setuserData([]);
@@ -330,6 +333,9 @@ function App() {
 
   //const message = I am updating my profile with wallet address ${walletAddress}
   /*
+
+
+  get collection owner /api/collections/getCollectionOwner/:contractAddress/'
 
   retrieving all collections:
   app.get('/api/collections', async (req, res) => {
@@ -532,7 +538,16 @@ function App() {
         <Route
           exact
           path="/collection/:collectionAddress/:id"
-          element={<CollectionPage coinbase={coinbase} />}
+          element={
+            <CollectionPage
+              coinbase={coinbase}
+              onFavoriteCollection={() => {
+                setCount(count + 1);
+              }}
+              userCollectionFavs={userCollectionFavs}
+              userData={userData}
+            />
+          }
         />
         <Route
           exact

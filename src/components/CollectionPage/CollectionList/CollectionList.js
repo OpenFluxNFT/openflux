@@ -15,9 +15,10 @@ import checkIcon from "../../Home/RecentlyListed/assets/checkIcon.svg";
 import useWindowSize from "../../../hooks/useWindowSize";
 import filterIcon from "./assets/filterIcon.svg";
 import xMark from "./assets/xMark.svg";
-
 import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
 import { NavLink } from "react-router-dom";
+import emptyFavorite from "../../Home/RecentlyListed/assets/emptyFavorite.svg";
+import redFavorite from "../../Home/RecentlyListed/assets/redFavorite.svg";
 
 const CollectionList = () => {
   const windowSize = useWindowSize();
@@ -483,6 +484,7 @@ const CollectionList = () => {
                             width={36}
                             alt=""
                           />
+
                           {item.title}
                         </td>
                         <td className="table-item col-2">
@@ -509,12 +511,25 @@ const CollectionList = () => {
                     <NavLink
                       to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
                       style={{ textDecoration: "none" }}
+                      className={"position-relative"}
                     >
                       <img
                         src={require(`./assets/nftPlaceholder${index + 1}.png`)}
                         className="card-img"
                         alt=""
                       />
+                      <div
+                        className="position-absolute favorite-container"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                        }}
+                      >
+                        <div className="d-flex align-items-center position-relative gap-2">
+                          <img src={emptyFavorite} alt="" className="fav-img" />
+                          <span className="fav-count">222</span>
+                        </div>
+                      </div>
                       <div className="d-flex align-items-center gap-2 mt-2">
                         <h6
                           className="recently-listed-title mb-0"

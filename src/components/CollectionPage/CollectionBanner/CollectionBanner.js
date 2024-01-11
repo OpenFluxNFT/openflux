@@ -8,6 +8,8 @@ import favoriteIcon from "./assets/favoriteIcon.svg";
 import favoriteIconActive from "./assets/favoriteIconActive.svg";
 
 import followIcon from "./assets/followIcon.svg";
+import followIconActive from "./assets/followIconActive.svg";
+
 import instagramIcon from "./assets/instagramIcon.svg";
 import twitterIcon from "./assets/twitterIcon.svg";
 import websiteIcon from "./assets/websiteIcon.svg";
@@ -25,6 +27,7 @@ const CollectionBanner = ({
   info,
   handleFavorite,
   isFavorite,
+  isVerified,
 }) => {
   return (
     <div className="container-lg py-0 py-lg-5">
@@ -42,7 +45,10 @@ const CollectionBanner = ({
                   </div>
                   <div className="d-flex align-items-center gap-3 flex-wrap">
                     {credentials.map((item, index) => (
-                      <div className="d-flex align-items-center gap-1" key={index}>
+                      <div
+                        className="d-flex align-items-center gap-1"
+                        key={index}
+                      >
                         <span className="collection-info-span mb-0">
                           {item.key}
                         </span>
@@ -69,7 +75,10 @@ const CollectionBanner = ({
                     className="favorite-icon"
                     onClick={handleFavorite}
                   />
-                  <img src={followIcon} alt="" />
+                  <img
+                    src={isVerified ? followIconActive : followIcon}
+                    alt=""
+                  />
                 </div>
               </div>
             </div>

@@ -1,11 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./_recentlylisted.scss";
 import checkIcon from "./assets/checkIcon.svg";
 import useWindowSize from "../../../hooks/useWindowSize";
 import Slider from "react-slick";
 import { NavLink } from "react-router-dom";
+import emptyFavorite from "./assets/emptyFavorite.svg";
+import redFavorite from "./assets/redFavorite.svg";
+import axios from "axios";
 
-const RecentlyListed = () => {
+const RecentlyListed = ({ coinbase, onFavoriteNft, userNftFavs }) => {
   const settings = {
     // dots: true,
     arrows: false,
@@ -60,8 +63,74 @@ const RecentlyListed = () => {
       usdPrice: 654874.86,
     },
   ];
+  const [favorite, setFavorite] = useState(false);
 
   const windowSize = useWindowSize();
+
+  const checkifFavorite = (collectionAddress) => {
+    if (userNftFavs && userNftFavs.length > 0) {
+      if (userNftFavs.find((obj) => obj === collectionAddress)) {
+        setFavorite(true);
+      } else {
+        setFavorite(false);
+      }
+    }
+  };
+
+  const handleAddFavorite = async (collectionAddress) => {
+    if (coinbase && collectionAddress) {
+      const data = {
+        contractAddress: collectionAddress,
+      };
+
+      await axios
+        .post(
+          `https://confluxapi.worldofdypians.com/api/users/addCollectionFavorite/${coinbase}`,
+          data,
+          {
+            headers: {
+              "x-api-key":
+                "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+            },
+          }
+        )
+        .then(() => {
+          setFavorite(true);
+          onFavoriteNft();
+        })
+        .catch((e) => {
+          console.error(e);
+          setFavorite(false);
+        });
+    }
+  };
+
+  const handleRemoveFavorite = async (collectionAddress) => {
+    if (coinbase && collectionAddress) {
+      const data = {
+        contractAddress: collectionAddress,
+      };
+
+      await axios
+        .post(
+          `https://confluxapi.worldofdypians.com/api/users/removeCollectionFavorite/${coinbase}`,
+          data,
+          {
+            headers: {
+              "x-api-key":
+                "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+            },
+          }
+        )
+        .then(() => {
+          setFavorite(false);
+          onFavoriteNft();
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    }
+  };
 
   return (
     <div className="container-lg mt-5">
@@ -79,12 +148,29 @@ const RecentlyListed = () => {
                 <NavLink
                   to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
                   style={{ textDecoration: "none" }}
+                  className={"position-relative"}
                 >
                   <img
                     src={require(`./assets/nftPlaceholder${index + 1}.png`)}
                     className="card-img"
                     alt=""
                   />
+                  <div
+                    className="position-absolute favorite-container"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                    }}
+                  >
+                    <div className="d-flex align-items-center position-relative gap-2">
+                      <img
+                        src={favorite ? redFavorite : emptyFavorite}
+                        alt=""
+                        className="fav-img"
+                      />
+                      <span className="fav-count">222</span>
+                    </div>
+                  </div>
                   <div className="d-flex align-items-center gap-2 mt-2">
                     <h6 className="recently-listed-title mb-0">CAWS #1125</h6>
                     <img src={checkIcon} alt="" />
@@ -110,12 +196,29 @@ const RecentlyListed = () => {
                 <NavLink
                   to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
                   style={{ textDecoration: "none" }}
+                  className={"position-relative"}
                 >
                   <img
                     src={require(`./assets/nftPlaceholder${index + 1}.png`)}
                     className="card-img"
                     alt=""
                   />
+                  <div
+                    className="position-absolute favorite-container"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                    }}
+                  >
+                    <div className="d-flex align-items-center position-relative gap-2">
+                      <img
+                        src={favorite ? redFavorite : emptyFavorite}
+                        alt=""
+                        className="fav-img"
+                      />{" "}
+                      <span className="fav-count">222</span>
+                    </div>
+                  </div>
                   <div className="d-flex align-items-center gap-2 mt-2">
                     <h6 className="recently-listed-title mb-0">CAWS #1125</h6>
                     <img src={checkIcon} alt="" />

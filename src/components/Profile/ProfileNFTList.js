@@ -14,7 +14,8 @@ import traitsIcon from "./assets/traitsIcon.svg";
 import collectionsIcon from "./assets/collectionsIcon.svg";
 import searchIcon from "../Header/assets/searchIcon.svg";
 import checkIcon from "../Home/RecentlyListed/assets/checkIcon.svg";
-
+import emptyFavorite from "../Home/RecentlyListed/assets/emptyFavorite.svg";
+import redFavorite from "../Home/RecentlyListed/assets/redFavorite.svg";
 import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
 import { NavLink } from "react-router-dom";
 
@@ -309,17 +310,26 @@ const ProfileNFTList = ({ option }) => {
                 </button>
                 <ul className="dropdown-menu categories-dropdown-menu w-100">
                   <li>
-                    <a className="dropdown-item categories-dropdown-item" href="#">
+                    <a
+                      className="dropdown-item categories-dropdown-item"
+                      href="#"
+                    >
                       Low to High
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item categories-dropdown-item" href="#">
+                    <a
+                      className="dropdown-item categories-dropdown-item"
+                      href="#"
+                    >
                       High to Low
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item categories-dropdown-item" href="#">
+                    <a
+                      className="dropdown-item categories-dropdown-item"
+                      href="#"
+                    >
                       Recently Listed
                     </a>
                   </li>
@@ -401,6 +411,7 @@ const ProfileNFTList = ({ option }) => {
                       <NavLink
                         to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
                         style={{ textDecoration: "none" }}
+                        className={"position-relative"}
                       >
                         <img
                           src={require(`./assets/nftPlaceholder${
@@ -409,6 +420,18 @@ const ProfileNFTList = ({ option }) => {
                           className="card-img"
                           alt=""
                         />
+                        <div
+                          className="position-absolute favorite-container"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                          }}
+                        >
+                          <div className="d-flex align-items-center position-relative gap-2">
+                            <img src={redFavorite} alt="" className="fav-img" />
+                            <span className="fav-count-active">222</span>
+                          </div>
+                        </div>
                         <div className="d-flex align-items-center gap-2 mt-2">
                           <h6
                             className="recently-listed-title mb-0"
@@ -446,12 +469,14 @@ const ProfileNFTList = ({ option }) => {
                       <NavLink
                         to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
                         style={{ textDecoration: "none" }}
+                        className={"position-relative"}
                       >
                         <img
                           src={require(`./assets/${item.image}.png`)}
                           className="w-100"
                           alt=""
                         />
+
                         <div className="p-3 collection-lower d-flex align-items-center justify-content-between">
                           <div className="d-flex align-items-center gap-2">
                             <h6 className="mb-0">{item.title}</h6>
@@ -536,16 +561,32 @@ const ProfileNFTList = ({ option }) => {
                 </table>
               ) : (
                 dummyCards.map((item, index) => (
-                  <div className="recently-listed-card p-3 d-flex flex-column" key={index}>
+                  <div
+                    className="recently-listed-card p-3 d-flex flex-column"
+                    key={index}
+                  >
                     <NavLink
                       to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
                       style={{ textDecoration: "none" }}
+                      className={"position-relative"}
                     >
                       <img
                         src={require(`./assets/nftPlaceholder${index + 1}.png`)}
-                        className="card-img"
+                        className="card-img card-img2"
                         alt=""
                       />
+                      <div
+                        className="position-absolute favorite-container"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                        }}
+                      >
+                        <div className="d-flex align-items-center position-relative gap-2">
+                          <img src={emptyFavorite} alt="" className="fav-img" />
+                          <span className="fav-count">222</span>
+                        </div>
+                      </div>
                       <div className="d-flex align-items-center gap-2 mt-2">
                         <h6
                           className="recently-listed-title mb-0"

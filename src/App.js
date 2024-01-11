@@ -19,6 +19,7 @@ import SettingsPage from "./screens/SettingsPage/SettingsPage";
 import { useNavigate } from "react-router-dom";
 import Toast from "./components/Toast/Toast";
 import { ethers } from "ethers";
+import SignModal from "./components/SignModal/SignModal";
 
 function App() {
   const [walletModal, setWalletModal] = useState(false);
@@ -32,11 +33,14 @@ function App() {
   const [allCollections, setAllCollections] = useState([]);
   const [isRedirect, setIsRedirect] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [showSignPopup, setshowSignPopup] = useState(false);
+
   const [toastMessage, settoastMessage] = useState();
   const [isErrorToast, setisErrorToast] = useState(false);
   const [isSuccestToast, setisSuccestToast] = useState(false);
   const [userTotalNftsOwned, setUserTotalNftsOwned] = useState(0);
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
+  const [signStatus, setSignStatus] = useState("initial");
 
   const windowSize = useWindowSize();
   const { ethereum } = window;
@@ -183,6 +187,7 @@ function App() {
 
   const handleAdduserWithSignature = async (walletAddr) => {
     if (walletAddr) {
+      setSignStatus("loading");
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner(walletAddr);
       const signature = await signer
@@ -207,11 +212,24 @@ function App() {
         })
         .catch((e) => {
           console.error(e);
+          setTimeout(() => {
+            setSignStatus("error");
+          }, 2000);
+          setTimeout(() => {
+            setSignStatus("initial");
+          }, 2000);
         });
 
-      if (result && result.status === 200) {
+      if (result && result.status === 200 || result.status === 201) {
         getUserData(walletAddr);
         fetchTotalNftOwned(walletAddr);
+     
+          setSignStatus("success");
+    
+        setTimeout(() => {
+          setSignStatus("initial");
+          setshowSignPopup(false);
+        }, 2000);
       }
     }
   };
@@ -231,7 +249,9 @@ function App() {
 
       if (result && result.status === 200) {
         if (result.data === "User not found") {
-          handleAdduserWithSignature(walletAddr);
+          setTimeout(() => {
+            setshowSignPopup(true);
+          }, 1000);
         } else {
           setuserData(result.data);
           fetchTotalNftOwned(walletAddr);
@@ -250,31 +270,29 @@ function App() {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner(coinbase);
       const signature = await signer
-        .signMessage(
-          `I am updating my profile with wallet address ${coinbase}`
-        )
+        .signMessage(`I am updating my profile with wallet address ${coinbase}`)
         .catch((e) => {
           console.error(e);
         });
 
-        formData.append("signature", signature)
+      formData.append("signature", signature);
 
-      axios.post(`${baseURL}/api/users/edit/${coinbase}`, 
-      userInfo,
-      {
-        headers: {
-          "x-api-key":
-            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-        },
-      }
-      ).then((res) => {
-        console.log(res.data);
-        setCount(count + 1)
-      }).catch((err) => {
-        console.log(err);
-      })
+      axios
+        .post(`${baseURL}/api/users/edit/${coinbase}`, userInfo, {
+          headers: {
+            "x-api-key":
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        })
+        .then((res) => {
+          console.log(res.data);
+          setCount(count + 1);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
-  }
+  };
 
   const getOtherUserData = async (walletAddr) => {
     if (walletAddr) {
@@ -295,7 +313,7 @@ function App() {
         } else {
           setuserData(result.data);
           fetchTotalNftOwned(walletAddr);
-          console.log('yes')
+          console.log("yes");
         }
       } else setuserData([]);
     }
@@ -521,11 +539,17 @@ function App() {
             />
           }
         />
-        <Route exact path="/settings" element={<SettingsPage
-        coinbase={coinbase}
-        userData={userData}
-        updateUserData={updateUserData}
-        />} />
+        <Route
+          exact
+          path="/settings"
+          element={
+            <SettingsPage
+              coinbase={coinbase}
+              userData={userData}
+              updateUserData={updateUserData}
+            />
+          }
+        />
         <Route
           exact
           path="/nft/:nftId/:nftAddress"
@@ -549,6 +573,21 @@ function App() {
           handleConnection={() => {
             handleConnectWallet();
           }}
+        />
+      )}
+      {showSignPopup === true && (
+        <SignModal
+          show={showSignPopup}
+          handleClose={() => {
+            setshowSignPopup(false);
+          }}
+          onHandleConfirm={() => {
+            handleAdduserWithSignature(coinbase);
+          }}
+          onHandleReject={() => {
+            setshowSignPopup(false);
+          }}
+          signStatus={signStatus}
         />
       )}
       <Footer />

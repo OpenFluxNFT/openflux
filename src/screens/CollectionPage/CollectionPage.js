@@ -44,22 +44,22 @@ const CollectionPage = ({
   const collectionInfo = [
     {
       title: "Total Volume",
-      value: "23.6M",
+      value: "tbd",
       valueType: "CFX",
     },
     {
       title: "Floor price",
-      value: "128,254.8",
+      value: "tbd",
       valueType: "CFX",
     },
     {
       title: "Listed",
-      value: "1,245",
+      value: "tbd",
       valueType: "(5%)",
     },
     {
       title: "Owners (unique)",
-      value: "125",
+      value: "tbd",
       valueType: "(34%)",
     },
   ];

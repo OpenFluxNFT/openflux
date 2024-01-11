@@ -12,18 +12,18 @@ const CollectionCard = ({ data }) => {
           <h6 className="collection-card-title mb-0">{data.title}</h6>
           <img src={checkIcon} alt="" />
         </div>
-        <div className="d-flex align-items-center gap-2">
+        <div className="d-flex align-items-center gap-2 justify-content-between">
           <div className="d-flex flex-column">
             <span className="collection-price-holder mb-1">Floor</span>
             <div className="collection-price-wrapper d-flex align-items-center gap-2 justify-content-center p-2">
-              <img src={confluxLogo} alt="" />
+              {/* <img src={confluxLogo} alt="" /> */}
               <h6 className="collection-price mb-0">{data.floorPrice} CFX</h6>
             </div>
           </div>
           <div className="d-flex flex-column">
             <span className="collection-price-holder mb-1">Total Volume</span>
             <div className="collection-price-wrapper gap-2 d-flex align-items-center justify-content-center p-2">
-              <img src={confluxLogo} alt="" />
+              {/* <img src={confluxLogo} alt="" /> */}
               <h6 className="collection-price mb-0">{data.totalVolume} CFX</h6>
             </div>
           </div>

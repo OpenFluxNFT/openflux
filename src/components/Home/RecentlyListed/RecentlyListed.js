@@ -85,7 +85,7 @@ const RecentlyListed = ({ coinbase, onFavoriteNft, userNftFavs }) => {
 
       await axios
         .post(
-          `https://confluxapi.worldofdypians.com/api/users/addCollectionFavorite/${coinbase}`,
+          `https://confluxapi.worldofdypians.com/api/users/addNftFavorite/${coinbase}`,
           data,
           {
             headers: {
@@ -113,7 +113,7 @@ const RecentlyListed = ({ coinbase, onFavoriteNft, userNftFavs }) => {
 
       await axios
         .post(
-          `https://confluxapi.worldofdypians.com/api/users/removeCollectionFavorite/${coinbase}`,
+          `https://confluxapi.worldofdypians.com/api/users/removeNftFavorite/${coinbase}`,
           data,
           {
             headers: {

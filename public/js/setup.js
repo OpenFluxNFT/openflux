@@ -35645,8 +35645,11 @@ async function connectWallet() {
       if (window.ethereum.isCoin98) {
         window.WALLET_TYPE = "coin98";
       }
-      if (window.ethereum.isMetaMask) {
-        window.WALLET_TYPE = "metamask";
+      if (window.ethereum.isCoin98) {
+        window.WALLET_TYPE = "coin98";
+      }
+      if (window.ethereum.isFluent) {
+        window.WALLET_TYPE = "fluent";
       }
       let coinbase_address = await window.ethereum?.request({
         method: "eth_accounts",

@@ -14,8 +14,10 @@ import traitsIcon from "./assets/traitsIcon.svg";
 import collectionsIcon from "./assets/collectionsIcon.svg";
 import searchIcon from "../Header/assets/searchIcon.svg";
 import checkIcon from "../Home/RecentlyListed/assets/checkIcon.svg";
-
+import emptyFavorite from "../Home/RecentlyListed/assets/emptyFavorite.svg";
+import redFavorite from "../Home/RecentlyListed/assets/redFavorite.svg";
 import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
+import { NavLink } from "react-router-dom";
 
 const ProfileNFTList = ({ option }) => {
   const [favoritesOption, setfavoritesOption] = useState("items");
@@ -150,7 +152,10 @@ const ProfileNFTList = ({ option }) => {
   return (
     <div className="container-lg">
       <div className="row collection-list-wrapper py-4 px-2">
-        <div className="col-2 mt-2 d-none d-lg-block" style={{ overflow: "hidden" }}>
+        <div
+          className="col-2 mt-2 d-none d-lg-block"
+          style={{ overflow: "hidden" }}
+        >
           <div className="d-flex align-items-center justify-content-between">
             <div className="d-flex align-items-center gap-1">
               <img src={liveIcon} alt="" />
@@ -162,11 +167,11 @@ const ProfileNFTList = ({ option }) => {
             </div>
           </div>
           <div className="filters-wrapper mt-4 p-3 h-100 d-flex flex-column gap-3">
-            <div class="" id="accordionExample">
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="headingOne">
+            <div className="" id="accordionExample">
+              <div className="accordion-item">
+                <h2 className="accordion-header" id="headingOne">
                   <button
-                    class="accordion-button collection-filter py-3 d-flex align-items-center gap-2 collapsed"
+                    className="accordion-button collection-filter py-3 d-flex align-items-center gap-2 collapsed"
                     type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#collapseOne"
@@ -179,11 +184,11 @@ const ProfileNFTList = ({ option }) => {
                 </h2>
                 <div
                   id="collapseOne"
-                  class="accordion-collapse collapse"
+                  className="accordion-collapse collapse"
                   aria-labelledby="headingOne"
                   data-bs-parent="#accordionExample"
                 >
-                  <div class="accordion-body">
+                  <div className="accordion-body">
                     <FormGroup>
                       <FormControlLabel
                         control={
@@ -238,10 +243,10 @@ const ProfileNFTList = ({ option }) => {
                   </div>
                 </div>
               </div>
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="headingTwo">
+              <div className="accordion-item">
+                <h2 className="accordion-header" id="headingTwo">
                   <button
-                    class="accordion-button collection-filter py-3  d-flex align-items-center gap-2 collapsed"
+                    className="accordion-button collection-filter py-3  d-flex align-items-center gap-2 collapsed"
                     type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#collapseTwo"
@@ -254,11 +259,11 @@ const ProfileNFTList = ({ option }) => {
                 </h2>
                 <div
                   id="collapseTwo"
-                  class="accordion-collapse collapse"
+                  className="accordion-collapse collapse"
                   aria-labelledby="headingTwo"
                   data-bs-parent="#accordionExample"
                 >
-                  <div class="accordion-body">
+                  <div className="accordion-body">
                     <div className="d-flex flex-column gap-2">
                       <div className="d-flex align-items-center gap-2">
                         <input
@@ -278,79 +283,6 @@ const ProfileNFTList = ({ option }) => {
                   </div>
                 </div>
               </div>
-              {/* <div class="accordion-item">
-                <h2 class="accordion-header" id="headingThree">
-                  <button
-                    class="accordion-button collection-filter py-3 d-flex align-items-center gap-2 collapsed"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#collapseThree"
-                    aria-expanded="false"
-                    aria-controls="collapseThree"
-                  >
-                    <img src={traitsIcon} alt="" />
-                    Traits
-                  </button>
-                </h2>
-                <div
-                  id="collapseThree"
-                  class="accordion-collapse collapse"
-                  aria-labelledby="headingThree"
-                  data-bs-parent="#accordionExample"
-                >
-                  <div class="accordion-body">
-                    <div class="" id="accordionExample2">
-                      {dummyTraits.map((item, index) => (
-                        <div class="accordion-item">
-                          <h2
-                            class="accordion-header"
-                            id={`headingOne${item.title}`}
-                          >
-                            <button
-                              class="accordion-button collection-filter px-2 py-2 d-flex align-items-center gap-2 collapsed"
-                              type="button"
-                              data-bs-toggle="collapse"
-                              data-bs-target={`#collapseOne${item.title}`}
-                              aria-expanded="false"
-                              aria-controls={`collapseOne${item.title}`}
-                              style={{ fontSize: "10px" }}
-                            >
-                              {item.title}
-                            </button>
-                          </h2>
-                          <div
-                            id={`collapseOne${item.title}`}
-                            class="accordion-collapse collapse"
-                            aria-labelledby={`headingOne${item.title}`}
-                            data-bs-parent="#accordionExample2"
-                          >
-                            <div class="accordion-body px-2">
-                              <FormGroup>
-                                {item.traits.map((trait, index) => (
-                                  <FormControlLabel
-                                    control={
-                                      <Checkbox
-                                        size="small"
-                                        sx={{
-                                          color: "white",
-                                          "&.Mui-checked": {
-                                            color: "#3DBDA7",
-                                          },
-                                        }}
-                                      />
-                                    }
-                                    label={trait}
-                                  />
-                                ))}
-                              </FormGroup>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div> */}
             </div>
           </div>
         </div>
@@ -367,28 +299,37 @@ const ProfileNFTList = ({ option }) => {
               </div>
             </div>
             <div className="col-3">
-              <div class="dropdown">
+              <div className="dropdown">
                 <button
-                  class="btn btn-secondary categories-dropdown p-3 dropdown-toggle w-100 d-flex align-items-center justify-content-between"
+                  className="btn btn-secondary categories-dropdown p-3 dropdown-toggle w-100 d-flex align-items-center justify-content-between"
                   type="button"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
                   Price: Low to High
                 </button>
-                <ul class="dropdown-menu categories-dropdown-menu w-100">
+                <ul className="dropdown-menu categories-dropdown-menu w-100">
                   <li>
-                    <a class="dropdown-item categories-dropdown-item" href="#">
+                    <a
+                      className="dropdown-item categories-dropdown-item"
+                      href="#"
+                    >
                       Low to High
                     </a>
                   </li>
                   <li>
-                    <a class="dropdown-item categories-dropdown-item" href="#">
+                    <a
+                      className="dropdown-item categories-dropdown-item"
+                      href="#"
+                    >
                       High to Low
                     </a>
                   </li>
                   <li>
-                    <a class="dropdown-item categories-dropdown-item" href="#">
+                    <a
+                      className="dropdown-item categories-dropdown-item"
+                      href="#"
+                    >
                       Recently Listed
                     </a>
                   </li>
@@ -461,53 +402,91 @@ const ProfileNFTList = ({ option }) => {
           </div>
           {option === "favorites" ? (
             <div className={`small-cards-grid mt-3`}>
-              {favoritesOption === "items" ? (
-                dummyCards.map((item, index) => (
-                  <div className="recently-listed-card p-3 d-flex flex-column">
-                    <img
-                      src={require(`./assets/nftPlaceholder${index + 1}.png`)}
-                      className="card-img"
-                      alt=""
-                    />
-                    <div className="d-flex align-items-center gap-2 mt-2">
-                      <h6
-                        className="recently-listed-title mb-0"
-                        style={{ fontSize: "12px" }}
+              {favoritesOption === "items"
+                ? dummyCards.map((item, index) => (
+                    <div
+                      className="recently-listed-card p-3 d-flex flex-column"
+                      key={index}
+                    >
+                      <NavLink
+                        to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
+                        style={{ textDecoration: "none" }}
+                        className={"position-relative"}
                       >
-                        CAWS #1125
-                      </h6>
-                      <img src={checkIcon} alt="" />
+                        <img
+                          src={require(`./assets/nftPlaceholder${
+                            index + 1
+                          }.png`)}
+                          className="card-img"
+                          alt=""
+                        />
+                        <div
+                          className="position-absolute favorite-container"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                          }}
+                        >
+                          <div className="d-flex align-items-center position-relative gap-2">
+                            <img src={redFavorite} alt="" className="fav-img" />
+                            <span className="fav-count-active">222</span>
+                          </div>
+                        </div>
+                        <div className="d-flex align-items-center gap-2 mt-2">
+                          <h6
+                            className="recently-listed-title mb-0"
+                            style={{ fontSize: "12px" }}
+                          >
+                            CAWS #1125
+                          </h6>
+                          <img src={checkIcon} alt="" />
+                        </div>
+                        <div className="d-flex align-items-center mt-2 gap-3">
+                          <h6
+                            className="cfx-price mb-0"
+                            style={{ fontSize: "10px" }}
+                          >
+                            1254.89 CFX
+                          </h6>
+                          <span
+                            className="usd-price"
+                            style={{ fontSize: "9px" }}
+                          >
+                            ($ 654,874.86)
+                          </span>
+                        </div>
+                        <div className="mt-3">
+                          <button className="buy-btn w-100">Buy</button>
+                        </div>
+                      </NavLink>
                     </div>
-                    <div className="d-flex align-items-center mt-2 gap-3">
-                      <h6
-                        className="cfx-price mb-0"
-                        style={{ fontSize: "10px" }}
+                  ))
+                : dummyFavorites.map((item, index) => (
+                    <div
+                      className="collection-card d-flex flex-column"
+                      key={index}
+                    >
+                      <NavLink
+                        to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
+                        style={{ textDecoration: "none" }}
+                        className={"position-relative"}
                       >
-                        1254.89 CFX
-                      </h6>
-                      <span className="usd-price" style={{ fontSize: "9px" }}>
-                        ($ 654,874.86)
-                      </span>
-                    </div>
-                    <div className="mt-3">
-                      <button className="buy-btn w-100">Buy</button>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                dummyFavorites.map((item, index) => (
-                    <div className="collection-card d-flex flex-column">
-                    <img src={require(`./assets/${item.image}.png`)} className="w-100" alt="" />
-                    <div className="p-3 collection-lower d-flex align-items-center justify-content-between">
-                        <div className="d-flex align-items-center gap-2">
+                        <img
+                          src={require(`./assets/${item.image}.png`)}
+                          className="w-100"
+                          alt=""
+                        />
+
+                        <div className="p-3 collection-lower d-flex align-items-center justify-content-between">
+                          <div className="d-flex align-items-center gap-2">
                             <h6 className="mb-0">{item.title}</h6>
                             <img src={checkIcon} alt="" />
+                          </div>
+                          <img src={star} alt="" />
                         </div>
-                        <img src={star} alt="" />
+                      </NavLink>
                     </div>
-                </div>
-                ))
-              )}
+                  ))}
             </div>
           ) : (
             <div
@@ -520,7 +499,7 @@ const ProfileNFTList = ({ option }) => {
               } mt-3`}
             >
               {gridView === "list" ? (
-                <table class="table nft-table">
+                <table className="table nft-table">
                   <thead>
                     <tr style={{ borderBottom: "2px solid #828FBB" }}>
                       <th
@@ -549,7 +528,7 @@ const ProfileNFTList = ({ option }) => {
                   </thead>
                   <tbody>
                     {dummyCards.map((item, index) => (
-                      <tr className="nft-table-row p-1">
+                      <tr className="nft-table-row p-1" key={index}>
                         <td
                           className="table-item col-2 d-flex align-items-center gap-1 w-100"
                           scope="row"
@@ -582,35 +561,56 @@ const ProfileNFTList = ({ option }) => {
                 </table>
               ) : (
                 dummyCards.map((item, index) => (
-                  <div className="recently-listed-card p-3 d-flex flex-column">
-                    <img
-                      src={require(`./assets/nftPlaceholder${index + 1}.png`)}
-                      className="card-img"
-                      alt=""
-                    />
-                    <div className="d-flex align-items-center gap-2 mt-2">
-                      <h6
-                        className="recently-listed-title mb-0"
-                        style={{ fontSize: "12px" }}
+                  <div
+                    className="recently-listed-card p-3 d-flex flex-column"
+                    key={index}
+                  >
+                    <NavLink
+                      to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
+                      style={{ textDecoration: "none" }}
+                      className={"position-relative"}
+                    >
+                      <img
+                        src={require(`./assets/nftPlaceholder${index + 1}.png`)}
+                        className="card-img card-img2"
+                        alt=""
+                      />
+                      <div
+                        className="position-absolute favorite-container"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                        }}
                       >
-                        CAWS #1125
-                      </h6>
-                      <img src={checkIcon} alt="" />
-                    </div>
-                    <div className="d-flex align-items-center mt-2 gap-3">
-                      <h6
-                        className="cfx-price mb-0"
-                        style={{ fontSize: "10px" }}
-                      >
-                        1254.89 CFX
-                      </h6>
-                      <span className="usd-price" style={{ fontSize: "9px" }}>
-                        ($ 654,874.86)
-                      </span>
-                    </div>
-                    <div className="mt-3">
-                      <button className="buy-btn w-100">Buy</button>
-                    </div>
+                        <div className="d-flex align-items-center position-relative gap-2">
+                          <img src={emptyFavorite} alt="" className="fav-img" />
+                          <span className="fav-count">222</span>
+                        </div>
+                      </div>
+                      <div className="d-flex align-items-center gap-2 mt-2">
+                        <h6
+                          className="recently-listed-title mb-0"
+                          style={{ fontSize: "12px" }}
+                        >
+                          CAWS #1125
+                        </h6>
+                        <img src={checkIcon} alt="" />
+                      </div>
+                      <div className="d-flex align-items-center mt-2 gap-3">
+                        <h6
+                          className="cfx-price mb-0"
+                          style={{ fontSize: "10px" }}
+                        >
+                          1254.89 CFX
+                        </h6>
+                        <span className="usd-price" style={{ fontSize: "9px" }}>
+                          ($ 654,874.86)
+                        </span>
+                      </div>
+                      <div className="mt-3">
+                        <button className="buy-btn w-100">Buy</button>
+                      </div>
+                    </NavLink>
                   </div>
                 ))
               )}

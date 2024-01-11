@@ -54,6 +54,7 @@ input:focus {
 
 
 .recently-listed-card {
+ 
   border-radius: 30px;
   background: linear-gradient(
     148deg,
@@ -61,9 +62,14 @@ input:focus {
     rgba(255, 255, 255, 0.05) 100%
   );
   backdrop-filter: blur(10px);
+  border: 1px solid transparent;
 
   .card-img {
-    border-radius: 30px;
+    /* border-radius: 30px; */
+  }
+
+  .card-img2 {
+    border-radius: 16px;
   }
   .recently-listed-title {
     color: #fff;
@@ -177,4 +183,9 @@ input:focus {
   .main-hero-title {
     font-size: 30px;
   }
+}
+
+
+.recently-listed-card:hover {
+  border: 1px solid #2f80ed;
 }

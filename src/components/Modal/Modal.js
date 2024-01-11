@@ -9,7 +9,7 @@ const Modal = ({
   children,
   setIsVisible,
   onModalClose,
-  maxWidth,
+  maxWidth,top
 }) => {
   let className = "modal fade ";
   let style = {};
@@ -27,7 +27,7 @@ const Modal = ({
       aria-labelledby={`modalLabel` + modalId}
       aria-hidden="true"
     >
-      <div className="modal-dialog" style={{ maxWidth: maxWidth }}>
+      <div className="modal-dialog" style={{ maxWidth: maxWidth, top: top }}>
         <div className="modal-content p-0 position-relative">
           {/* <img src={require("../../../Assets/General/times-icon.svg").default} alt="" aria-hidden="true" className="close" data-dismiss="modal" aria-label="Close" /> */}
           <span

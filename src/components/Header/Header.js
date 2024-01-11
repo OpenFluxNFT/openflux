@@ -1,16 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import "./_header.scss";
 import dypiusLogo from "./assets/dypiusLogo.svg";
 import cartIcon from "./assets/cartIcon.svg";
 import walletIcon from "./assets/walletIcon.svg";
 import userIcon from "./assets/userIcon.svg";
 import conflux from "./assets/conflux.svg";
+import copy from "./assets/copy.svg";
+import check from "./assets/check.svg";
+import logout from "./assets/logout.svg";
 
 import searchIcon from "./assets/searchIcon.svg";
 import { shortAddress } from "../../hooks/shortAddress";
 import { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { handleSwitchNetworkhook } from "../../hooks/switchNetwork";
+import OutsideClickHandler from "react-outside-click-handler";
+import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import dropdown from "./assets/dropdown.svg";
+import Web3 from "web3";
+import getFormattedNumber from "../../hooks/get-formatted-number";
 
 const Header = ({
   handleSignup,
@@ -18,7 +27,32 @@ const Header = ({
   isConnected,
   chainId,
   handleSwitchNetwork,
+  handleSignupAndRedirectToAccount,
+  handleDisconnect,
 }) => {
+  const [showmenu, setShowMenu] = useState(false);
+  const [tooltip, setTooltip] = useState(false);
+  const [balance, setUserBalance] = useState(0);
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const getUserBalance = async () => {
+    if (isConnected && coinbase && chainId === 1030) {
+      const balance = await window.ethereum.request({
+        method: "eth_getBalance",
+        params: [coinbase, "latest"],
+      });
+
+      if (balance) {
+        const web3cfx = new Web3(window.config.conflux_endpoint);
+        const stringBalance = web3cfx.utils.hexToNumberString(balance);
+        const amount = web3cfx.utils.fromWei(stringBalance, "ether");
+        setUserBalance(amount);
+      }
+    }
+  };
+
   const handleConfluxPool = async () => {
     if (window.ethereum) {
       if (!window.gatewallet) {
@@ -35,10 +69,23 @@ const Header = ({
     }
   };
 
+  const manageDisconnect = () => {
+    if (location.pathname.includes("/profile")) {
+      handleDisconnect();
+      // navigate("/");
+    } else handleDisconnect();
+  };
+
+  useEffect(() => {
+    getUserBalance();
+  }, [coinbase, isConnected, chainId]);
+
   return (
     <div className="container-fluid py-3 header-wrapper">
-      <div className="container-lg px-0
-      ">
+      <div
+        className="container-lg px-0
+      "
+      >
         <div className="row mx-0 align-items-center justify-content-center">
           <div className="col-1">
             <NavLink to={"/"}>
@@ -58,20 +105,29 @@ const Header = ({
           <div className="col-7 px-0">
             <div className="d-flex gap-1 align-items-center justify-content-between">
               <div className="d-flex align-items-center gap-4">
-                <NavLink className={"header-link mb-0"} to={"/collections"}>
+                <NavLink
+                  to={"/collections"}
+                  className={({ isActive }) =>
+                    isActive ? "header-link-active mb-0" : "header-link mb-0"
+                  }
+                >
                   Collections
                 </NavLink>
-                <NavLink className={"header-link mb-0"} to={"/mint"}>
+                {/* <NavLink className={"header-link mb-0"} to={"/mint"}>
                   Mint
-                </NavLink>
-                <NavLink className={"header-link mb-0"} to={"/support"}>
+                </NavLink> */}
+                {/* <a
+                  className={"header-link mb-0"}
+                  href="mailto:someone@support.com"
+                >
                   Support
-                </NavLink>
+                </a> */}
               </div>
+
               <div className="d-flex align-items-center gap-3">
                 {coinbase && isConnected && chainId === 1030 && (
                   <button className="btn account-btn d-flex align-items-center gap-2">
-                    <img src={conflux} alt="" /> Conflux
+                    <img src={conflux} alt="" /> Conflux eSpace
                   </button>
                 )}
                 {coinbase && isConnected && chainId !== 1030 && (
@@ -90,13 +146,64 @@ const Header = ({
                   </button>
                 )}
                 {coinbase && isConnected && (
-                  <button className="btn account-btn d-flex align-items-center gap-2">
-                    {shortAddress(coinbase)}
+                  <button
+                    className="btn account-btn d-flex align-items-center gap-2"
+                    onClick={() => {
+                      setShowMenu(true);
+                    }}
+                  >
+                    <img src={walletIcon} alt="" />
+                    {getFormattedNumber(balance, 2)} CFX
+                    <img src={dropdown} alt="" />
                   </button>
                 )}
-                <button className="btn blue-btn">
-                  <img src={userIcon} alt="" />
-                </button>
+                {coinbase && isConnected ? (
+                  <NavLink className="btn blue-btn" to={`/profile/${coinbase}`}>
+                    <img src={userIcon} alt="" />
+                  </NavLink>
+                ) : (
+                  <button
+                    className="btn blue-btn"
+                    onClick={handleSignupAndRedirectToAccount}
+                  >
+                    <img src={userIcon} alt="" />
+                  </button>
+                )}
+                {showmenu === true && (
+                  <div className="position-absolute" style={{ width: "210px" }}>
+                    <OutsideClickHandler
+                      onOutsideClick={() => {
+                        setShowMenu(false);
+                      }}
+                    >
+                      <div className="menuwrapper">
+                        <div className="d-flex flex-column gap-2">
+                          <span
+                            className="menuitem2"
+                            onClick={() => {
+                              navigator.clipboard.writeText(coinbase);
+                              setTooltip(true);
+                              setTimeout(() => setTooltip(false), 2000);
+                            }}
+                          >
+                            {shortAddress(coinbase)}{" "}
+                            <img src={tooltip ? check : copy} alt="" />
+                          </span>
+
+                          <span
+                            className="menuitem2"
+                            onClick={() => {
+                              setShowMenu(false);
+                              manageDisconnect();
+                            }}
+                          >
+                            <img src={logout} alt="" /> Disconnect{" "}
+                          </span>
+                        </div>
+                      </div>
+                    </OutsideClickHandler>
+                  </div>
+                )}
               </div>
             </div>
           </div>

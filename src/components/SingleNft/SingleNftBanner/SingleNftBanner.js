@@ -6,7 +6,7 @@ import websiteIcon from "./assets/websiteIcon.svg";
 import shareIcon from "./assets/shareIcon.svg";
 import cfx from "./assets/cfx.svg";
 
-const SingleNftBanner = () => {
+const SingleNftBanner = ({ chainId, onShowMakeOfferPopup }) => {
   return (
     <div className="container-lg">
       <div className="nft-banner-wrapper p-3">
@@ -93,11 +93,16 @@ const SingleNftBanner = () => {
                     </div>
                   </div>
                 </div>
-                <span className="error-status-text">
-                  *Unsupported network. please change the chain on your wallet
-                </span>
+                {chainId !== 1030 && (
+                  <span className="error-status-text">
+                    *Unsupported network. please change the chain on your wallet
+                  </span>
+                )}
                 <div className="d-flex align-items-center gap-2 justify-content-center mt-4">
-                  <button className="btn make-offer-btn px-3 py-1 col-lg-3">
+                  <button
+                    className="btn make-offer-btn px-3 py-1 col-lg-3"
+                    onClick={onShowMakeOfferPopup}
+                  >
                     Make Offer
                   </button>
                   <button className="btn buy-nft-btn px-3 py-1 col-lg-3">

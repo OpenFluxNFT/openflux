@@ -10,13 +10,12 @@
   justify-content: center;
   align-items: center;
 
-  @media screen and (max-width: 786px) {
-    height: 200px;
-  }
+  // @media screen and (max-width: 786px) {
+  //   height: 200px;
+  // }
   .info-arrow {
     @media screen and (max-width: 786px) {
-      transform: rotate(90deg);
-    }
+display: none;    }
   }
 }
 

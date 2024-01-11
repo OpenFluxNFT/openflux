@@ -7,6 +7,7 @@ import collectionPlaceholder4 from "./assets/collectionPlaceholder4.png";
 import checkIcon from "./assets/checkIcon.svg";
 import useWindowSize from "../../../hooks/useWindowSize";
 import Slider from "react-slick";
+import { NavLink } from "react-router-dom";
 
 const TopCollections = () => {
   const windowSize = useWindowSize();
@@ -27,73 +28,92 @@ const TopCollections = () => {
       title: "Cats and Watches Society",
       img: collectionPlaceholder1,
       floorPrice: 122.8,
+      collectionName: "catsandwatchessocietycaws",
+      collectionAddress: window.config.nft_caws_address
     },
     {
       title: "World of Dypians Land",
       img: collectionPlaceholder2,
       floorPrice: 142.7,
+      collectionName: "worldofdypians",
+      collectionAddress: window.config.nft_land_address
+
     },
     {
       title: "CAWS Timepiece",
       img: collectionPlaceholder3,
       floorPrice: "--",
+      collectionName: "cawstimepiece",
+      collectionAddress: window.config.nft_timepiece_address
+
     },
     {
       title: "Cats and Watches Society",
       img: collectionPlaceholder4,
       floorPrice: "--",
+      collectionName: "catsandwatchessocietycaws",
+      collectionAddress: window.config.nft_caws_address
+
     },
   ];
 
   return (
     <div className="container-lg pt-0 pb-5 pt-lg-5">
       <div className="row">
-        <h6 className="main-hero-title mb-3">Top Collections</h6>
+        <h6 className="main-hero-title mb-3">New Collections</h6>
         {windowSize.width > 786 ? (
           <div className="top-collections-grid pe-0">
             {dummyCollections.map((item, index) => (
-            <div
-              className="position-relative"
-              key={index}
-              style={{ width: "fit-content" }}
-            >
-              <img src={item.img} className="top-collection-image" alt="" />
-              <div className="top-collection-info d-flex flex-column p-3 gap-2">
-                <div className="d-flex align-items-center gap-1">
-                  <h6 className="top-collection-title mb-0">{item.title}</h6>
-                  <img src={checkIcon} alt="" />
-                </div>
-                <div className="d-flex align-items-center gap-1">
-                  <span className="mb-0 floor-placeholder">Floor:</span>
-                  <span className="floor-price mb-0">
-                    {item.floorPrice} CFX
-                  </span>
-                </div>
+              <div
+                className="position-relative top-collection-wrapper"
+                key={index}
+                style={{ width: "fit-content" }}
+              >
+                <NavLink to={`/collection/${item.collectionAddress}/${item.collectionName}`}>
+                  <img src={item.img} className="top-collection-image" alt="" />
+                  <div className="top-collection-info d-flex flex-column p-3 gap-2">
+                    <div className="d-flex align-items-center gap-1">
+                      <h6 className="top-collection-title mb-0">
+                        {item.title}
+                      </h6>
+                      <img src={checkIcon} alt="" />
+                    </div>
+                    <div className="d-flex align-items-center gap-1">
+                      <span className="mb-0 floor-placeholder">Floor:</span>
+                      <span className="floor-price mb-0">
+                        {item.floorPrice} CFX
+                      </span>
+                    </div>
+                  </div>
+                </NavLink>
               </div>
-            </div>
             ))}
           </div>
         ) : (
           <Slider {...settings}>
             {dummyCollections.map((item, index) => (
               <div
-                className="position-relative"
+                className="position-relative top-collection-wrapper"
                 key={index}
                 // style={{ width: "fit-content" }}
               >
-                <img src={item.img} className="top-collection-image" alt="" />
-                <div className="top-collection-info d-flex flex-column p-3 gap-2">
-                  <div className="d-flex align-items-center gap-1">
-                    <h6 className="top-collection-title mb-0">{item.title}</h6>
-                    <img src={checkIcon} alt="" />
+                <NavLink to={`/collection/${item.collectionAddress}/${item.collectionName}`}>
+                  <img src={item.img} className="top-collection-image" alt="" />
+                  <div className="top-collection-info d-flex flex-column p-3 gap-2">
+                    <div className="d-flex align-items-center gap-1">
+                      <h6 className="top-collection-title mb-0">
+                        {item.title}
+                      </h6>
+                      <img src={checkIcon} alt="" />
+                    </div>
+                    <div className="d-flex align-items-center gap-1">
+                      <span className="mb-0 floor-placeholder">Floor:</span>
+                      <span className="floor-price mb-0">
+                        {item.floorPrice} CFX
+                      </span>
+                    </div>
                   </div>
-                  <div className="d-flex align-items-center gap-1">
-                    <span className="mb-0 floor-placeholder">Floor:</span>
-                    <span className="floor-price mb-0">
-                      {item.floorPrice} CFX
-                    </span>
-                  </div>
-                </div>
+                </NavLink>
               </div>
             ))}
           </Slider>

@@ -18,6 +18,7 @@ const MobileHeader = ({
   isConnected,
   chainId,
   handleSwitchNetwork,
+  handleSignupAndRedirectToAccount,
 }) => {
   const [menu, setMenu] = useState(false);
 
@@ -66,8 +67,8 @@ const MobileHeader = ({
                     setMenu(!menu);
                   }}
                 />
-                <label class="menu-button-container" for="menu-toggle">
-                  <div class="menu-button"></div>
+                <label className="menu-button-container" htmlFor="menu-toggle">
+                  <div className="menu-button"></div>
                 </label>
               </>
             </div>
@@ -92,14 +93,17 @@ const MobileHeader = ({
           <img src={mobileNavArrow} alt="" />
         </NavLink>
 
-        <div className="mobile-menu-item d-flex align-items-center justify-content-between p-3">
+        {/* <div className="mobile-menu-item d-flex align-items-center justify-content-between p-3">
           <h6 className="mb-0 text-white">Mint</h6>
           <img src={mobileNavArrow} alt="" />
-        </div>
-        <div className="mobile-menu-item d-flex align-items-center justify-content-between p-3">
-          <h6 className="mb-0 text-white">Support</h6>
+        </div> */}
+        {/* <div className="mobile-menu-item d-flex align-items-center justify-content-between p-3">
+          <a className={"mb-0 text-white"} href="mailto:someone@support.com">
+            Support
+          </a>
+
           <img src={mobileNavArrow} alt="" />
-        </div>
+        </div> */}
         <div className="d-flex align-items-center gap-3">
           {coinbase && isConnected && chainId === 1030 && (
             <button className="btn account-btn d-flex align-items-center gap-2">
@@ -125,9 +129,18 @@ const MobileHeader = ({
               {shortAddress(coinbase)}
             </button>
           )}
-          <button className="btn blue-btn" onClick={() => console.log("hello")}>
-            <img src={userIcon} alt="" />
-          </button>
+          {coinbase && isConnected ? (
+            <NavLink className="btn blue-btn" to={`/profile/${coinbase}`}>
+              <img src={userIcon} alt="" />
+            </NavLink>
+          ) : (
+            <button
+              className="btn blue-btn"
+              onClick={handleSignupAndRedirectToAccount}
+            >
+              <img src={userIcon} alt="" />
+            </button>
+          )}
         </div>
       </div>
     </>

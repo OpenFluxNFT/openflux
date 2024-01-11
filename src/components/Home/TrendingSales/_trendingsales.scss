@@ -32,17 +32,16 @@
     gap: 35px;
 
     @media screen and (max-width: 1024px) {
-    grid-template-columns: repeat(2, 1fr);
-      
+      grid-template-columns: repeat(2, 1fr);
     }
     @media screen and (max-width: 786px) {
-    grid-template-columns: repeat(1, 1fr);
-    padding-bottom: 30px;
-      
+      grid-template-columns: repeat(1, 1fr);
+      padding-bottom: 30px;
     }
     .trending-card {
       border-radius: 10px;
       background: #23244e;
+      border: 1px solid transparent;
       .trending-card-title {
         color: #fff;
         font-size: 16px;
@@ -111,16 +110,20 @@
         }
       }
 
-      .list-date{
-        color: #B6A6B5;
-font-size: 13px;
-font-style: normal;
-font-weight: 400;
-line-height: 12px; 
-position: absolute;
-left: 0%;
-bottom: -15%;
+      .list-date {
+        color: #b6a6b5;
+        font-size: 13px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 12px;
+        position: absolute;
+        left: 0%;
+        bottom: -15%;
       }
+    }
+
+    .trending-card:hover {
+      border: 1px solid #2f80ed;
     }
   }
 }

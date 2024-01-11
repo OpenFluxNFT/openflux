@@ -13,6 +13,16 @@
   width: 100%;
 }
 
+.top-collection-wrapper {
+  border: 1px solid transparent;
+  border-radius: 30px;
+}
+
+.top-collection-wrapper:hover {
+  border: 1px solid #2f80ed;
+
+}
+
 .top-collection-info {
   position: absolute;
   bottom: 0;

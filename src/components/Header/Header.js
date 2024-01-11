@@ -116,12 +116,12 @@ const Header = ({
                 {/* <NavLink className={"header-link mb-0"} to={"/mint"}>
                   Mint
                 </NavLink> */}
-                <a
+                {/* <a
                   className={"header-link mb-0"}
                   href="mailto:someone@support.com"
                 >
                   Support
-                </a>
+                </a> */}
               </div>
 
               <div className="d-flex align-items-center gap-3">

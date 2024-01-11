@@ -220,15 +220,22 @@ function App() {
           }, 2000);
         });
 
-      if (result && result.status === 200 || result.status === 201) {
+      if ((result && result.status === 200) || result.status === 201) {
         getUserData(walletAddr);
         fetchTotalNftOwned(walletAddr);
-     
-          setSignStatus("success");
-    
+
+        setSignStatus("success");
+
         setTimeout(() => {
           setSignStatus("initial");
           setshowSignPopup(false);
+        }, 2000);
+      } else {
+        setTimeout(() => {
+          setSignStatus("error");
+        }, 2000);
+        setTimeout(() => {
+          setSignStatus("initial");
         }, 2000);
       }
     }

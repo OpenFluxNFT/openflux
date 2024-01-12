@@ -18,16 +18,16 @@ const HtmlTooltip = styled(({ className, ...props }) => (
   },
 }));
 
-const ProfileSettings = ({ coinbase, userData, updateUserData, successUpdateProfile }) => {
-const baseUrl = "https://confluxapi.worldofdypians.com/";
+const ProfileSettings = ({
+  coinbase,
+  userData,
+  updateUserData,
+  successUpdateProfile,
+}) => {
+  const baseUrl = "https://confluxapi.worldofdypians.com/";
 
   const [profileImage, setProfileImage] = useState();
   const [bannerImage, setBannerImage] = useState();
-
-
-
-
-
 
   const [userInfo, setUserInfo] = useState({
     username: "",
@@ -39,7 +39,7 @@ const baseUrl = "https://confluxapi.worldofdypians.com/";
   });
 
   const display = () => {
-    if(userData && userData._id){
+    if (userData && userData._id) {
       // setUserInfo(userInfo => ({
       //   ...userInfo,
       //   username: userData?.username,
@@ -50,14 +50,14 @@ const baseUrl = "https://confluxapi.worldofdypians.com/";
       //   bannerPicture: userData?.bannerPicture ? baseUrl + userData?.bannerPicture : '',
       // }))
 
-      if(userData?.profilePicture){
-        setProfileImage(baseUrl + userData?.profilePicture)
+      if (userData?.profilePicture) {
+        setProfileImage(baseUrl + userData?.profilePicture);
       }
-      if(userData?.bannerPicture){
-        setBannerImage(baseUrl + userData?.bannerPicture)
+      if (userData?.bannerPicture) {
+        setBannerImage(baseUrl + userData?.bannerPicture);
       }
     }
-  }
+  };
 
   const isImage = async (file) => {
     const acceptedImageTypes = ["image/png"];
@@ -154,195 +154,202 @@ const baseUrl = "https://confluxapi.worldofdypians.com/";
 
   useEffect(() => {
     display();
-  }, [userData])
-  
+  }, [userData]);
 
   return (
-   <>
-    <div className="col-12 col-lg-10">
-      <div className="row">
-        <h6 className="settings-header mb-3">Profile Details</h6>
-        <div className="col-12 col-lg-6">
-          <div className="d-flex flex-column gap-4">
-            <div className="d-flex flex-column gap-2">
-              <h6 className="input-label mb-0">Username</h6>
-              <input
-                type="text"
-                placeholder={userData?.username ? userData.username : "Username"}
-                className="settings-input w-100"
-                value={userInfo.username}
-                onChange={(e) =>
-                  setUserInfo((userInfo) => ({
-                    ...userInfo,
-                    username: e.target.value,
-                  }))
-                }
-              />
-            </div>
-            <div className="d-flex flex-column gap-2">
-              <div className="d-flex align-items-center gap-2">
-                <h6 className="input-label mb-0">Email</h6>
-                <HtmlTooltip
-                  placement="top"
-                  title={
-                    <p className="tooltip-text mb-0">
-                      The email address will be used to send various
-                      notifications related to activity on the Marketplace.
-                    </p>
+    <>
+      <div className="col-12 col-lg-10">
+        <div className="row">
+          <h6 className="settings-header mb-3">Profile Details</h6>
+          <div className="col-12 col-lg-6">
+            <div className="d-flex flex-column gap-4">
+              <div className="d-flex flex-column gap-2">
+                <h6 className="input-label mb-0">Username</h6>
+                <input
+                  type="text"
+                  placeholder={
+                    userData?.username ? userData.username : "Username"
                   }
-                >
-                  <img src={infoIcon} width={16} height={16} alt="" />
-                </HtmlTooltip>
+                  className="settings-input w-100"
+                  value={userInfo.username}
+                  onChange={(e) =>
+                    setUserInfo((userInfo) => ({
+                      ...userInfo,
+                      username: e.target.value,
+                    }))
+                  }
+                />
               </div>
-              <input
-                type="email"
-                placeholder={userData?.email ? userData?.email : "Email"}
-                className="settings-input w-100"
-                value={userInfo.email}
-                onChange={(e) =>
-                  setUserInfo((userInfo) => ({
-                    ...userInfo,
-                    email: e.target.value,
-                  }))
-                }
-              />
-            </div>
-            <div className="d-flex flex-column gap-2">
-              <h6 className="input-label mb-0">Website</h6>
-              <input
-                type="text"
-                placeholder={userData?.website ? userData?.website : "Website"}
-                className="settings-input w-100"
-                value={userInfo.website}
-                onChange={(e) =>
-                  setUserInfo((userInfo) => ({
-                    ...userInfo,
-                    website: e.target.value,
-                  }))
-                }
-              />
+              <div className="d-flex flex-column gap-2">
+                <div className="d-flex align-items-center gap-2">
+                  <h6 className="input-label mb-0">Email</h6>
+                  <HtmlTooltip
+                    placement="top"
+                    title={
+                      <p className="tooltip-text mb-0">
+                        The email address will be used to send various
+                        notifications related to activity on the Marketplace.
+                      </p>
+                    }
+                  >
+                    <img src={infoIcon} width={16} height={16} alt="" />
+                  </HtmlTooltip>
+                </div>
+                <input
+                  type="email"
+                  placeholder={userData?.email ? userData?.email : "Email"}
+                  className="settings-input w-100"
+                  value={userInfo.email}
+                  onChange={(e) =>
+                    setUserInfo((userInfo) => ({
+                      ...userInfo,
+                      email: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+              <div className="d-flex flex-column gap-2">
+                <h6 className="input-label mb-0">Website</h6>
+                <input
+                  type="text"
+                  placeholder={
+                    userData?.website ? userData?.website : "Website"
+                  }
+                  className="settings-input w-100"
+                  value={userInfo.website}
+                  onChange={(e) =>
+                    setUserInfo((userInfo) => ({
+                      ...userInfo,
+                      website: e.target.value,
+                    }))
+                  }
+                />
+              </div>
             </div>
           </div>
-        </div>
-        <div className="col-12 col-lg-6">
-          <div className="d-flex flex-column justify-content-between mt-4 mt-lg-0 h-100">
-            <div className="d-flex align-items-center">
-              <div className="col-3">
-                <div className="d-flex flex-column gap-2">
-                  <div className="d-flex align-items-center gap-2">
-                    <h6 className="input-label mb-0">Profile Image</h6>
-                    <HtmlTooltip
-                      placement="top"
-                      title={
-                        <div className="d-flex flex-column gap-2">
-                          <p className="tooltip-text mb-0">
-                            Recommended: 400px x 400px
-                          </p>
-                          <p className="tooltip-text mb-0">Max size: 500KB</p>
-                        </div>
-                      }
-                    >
-                      <img src={infoIcon} width={16} height={16} alt="" />
-                    </HtmlTooltip>
-                  </div>
-                  <div className="profile-image-placeholder">
-                    <input
-                      type="file"
-                      accept=".png"
-                      onChange={uploadProfileImage}
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                        opacity: 0,
-                        cursor: "pointer",
-                      }}
-                    />
-                    {profileImage && (
-                      <img
-                        src={profileImage}
-                        className="profile-image"
-                        alt=""
+          <div className="col-12 col-lg-6">
+            <div className="d-flex flex-column justify-content-between mt-4 mt-lg-0 h-100">
+              <div className="d-flex align-items-center">
+                <div className="col-3">
+                  <div className="d-flex flex-column gap-2">
+                    <div className="d-flex align-items-center gap-2">
+                      <h6 className="input-label mb-0">Profile Image</h6>
+                      <HtmlTooltip
+                        placement="top"
+                        title={
+                          <div className="d-flex flex-column gap-2">
+                            <p className="tooltip-text mb-0">
+                              Recommended: 400px x 400px
+                            </p>
+                            <p className="tooltip-text mb-0">Max size: 500KB</p>
+                          </div>
+                        }
+                      >
+                        <img src={infoIcon} width={16} height={16} alt="" />
+                      </HtmlTooltip>
+                    </div>
+                    <div className="profile-image-placeholder">
+                      <input
+                        type="file"
+                        accept=".png"
+                        onChange={uploadProfileImage}
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          height: "100%",
+                          opacity: 0,
+                          cursor: "pointer",
+                        }}
                       />
-                    )}
-                    <img src={editIcon} className="edit-image" alt="" />
+                      {profileImage && (
+                        <img
+                          src={profileImage}
+                          className="profile-image"
+                          alt=""
+                        />
+                      )}
+                      <img src={editIcon} className="edit-image" alt="" />
+                    </div>
+                  </div>
+                </div>
+                <div className="col-9">
+                  <div className="d-flex flex-column gap-2">
+                    <div className="d-flex align-items-center gap-2">
+                      <h6 className="input-label mb-0">Profile Banner</h6>
+                      <HtmlTooltip
+                        placement="top"
+                        title={
+                          <div className="d-flex flex-column gap-2">
+                            <p className="tooltip-text mb-0">
+                              Recommended: 1400px x 350px
+                            </p>
+                            <p className="tooltip-text mb-0">Max size: 500KB</p>
+                          </div>
+                        }
+                      >
+                        <img src={infoIcon} width={16} height={16} alt="" />
+                      </HtmlTooltip>
+                    </div>
+                    <div className="profile-banner-placeholder">
+                      <input
+                        type="file"
+                        accept=".png"
+                        onChange={uploadBannerImage}
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          height: "100%",
+                          opacity: 0,
+                          cursor: "pointer",
+                        }}
+                      />
+                      {bannerImage && (
+                        <img
+                          src={bannerImage}
+                          className="banner-image"
+                          alt=""
+                        />
+                      )}
+                      <img src={editIcon} className="edit-image" alt="" />
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className="col-9">
-                <div className="d-flex flex-column gap-2">
-                  <div className="d-flex align-items-center gap-2">
-                    <h6 className="input-label mb-0">Profile Banner</h6>
-                    <HtmlTooltip
-                      placement="top"
-                      title={
-                        <div className="d-flex flex-column gap-2">
-                          <p className="tooltip-text mb-0">
-                            Recommended: 1400px x 350px
-                          </p>
-                          <p className="tooltip-text mb-0">Max size: 500KB</p>
-                        </div>
-                      }
-                    >
-                      <img src={infoIcon} width={16} height={16} alt="" />
-                    </HtmlTooltip>
-                  </div>
-                  <div className="profile-banner-placeholder">
-                    <input
-                      type="file"
-                      accept=".png"
-                      onChange={uploadBannerImage}
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                        opacity: 0,
-                        cursor: "pointer",
-                      }}
-                    />
-                    {bannerImage && (
-                      <img src={bannerImage} className="banner-image" alt="" />
-                    )}
-                    <img src={editIcon} className="edit-image" alt="" />
-                  </div>
-                </div>
+              <div className="d-flex flex-column gap-2">
+                <h6 className="input-label mb-0">Wallet Address</h6>
+                <input
+                  type="text"
+                  // placeholder="Website"
+                  className="settings-input w-100"
+                  value={coinbase}
+                  disabled
+                />
               </div>
             </div>
-            <div className="d-flex flex-column gap-2">
-              <h6 className="input-label mb-0">Wallet Address</h6>
-              <input
+          </div>
+          <div className="col-12 mt-4">
+            <div className="d-flex flex-column gap-2 mt-4 mt-lg-0">
+              <h6 className="input-label mb-0">Bio</h6>
+              <textarea
                 type="text"
-                // placeholder="Website"
+                placeholder={userData?.bio ? userData?.bio : "Bio"}
                 className="settings-input w-100"
-                value={coinbase}
-                disabled
+                style={{ height: "100%" }}
+                rows={5}
+                value={userInfo.bio}
+                onChange={(e) =>
+                  setUserInfo((userInfo) => ({
+                    ...userInfo,
+                    bio: e.target.value,
+                  }))
+                }
               />
             </div>
-          </div>
-        </div>
-        <div className="col-12 mt-4">
-          <div className="d-flex flex-column gap-2 mt-4 mt-lg-0">
-            <h6 className="input-label mb-0">Bio</h6>
-            <textarea
-              type="text"
-              placeholder={userData?.bio ? userData?.bio : "Bio"}
-              className="settings-input w-100"
-              style={{ height: "100%" }}
-              rows={5}
-              value={userInfo.bio}
-              onChange={(e) =>
-                setUserInfo((userInfo) => ({
-                  ...userInfo,
-                  bio: e.target.value,
-                }))
-              }
-            />
-          </div>
-          {/* <div className="mt-4 d-flex flex-column flex-lg-row align-items-start align-items-lg-center justify-content-between">
+            {/* <div className="mt-4 d-flex flex-column flex-lg-row align-items-start align-items-lg-center justify-content-between">
             <div className="d-flex flex-column gap-2">
               <h6 className="input-label mb-0">Social Connections</h6>
               <span className="social-connections-span">
@@ -367,31 +374,37 @@ const baseUrl = "https://confluxapi.worldofdypians.com/";
               </div>
             </div>
           </div> */}
-          <div className="d-flex align-items-center justify-content-center mt-4">
-            <button
-              className="connect-social-btn px-3 py-1"
-              style={{ fontSize: "16px" }}
-              onClick={() => updateUserData(userInfo).then(() => {
-                setUserInfo({
-                  username: "",
-                  email: "",
-                  website: "",
-                  bio: "",
-                  profilePicture: "",
-                  bannerPicture: "",
-                })
-              })}
-            >
-              Save
-            </button>
+            <div className="d-flex align-items-center justify-content-center mt-4">
+              <button
+                className="connect-social-btn px-3 py-1"
+                style={{ fontSize: "16px" }}
+                onClick={() =>
+                  updateUserData(userInfo).then(() => {
+                    setUserInfo({
+                      username: "",
+                      email: "",
+                      website: "",
+                      bio: "",
+                      profilePicture: "",
+                      bannerPicture: "",
+                    });
+                  })
+                }
+              >
+                Save
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    {/* {successUpdateProfile &&  */}
-      <Toast isSuccess={successUpdateProfile.success ? true : false} isError={successUpdateProfile.success === false ? true : false} message={successUpdateProfile.message} /> 
-    {/* } */}
-   </>
+      {/* {successUpdateProfile &&  */}
+      <Toast
+        isSuccess={successUpdateProfile.success ? true : false}
+        isError={successUpdateProfile.success === false ? true : false}
+        message={successUpdateProfile.message}
+      />
+      {/* } */}
+    </>
   );
 };
 

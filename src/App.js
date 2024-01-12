@@ -336,6 +336,13 @@ function App() {
             message: "Succesfully updated"
           })
           setCount(count + 1);
+
+          setTimeout(() => {
+            setSuccessUpdateProfile({
+              success: null,
+              message: ""
+            })
+          }, 3000);
         })
         .catch((err) => {
           console.log(err);
@@ -343,6 +350,12 @@ function App() {
             success: false,
             message: "Something went wrong"
           })
+          setTimeout(() => {
+            setSuccessUpdateProfile({
+              success: null,
+              message: ""
+            })
+          }, 3000);
 
         });
     }

@@ -7,7 +7,7 @@ import SupportSettings from "../../components/SettingsPage/SupportSettings";
 import CollectionSettings from "../../components/SettingsPage/CollectionSettings";
 import axios from "axios";
 
-const SettingsPage = ({ coinbase, userData, updateUserData }) => {
+const SettingsPage = ({ coinbase, userData, updateUserData,userCollection }) => {
   const [category, setCategory] = useState("profile");
 
   useEffect(() => {
@@ -32,7 +32,7 @@ const SettingsPage = ({ coinbase, userData, updateUserData }) => {
               ) : category === "support" ? (
                 <SupportSettings />
               ) : (
-                <CollectionSettings/>
+                <CollectionSettings userCollection={userCollection}/>
               )}
             </div>
           </div>

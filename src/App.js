@@ -30,6 +30,8 @@ function App() {
   const [showForms2, setShowForms2] = useState(false);
   const [coinbase, setCoinbase] = useState();
   const [userData, setuserData] = useState([]);
+  const [userCollection, setuserCollection] = useState([]);
+
   const [allCollections, setAllCollections] = useState([]);
   const [userCollectionFavs, setuserCollectionFavs] = useState([]);
 
@@ -187,6 +189,24 @@ function App() {
     }
   };
 
+  const fetchuserCollection = async (walletAddr) => {
+    //setuserCollection
+    const result = await axios
+      .get(`${baseURL}/api/users/checkCollections/${walletAddr}`, {
+        headers: {
+          "x-api-key":
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+
+    if (result && result.status === 200) {
+      setuserCollection(result.data.ownedCollections);
+    }
+  };
+
   const handleAdduserWithSignature = async (walletAddr) => {
     if (walletAddr) {
       setSignStatus("loading");
@@ -265,6 +285,7 @@ function App() {
           setuserData(result.data);
           setuserCollectionFavs(result.data.collectionFavorites);
           fetchTotalNftOwned(walletAddr);
+          fetchuserCollection(walletAddr);
         }
       } else setuserData([]);
     }
@@ -273,14 +294,13 @@ function App() {
   const updateUserData = async (userInfo) => {
     if (coinbase && isConnected) {
       const filteredInfo = Object.fromEntries(
-        Object.entries(userInfo).filter(([key, value]) => value !== '')
-    );
+        Object.entries(userInfo).filter(([key, value]) => value !== "")
+      );
       const formData = new FormData();
       for (const [key, value] of Object.entries(filteredInfo)) {
         formData.append(key, value);
       }
 
-    
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner(coinbase);
       const signature = await signer
@@ -308,8 +328,6 @@ function App() {
           console.log(err);
         });
     }
-
-   
   };
 
   const getOtherUserData = async (walletAddr) => {
@@ -331,7 +349,6 @@ function App() {
         } else {
           setuserData(result.data);
           fetchTotalNftOwned(walletAddr);
-          console.log("yes");
         }
       } else setuserData([]);
     }
@@ -566,6 +583,7 @@ function App() {
               onViewShared={(value) => {
                 getOtherUserData(value);
               }}
+              userCollection={userCollection}
             />
           }
         />
@@ -577,6 +595,7 @@ function App() {
               coinbase={coinbase}
               userData={userData}
               updateUserData={updateUserData}
+              userCollection={userCollection}
             />
           }
         />

@@ -23,7 +23,7 @@ const HtmlTooltip = styled(({ className, ...props }) => (
   },
 }));
 
-const CollectionSettings = () => {
+const CollectionSettings = ({userCollection}) => {
   const dummyCollections = [
     {
       title: "Cats And Watches Society",
@@ -254,7 +254,7 @@ const CollectionSettings = () => {
                     placeholder="Username"
                     className="settings-input w-100"
                     disabled
-                    value={collection.title}
+                    value={collection.collectionName}
                   />
                 </div>
                 <div className="d-flex flex-column gap-2">
@@ -266,6 +266,7 @@ const CollectionSettings = () => {
                     type="text"
                     placeholder="Email"
                     className="settings-input w-100"
+                    value={"Conflux eSpace"}
                   />
                 </div>
               </div>
@@ -290,6 +291,7 @@ const CollectionSettings = () => {
                     type="text"
                     placeholder="https://opensea.io/"
                     className="settings-input w-100"
+                    value={collection.websiteLink}
                   />
                 </div>
               </div>
@@ -496,6 +498,7 @@ const CollectionSettings = () => {
                         type="text"
                         placeholder="Telegram"
                         className="settings-input w-100"
+                        value={collection.tgLink}
                       />
                     </div>
                     <div className="d-flex flex-column gap-2">
@@ -534,6 +537,7 @@ const CollectionSettings = () => {
                         type="text"
                         placeholder="Discord"
                         className="settings-input w-100"
+                        value={collection.discordLink}
                       />
                     </div>
                   </div>
@@ -568,38 +572,47 @@ const CollectionSettings = () => {
         ) : (
           <div className="col-12">
             <h6 className="input-label">My Collections</h6>
-            <div className="small-cards-grid">
-              {dummyCollections.map((item, index) => (
-                <div className="collection-card d-flex flex-column" key={index}>
-                  <img
-                    src={require(`../Profile/assets/${item.image}.png`)}
-                    className="w-100"
-                    alt=""
-                  />
-                  <div className="p-3 collection-lower d-flex align-items-center justify-content-between">
-                    <div className="d-flex align-items-center gap-2">
-                      <h6 className="mb-0">{item.title}</h6>
+            {userCollection && userCollection.length > 0 ? (
+              <div className="small-cards-grid">
+                {userCollection.map((item, index) => (
+                  <div
+                    className="collection-card d-flex flex-column"
+                    key={index}
+                  >
+                    <img
+                      src={require(`../Profile/assets/favoritesPlaceholder1.png`)}
+                      className="w-100"
+                      alt=""
+                    />
+                    <div className="p-3 collection-lower d-flex align-items-center justify-content-between">
+                      <div className="d-flex align-items-center gap-2">
+                        <h6 className="mb-0">{item.collectionName}</h6>
+                      </div>
+                      {/* <img src={star} alt="" /> */}
+                      <button
+                        className="edit-collection-btn d-flex align-items-center gap-1"
+                        onClick={() => {
+                          setCollection(item);
+                          getCollectionOwner(item.contractAddress);
+                        }}
+                      >
+                        <img src={penIcon} alt="" />
+                        Edit
+                      </button>
                     </div>
-                    {/* <img src={star} alt="" /> */}
-                    <button
-                      className="edit-collection-btn d-flex align-items-center gap-1"
-                      onClick={() => setCollection(item)}
-                    >
-                      <img src={penIcon} alt="" />
-                      Edit
-                    </button>
                   </div>
-                </div>
-              ))}
-            </div>
-            <div className="d-flex flex-column mt-4 gap-2">
-              <div className="no-collections-wrap p-2 w-100 d-flex align-items-center gap-2">
-                <img src={collectionSettingsIcon} alt="" />
-                <span className="no-collections-text">
-                  You haven’t created any collections yet.
-                </span>
+                ))}
               </div>
-            </div>
+            ) : (
+              <div className="d-flex flex-column mt-4 gap-2">
+                <div className="no-collections-wrap p-2 w-100 d-flex align-items-center gap-2">
+                  <img src={collectionSettingsIcon} alt="" />
+                  <span className="no-collections-text">
+                    You haven’t created any collections yet.
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

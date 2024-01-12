@@ -296,9 +296,15 @@ function App() {
 
   const updateUserData = async (userInfo) => {
     if (coinbase && isConnected) {
+      setSuccessUpdateProfile({
+        success: null,
+        message: ""
+      })
+
       const filteredInfo = Object.fromEntries(
         Object.entries(userInfo).filter(([key, value]) => value !== "")
       );
+      
       const formData = new FormData();
       for (const [key, value] of Object.entries(filteredInfo)) {
         formData.append(key, value);

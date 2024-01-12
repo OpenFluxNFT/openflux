@@ -40,15 +40,15 @@ const baseUrl = "https://confluxapi.worldofdypians.com/";
 
   const display = () => {
     if(userData && userData._id){
-      setUserInfo(userInfo => ({
-        ...userInfo,
-        username: userData?.username,
-        email: userData?.email,
-        website: userData?.website,
-        bio: userData?.bio,
-        profilePicture: userData?.profilePicture ? baseUrl + userData?.profilePicture : '',
-        bannerPicture: userData?.bannerPicture ? baseUrl + userData?.bannerPicture : '',
-      }))
+      // setUserInfo(userInfo => ({
+      //   ...userInfo,
+      //   username: userData?.username,
+      //   email: userData?.email,
+      //   website: userData?.website,
+      //   bio: userData?.bio,
+      //   profilePicture: userData?.profilePicture ? baseUrl + userData?.profilePicture : '',
+      //   bannerPicture: userData?.bannerPicture ? baseUrl + userData?.bannerPicture : '',
+      // }))
 
       if(userData?.profilePicture){
         setProfileImage(baseUrl + userData?.profilePicture)
@@ -154,7 +154,7 @@ const baseUrl = "https://confluxapi.worldofdypians.com/";
 
   useEffect(() => {
     display();
-  }, [])
+  }, [userData])
   
 
   return (
@@ -168,7 +168,7 @@ const baseUrl = "https://confluxapi.worldofdypians.com/";
               <h6 className="input-label mb-0">Username</h6>
               <input
                 type="text"
-                placeholder="Username"
+                placeholder={userData?.username ? userData.username : "Username"}
                 className="settings-input w-100"
                 value={userInfo.username}
                 onChange={(e) =>
@@ -196,7 +196,7 @@ const baseUrl = "https://confluxapi.worldofdypians.com/";
               </div>
               <input
                 type="email"
-                placeholder="Email"
+                placeholder={userData?.email ? userData?.email : "Email"}
                 className="settings-input w-100"
                 value={userInfo.email}
                 onChange={(e) =>
@@ -211,7 +211,7 @@ const baseUrl = "https://confluxapi.worldofdypians.com/";
               <h6 className="input-label mb-0">Website</h6>
               <input
                 type="text"
-                placeholder="Website"
+                placeholder={userData?.website ? userData?.website : "Website"}
                 className="settings-input w-100"
                 value={userInfo.website}
                 onChange={(e) =>
@@ -329,7 +329,7 @@ const baseUrl = "https://confluxapi.worldofdypians.com/";
             <h6 className="input-label mb-0">Bio</h6>
             <textarea
               type="text"
-              placeholder="Bio"
+              placeholder={userData?.bio ? userData?.bio : "Bio"}
               className="settings-input w-100"
               style={{ height: "100%" }}
               rows={5}
@@ -380,7 +380,7 @@ const baseUrl = "https://confluxapi.worldofdypians.com/";
       </div>
     </div>
     {/* {successUpdateProfile &&  */}
-      <Toast isSuccess={successUpdateProfile.success ? true : false} isError={!successUpdateProfile.success ? true : false} message={successUpdateProfile.message} /> 
+      <Toast isSuccess={successUpdateProfile.success ? true : false} isError={successUpdateProfile.success === false ? true : false} message={successUpdateProfile.message} /> 
     {/* } */}
    </>
   );

@@ -190,7 +190,6 @@ function App() {
   };
 
   const fetchuserCollection = async (walletAddr) => {
-    //setuserCollection
     const result = await axios
       .get(`${baseURL}/api/users/checkCollections/${walletAddr}`, {
         headers: {
@@ -285,7 +284,7 @@ function App() {
           setuserData(result.data);
           setuserCollectionFavs(result.data.collectionFavorites);
           fetchTotalNftOwned(walletAddr);
-          fetchuserCollection(walletAddr);
+          fetchuserCollection('0x65c3d0f9438644945df5bf321c9f0fcf333302b8');
         }
       } else setuserData([]);
     }

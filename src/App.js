@@ -585,7 +585,7 @@ function App() {
 
       <Routes>
         <Route exact path="/" element={<Home allCollections={allCollections}/>} />
-        <Route exact path="/collections" element={<Collections />} />
+        <Route exact path="/collections" element={<Collections  allCollections={allCollections}/>} />
         {/* <Route exact path="/mint" element={<Mint />} /> */}
         <Route exact path="/support" element={<Support />} />
 
@@ -600,6 +600,7 @@ function App() {
               }}
               userCollectionFavs={userCollectionFavs}
               userData={userData}
+              allCollections={allCollections}
             />
           }
         />

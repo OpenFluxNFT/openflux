@@ -22,13 +22,14 @@ const CollectionBanner = ({
   banner,
   socials,
   bannerActions,
-  credentials,
   desc,
   info,
   handleFavorite,
   isFavorite,
   isVerified,
+  currentCollection,
 }) => {
+  
   return (
     <div className="container-lg py-0 py-lg-5">
       <div className="row px-0">
@@ -44,19 +45,28 @@ const CollectionBanner = ({
                     <img src={checkIcon} alt="" />
                   </div>
                   <div className="d-flex align-items-center gap-3 flex-wrap">
-                    {credentials.map((item, index) => (
-                      <div
-                        className="d-flex align-items-center gap-1"
-                        key={index}
-                      >
-                        <span className="collection-info-span mb-0">
-                          {item.key}
-                        </span>
-                        <span className="collection-info mb-0">
-                          {item.value}
-                        </span>
-                      </div>
-                    ))}
+                    <div className="d-flex align-items-center gap-1">
+                      <span className="collection-info-span mb-0">Items</span>
+                      <span className="collection-info mb-0">9,953</span>
+                    </div>
+                    <div className="d-flex align-items-center gap-1">
+                      <span className="collection-info-span mb-0">Created</span>
+                      <span className="collection-info mb-0">
+                        Sept 09, 2023
+                      </span>
+                    </div>
+                    <div className="d-flex align-items-center gap-1">
+                      <span className="collection-info-span mb-0">
+                        Creator Earning
+                      </span>
+                      <span className="collection-info mb-0">5%</span>
+                    </div>
+                    <div className="d-flex align-items-center gap-1">
+                      <span className="collection-info-span mb-0">Chain</span>
+                      <span className="collection-info mb-0">
+                        Conflux eSpace
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <div className="d-flex align-items-center gap-2">

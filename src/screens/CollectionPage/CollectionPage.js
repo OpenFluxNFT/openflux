@@ -12,6 +12,7 @@ const CollectionPage = ({
   onFavoriteCollection,
   userCollectionFavs,
   userData,
+  allCollections,
 }) => {
   const collectionSocials = [
     "website",
@@ -37,7 +38,7 @@ const CollectionPage = ({
     },
     {
       key: "Chain",
-      value: "Conflux Network",
+      value: "Conflux eSpace",
     },
   ];
 
@@ -70,6 +71,8 @@ const CollectionPage = ({
   const [favorite, setFavorite] = useState(false);
   const [collectionOwner, setcollectionOwner] = useState();
   const [isVerified, setisVerified] = useState(false);
+  const [currentCollection, setcurrentCollection] = useState([]);
+
 
   const { collectionAddress } = useParams();
 
@@ -88,13 +91,23 @@ const CollectionPage = ({
 
       if (result && result.status === 200) {
         if (result.data === "User not found") {
-          setisVerified(false)
+          setisVerified(false);
         } else {
-          setisVerified(true)
+          setisVerified(true);
         }
       } else setisVerified(false);
     }
   };
+
+  const fetchCurrentCollection = (collectionAddr)=>{
+
+
+    const result = allCollections.find((item)=>{ return item.contractAddress === collectionAddr});
+    if(result) {
+      setcurrentCollection(result)
+    }
+
+  }
 
   const getCollectionOwner = async () => {
     const result = await axios
@@ -113,12 +126,9 @@ const CollectionPage = ({
 
     if (result && result.status === 200) {
       setcollectionOwner(result.data);
-      checkCollectionOwner(result.data)
+      checkCollectionOwner(result.data);
     }
   };
-
-
-
 
   const checkifFavorite = () => {
     if (userCollectionFavs && userCollectionFavs.length > 0) {
@@ -195,16 +205,20 @@ const CollectionPage = ({
 
   useEffect(() => {
     getCollectionOwner();
+    fetchCurrentCollection(collectionAddress)
   }, [collectionAddress]);
+
+  useEffect(() => {
+    fetchCurrentCollection(collectionAddress)
+  }, [collectionAddress,allCollections]);
 
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
       <CollectionBanner
-        title={"Cats And Watches Society"}
+        title={currentCollection.collectionName}
         logo={collectionIcon}
         banner={banner}
         socials={collectionSocials}
-        credentials={collectionCredenrtials}
         desc={collectionDesc}
         info={collectionInfo}
         isFavorite={favorite}
@@ -212,8 +226,9 @@ const CollectionPage = ({
           favorite ? handleRemoveFavorite() : handleAddFavorite();
         }}
         isVerified={isVerified}
+        currentCollection={currentCollection}
       />
-      <CollectionList />
+      <CollectionList currentCollection={currentCollection}/>
     </div>
   );
 };

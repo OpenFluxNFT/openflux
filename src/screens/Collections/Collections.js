@@ -4,16 +4,16 @@ import TopCollections from '../../components/Collections/TopCollections/TopColle
 import TrendingCollections from '../../components/Collections/TrendingCollections/TrendingCollections'
 import CollectionCategories from '../../components/Collections/CollectionCategories/CollectionCategories'
 
-const Collections = () => {
+const Collections = ({allCollections}) => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
-    <TopCollections />
-    <TrendingCollections />
-    <CollectionCategories />
+    <TopCollections  allCollections={allCollections}/>
+    <TrendingCollections  allCollections={allCollections}/>
+    <CollectionCategories allCollections={allCollections}/>
   </div>
   )
 }

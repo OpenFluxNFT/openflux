@@ -510,6 +510,8 @@ const CollectionSettings = ({userCollection}) => {
                         type="text"
                         placeholder="Conflux Scan"
                         className="settings-input w-100"
+                        disabled
+                        value={`https://evm.confluxscan.net/address/${collection.contractAddress}`}
                       />
                     </div>
                   </div>

@@ -9,7 +9,7 @@ import collectionCardPlaceholder4 from "./assets/collectionCardPlaceholder4.png"
 import useWindowSize from "../../../hooks/useWindowSize";
 import { NavLink } from "react-router-dom";
 
-const CollectionCategories = () => {
+const CollectionCategories = ({allCollections}) => {
   const [category, setCategory] = useState("all");
   const windowSize = useWindowSize();
   const sliderRef = useRef();
@@ -156,9 +156,9 @@ const CollectionCategories = () => {
         </Slider> */}
         {windowSize.width > 786 ? (
           <div className="collection-categories-grid">
-            {dummyCollections.slice(0, 4).map((item, index) => (
+            {allCollections.slice(0, 4).map((item, index) => (
               <NavLink
-                to={`/collection/${item.collectionAddress}/${item.collectionName}`}
+                to={`/collection/${item.contractAddress}/${item.symbol}`}
                 key={index}
                 className={"text-decoration-none"}
               >
@@ -168,9 +168,9 @@ const CollectionCategories = () => {
           </div>
         ) : (
           <Slider ref={sliderRef} {...settings}>
-            {dummyCollections.map((item, index) => (
+            {allCollections.map((item, index) => (
               <NavLink
-                to={`/collection/${item.collectionAddress}/${item.collectionName}`}
+              to={`/collection/${item.contractAddress}/${item.symbol}`}
                 className={"text-decoration-none"}
                 key={index}
               >

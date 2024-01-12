@@ -40,7 +40,7 @@ const ProfileBanner = ({
   // console.log(logo, banner);
 
   const isImage = async (file) => {
-    const acceptedImageTypes = ["image/png", "image/jpeg", "image/jpg"];
+    const acceptedImageTypes = ["image/png"];
     return acceptedImageTypes.includes(file.type);
   };
 
@@ -152,7 +152,7 @@ const ProfileBanner = ({
                 <div className="collection-banner-empty position-relative">
                 <input
                          type="file"
-                         accept=".png, .jpg, .jpeg"
+                         accept=".png"
                          onChange={uploadBannerImage}
                          style={{
                            position: "absolute",
@@ -185,7 +185,7 @@ const ProfileBanner = ({
                         }
                           <input
                          type="file"
-                         accept=".png, .jpg, .jpeg"
+                         accept=".png"
                          onChange={uploadProfileImage}
                          style={{
                            position: "absolute",

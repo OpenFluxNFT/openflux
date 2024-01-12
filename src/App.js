@@ -288,7 +288,7 @@ function App() {
           setuserData(result.data);
           setuserCollectionFavs(result.data.collectionFavorites);
           fetchTotalNftOwned(walletAddr);
-          fetchuserCollection('0x65c3d0f9438644945df5bf321c9f0fcf333302b8');
+          fetchuserCollection("0x65c3d0f9438644945df5bf321c9f0fcf333302b8");
         }
       } else setuserData([]);
     }
@@ -298,13 +298,13 @@ function App() {
     if (coinbase && isConnected) {
       setSuccessUpdateProfile({
         success: null,
-        message: ""
-      })
+        message: "",
+      });
 
       const filteredInfo = Object.fromEntries(
         Object.entries(userInfo).filter(([key, value]) => value !== "")
       );
-      
+
       const formData = new FormData();
       for (const [key, value] of Object.entries(filteredInfo)) {
         formData.append(key, value);
@@ -333,30 +333,29 @@ function App() {
           console.log(res.data);
           setSuccessUpdateProfile({
             success: true,
-            message: "Succesfully updated"
-          })
+            message: "Succesfully updated",
+          });
           setCount(count + 1);
 
           setTimeout(() => {
             setSuccessUpdateProfile({
               success: null,
-              message: ""
-            })
+              message: "",
+            });
           }, 3000);
         })
         .catch((err) => {
           console.log(err);
           setSuccessUpdateProfile({
             success: false,
-            message: "Something went wrong"
-          })
+            message: "Something went wrong",
+          });
           setTimeout(() => {
             setSuccessUpdateProfile({
               success: null,
-              message: ""
-            })
+              message: "",
+            });
           }, 3000);
-
         });
     }
   };
@@ -584,8 +583,16 @@ function App() {
       )}
 
       <Routes>
-        <Route exact path="/" element={<Home allCollections={allCollections}/>} />
-        <Route exact path="/collections" element={<Collections />} />
+        <Route
+          exact
+          path="/"
+          element={<Home allCollections={allCollections} />}
+        />
+        <Route
+          exact
+          path="/collections"
+          element={<Collections allCollections={allCollections} />}
+        />
         {/* <Route exact path="/mint" element={<Mint />} /> */}
         <Route exact path="/support" element={<Support />} />
 
@@ -600,6 +607,7 @@ function App() {
               }}
               userCollectionFavs={userCollectionFavs}
               userData={userData}
+              allCollections={allCollections}
             />
           }
         />

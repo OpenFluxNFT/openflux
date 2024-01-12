@@ -20,7 +20,7 @@ import { NavLink } from "react-router-dom";
 import emptyFavorite from "../../Home/RecentlyListed/assets/emptyFavorite.svg";
 import redFavorite from "../../Home/RecentlyListed/assets/redFavorite.svg";
 
-const CollectionList = () => {
+const CollectionList = ({currentCollection}) => {
   const windowSize = useWindowSize();
   const [openFilters, setOpenFilters] = useState(false);
 

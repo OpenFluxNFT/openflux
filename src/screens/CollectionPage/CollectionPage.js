@@ -12,16 +12,8 @@ const CollectionPage = ({
   onFavoriteCollection,
   userCollectionFavs,
   userData,
+  allCollections,
 }) => {
-  const collectionSocials = [
-    "website",
-    "twitter",
-    "instagram",
-    "discord",
-    "telegram",
-    "confluxScan",
-  ];
-
   const collectionCredenrtials = [
     {
       key: "Items",
@@ -37,7 +29,7 @@ const CollectionPage = ({
     },
     {
       key: "Chain",
-      value: "Conflux Network",
+      value: "Conflux eSpace",
     },
   ];
 
@@ -70,6 +62,8 @@ const CollectionPage = ({
   const [favorite, setFavorite] = useState(false);
   const [collectionOwner, setcollectionOwner] = useState();
   const [isVerified, setisVerified] = useState(false);
+  const [currentCollection, setcurrentCollection] = useState([]);
+  const [collectionSocials, setcollectionSocials] = useState([]);
 
   const { collectionAddress } = useParams();
 
@@ -88,11 +82,34 @@ const CollectionPage = ({
 
       if (result && result.status === 200) {
         if (result.data === "User not found") {
-          setisVerified(false)
+          setisVerified(false);
         } else {
-          setisVerified(true)
+          setisVerified(true);
         }
       } else setisVerified(false);
+    }
+  };
+
+  const fetchCurrentCollection = (collectionAddr) => {
+    const result = allCollections.find((item) => {
+      return item.contractAddress === collectionAddr;
+    });
+    if (result) {
+      setcurrentCollection(result);
+
+      const socialsObject = [
+        { title: "website", link: result.websiteLink },
+        { title: "twitter", link: result.twitterLink },
+        { title: "instagram", link: result.instagramLink },
+        { title: "discord", link: result.discordLink },
+        { title: "telegram", link: result.tgLink },
+        {
+          title: "confluxScan",
+          link: `https://evm.confluxscan.net/address/${collectionAddr}`,
+        },
+      ];
+
+      setcollectionSocials(socialsObject);
     }
   };
 
@@ -113,12 +130,9 @@ const CollectionPage = ({
 
     if (result && result.status === 200) {
       setcollectionOwner(result.data);
-      checkCollectionOwner(result.data)
+      checkCollectionOwner(result.data);
     }
   };
-
-
-
 
   const checkifFavorite = () => {
     if (userCollectionFavs && userCollectionFavs.length > 0) {
@@ -195,25 +209,30 @@ const CollectionPage = ({
 
   useEffect(() => {
     getCollectionOwner();
+    fetchCurrentCollection(collectionAddress);
   }, [collectionAddress]);
+
+  useEffect(() => {
+    fetchCurrentCollection(collectionAddress);
+  }, [collectionAddress, allCollections]);
 
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
       <CollectionBanner
-        title={"Cats And Watches Society"}
+        title={currentCollection.collectionName}
         logo={collectionIcon}
         banner={banner}
         socials={collectionSocials}
-        credentials={collectionCredenrtials}
-        desc={collectionDesc}
+        desc={currentCollection.description ?? "No description"}
         info={collectionInfo}
         isFavorite={favorite}
         handleFavorite={() => {
           favorite ? handleRemoveFavorite() : handleAddFavorite();
         }}
         isVerified={isVerified}
+        currentCollection={currentCollection}
       />
-      <CollectionList />
+      <CollectionList currentCollection={currentCollection} />
     </div>
   );
 };

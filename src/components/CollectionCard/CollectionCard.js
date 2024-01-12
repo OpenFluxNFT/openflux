@@ -7,7 +7,7 @@ import collectionCardPlaceholder1 from "../../components/Collections/CollectionC
 const CollectionCard = ({ data }) => {
   return (
     <div className="d-flex flex-column collection-card ">
-      <img src={data.img ?? collectionCardPlaceholder1} className="w-100" alt="" />
+      <img src={data.collectionBannerPicture ?? collectionCardPlaceholder1} className="w-100" alt="" />
       <div className="collection-card-bottom d-flex flex-column gap-3 p-3">
         <div className="d-flex align-items-center gap-2 overflow-hidden">
           <h6 className="collection-card-title mb-0">{data.collectionName}</h6>

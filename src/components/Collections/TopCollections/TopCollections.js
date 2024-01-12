@@ -9,7 +9,7 @@ import useWindowSize from "../../../hooks/useWindowSize";
 import Slider from "react-slick";
 import { NavLink } from "react-router-dom";
 
-const TopCollections = () => {
+const TopCollections = ({allCollections}) => {
   const windowSize = useWindowSize();
   const settings = {
     dots: true,
@@ -63,25 +63,26 @@ const TopCollections = () => {
         <h6 className="main-hero-title mb-3">New Collections</h6>
         {windowSize.width > 786 ? (
           <div className="top-collections-grid pe-0">
-            {dummyCollections.map((item, index) => (
+            {allCollections.slice(6,10).map((item, index) => (
               <div
                 className="position-relative top-collection-wrapper"
                 key={index}
                 style={{ width: "fit-content" }}
               >
-                <NavLink to={`/collection/${item.collectionAddress}/${item.collectionName}`}>
-                  <img src={item.img} className="top-collection-image" alt="" />
+                <NavLink to={`/collection/${item.contractAddress}/${item.symbol}`}>
+                  <img src={item.collectionBannerPicture ?? collectionPlaceholder2} className="top-collection-image" alt="" />
                   <div className="top-collection-info d-flex flex-column p-3 gap-2">
                     <div className="d-flex align-items-center gap-1">
                       <h6 className="top-collection-title mb-0">
-                        {item.title}
+                        {item.collectionName}
                       </h6>
-                      <img src={checkIcon} alt="" />
+                    
+                      {item.verified === 'yes' &&  <img src={checkIcon} alt="" /> }
                     </div>
                     <div className="d-flex align-items-center gap-1">
                       <span className="mb-0 floor-placeholder">Floor:</span>
                       <span className="floor-price mb-0">
-                        {item.floorPrice} CFX
+                        {item.floorPrice ?? 'tbd'} CFX
                       </span>
                     </div>
                   </div>
@@ -91,25 +92,25 @@ const TopCollections = () => {
           </div>
         ) : (
           <Slider {...settings}>
-            {dummyCollections.map((item, index) => (
+            {allCollections.map((item, index) => (
               <div
                 className="position-relative top-collection-wrapper"
                 key={index}
                 // style={{ width: "fit-content" }}
               >
-                <NavLink to={`/collection/${item.collectionAddress}/${item.collectionName}`}>
-                  <img src={item.img} className="top-collection-image" alt="" />
+                <NavLink to={`/collection/${item.contractAddress}/${item.symbol}`}>
+                  <img src={item.collectionBannerPicture ?? collectionPlaceholder2} className="top-collection-image" alt="" />
                   <div className="top-collection-info d-flex flex-column p-3 gap-2">
                     <div className="d-flex align-items-center gap-1">
                       <h6 className="top-collection-title mb-0">
-                        {item.title}
+                        {item.collectionName}
                       </h6>
-                      <img src={checkIcon} alt="" />
+                      {item.verified === 'yes' &&  <img src={checkIcon} alt="" /> }
                     </div>
                     <div className="d-flex align-items-center gap-1">
                       <span className="mb-0 floor-placeholder">Floor:</span>
                       <span className="floor-price mb-0">
-                        {item.floorPrice} CFX
+                        {item.floorPrice ?? 'tbd'} CFX
                       </span>
                     </div>
                   </div>

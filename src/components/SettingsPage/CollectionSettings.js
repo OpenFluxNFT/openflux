@@ -9,7 +9,19 @@ import telegramIcon from "./assets/telegramIcon.svg";
 import penIcon from "./assets/penIcon.svg";
 import editIcon from "./assets/editIcon.svg";
 import collectionSettingsIcon from "./assets/collectionSettingsIcon.svg";
+import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
+import styled from "@emotion/styled";
 import axios from "axios";
+
+const HtmlTooltip = styled(({ className, ...props }) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: "#141843",
+    maxWidth: 220,
+    border: "1px solid rgba(47, 128, 237, 0.20)",
+  },
+}));
 
 const CollectionSettings = () => {
   const dummyCollections = [
@@ -39,7 +51,6 @@ const CollectionSettings = () => {
   const [collectionsImage, setCollectionsImage] = useState();
   const [collectionOwner, setcollectionOwner] = useState();
 
-
   const getCollectionOwner = async (collectionAddress) => {
     const result = await axios
       .get(
@@ -59,7 +70,6 @@ const CollectionSettings = () => {
       setcollectionOwner(result.data);
     }
   };
-
 
   const isImage = async (file) => {
     const acceptedImageTypes = ["image/png", "image/jpeg", "image/jpg"];
@@ -227,7 +237,17 @@ const CollectionSettings = () => {
                 <div className="d-flex flex-column gap-2">
                   <div className="d-flex align-items-center gap-2">
                     <h6 className="input-label mb-0">Name</h6>
-                    <img src={infoIcon} width={16} height={16} alt="" />
+                    <HtmlTooltip
+                      placement="top"
+                      title={
+                        <p className="tooltip-text mb-0">
+                          Not editable for badged collections. Please contact
+                          support for additional help.
+                        </p>
+                      }
+                    >
+                      <img src={infoIcon} width={16} height={16} alt="" />
+                    </HtmlTooltip>
                   </div>
                   <input
                     type="text"
@@ -265,7 +285,6 @@ const CollectionSettings = () => {
                 <div className="d-flex flex-column gap-2">
                   <div className="d-flex align-items-center gap-2">
                     <h6 className="input-label mb-0">Website</h6>
-                    <img src={infoIcon} width={16} height={16} alt="" />
                   </div>
                   <input
                     type="text"
@@ -295,7 +314,21 @@ const CollectionSettings = () => {
                       <div className="d-flex flex-column gap-2">
                         <div className="d-flex align-items-center gap-2">
                           <h6 className="input-label mb-0">Profile Image</h6>
-                          <img src={infoIcon} width={16} height={16} alt="" />
+                          <HtmlTooltip
+                            placement="top"
+                            title={
+                              <div className="d-flex flex-column gap-2">
+                                <p className="tooltip-text mb-0">
+                                  Recommended: 400px x 400px
+                                </p>
+                                <p className="tooltip-text mb-0">
+                                  Max size: 500KB
+                                </p>
+                              </div>
+                            }
+                          >
+                            <img src={infoIcon} width={16} height={16} alt="" />
+                          </HtmlTooltip>
                         </div>
                         <div className="profile-image-placeholder">
                           <input
@@ -327,7 +360,21 @@ const CollectionSettings = () => {
                       <div className="d-flex flex-column gap-2">
                         <div className="d-flex align-items-center gap-2">
                           <h6 className="input-label mb-0">Profile Banner</h6>
-                          <img src={infoIcon} width={16} height={16} alt="" />
+                          <HtmlTooltip
+                            placement="top"
+                            title={
+                              <div className="d-flex flex-column gap-2">
+                                <p className="tooltip-text mb-0">
+                                  Recommended: 1400px x 350px
+                                </p>
+                                <p className="tooltip-text mb-0">
+                                  Max size: 500KB
+                                </p>
+                              </div>
+                            }
+                          >
+                            <img src={infoIcon} width={16} height={16} alt="" />
+                          </HtmlTooltip>
                         </div>
                         <div className="profile-banner-placeholder">
                           {}
@@ -366,7 +413,19 @@ const CollectionSettings = () => {
                       <div className="d-flex flex-column gap-2">
                         <div className="d-flex align-items-center gap-2">
                           <h6 className="input-label mb-0">Featured Banner</h6>
-                          <img src={infoIcon} width={16} height={16} alt="" />
+                          <HtmlTooltip
+                      placement="top"
+                      title={
+                        <div className="d-flex flex-column gap-2">
+                          <p className="tooltip-text mb-0">
+                            Recommended: 600px x 400px
+                          </p>
+                          <p className="tooltip-text mb-0">Max size: 500KB</p>
+                        </div>
+                      }
+                    >
+                      <img src={infoIcon} width={16} height={16} alt="" />
+                    </HtmlTooltip>
                         </div>
                         <div className="featured-banner-placeholder">
                           <img src={editIcon} alt="" className="edit-image" />
@@ -379,7 +438,19 @@ const CollectionSettings = () => {
                           <h6 className="input-label mb-0">
                             Collection Banner
                           </h6>
-                          <img src={infoIcon} width={16} height={16} alt="" />
+                          <HtmlTooltip
+                      placement="top"
+                      title={
+                        <div className="d-flex flex-column gap-2">
+                          <p className="tooltip-text mb-0">
+                            Recommended: 350px x 400px
+                          </p>
+                          <p className="tooltip-text mb-0">Max size: 500KB</p>
+                        </div>
+                      }
+                    >
+                      <img src={infoIcon} width={16} height={16} alt="" />
+                    </HtmlTooltip>
                         </div>
                         <div className="collection-banner-placeholder">
                           <img src={editIcon} alt="" className="edit-image" />

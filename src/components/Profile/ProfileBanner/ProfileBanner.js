@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./_profilebanner.scss";
 import bannerPlaceholder from "./assets/bannerPlaceholder.png";
 import cawsIcon from "./assets/cawsIcon.png";
@@ -29,7 +29,108 @@ const ProfileBanner = ({
 }) => {
 
   
-  console.log(logo, banner);
+  const [profileImage, setProfileImage] = useState()
+  const [bannerImage, setBannerImage] = useState()
+  const [userInfo, setUserInfo] = useState({
+    profilePicture: "",
+    bannerPicture: ""
+  })
+
+
+  // console.log(logo, banner);
+
+  const isImage = async (file) => {
+    const acceptedImageTypes = ["image/png", "image/jpeg", "image/jpg"];
+    return acceptedImageTypes.includes(file.type);
+  };
+
+  const isAspectRatioValidProfile = async (file, targetWidth, targetHeight) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        resolve(img.width <= targetWidth || img.height <= targetHeight);
+      };
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
+  const uploadProfileImage = async (e) => {
+    const maxSizeInBytes = 500 * 1024; // 500KB
+
+    const files = e.target.files;
+
+    if (files.length > 0) {
+      const file = files[0];
+
+      if (
+        file &&
+        (await isImage(file)) &&
+        //  isSizeValid(file) &&
+        file.size <= maxSizeInBytes &&
+        (await isAspectRatioValidProfile(file, 400, 400))
+      ) {
+        // Set the selected image
+        const reader = new FileReader();
+
+        reader.onload = () => {
+          // Set the selected image as a data URL
+          setProfileImage(reader.result);
+          setUserInfo((userInfo) => ({
+            ...userInfo,
+            profilePicture: file,
+          }));
+        };
+        reader.readAsDataURL(file);
+      } else {
+        // Display an error message or handle invalid file type, size, or aspect ratio
+        if (!isImage(file)) {
+          alert("Please select a valid image file (PNG, JPG, JPEG)");
+        } else if (file.size > maxSizeInBytes) {
+          alert("Selected image exceeds the maximum size of 500KB");
+        } else {
+          alert("Selected image must have an aspect ratio of 1:1");
+        }
+      }
+    }
+  };
+  const uploadBannerImage = async (e) => {
+    const maxSizeInBytes = 500 * 1024; // 500KB
+
+    const files = e.target.files;
+
+    if (files.length > 0) {
+      const file = files[0];
+
+      if (
+        file &&
+        (await isImage(file)) &&
+        file.size <= maxSizeInBytes &&
+        (await isAspectRatioValidProfile(file, 1400, 350))
+      ) {
+        // Set the selected image
+        const reader = new FileReader();
+
+        reader.onload = () => {
+          // Set the selected image as a data URL
+          setBannerImage(reader.result);
+          setUserInfo((userInfo) => ({
+            ...userInfo,
+            bannerPicture: file,
+          }));
+        };
+        reader.readAsDataURL(file);
+      } else {
+        // Display an error message or handle invalid file type, size, or aspect ratio
+        if (!isImage(file)) {
+          alert("Please select a valid image file (PNG, JPG, JPEG)");
+        } else if (file.size > maxSizeInBytes) {
+          alert("Selected image exceeds the maximum size of 500KB");
+        } else {
+          alert("Selected image must have an aspect ratio of 4:1");
+        }
+      }
+    }
+  };
   
   return (
 
@@ -47,13 +148,30 @@ const ProfileBanner = ({
               <div className="collection-banner-main-info d-flex flex-column flex-lg-row gap-3 gap-lg-0 align-items-start ps-3 ps-lg-5 pe-3 py-3 justify-content-between">
                 <div className="d-flex flex-column gap-3">
                   <div className="d-flex align-items-center gap-2 position-relative">
-                    {logo ? (
-                      <img src={`https://confluxapi.worldofdypians.com/${logo}`} className="collection-logo" alt="" />
-                    ) : (
-                      <div className="profile-image-placeholder-small">
+                  
+               
+                      <div className="profile-image-placeholder-small position-relative">
+                        {logo &&
+                         <img src={`https://confluxapi.worldofdypians.com/${logo}`} className="collection-logo" alt="" />
+                       
+                        }
+                          <input
+                         type="file"
+                         accept=".png, .jpg, .jpeg"
+                         onChange={uploadProfileImage}
+                         style={{
+                           position: "absolute",
+                           top: 0,
+                           left: 0,
+                           width: "100%",
+                           height: "100%",
+                           opacity: 0,
+                           cursor: "pointer",
+                         }}
+                       />
                         <img src={editIcon} alt="" className="edit-image" />
                       </div>
-                    )}
+                    
                     <h6 className="collection-title mb-0">{title}</h6>
                     {title !== "Unnamed" && <img src={checkIcon} alt="" />}
                   </div>

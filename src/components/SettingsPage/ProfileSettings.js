@@ -60,7 +60,7 @@ const baseUrl = "https://confluxapi.worldofdypians.com/";
   }
 
   const isImage = async (file) => {
-    const acceptedImageTypes = ["image/png", "image/jpeg", "image/jpg"];
+    const acceptedImageTypes = ["image/png"];
     return acceptedImageTypes.includes(file.type);
   };
 
@@ -248,7 +248,7 @@ const baseUrl = "https://confluxapi.worldofdypians.com/";
                   <div className="profile-image-placeholder">
                     <input
                       type="file"
-                      accept=".png, .jpg, .jpeg"
+                      accept=".png"
                       onChange={uploadProfileImage}
                       style={{
                         position: "absolute",
@@ -292,7 +292,7 @@ const baseUrl = "https://confluxapi.worldofdypians.com/";
                   <div className="profile-banner-placeholder">
                     <input
                       type="file"
-                      accept=".png, .jpg, .jpeg"
+                      accept=".png"
                       onChange={uploadBannerImage}
                       style={{
                         position: "absolute",
@@ -371,7 +371,16 @@ const baseUrl = "https://confluxapi.worldofdypians.com/";
             <button
               className="connect-social-btn px-3 py-1"
               style={{ fontSize: "16px" }}
-              onClick={() => updateUserData(userInfo)}
+              onClick={() => updateUserData(userInfo).then(() => {
+                setUserInfo({
+                  username: "",
+                  email: "",
+                  website: "",
+                  bio: "",
+                  profilePicture: "",
+                  bannerPicture: "",
+                })
+              })}
             >
               Save
             </button>

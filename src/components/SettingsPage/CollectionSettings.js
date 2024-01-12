@@ -72,7 +72,7 @@ const CollectionSettings = ({userCollection}) => {
   };
 
   const isImage = async (file) => {
-    const acceptedImageTypes = ["image/png", "image/jpeg", "image/jpg"];
+    const acceptedImageTypes = ["image/png"];
     return acceptedImageTypes.includes(file.type);
   };
 
@@ -335,7 +335,7 @@ const CollectionSettings = ({userCollection}) => {
                         <div className="profile-image-placeholder">
                           <input
                             type="file"
-                            accept=".png, .jpg, .jpeg"
+                            accept=".png"
                             onChange={uploadProfileImage}
                             style={{
                               position: "absolute",
@@ -382,7 +382,7 @@ const CollectionSettings = ({userCollection}) => {
                           {}
                           <input
                             type="file"
-                            accept=".png, .jpg, .jpeg"
+                            accept=".png"
                             onChange={uploadBannerImage}
                             style={{
                               position: "absolute",

@@ -7,7 +7,7 @@ import SupportSettings from "../../components/SettingsPage/SupportSettings";
 import CollectionSettings from "../../components/SettingsPage/CollectionSettings";
 import axios from "axios";
 
-const SettingsPage = ({ coinbase, userData, updateUserData,userCollection }) => {
+const SettingsPage = ({ coinbase, userData, updateUserData,userCollection, successUpdateProfile }) => {
   const [category, setCategory] = useState("profile");
 
   useEffect(() => {
@@ -26,6 +26,7 @@ const SettingsPage = ({ coinbase, userData, updateUserData,userCollection }) => 
                   coinbase={coinbase}
                   userData={userData}
                   updateUserData={updateUserData}
+                  successUpdateProfile={successUpdateProfile}
                 />
               ) : category === "notifications" ? (
                 <NotificationSettings />

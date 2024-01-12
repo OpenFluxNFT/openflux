@@ -43,6 +43,10 @@ function App() {
   const [isErrorToast, setisErrorToast] = useState(false);
   const [isSuccestToast, setisSuccestToast] = useState(false);
   const [userTotalNftsOwned, setUserTotalNftsOwned] = useState(0);
+  const [successUpdateProfile, setSuccessUpdateProfile] = useState({
+    success: null,
+    message: "",
+  });
   const [count, setCount] = useState(0);
   const [signStatus, setSignStatus] = useState("initial");
 
@@ -321,10 +325,19 @@ function App() {
         })
         .then((res) => {
           console.log(res.data);
+          setSuccessUpdateProfile({
+            success: true,
+            message: "Succesfully updated"
+          })
           setCount(count + 1);
         })
         .catch((err) => {
           console.log(err);
+          setSuccessUpdateProfile({
+            success: false,
+            message: "Something went wrong"
+          })
+
         });
     }
   };
@@ -595,6 +608,7 @@ function App() {
               userData={userData}
               updateUserData={updateUserData}
               userCollection={userCollection}
+              successUpdateProfile={successUpdateProfile}
             />
           }
         />

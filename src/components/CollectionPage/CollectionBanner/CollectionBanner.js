@@ -88,7 +88,7 @@ const CollectionBanner = ({
               <p className="collection-desc mb-0">{desc}</p>
               <div className="collection-amounts-grid">
                 {info.map((item, index) => (
-                  <div className="d-flex flex-column gap-1">
+                  <div className="d-flex flex-column gap-1" key={index}>
                     <span className="collection-amount-span mb-0">
                       {item.title}
                     </span>

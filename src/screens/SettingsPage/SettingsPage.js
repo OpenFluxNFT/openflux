@@ -14,6 +14,8 @@ const SettingsPage = ({ coinbase, userData, updateUserData,userCollection, succe
     window.scrollTo(0, 0);
   }, []);
 
+  console.log(userCollection)
+
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
       <div className="container-lg pt-4">

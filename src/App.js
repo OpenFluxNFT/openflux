@@ -565,7 +565,7 @@ function App() {
       )}
 
       <Routes>
-        <Route exact path="/" element={<Home />} />
+        <Route exact path="/" element={<Home allCollections={allCollections}/>} />
         <Route exact path="/collections" element={<Collections />} />
         {/* <Route exact path="/mint" element={<Mint />} /> */}
         <Route exact path="/support" element={<Support />} />

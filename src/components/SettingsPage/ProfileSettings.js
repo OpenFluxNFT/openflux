@@ -108,7 +108,7 @@ const ProfileSettings = ({
         } else if (file.size > maxSizeInBytes) {
           alert("Selected image exceeds the maximum size of 500KB");
         } else {
-          alert("Selected image must have an aspect ratio of 1:1");
+          alert("Selected image must be a maximum of 400px x 400px");
         }
       }
     }
@@ -146,7 +146,7 @@ const ProfileSettings = ({
         } else if (file.size > maxSizeInBytes) {
           alert("Selected image exceeds the maximum size of 500KB");
         } else {
-          alert("Selected image must have an aspect ratio of 4:1");
+          alert("Selected image must be a maximum of 1400px x 350px");
         }
       }
     }

@@ -611,6 +611,8 @@ function App() {
               coinbase={coinbase}
               userData={userData}
               userTotalNftsOwned={userTotalNftsOwned}
+              updateUserData={updateUserData}
+              successUpdateProfile={successUpdateProfile}
               onViewShared={(value) => {
                 getOtherUserData(value);
               }}

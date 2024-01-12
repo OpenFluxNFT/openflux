@@ -5,7 +5,14 @@ import ProfileBanner from "../../components/Profile/ProfileBanner/ProfileBanner"
 
 import { useParams } from "react-router-dom";
 
-const Profile = ({ coinbase, userData, userTotalNftsOwned, onViewShared }) => {
+const Profile = ({
+  coinbase,
+  userData,
+  userTotalNftsOwned,
+  onViewShared,
+  updateUserData,
+  successUpdateProfile,
+}) => {
   const [option, setOption] = useState("collected");
   const profileSocials = ["website", "twitter", "instagram"];
 
@@ -129,6 +136,8 @@ const Profile = ({ coinbase, userData, userTotalNftsOwned, onViewShared }) => {
         credentials={profileCredenrtials}
         desc={userData.bio ?? "No bio Available"}
         info={profileInfo}
+        updateUserData={updateUserData}
+        successUpdateProfile={successUpdateProfile}
       />
       <div className="container-lg py-5">
         <div className="row mx-0">

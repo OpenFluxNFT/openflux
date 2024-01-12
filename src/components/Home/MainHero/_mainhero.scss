@@ -1,10 +1,9 @@
 .main-hero-wrapper {
   border-radius: 30px;
-  background: linear-gradient(
-    148deg,
-    rgba(35, 36, 78, 0.1) 0%,
-    rgba(47, 128, 237, 0.05) 100%
-  );
+  background:  url('./assets/main-heroBg.webp');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
   // backdrop-filter: blur(10px);
   @media only screen and (max-width: 991px) {
     margin-top: 3rem;
@@ -38,5 +37,141 @@
     outline: none;
     border: none;
     text-decoration: none;
+  }
+
+  .explore-btn {
+    border-radius: 20px;
+    background: linear-gradient(90deg, #2F80ED 0%, #1DC8F3 100%);
+    color: #fff;
+    text-align: center;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    text-transform: capitalize;
+    width: fit-content;
+    outline: none;
+    border: none;
+    text-decoration: none;
+  }
+}
+
+
+
+.package-blur {
+  transition: all 0.25s;
+}
+
+.package-blur:hover {
+  transform: translateY(-10px);
+
+  .first-box-blur {
+    border: 2px solid #00fecf;
+  }
+  .second-box-blur {
+    border: 2px solid #00fecf;
+  }
+
+  .blur-package-title {
+    color: #00fecf;
+  }
+}
+
+.blur-img-big {
+  height: 342px !important;
+  width: 323px !important;
+
+  @media only screen and (max-width: 991px) {
+    transform: none !important;
+    position: relative !important;
+    top: 0 !important;
+    left: 0 !important;
+  }
+}
+
+.blur-img {
+  filter: drop-shadow(16.058px 17.1286px 35.3276px rgba(0, 0, 0, 0.09));
+  border-radius: 16.058px;
+  transform: matrix(1, 0, -0.18, 0.98, 0, 0);
+  width: 136.82px;
+  height: 144.9px;
+  position: absolute;
+  top: 6px;
+  left: 48px;
+}
+
+.first-bigbox-blur {
+  left: 105px;
+  position: relative !important;
+  top: 13px !important;
+  width: 296px !important;
+  height: 372px !important;
+
+
+  @media only screen and (max-width: 991px) {
+    transform: none !important;
+  }
+}
+
+.second-bigbox-blur {
+  width: 281.94px !important;
+  height: 295px !important;
+ 
+
+  @media only screen and (max-width: 991px) {
+    transform: none !important;
+  }
+}
+
+.first-box-blur {
+  width: 125.66px;
+  height: 166.08px;
+
+  
+
+  background: linear-gradient(
+    155.14deg,
+    rgba(255, 255, 255, 0) -2.13%,
+    rgba(255, 255, 255, 0.15) 136.58%
+  );
+  filter: drop-shadow(0px 4.28214px 52.4562px rgba(0, 7, 72, 0.12));
+  backdrop-filter: blur(13.3817px);
+  /* Note: backdrop-filter has minimal browser support */
+
+  border-radius: 21.4107px;
+  transform: matrix(1, 0, -0.18, 0.98, 0, 0);
+  flex: none;
+  order: 0;
+  align-self: stretch;
+  flex-grow: 1;
+  border: 2px solid #41435a;
+  transition: all 0.25s;
+}
+
+
+.second-box-blur {
+  width: 125.66px;
+  height: 89.13px;
+
+  background: linear-gradient(
+    155.14deg,
+    rgba(255, 255, 255, 0) -2.13%,
+    rgba(255, 255, 255, 0.15) 136.58%
+  );
+  filter: drop-shadow(0px 4.28214px 52.4562px rgba(0, 7, 72, 0.12));
+  backdrop-filter: blur(13.3817px);
+  border-radius: 21.4107px;
+  transform: matrix(1, 0, -0.18, 0.98, 0, 0);
+  position: absolute;
+  top: -11px;
+  left: 28px;
+  border: 2px solid #41435a;
+  transition: all 0.25s;
+}
+
+.customTop {
+  top: 80px;
+  @media only screen and (max-width: 991px) {
+    top: auto;
   }
 }

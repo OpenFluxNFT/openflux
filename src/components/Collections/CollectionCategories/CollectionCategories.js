@@ -96,8 +96,8 @@ const CollectionCategories = () => {
   return (
     <div className="container-lg py-5">
       <div className="row">
-      <h6 className="info-title my-4">
-      Collection <span style={{ color: "#2F80ED" }}>Categories</span>
+        <h6 className="info-title my-4">
+          Collection <span style={{ color: "#2F80ED" }}>Categories</span>
         </h6>
         <div className="d-flex align-items center gap-3 pb-3 pb-lg-0 mb-5 categories-tabs">
           <div
@@ -159,8 +159,8 @@ const CollectionCategories = () => {
             {dummyCollections.slice(0, 4).map((item, index) => (
               <NavLink
                 to={`/collection/${item.collectionAddress}/${item.collectionName}`}
-                style={{ textDecoration: "none" }}
                 key={index}
+                className={"text-decoration-none"}
               >
                 <CollectionCard key={index} data={item} />
               </NavLink>
@@ -171,7 +171,7 @@ const CollectionCategories = () => {
             {dummyCollections.map((item, index) => (
               <NavLink
                 to={`/collection/${item.collectionAddress}/${item.collectionName}`}
-                style={{ textDecoration: "none" }}
+                className={"text-decoration-none"}
                 key={index}
               >
                 <CollectionCard key={index} data={item} />

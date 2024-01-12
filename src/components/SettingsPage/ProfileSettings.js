@@ -6,6 +6,7 @@ import instagramIcon from "./assets/instagramIcon.svg";
 import editIcon from "./assets/editIcon.svg";
 import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
 import styled from "@emotion/styled";
+import Toast from "../Toast/Toast";
 
 const HtmlTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -17,7 +18,7 @@ const HtmlTooltip = styled(({ className, ...props }) => (
   },
 }));
 
-const ProfileSettings = ({ coinbase, userData, updateUserData }) => {
+const ProfileSettings = ({ coinbase, userData, updateUserData, successUpdateProfile }) => {
 const baseUrl = "https://confluxapi.worldofdypians.com/";
 
   const [profileImage, setProfileImage] = useState();
@@ -157,6 +158,7 @@ const baseUrl = "https://confluxapi.worldofdypians.com/";
   
 
   return (
+   <>
     <div className="col-12 col-lg-10">
       <div className="row">
         <h6 className="settings-header mb-3">Profile Details</h6>
@@ -377,6 +379,10 @@ const baseUrl = "https://confluxapi.worldofdypians.com/";
         </div>
       </div>
     </div>
+    {/* {successUpdateProfile &&  */}
+      <Toast isSuccess={successUpdateProfile.success ? true : false} isError={!successUpdateProfile.success ? true : false} message={successUpdateProfile.message} /> 
+    {/* } */}
+   </>
   );
 };
 

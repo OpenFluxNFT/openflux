@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./_profilebanner.scss";
 import bannerPlaceholder from "./assets/bannerPlaceholder.png";
 import cawsIcon from "./assets/cawsIcon.png";
@@ -29,8 +29,8 @@ const ProfileBanner = ({
 }) => {
 
   
-  const [profileImage, setProfileImage] = useState()
-  const [bannerImage, setBannerImage] = useState()
+  const [profileImage, setProfileImage] = useState(null)
+  const [bannerImage, setBannerImage] = useState(null)
   const [userInfo, setUserInfo] = useState({
     profilePicture: "",
     bannerPicture: ""
@@ -131,6 +131,17 @@ const ProfileBanner = ({
       }
     }
   };
+
+  useEffect(() => {
+    if(banner){
+      setBannerImage(`https://confluxapi.worldofdypians.com/${banner}`)
+    }
+ 
+    if(logo){
+      setProfileImage(`https://confluxapi.worldofdypians.com/${logo}`)
+    }
+  }, [banner, logo])
+  
   
   return (
 
@@ -138,11 +149,28 @@ const ProfileBanner = ({
       <div className="row px-0">
         <div className="collection-banner d-flex flex-column px-0">
           <div className="collection-banner-up position-relative">
-            {banner ? (
-              <img src={`https://confluxapi.worldofdypians.com/${banner}`} className="w-100 d-flex user-banner-img " alt=""/>
-            ) : (
-              <div className="collection-banner-empty"></div>
-            )}
+                <div className="collection-banner-empty position-relative">
+                <input
+                         type="file"
+                         accept=".png, .jpg, .jpeg"
+                         onChange={uploadBannerImage}
+                         style={{
+                           position: "absolute",
+                           top: 0,
+                           left: 0,
+                           width: "100%",
+                           height: "100%",
+                           opacity: 0,
+                           cursor: "pointer",
+                         }}
+                       />
+                  {bannerImage && 
+                  <img src={bannerImage} className="w-100 d-flex user-banner-img " alt=""/>
+                  }
+                        <img src={editIcon} alt="" className="edit-image" style={{cursor: "pointer"}} />
+
+                </div>
+            
 
             <div className="ps-0 ps-lg-5 collection-position">
               <div className="collection-banner-main-info d-flex flex-column flex-lg-row gap-3 gap-lg-0 align-items-start ps-3 ps-lg-5 pe-3 py-3 justify-content-between">
@@ -150,9 +178,9 @@ const ProfileBanner = ({
                   <div className="d-flex align-items-center gap-2 position-relative">
                   
                
-                      <div className="profile-image-placeholder-small position-relative">
-                        {logo &&
-                         <img src={`https://confluxapi.worldofdypians.com/${logo}`} className="collection-logo" alt="" />
+                      <div className="profile-image-placeholder-small position-relative" style={{cursor: "pointer"}}>
+                        {profileImage &&
+                         <img src={profileImage} className="collection-logo" alt="" />
                        
                         }
                           <input
@@ -169,7 +197,7 @@ const ProfileBanner = ({
                            cursor: "pointer",
                          }}
                        />
-                        <img src={editIcon} alt="" className="edit-image" />
+                        <img src={editIcon} alt="" className="edit-image" style={{cursor: "pointer"}} />
                       </div>
                     
                     <h6 className="collection-title mb-0">{title}</h6>

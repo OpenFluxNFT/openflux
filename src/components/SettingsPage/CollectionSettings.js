@@ -24,24 +24,7 @@ const HtmlTooltip = styled(({ className, ...props }) => (
 }));
 
 const CollectionSettings = ({userCollection}) => {
-  const dummyCollections = [
-    {
-      title: "Cats And Watches Society",
-      image: "favoritesPlaceholder1",
-    },
-    {
-      title: "CAWS Timepiece",
-      image: "favoritesPlaceholder2",
-    },
-    {
-      title: "World of Dypians Land",
-      image: "favoritesPlaceholder3",
-    },
-    {
-      title: "Cats And Watches Society",
-      image: "favoritesPlaceholder4",
-    },
-  ];
+
 
   const [collection, setCollection] = useState(null);
 
@@ -50,6 +33,15 @@ const CollectionSettings = ({userCollection}) => {
   const [featuredImage, setFeaturedImage] = useState();
   const [collectionsImage, setCollectionsImage] = useState();
   const [collectionOwner, setcollectionOwner] = useState();
+
+  const [collectionInfo, setcollectionInfo] = useState({
+    username: "",
+    email: "",
+    website: "",
+    bio: "",
+    profilePicture: "",
+    bannerPicture: "",
+  });
 
   const getCollectionOwner = async (collectionAddress) => {
     const result = await axios

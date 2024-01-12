@@ -14,15 +14,6 @@ const CollectionPage = ({
   userData,
   allCollections,
 }) => {
-  const collectionSocials = [
-    "website",
-    "twitter",
-    "instagram",
-    "discord",
-    "telegram",
-    "confluxScan",
-  ];
-
   const collectionCredenrtials = [
     {
       key: "Items",
@@ -72,7 +63,7 @@ const CollectionPage = ({
   const [collectionOwner, setcollectionOwner] = useState();
   const [isVerified, setisVerified] = useState(false);
   const [currentCollection, setcurrentCollection] = useState([]);
-
+  const [collectionSocials, setcollectionSocials] = useState([]);
 
   const { collectionAddress } = useParams();
 
@@ -99,15 +90,28 @@ const CollectionPage = ({
     }
   };
 
-  const fetchCurrentCollection = (collectionAddr)=>{
+  const fetchCurrentCollection = (collectionAddr) => {
+    const result = allCollections.find((item) => {
+      return item.contractAddress === collectionAddr;
+    });
+    if (result) {
+      setcurrentCollection(result);
 
+      const socialsObject = [
+        { title: "website", link: result.websiteLink },
+        { title: "twitter", link: result.twitterLink },
+        { title: "instagram", link: result.instagramLink },
+        { title: "discord", link: result.discordLink },
+        { title: "telegram", link: result.tgLink },
+        {
+          title: "confluxScan",
+          link: `https://evm.confluxscan.net/address/${collectionAddr}`,
+        },
+      ];
 
-    const result = allCollections.find((item)=>{ return item.contractAddress === collectionAddr});
-    if(result) {
-      setcurrentCollection(result)
+      setcollectionSocials(socialsObject);
     }
-
-  }
+  };
 
   const getCollectionOwner = async () => {
     const result = await axios
@@ -205,12 +209,12 @@ const CollectionPage = ({
 
   useEffect(() => {
     getCollectionOwner();
-    fetchCurrentCollection(collectionAddress)
+    fetchCurrentCollection(collectionAddress);
   }, [collectionAddress]);
 
   useEffect(() => {
-    fetchCurrentCollection(collectionAddress)
-  }, [collectionAddress,allCollections]);
+    fetchCurrentCollection(collectionAddress);
+  }, [collectionAddress, allCollections]);
 
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
@@ -219,7 +223,7 @@ const CollectionPage = ({
         logo={collectionIcon}
         banner={banner}
         socials={collectionSocials}
-        desc={collectionDesc}
+        desc={currentCollection.description ?? "No description"}
         info={collectionInfo}
         isFavorite={favorite}
         handleFavorite={() => {
@@ -228,7 +232,7 @@ const CollectionPage = ({
         isVerified={isVerified}
         currentCollection={currentCollection}
       />
-      <CollectionList currentCollection={currentCollection}/>
+      <CollectionList currentCollection={currentCollection} />
     </div>
   );
 };

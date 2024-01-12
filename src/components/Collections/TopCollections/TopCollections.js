@@ -70,13 +70,14 @@ const TopCollections = ({allCollections}) => {
                 style={{ width: "fit-content" }}
               >
                 <NavLink to={`/collection/${item.contractAddress}/${item.symbol}`}>
-                  <img src={item.img ?? collectionPlaceholder2} className="top-collection-image" alt="" />
+                  <img src={item.collectionBannerPicture ?? collectionPlaceholder2} className="top-collection-image" alt="" />
                   <div className="top-collection-info d-flex flex-column p-3 gap-2">
                     <div className="d-flex align-items-center gap-1">
                       <h6 className="top-collection-title mb-0">
                         {item.collectionName}
                       </h6>
-                      <img src={checkIcon} alt="" />
+                    
+                      {item.verified === 'yes' &&  <img src={checkIcon} alt="" /> }
                     </div>
                     <div className="d-flex align-items-center gap-1">
                       <span className="mb-0 floor-placeholder">Floor:</span>
@@ -98,13 +99,13 @@ const TopCollections = ({allCollections}) => {
                 // style={{ width: "fit-content" }}
               >
                 <NavLink to={`/collection/${item.contractAddress}/${item.symbol}`}>
-                  <img src={item.img ?? collectionPlaceholder2} className="top-collection-image" alt="" />
+                  <img src={item.collectionBannerPicture ?? collectionPlaceholder2} className="top-collection-image" alt="" />
                   <div className="top-collection-info d-flex flex-column p-3 gap-2">
                     <div className="d-flex align-items-center gap-1">
                       <h6 className="top-collection-title mb-0">
                         {item.collectionName}
                       </h6>
-                      <img src={checkIcon} alt="" />
+                      {item.verified === 'yes' &&  <img src={checkIcon} alt="" /> }
                     </div>
                     <div className="d-flex align-items-center gap-1">
                       <span className="mb-0 floor-placeholder">Floor:</span>

@@ -29,7 +29,7 @@ const CollectionBanner = ({
   isVerified,
   currentCollection,
 }) => {
-  
+ console.log(socials[0])
   return (
     <div className="container-lg py-0 py-lg-5">
       <div className="row px-0">
@@ -42,17 +42,17 @@ const CollectionBanner = ({
                   <div className="d-flex align-items-center gap-2 position-relative">
                     <img src={logo} className="collection-logo" alt="" />
                     <h6 className="collection-title mb-0">{title}</h6>
-                    <img src={checkIcon} alt="" />
+                    {isVerified && <img src={checkIcon} alt="" />}
                   </div>
                   <div className="d-flex align-items-center gap-3 flex-wrap">
                     <div className="d-flex align-items-center gap-1">
                       <span className="collection-info-span mb-0">Items</span>
-                      <span className="collection-info mb-0">9,953</span>
+                      <span className="collection-info mb-0">tbd</span>
                     </div>
                     <div className="d-flex align-items-center gap-1">
                       <span className="collection-info-span mb-0">Created</span>
                       <span className="collection-info mb-0">
-                        Sept 09, 2023
+                        tbd
                       </span>
                     </div>
                     <div className="d-flex align-items-center gap-1">
@@ -71,8 +71,8 @@ const CollectionBanner = ({
                 </div>
                 <div className="d-flex align-items-center gap-2">
                   {socials.map((item, index) => (
-                    <a href="#" target="_blank" key={index}>
-                      <img src={require(`./assets/${item}Icon.svg`)} alt="" />
+                    <a href={item.link === "" ? '#' : item.link} target="_blank" key={index}>
+                      <img src={require(`./assets/${item.title}Icon.svg`)} alt="" />
                     </a>
                   ))}
                   <div

@@ -141,8 +141,7 @@ const ProfileBanner = ({
       setProfileImage(`https://confluxapi.worldofdypians.com/${logo}`)
     }
   }, [banner, logo])
-  
-  
+   
   return (
 
     <div className="container-lg py-0 py-lg-5">

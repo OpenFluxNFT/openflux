@@ -39,10 +39,6 @@ const CollectionSettings = ({
   const [collectionOwner, setcollectionOwner] = useState();
 
   const [collectionInfo, setcollectionInfo] = useState({
-    username: "",
-    email: "",
-    website: "",
-    bio: "",
     collectionProfilePic: "",
     collectionBackgroundPic: "",
     collectionBannerPicture: "",
@@ -80,19 +76,21 @@ const CollectionSettings = ({
 
   const display = () => {
     if (collection) {
-      // setUserInfo(userInfo => ({
-      //   ...userInfo,
-      //   username: userData?.username,
-      //   email: userData?.email,
-      //   website: userData?.website,
-      //   bio: userData?.bio,
-      //   profilePicture: userData?.profilePicture ? baseUrl + userData?.profilePicture : '',
-      //   bannerPicture: userData?.bannerPicture ? baseUrl + userData?.bannerPicture : '',
-      // }))
+      setcollectionInfo((collectionInfo) => ({
+        ...collectionInfo,
+        websiteLink: collection.websiteLink,
+        // username: userData?.username,
+        // email: userData?.email,
+        // website: userData?.website,
+        // bio: userData?.bio,
+        // profilePicture: userData?.profilePicture ? baseUrl + userData?.profilePicture : '',
+        // bannerPicture: userData?.bannerPicture ? baseUrl + userData?.bannerPicture : '',
+      }));
 
       if (collection?.collectionProfilePic) {
         setProfileImage(baseUrl + collection?.collectionProfilePic);
       }
+
       if (collection?.collectionBackgroundPic) {
         setBannerImage(baseUrl + collection?.collectionBackgroundPic);
       }
@@ -313,7 +311,7 @@ const CollectionSettings = ({
                     </div>
                     <input
                       type="text"
-                      placeholder="Email"
+                      placeholder="Blockchain"
                       className="settings-input w-100"
                       value={"Conflux eSpace"}
                       disabled
@@ -341,7 +339,7 @@ const CollectionSettings = ({
                       type="text"
                       placeholder="https://opensea.io/"
                       className="settings-input w-100"
-                      value={collection.websiteLink}
+                      value={collectionInfo.websiteLink}
                       onChange={(e) =>
                         setcollectionInfo((collectionInfo) => ({
                           ...collectionInfo,
@@ -740,10 +738,6 @@ const CollectionSettings = ({
                     onClick={() =>
                       updateCollectionData(collectionInfo).then(() => {
                         setcollectionInfo({
-                          username: "",
-                          email: "",
-                          website: "",
-                          bio: "",
                           collectionProfilePic: "",
                           collectionBackgroundPic: "",
                           collectionBannerPicture: "",

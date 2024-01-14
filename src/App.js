@@ -391,9 +391,10 @@ function App() {
 
       formData.append("signature", signature);
       formData.append("walletAddress", coinbase);
+      formData.append('id', collectionId)
 
       axios
-        .post(`${baseURL}/api/collections/edit/${collectionId}`, formData, {
+        .post(`${baseURL}/api/collections/edit`, formData, {
           headers: {
             "x-api-key":
               "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",

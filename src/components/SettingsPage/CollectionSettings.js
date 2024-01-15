@@ -52,6 +52,13 @@ const CollectionSettings = ({
     tags: [],
     description: "",
   });
+
+
+  const [toastInfo, setToastInfo] = useState({
+    message: "",
+    error: false,
+  });
+
   let tagsArray = [];
   const baseUrl = "https://confluxapi.worldofdypians.com/";
 
@@ -115,12 +122,13 @@ const CollectionSettings = ({
       const img = new Image();
 
       img.onload = () => {
-        resolve(img.width <= targetWidth || img.height <= targetHeight);
+        resolve(img.width <= targetWidth && img.height <= targetHeight);
       };
       img.src = URL.createObjectURL(file);
     });
   };
 
+  
   const uploadProfileImage = async (e) => {
     const maxSizeInBytes = 500 * 1024; // 500KB
 
@@ -151,16 +159,30 @@ const CollectionSettings = ({
       } else {
         // Display an error message or handle invalid file type, size, or aspect ratio
         if (!isImage(file)) {
-          alert("Please select a valid image file (PNG, JPG, JPEG)");
+          setToastInfo({
+            message: "Please select a valid image file (PNG, JPG, JPEG)",
+            error: true,
+          });
         } else if (file.size > maxSizeInBytes) {
-          alert("Selected image exceeds the maximum size of 500KB");
+          setToastInfo({
+            message: "Selected image exceeds the maximum size of 500KB",
+            error: true,
+          });
         } else {
-          alert("Selected image must be a maximum of 400px x 400px");
+          setToastInfo({
+            message: "Selected image must be a maximum of 400px x 400px",
+            error: true,
+          });
         }
       }
     }
+    setTimeout(() => {
+      setToastInfo({
+        message: "",
+        error: false,
+      });
+    }, 5000);
   };
-
   const uploadCollectionsImage = async (e) => {
     const maxSizeInBytes = 500 * 1024; // 500KB
 
@@ -189,14 +211,29 @@ const CollectionSettings = ({
       } else {
         // Display an error message or handle invalid file type, size, or aspect ratio
         if (!isImage(file)) {
-          alert("Please select a valid image file (PNG, JPG, JPEG)");
+          setToastInfo({
+            message: "Please select a valid image file (PNG, JPG, JPEG)",
+            error: true,
+          });
         } else if (file.size > maxSizeInBytes) {
-          alert("Selected image exceeds the maximum size of 500KB");
+          setToastInfo({
+            message: "Selected image exceeds the maximum size of 500KB",
+            error: true,
+          });
         } else {
-          alert("Selected image must have an aspect ratio of 4:1");
+          setToastInfo({
+            message: "Selected image must be a maximum of 400px x 800px",
+            error: true,
+          });
         }
       }
     }
+    setTimeout(() => {
+      setToastInfo({
+        message: "",
+        error: false,
+      });
+    }, 5000);
   };
   const uploadFeaturedImage = async (e) => {
     const maxSizeInBytes = 500 * 1024; // 500KB
@@ -227,14 +264,29 @@ const CollectionSettings = ({
       } else {
         // Display an error message or handle invalid file type, size, or aspect ratio
         if (!isImage(file)) {
-          alert("Please select a valid image file (PNG, JPG, JPEG)");
+          setToastInfo({
+            message: "Please select a valid image file (PNG, JPG, JPEG)",
+            error: true,
+          });
         } else if (file.size > maxSizeInBytes) {
-          alert("Selected image exceeds the maximum size of 500KB");
+          setToastInfo({
+            message: "Selected image exceeds the maximum size of 500KB",
+            error: true,
+          });
         } else {
-          alert("Selected image must have an aspect ratio of 4:1");
+          setToastInfo({
+            message: "Selected image must be a maximum of 600px x 400px",
+            error: true,
+          });
         }
       }
     }
+    setTimeout(() => {
+      setToastInfo({
+        message: "",
+        error: false,
+      });
+    }, 5000);
   };
   const uploadBannerImage = async (e) => {
     const maxSizeInBytes = 500 * 1024; // 500KB
@@ -258,23 +310,37 @@ const CollectionSettings = ({
           setBannerImage(reader.result);
           setcollectionInfo((collectionInfo) => ({
             ...collectionInfo,
-            collectionBackgroundPic: file,
+            collectionBannerPic: file,
           }));
         };
         reader.readAsDataURL(file);
       } else {
         // Display an error message or handle invalid file type, size, or aspect ratio
         if (!isImage(file)) {
-          alert("Please select a valid image file (PNG, JPG, JPEG)");
+          setToastInfo({
+            message: "Please select a valid image file (PNG, JPG, JPEG)",
+            error: true,
+          });
         } else if (file.size > maxSizeInBytes) {
-          alert("Selected image exceeds the maximum size of 500KB");
+          setToastInfo({
+            message: "Selected image exceeds the maximum size of 500KB",
+            error: true,
+          });
         } else {
-          alert("Selected image must be a maximum of 1400px x 350px");
+          setToastInfo({
+            message: "Selected image must be a maximum of 1400px x 350px",
+            error: true,
+          });
         }
       }
     }
+    setTimeout(() => {
+      setToastInfo({
+        message: "",
+        error: false,
+      });
+    }, 5000);
   };
-
   const addTags = (tag) => {
     let tagArray = collectionInfo.tags;
     if (tagArray.includes(tag)) {
@@ -930,6 +996,10 @@ const CollectionSettings = ({
           successUpdateCollectionProfile.success === false ? true : false
         }
         message={successUpdateCollectionProfile.message}
+      />
+       <Toast
+        isError={toastInfo.error}
+        message={toastInfo.message}
       />
     </>
   );

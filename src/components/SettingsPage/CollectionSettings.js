@@ -744,21 +744,22 @@ const CollectionSettings = ({
                     className="connect-social-btn px-3 py-1"
                     style={{ fontSize: "16px" }}
                     onClick={() =>
-                      updateCollectionData(collectionInfo).then(() => {
-                        setcollectionInfo({
-                          collectionProfilePic: "",
-                          collectionBackgroundPic: "",
-                          collectionBannerPicture: "",
-                          featuredBannerPicture: "",
-                          websiteLink: "",
-                          twitterLink: "",
-                          tgLink: "",
-                          discordLink: "",
-                          instagramLink: "",
-                          tags: [],
-                          description: "",
-                        });
-                      })
+                      updateCollectionData(collectionInfo)
+                      // .then(() => {
+                      //   setcollectionInfo({
+                      //     collectionProfilePic: "",
+                      //     collectionBackgroundPic: "",
+                      //     collectionBannerPicture: "",
+                      //     featuredBannerPicture: "",
+                      //     websiteLink: "",
+                      //     twitterLink: "",
+                      //     tgLink: "",
+                      //     discordLink: "",
+                      //     instagramLink: "",
+                      //     tags: [],
+                      //     description: "",
+                      //   });
+                      // })
                     }
                   >
                     Save

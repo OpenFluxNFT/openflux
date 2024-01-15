@@ -240,13 +240,22 @@ const TrendingCollections = ({ allCollections }) => {
                     style={{ textDecoration: "none" }}
                   >
                     <div className="trending-collection-card d-flex align-items-center gap-2">
-                      <img src={ item.collectionProfilePic ?? dummyCards[index].image} alt="" />
+                      <img
+                        src={
+                          item.collectionProfilePic
+                            ? `https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`
+                            : dummyCards[index].image
+                        }
+                        alt=""
+                      />
                       <div className="d-flex flex-column gap-2 p-3">
                         <div className="d-flex align-items-center gap-2">
                           <h6 className="trending-collection-title mb-0">
                             {item.collectionName}
                           </h6>
-                          {item.verified === 'yes' &&  <img src={checkIcon} alt="" /> }
+                          {item.verified === "yes" && (
+                            <img src={checkIcon} alt="" />
+                          )}
                         </div>
                         <div className="d-flex align-items-center gap-3">
                           <div className="d-flex flex-column">

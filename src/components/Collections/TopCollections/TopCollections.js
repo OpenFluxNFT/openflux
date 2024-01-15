@@ -9,7 +9,7 @@ import useWindowSize from "../../../hooks/useWindowSize";
 import Slider from "react-slick";
 import { NavLink } from "react-router-dom";
 
-const TopCollections = ({allCollections}) => {
+const TopCollections = ({ allCollections }) => {
   const windowSize = useWindowSize();
   const settings = {
     dots: true,
@@ -29,31 +29,28 @@ const TopCollections = ({allCollections}) => {
       img: collectionPlaceholder1,
       floorPrice: 122.8,
       collectionName: "catsandwatchessocietycaws",
-      collectionAddress: window.config.nft_caws_address
+      collectionAddress: window.config.nft_caws_address,
     },
     {
       title: "World of Dypians Land",
       img: collectionPlaceholder2,
       floorPrice: 142.7,
       collectionName: "worldofdypians",
-      collectionAddress: window.config.nft_land_address
-
+      collectionAddress: window.config.nft_land_address,
     },
     {
       title: "CAWS Timepiece",
       img: collectionPlaceholder3,
       floorPrice: "--",
       collectionName: "cawstimepiece",
-      collectionAddress: window.config.nft_timepiece_address
-
+      collectionAddress: window.config.nft_timepiece_address,
     },
     {
       title: "Cats and Watches Society",
       img: collectionPlaceholder4,
       floorPrice: "--",
       collectionName: "catsandwatchessocietycaws",
-      collectionAddress: window.config.nft_caws_address
-
+      collectionAddress: window.config.nft_caws_address,
     },
   ];
 
@@ -69,20 +66,32 @@ const TopCollections = ({allCollections}) => {
                 key={index}
                 style={{ width: "fit-content" }}
               >
-                <NavLink to={`/collection/${item.contractAddress}/${item.symbol}`}>
-                  <img src={item.collectionBannerPicture ?? collectionPlaceholder2} className="top-collection-image" alt="" />
+                <NavLink
+                  to={`/collection/${item.contractAddress}/${item.symbol}`}
+                >
+                  <img
+                    src={
+                      item.collectionBannerPicture
+                        ? `https://confluxapi.worldofdypians.com/${item.collectionBannerPicture}`
+                        : collectionPlaceholder2
+                    }
+                    className="top-collection-image"
+                    alt=""
+                  />
                   <div className="top-collection-info d-flex flex-column p-3 gap-2">
                     <div className="d-flex align-items-center gap-1">
                       <h6 className="top-collection-title mb-0">
                         {item.collectionName}
                       </h6>
-                    
-                      {item.verified === 'yes' &&  <img src={checkIcon} alt="" /> }
+
+                      {item.verified === "yes" && (
+                        <img src={checkIcon} alt="" />
+                      )}
                     </div>
                     <div className="d-flex align-items-center gap-1">
                       <span className="mb-0 floor-placeholder">Floor:</span>
                       <span className="floor-price mb-0">
-                        {item.floorPrice ?? 'tbd'} CFX
+                        {item.floorPrice ?? "tbd"} CFX
                       </span>
                     </div>
                   </div>
@@ -98,19 +107,31 @@ const TopCollections = ({allCollections}) => {
                 key={index}
                 // style={{ width: "fit-content" }}
               >
-                <NavLink to={`/collection/${item.contractAddress}/${item.symbol}`}>
-                  <img src={item.collectionBannerPicture ?? collectionPlaceholder2} className="top-collection-image" alt="" />
+                <NavLink
+                  to={`/collection/${item.contractAddress}/${item.symbol}`}
+                >
+                  <img
+                    src={
+                      item.collectionBannerPicture
+                        ? `https://confluxapi.worldofdypians.com/${item.collectionBannerPicture}`
+                        : collectionPlaceholder2
+                    }
+                    className="top-collection-image"
+                    alt=""
+                  />
                   <div className="top-collection-info d-flex flex-column p-3 gap-2">
                     <div className="d-flex align-items-center gap-1">
                       <h6 className="top-collection-title mb-0">
                         {item.collectionName}
                       </h6>
-                      {item.verified === 'yes' &&  <img src={checkIcon} alt="" /> }
+                      {item.verified === "yes" && (
+                        <img src={checkIcon} alt="" />
+                      )}
                     </div>
                     <div className="d-flex align-items-center gap-1">
                       <span className="mb-0 floor-placeholder">Floor:</span>
                       <span className="floor-price mb-0">
-                        {item.floorPrice ?? 'tbd'} CFX
+                        {item.floorPrice ?? "tbd"} CFX
                       </span>
                     </div>
                   </div>

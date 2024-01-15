@@ -7,25 +7,38 @@ import collectionCardPlaceholder1 from "../../components/Collections/CollectionC
 const CollectionCard = ({ data }) => {
   return (
     <div className="d-flex flex-column collection-card ">
-      <img src={data.collectionBannerPicture ?? collectionCardPlaceholder1} className="w-100" alt="" />
+      <img
+        src={
+          data.collectionBannerPicture
+            ? `https://confluxapi.worldofdypians.com/${data.collectionBannerPicture}`
+            : collectionCardPlaceholder1
+        }
+        className="w-100"
+        alt=""
+      />
+
       <div className="collection-card-bottom d-flex flex-column gap-3 p-3">
         <div className="d-flex align-items-center gap-2 overflow-hidden">
           <h6 className="collection-card-title mb-0">{data.collectionName}</h6>
-         {data.verified === 'yes' &&  <img src={checkIcon} alt="" /> }
+          {data.verified === "yes" && <img src={checkIcon} alt="" />}
         </div>
         <div className="d-flex align-items-center gap-2 justify-content-between">
           <div className="d-flex flex-column">
             <span className="collection-price-holder mb-1">Floor</span>
             <div className="collection-price-wrapper d-flex align-items-center gap-2 justify-content-center p-2">
               {/* <img src={confluxLogo} alt="" /> */}
-              <h6 className="collection-price mb-0">{data.floorPrice ?? 'tbd'} CFX</h6>
+              <h6 className="collection-price mb-0">
+                {data.floorPrice ?? "tbd"} CFX
+              </h6>
             </div>
           </div>
           <div className="d-flex flex-column">
             <span className="collection-price-holder mb-1">Total Volume</span>
             <div className="collection-price-wrapper gap-2 d-flex align-items-center justify-content-center p-2">
               {/* <img src={confluxLogo} alt="" /> */}
-              <h6 className="collection-price mb-0">{data.totalVolume ?? 'tbd'} CFX</h6>
+              <h6 className="collection-price mb-0">
+                {data.totalVolume ?? "tbd"} CFX
+              </h6>
             </div>
           </div>
         </div>

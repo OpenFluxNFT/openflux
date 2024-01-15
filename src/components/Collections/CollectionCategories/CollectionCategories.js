@@ -9,7 +9,7 @@ import collectionCardPlaceholder4 from "./assets/collectionCardPlaceholder4.png"
 import useWindowSize from "../../../hooks/useWindowSize";
 import { NavLink } from "react-router-dom";
 
-const CollectionCategories = () => {
+const CollectionCategories = ({allCollections}) => {
   const [category, setCategory] = useState("all");
   const windowSize = useWindowSize();
   const sliderRef = useRef();
@@ -96,6 +96,9 @@ const CollectionCategories = () => {
   return (
     <div className="container-lg py-5">
       <div className="row">
+        <h6 className="info-title my-4">
+          Collection <span style={{ color: "#2F80ED" }}>Categories</span>
+        </h6>
         <div className="d-flex align-items center gap-3 pb-3 pb-lg-0 mb-5 categories-tabs">
           <div
             className={`trending-tab ${
@@ -153,11 +156,11 @@ const CollectionCategories = () => {
         </Slider> */}
         {windowSize.width > 786 ? (
           <div className="collection-categories-grid">
-            {dummyCollections.slice(0, 4).map((item, index) => (
+            {allCollections.slice(0, 4).map((item, index) => (
               <NavLink
-                to={`/collection/${item.collectionAddress}/${item.collectionName}`}
-                style={{ textDecoration: "none" }}
+                to={`/collection/${item.contractAddress}/${item.symbol}`}
                 key={index}
+                className={"text-decoration-none"}
               >
                 <CollectionCard key={index} data={item} />
               </NavLink>
@@ -165,10 +168,10 @@ const CollectionCategories = () => {
           </div>
         ) : (
           <Slider ref={sliderRef} {...settings}>
-            {dummyCollections.map((item, index) => (
+            {allCollections.map((item, index) => (
               <NavLink
-                to={`/collection/${item.collectionAddress}/${item.collectionName}`}
-                style={{ textDecoration: "none" }}
+              to={`/collection/${item.contractAddress}/${item.symbol}`}
+                className={"text-decoration-none"}
                 key={index}
               >
                 <CollectionCard key={index} data={item} />

@@ -126,7 +126,7 @@ const TrendingCollections = () => {
                 to={`/collection/${item.collectionAddress}/${item.collectionName}`}
                 style={{textDecoration: 'none'}}
               >
-                <CollectionCard key={index} data={item} />
+                <CollectionCard key={index} data={item}/>
               </NavLink>
             </div>
           ))}

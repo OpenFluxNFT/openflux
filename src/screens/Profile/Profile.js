@@ -5,7 +5,14 @@ import ProfileBanner from "../../components/Profile/ProfileBanner/ProfileBanner"
 
 import { useParams } from "react-router-dom";
 
-const Profile = ({ coinbase, userData, userTotalNftsOwned, onViewShared }) => {
+const Profile = ({
+  coinbase,
+  userData,
+  userTotalNftsOwned,
+  onViewShared,
+  updateUserData,
+  successUpdateProfile,
+}) => {
   const [option, setOption] = useState("collected");
   const profileSocials = ["website", "twitter", "instagram"];
 
@@ -19,13 +26,24 @@ const Profile = ({ coinbase, userData, userTotalNftsOwned, onViewShared }) => {
 
   const { id } = useParams();
 
+  const formatDate = (date) => {
+    const test = new Date(date);
+    const options = { month: "short", day: "2-digit", year: "numeric" };
+    const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
+      test
+    );
+
+    return formattedDate;
+  };
+
   const assignUserData = () => {
     if (userData && userData._id) {
       const userTime = new Date(userData.joinedAt).toLocaleDateString();
+      const userTime2 = formatDate(userTime);
       const userAddr = userData.walletAddress;
       const totalNFTFavs = userData.nftFavorites.length;
-      const profilepic = userData.profilePicture
-      const bannerpic = userData.bannerPicture
+      const profilepic = userData.profilePicture;
+      const bannerpic = userData.bannerPicture;
 
       if (!profilepic) {
         setprofilePicture();
@@ -37,7 +55,7 @@ const Profile = ({ coinbase, userData, userTotalNftsOwned, onViewShared }) => {
       } else {
         setbannerPicturePicture(bannerpic);
       }
-      setUserJoined(userTime);
+      setUserJoined(userTime2);
       setuserWallet(userAddr);
       setUserTotalNftsFavs(totalNFTFavs);
 
@@ -118,6 +136,8 @@ const Profile = ({ coinbase, userData, userTotalNftsOwned, onViewShared }) => {
         credentials={profileCredenrtials}
         desc={userData.bio ?? "No bio Available"}
         info={profileInfo}
+        updateUserData={updateUserData}
+        successUpdateProfile={successUpdateProfile}
       />
       <div className="container-lg py-5">
         <div className="row mx-0">

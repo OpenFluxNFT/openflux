@@ -30,6 +30,8 @@ function App() {
   const [showForms2, setShowForms2] = useState(false);
   const [coinbase, setCoinbase] = useState();
   const [userData, setuserData] = useState([]);
+  const [userCollection, setuserCollection] = useState([]);
+
   const [allCollections, setAllCollections] = useState([]);
   const [userCollectionFavs, setuserCollectionFavs] = useState([]);
 
@@ -41,8 +43,18 @@ function App() {
   const [isErrorToast, setisErrorToast] = useState(false);
   const [isSuccestToast, setisSuccestToast] = useState(false);
   const [userTotalNftsOwned, setUserTotalNftsOwned] = useState(0);
+  const [successUpdateProfile, setSuccessUpdateProfile] = useState({
+    success: null,
+    message: "",
+  });
+  const [successUpdateCollectionProfile, setSuccessUpdateCollectionProfile] =
+    useState({
+      success: null,
+      message: "",
+    });
   const [count, setCount] = useState(0);
   const [signStatus, setSignStatus] = useState("initial");
+  const [collectionId, setcollectionId] = useState();
 
   const windowSize = useWindowSize();
   const { ethereum } = window;
@@ -187,6 +199,24 @@ function App() {
     }
   };
 
+  const fetchuserCollection = async (walletAddr) => {
+    const result = await axios
+      // .get(`${baseURL}/api/users/checkCollections/${walletAddr}`, {
+      .get(`${baseURL}/api/users/checkCollections/0xb33ed310d7d3c1f5a9b785be909f3790afc15bb2`, {
+        headers: {
+          "x-api-key":
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+
+    if (result && result.status === 200) {
+      setuserCollection(result.data.ownedCollections);
+    }
+  };
+
   const handleAdduserWithSignature = async (walletAddr) => {
     if (walletAddr) {
       setSignStatus("loading");
@@ -265,6 +295,7 @@ function App() {
           setuserData(result.data);
           setuserCollectionFavs(result.data.collectionFavorites);
           fetchTotalNftOwned(walletAddr);
+          fetchuserCollection(walletAddr);
         }
       } else setuserData([]);
     }
@@ -272,15 +303,20 @@ function App() {
 
   const updateUserData = async (userInfo) => {
     if (coinbase && isConnected) {
+      setSuccessUpdateProfile({
+        success: null,
+        message: "",
+      });
+
       const filteredInfo = Object.fromEntries(
-        Object.entries(userInfo).filter(([key, value]) => value !== '')
-    );
+        Object.entries(userInfo).filter(([key, value]) => value !== "")
+      );
+
       const formData = new FormData();
       for (const [key, value] of Object.entries(filteredInfo)) {
         formData.append(key, value);
       }
 
-    
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner(coinbase);
       const signature = await signer
@@ -302,14 +338,109 @@ function App() {
         })
         .then((res) => {
           console.log(res.data);
+          setSuccessUpdateProfile({
+            success: true,
+            message: "Succesfully updated",
+          });
           setCount(count + 1);
+
+          setTimeout(() => {
+            setSuccessUpdateProfile({
+              success: null,
+              message: "",
+            });
+          }, 3000);
         })
         .catch((err) => {
           console.log(err);
+          setSuccessUpdateProfile({
+            success: false,
+            message: "Something went wrong",
+          });
+          setTimeout(() => {
+            setSuccessUpdateProfile({
+              success: null,
+              message: "",
+            });
+          }, 3000);
         });
     }
+  };
 
-   
+  const updateCollectionData = async (collectionInfo) => {
+    if (coinbase && isConnected) {
+      setSuccessUpdateCollectionProfile({
+        success: null,
+        message: "",
+      });
+
+      const filteredInfo = Object.fromEntries(
+        Object.entries(collectionInfo).filter(
+          ([key, value]) => value !== "" && value !== undefined
+        )
+      );
+
+      console.log(
+        Object.fromEntries(
+          Object.entries(collectionInfo).filter(
+            ([key, value]) => value !== "" && value !== undefined
+          )
+        )
+      );
+
+      const formData = new FormData();
+      for (const [key, value] of Object.entries(filteredInfo)) {
+        formData.append(key, value);
+      }
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner(coinbase);
+      const signature = await signer
+        .signMessage(`I am updating my collection with id ${collectionId}`)
+        .catch((e) => {
+          console.error(e);
+        });
+
+      formData.append("signature", signature);
+      formData.append("walletAddress", coinbase);
+      formData.append("id", collectionId);
+      axios
+        .post(`${baseURL}/api/collections/edit`, formData, {
+          headers: {
+            "x-api-key":
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          console.log(res.data);
+          setSuccessUpdateCollectionProfile({
+            success: true,
+            message: "Succesfully updated",
+          });
+          setCount(count + 1);
+
+          setTimeout(() => {
+            setSuccessUpdateCollectionProfile({
+              success: null,
+              message: "",
+            });
+          }, 3000);
+        })
+        .catch((err) => {
+          console.log(err);
+          setSuccessUpdateCollectionProfile({
+            success: false,
+            message: "Something went wrong",
+          });
+          setTimeout(() => {
+            setSuccessUpdateCollectionProfile({
+              success: null,
+              message: "",
+            });
+          }, 3000);
+        });
+    }
   };
 
   const getOtherUserData = async (walletAddr) => {
@@ -331,7 +462,6 @@ function App() {
         } else {
           setuserData(result.data);
           fetchTotalNftOwned(walletAddr);
-          console.log("yes");
         }
       } else setuserData([]);
     }
@@ -520,6 +650,7 @@ function App() {
             setIsRedirect(true);
           }}
           handleDisconnect={handleDisconnect}
+          allCollections={allCollections}
         />
       ) : (
         <MobileHeader
@@ -536,8 +667,16 @@ function App() {
       )}
 
       <Routes>
-        <Route exact path="/" element={<Home />} />
-        <Route exact path="/collections" element={<Collections />} />
+        <Route
+          exact
+          path="/"
+          element={<Home allCollections={allCollections} />}
+        />
+        <Route
+          exact
+          path="/collections"
+          element={<Collections allCollections={allCollections} />}
+        />
         {/* <Route exact path="/mint" element={<Mint />} /> */}
         <Route exact path="/support" element={<Support />} />
 
@@ -552,6 +691,7 @@ function App() {
               }}
               userCollectionFavs={userCollectionFavs}
               userData={userData}
+              allCollections={allCollections}
             />
           }
         />
@@ -563,9 +703,12 @@ function App() {
               coinbase={coinbase}
               userData={userData}
               userTotalNftsOwned={userTotalNftsOwned}
+              updateUserData={updateUserData}
+              successUpdateProfile={successUpdateProfile}
               onViewShared={(value) => {
                 getOtherUserData(value);
               }}
+              userCollection={userCollection}
             />
           }
         />
@@ -577,6 +720,13 @@ function App() {
               coinbase={coinbase}
               userData={userData}
               updateUserData={updateUserData}
+              userCollection={userCollection}
+              successUpdateProfile={successUpdateProfile}
+              successUpdateCollectionProfile={successUpdateCollectionProfile}
+              updateCollectionData={updateCollectionData}
+              onSelectCollection={(value) => {
+                setcollectionId(value);
+              }}
             />
           }
         />

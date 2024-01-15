@@ -20,7 +20,6 @@ import { useNavigate } from "react-router-dom";
 import dropdown from "./assets/dropdown.svg";
 import Web3 from "web3";
 import getFormattedNumber from "../../hooks/get-formatted-number";
-
 const Header = ({
   handleSignup,
   coinbase,
@@ -29,10 +28,14 @@ const Header = ({
   handleSwitchNetwork,
   handleSignupAndRedirectToAccount,
   handleDisconnect,
+  allCollections,
 }) => {
   const [showmenu, setShowMenu] = useState(false);
   const [tooltip, setTooltip] = useState(false);
   const [balance, setUserBalance] = useState(0);
+  const [searchResult, setSearchResult] = useState("");
+  const [currentCollection, setcurrentCollection] = useState();
+  const [isopen, setisopen] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -76,6 +79,24 @@ const Header = ({
     } else handleDisconnect();
   };
 
+  const handleFilterCollection = (collectionTitle) => {
+    if (collectionTitle.length >= 3) {
+      const result = allCollections.filter((item) => {
+        return item.collectionName
+          .toLowerCase()
+          .includes(collectionTitle.toLowerCase());
+      });
+      console.log(result);
+      if (result) {
+        setcurrentCollection(result);
+        setisopen(true);
+      } else {
+        setcurrentCollection();
+        setisopen(false);
+      }
+    }
+  };
+
   useEffect(() => {
     getUserBalance();
   }, [coinbase, isConnected, chainId]);
@@ -86,22 +107,79 @@ const Header = ({
         className="container-lg px-0
       "
       >
-        <div className="row mx-0 align-items-center justify-content-center">
+        <div className="row mx-0 align-items-center justify-content-center position-relative">
           <div className="col-1">
             <NavLink to={"/"}>
               <img src={dypiusLogo} alt="" />
             </NavLink>
           </div>
           <div className="col-4">
-            <div className="position-relative">
+            <div className="position-relative" onClick={()=>{searchResult!=="" && handleFilterCollection(searchResult)}}>
               <img src={searchIcon} alt="" className="search-icon" />
               <input
                 type="text"
                 className="search-input"
                 placeholder="Search anything"
+                value={searchResult}
+                onChange={(e) => {
+                  setSearchResult(e.target.value);
+                  handleFilterCollection(e.target.value);
+                }}
               />
             </div>
           </div>
+          {isopen && (
+            <div className="position-absolute">
+              <OutsideClickHandler
+                onOutsideClick={() => {
+                  setisopen(false);
+                }}
+              >
+                <div className="search-result-wrapper position-absolute p-3">
+                  <div className="d-flex flex-column gap-2">
+                    {currentCollection &&
+                      currentCollection.length > 0 &&
+                      currentCollection.map((item, index) => {
+                        return (
+                          <NavLink
+                            to={`/collection/${item.contractAddress}/${item.symbol}`}
+                            className={"text-decoration-none"}
+                            onClick={() => {
+                              setcurrentCollection();
+                              setSearchResult("");
+                              setisopen(false)
+                            }}
+                          >
+                            <div
+                              key={index}
+                              className="d-flex align-items-center gap-2"
+                            >
+                              <div className="menuitem2 w-100">
+                                {item.collectionProfilePic && (
+                                  <img
+                                    src={`https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`}
+                                    className="collection-logo-small"
+                                  />
+                                )}
+                                <span className="collection-title">
+                                  {item.collectionName}
+                                </span>
+                              </div>
+                            </div>
+                          </NavLink>
+                        );
+                      })}
+                    {currentCollection && currentCollection.length === 0 && (
+                      <div className="d-flex align-items-center gap-2">
+                        <span className="collection-title text-white">No items with this keyword</span>
+                      </div>
+                    )}
+                    <div></div>
+                  </div>
+                </div>
+              </OutsideClickHandler>
+            </div>
+          )}
           <div className="col-7 px-0">
             <div className="d-flex gap-1 align-items-center justify-content-between">
               <div className="d-flex align-items-center gap-4">

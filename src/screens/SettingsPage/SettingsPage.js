@@ -7,8 +7,17 @@ import SupportSettings from "../../components/SettingsPage/SupportSettings";
 import CollectionSettings from "../../components/SettingsPage/CollectionSettings";
 import axios from "axios";
 
-const SettingsPage = ({ coinbase, userData, updateUserData }) => {
+const SettingsPage = ({
+  coinbase,
+  userData,
+  updateUserData,
+  userCollection,
+  successUpdateProfile,
+  updateCollectionData,
+  onSelectCollection,successUpdateCollectionProfile
+}) => {
   const [category, setCategory] = useState("profile");
+  const [collectionId, setcollectionId] = useState();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -16,7 +25,7 @@ const SettingsPage = ({ coinbase, userData, updateUserData }) => {
 
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
-      <div className="container-lg pt-4">
+      <div className="container-lg  pt-4">
         <div className="row">
           <div className="settings-wrapper p-3" style={{ minHeight: "70vh" }}>
             <div className="row" style={{ height: "100%" }}>
@@ -26,13 +35,19 @@ const SettingsPage = ({ coinbase, userData, updateUserData }) => {
                   coinbase={coinbase}
                   userData={userData}
                   updateUserData={updateUserData}
+                  successUpdateProfile={successUpdateProfile}
                 />
               ) : category === "notifications" ? (
                 <NotificationSettings />
               ) : category === "support" ? (
                 <SupportSettings />
               ) : (
-                <CollectionSettings/>
+                <CollectionSettings
+                  userCollection={userCollection}
+                  updateCollectionData={updateCollectionData}
+                  onSelectCollection={onSelectCollection}
+                  successUpdateCollectionProfile={successUpdateCollectionProfile}
+                />
               )}
             </div>
           </div>

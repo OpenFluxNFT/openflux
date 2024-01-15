@@ -8,7 +8,7 @@ import RecentlyListed from "../../components/Home/RecentlyListed/RecentlyListed"
 import TrendingCollections from "../../components/Home/TrendingCollections/TrendingCollections";
 import CollectionCategories from "../../components/Collections/CollectionCategories/CollectionCategories";
 
-const Home = () => {
+const Home = ({allCollections}) => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -20,7 +20,7 @@ const Home = () => {
       <HomeInfo />
       <TrendingSales />
       <RecentlyListed />
-      <CollectionCategories />
+      <CollectionCategories allCollections={allCollections}/>
     </div>
   );
 };

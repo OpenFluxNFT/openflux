@@ -87,6 +87,18 @@
   }
 }
 
+.featured-image{
+  height: 100px;
+  width: 200px;
+  aspect-ratio: 2/1;
+  transition: all .3s;
+  border-radius: 10px;
+  @media screen and (max-width: 786px) {
+    width: 100px;
+    height: 100px;
+  }
+}
+
 .profile-image-placeholder:hover {
   box-shadow: inset 0px 0px 1000px rgba(0, 0, 0, 0.3);
   .edit-image{
@@ -327,6 +339,16 @@
   aspect-ratio: 0.87/1;
   border-radius: 10px;
   position: relative;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+
+.collection-banner-image {
+  height: 100px;
+  width: 87px;
+  aspect-ratio: 0.87/1;
+  border-radius: 10px;
   transition: all 0.3s;
   cursor: pointer;
 }

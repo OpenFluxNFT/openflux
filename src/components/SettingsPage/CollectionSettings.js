@@ -79,12 +79,12 @@ const CollectionSettings = ({
       setcollectionInfo((collectionInfo) => ({
         ...collectionInfo,
         websiteLink: collection.websiteLink,
-        // username: userData?.username,
-        // email: userData?.email,
-        // website: userData?.website,
-        // bio: userData?.bio,
-        // profilePicture: userData?.profilePicture ? baseUrl + userData?.profilePicture : '',
-        // bannerPicture: userData?.bannerPicture ? baseUrl + userData?.bannerPicture : '',
+        twitterLink: collection.twitterLink,
+        tgLink: collection.tgLink,
+        discordLink: collection.discordLink,
+        instagramLink: collection.instagramLink,
+        // tags: [],
+        description: collection.description,
       }));
 
       if (collection?.collectionProfilePic) {
@@ -94,11 +94,12 @@ const CollectionSettings = ({
       if (collection?.collectionBackgroundPic) {
         setBannerImage(baseUrl + collection?.collectionBackgroundPic);
       }
-      if (collection?.collectionBannerPicture) {
-        setFeaturedImage(baseUrl + collection?.collectionBannerPicture);
-      }
+
       if (collection?.featuredBannerPicture) {
-        setCollectionsImage(baseUrl + collection?.featuredBannerPicture);
+        setFeaturedImage(baseUrl + collection?.featuredBannerPicture);
+      }
+      if (collection?.collectionBannerPicture) {
+        setCollectionsImage(baseUrl + collection?.collectionBannerPicture);
       }
     }
   };
@@ -140,10 +141,10 @@ const CollectionSettings = ({
         reader.onload = () => {
           // Set the selected image as a data URL
           setProfileImage(reader.result);
-          // setUserInfo((userInfo) => ({
-          //   ...userInfo,
-          //   profilePicture: file,
-          // }));
+          setcollectionInfo((collectionInfo) => ({
+            ...collectionInfo,
+            collectionProfilePic: file,
+          }));
         };
         reader.readAsDataURL(file);
       } else {
@@ -177,7 +178,10 @@ const CollectionSettings = ({
         const reader = new FileReader();
 
         reader.onload = () => {
-          // Set the selected image as a data URL
+          setcollectionInfo((collectionInfo) => ({
+            ...collectionInfo,
+            collectionBannerPicture: file,
+          }));
           setCollectionsImage(reader.result);
         };
         reader.readAsDataURL(file);
@@ -213,6 +217,10 @@ const CollectionSettings = ({
         reader.onload = () => {
           // Set the selected image as a data URL
           setFeaturedImage(reader.result);
+          setcollectionInfo((collectionInfo) => ({
+            ...collectionInfo,
+            featuredBannerPicture: file,
+          }));
         };
         reader.readAsDataURL(file);
       } else {
@@ -247,10 +255,10 @@ const CollectionSettings = ({
         reader.onload = () => {
           // Set the selected image as a data URL
           setBannerImage(reader.result);
-          // setUserInfo((userInfo) => ({
-          //   ...userInfo,
-          //   bannerPicture: file,
-          // }));
+          setcollectionInfo((collectionInfo) => ({
+            ...collectionInfo,
+            collectionBackgroundPic: file,
+          }));
         };
         reader.readAsDataURL(file);
       } else {
@@ -369,7 +377,7 @@ const CollectionSettings = ({
                       <div className="col-3">
                         <div className="d-flex flex-column gap-2">
                           <div className="d-flex align-items-center gap-2">
-                            <h6 className="input-label mb-0">Profile Image</h6>
+                            <h6 className="input-label mb-0">Logo</h6>
                             <HtmlTooltip
                               placement="top"
                               title={

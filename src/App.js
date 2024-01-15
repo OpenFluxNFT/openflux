@@ -47,10 +47,11 @@ function App() {
     success: null,
     message: "",
   });
-  const [successUpdateCollectionProfile, setSuccessUpdateCollectionProfile] = useState({
-    success: null,
-    message: "",
-  });
+  const [successUpdateCollectionProfile, setSuccessUpdateCollectionProfile] =
+    useState({
+      success: null,
+      message: "",
+    });
   const [count, setCount] = useState(0);
   const [signStatus, setSignStatus] = useState("initial");
   const [collectionId, setcollectionId] = useState();
@@ -373,7 +374,17 @@ function App() {
       });
 
       const filteredInfo = Object.fromEntries(
-        Object.entries(collectionInfo).filter(([key, value]) => value !== "")
+        Object.entries(collectionInfo).filter(
+          ([key, value]) => value !== "" && value !== undefined
+        )
+      );
+
+      console.log(
+        Object.fromEntries(
+          Object.entries(collectionInfo).filter(
+            ([key, value]) => value !== "" && value !== undefined
+          )
+        )
       );
 
       const formData = new FormData();
@@ -391,8 +402,7 @@ function App() {
 
       formData.append("signature", signature);
       formData.append("walletAddress", coinbase);
-      formData.append('id', collectionId)
-
+      formData.append("id", collectionId);
       axios
         .post(`${baseURL}/api/collections/edit`, formData, {
           headers: {
@@ -711,7 +721,6 @@ function App() {
               userCollection={userCollection}
               successUpdateProfile={successUpdateProfile}
               successUpdateCollectionProfile={successUpdateCollectionProfile}
-
               updateCollectionData={updateCollectionData}
               onSelectCollection={(value) => {
                 setcollectionId(value);

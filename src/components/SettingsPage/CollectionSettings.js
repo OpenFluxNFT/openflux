@@ -13,6 +13,7 @@ import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
 import styled from "@emotion/styled";
 import axios from "axios";
 import Toast from "../Toast/Toast";
+import { Checkbox } from "@mui/material";
 
 const HtmlTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -41,17 +42,17 @@ const CollectionSettings = ({
   const [collectionInfo, setcollectionInfo] = useState({
     collectionProfilePic: "",
     collectionBackgroundPic: "",
-    collectionBannerPicture: "",
-    featuredBannerPicture: "",
+    collectionBannerPic: "",
+    featuredBannerPic: "",
     websiteLink: "",
     twitterLink: "",
     tgLink: "",
     discordLink: "",
     instagramLink: "",
-    // tags: [],
+    tags: [],
     description: "",
   });
-
+  let tagsArray = [];
   const baseUrl = "https://confluxapi.worldofdypians.com/";
 
   const getCollectionOwner = async (collectionAddress) => {
@@ -79,12 +80,12 @@ const CollectionSettings = ({
       setcollectionInfo((collectionInfo) => ({
         ...collectionInfo,
         websiteLink: collection.websiteLink,
-        // username: userData?.username,
-        // email: userData?.email,
-        // website: userData?.website,
-        // bio: userData?.bio,
-        // profilePicture: userData?.profilePicture ? baseUrl + userData?.profilePicture : '',
-        // bannerPicture: userData?.bannerPicture ? baseUrl + userData?.bannerPicture : '',
+        twitterLink: collection.twitterLink,
+        tgLink: collection.tgLink,
+        discordLink: collection.discordLink,
+        instagramLink: collection.instagramLink,
+        tags: collection.tags,
+        description: collection.description,
       }));
 
       if (collection?.collectionProfilePic) {
@@ -94,11 +95,12 @@ const CollectionSettings = ({
       if (collection?.collectionBackgroundPic) {
         setBannerImage(baseUrl + collection?.collectionBackgroundPic);
       }
-      if (collection?.collectionBannerPicture) {
-        setFeaturedImage(baseUrl + collection?.collectionBannerPicture);
+
+      if (collection?.featuredBannerPic) {
+        setFeaturedImage(baseUrl + collection?.featuredBannerPic);
       }
-      if (collection?.featuredBannerPicture) {
-        setCollectionsImage(baseUrl + collection?.featuredBannerPicture);
+      if (collection?.collectionBannerPicture) {
+        setCollectionsImage(baseUrl + collection?.collectionBannerPicture);
       }
     }
   };
@@ -140,10 +142,10 @@ const CollectionSettings = ({
         reader.onload = () => {
           // Set the selected image as a data URL
           setProfileImage(reader.result);
-          // setUserInfo((userInfo) => ({
-          //   ...userInfo,
-          //   profilePicture: file,
-          // }));
+          setcollectionInfo((collectionInfo) => ({
+            ...collectionInfo,
+            collectionProfilePic: file,
+          }));
         };
         reader.readAsDataURL(file);
       } else {
@@ -171,13 +173,16 @@ const CollectionSettings = ({
         file &&
         (await isImage(file)) &&
         file.size <= maxSizeInBytes &&
-        (await isAspectRatioValidProfile(file, 350, 400))
+        (await isAspectRatioValidProfile(file, 400, 800))
       ) {
         // Set the selected image
         const reader = new FileReader();
 
         reader.onload = () => {
-          // Set the selected image as a data URL
+          setcollectionInfo((collectionInfo) => ({
+            ...collectionInfo,
+            collectionBannerPic: file,
+          }));
           setCollectionsImage(reader.result);
         };
         reader.readAsDataURL(file);
@@ -213,6 +218,10 @@ const CollectionSettings = ({
         reader.onload = () => {
           // Set the selected image as a data URL
           setFeaturedImage(reader.result);
+          setcollectionInfo((collectionInfo) => ({
+            ...collectionInfo,
+            featuredBannerPic: file,
+          }));
         };
         reader.readAsDataURL(file);
       } else {
@@ -247,10 +256,10 @@ const CollectionSettings = ({
         reader.onload = () => {
           // Set the selected image as a data URL
           setBannerImage(reader.result);
-          // setUserInfo((userInfo) => ({
-          //   ...userInfo,
-          //   bannerPicture: file,
-          // }));
+          setcollectionInfo((collectionInfo) => ({
+            ...collectionInfo,
+            collectionBackgroundPic: file,
+          }));
         };
         reader.readAsDataURL(file);
       } else {
@@ -264,6 +273,21 @@ const CollectionSettings = ({
         }
       }
     }
+  };
+
+  const addTags = (tag) => {
+    let tagArray = collectionInfo.tags;
+    if (tagArray.includes(tag)) {
+      const index = tagArray.indexOf(tag);
+      tagArray.splice(index, 1);
+    } else {
+      tagArray.push(tag);
+    }
+
+    setcollectionInfo((collectionInfo) => ({
+      ...collectionInfo,
+      tags: tagArray,
+    }));
   };
 
   useEffect(() => {
@@ -307,7 +331,17 @@ const CollectionSettings = ({
                   <div className="d-flex flex-column gap-2">
                     <div className="d-flex align-items-center gap-2">
                       <h6 className="input-label mb-0">Blockchain</h6>
-                      <img src={infoIcon} width={16} height={16} alt="" />
+                      <HtmlTooltip
+                        placement="top"
+                        title={
+                          <p className="tooltip-text mb-0">
+                            Not editable for badged collections. Please contact
+                            support for additional help.
+                          </p>
+                        }
+                      >
+                        <img src={infoIcon} width={16} height={16} alt="" />
+                      </HtmlTooltip>
                     </div>
                     <input
                       type="text"
@@ -354,22 +388,122 @@ const CollectionSettings = ({
                 <div className="d-flex flex-column gap-4">
                   <div className="d-flex flex-column gap-2">
                     <h6 className="input-label mb-0">Tags</h6>
-                    <input
+                    <div className="checkbox-grid">
+                      <div className="d-flex align-items-center gap-2">
+                        <Checkbox
+                          onChange={() => addTags("Gaming")}
+                          sx={{
+                            color: "white",
+                            "&.Mui-checked": {
+                              color: "#00FECF",
+                            },
+                          }}
+                          checked={
+                            collectionInfo.tags.find((item) => {
+                              return item === "Gaming";
+                            }) !== undefined
+                              ? true
+                              : false
+                          }
+                        />
+                        <span className="checkbox-title">Gaming</span>
+                      </div>
+                      <div className="d-flex align-items-center gap-2">
+                        <Checkbox
+                          onChange={() => addTags("Art")}
+                          sx={{
+                            color: "white",
+                            "&.Mui-checked": {
+                              color: "#00FECF",
+                            },
+                          }}
+                          checked={collectionInfo.tags.find((item) => {
+                            return item === "Art";
+                          })}
+                        />
+                        <span className="checkbox-title">Art</span>
+                      </div>
+                      <div className="d-flex align-items-center gap-2">
+                        <Checkbox
+                          onChange={() => addTags("Virtual World")}
+                          sx={{
+                            color: "white",
+                            "&.Mui-checked": {
+                              color: "#00FECF",
+                            },
+                          }}
+                          checked={collectionInfo.tags.find((item) => {
+                            return item === "Virtual World";
+                          })}
+                        />
+                        <span className="checkbox-title">Virtual World</span>
+                      </div>
+                      <div className="d-flex align-items-center gap-2">
+                        <Checkbox
+                          onChange={() => addTags("Music")}
+                          sx={{
+                            color: "white",
+                            "&.Mui-checked": {
+                              color: "#00FECF",
+                            },
+                          }}
+                          checked={collectionInfo.tags.find((item) => {
+                            return item === "Music";
+                          })}
+                        />
+                        <span className="checkbox-title">Music</span>
+                      </div>
+                      <div className="d-flex align-items-center gap-2">
+                        <Checkbox
+                          onChange={() => addTags("Sports")}
+                          sx={{
+                            color: "white",
+                            "&.Mui-checked": {
+                              color: "#00FECF",
+                            },
+                          }}
+                          checked={collectionInfo.tags.find((item) => {
+                            return item === "Sports";
+                          })}
+                        />
+                        <span className="checkbox-title">Sports</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="d-flex flex-column gap-2 mt-4 mt-lg-0">
+                    <h6 className="input-label mb-0">Description</h6>
+                    <textarea
                       type="text"
-                      placeholder="0xc...3453"
+                      placeholder="Description"
                       className="settings-input w-100"
+                      style={{ height: "100%" }}
+                      rows={5}
+                      value={collectionInfo.description}
+                      onChange={(e) =>
+                        setcollectionInfo((collectionInfo) => ({
+                          ...collectionInfo,
+                          description: e.target.value,
+                        }))
+                      }
+                      maxLength={350}
                     />
                   </div>
                 </div>
               </div>
               <div className="row">
+                <h6 className="input-label mb-0 mt-5">Collection images</h6>
+                <span className="comment-txt">
+                  These images will be used for featuring your collection on the
+                  homepage, category pages, or other display areas of the
+                  Marketplace
+                </span>
                 <div className="col-12 col-lg-6 mt-4">
                   <div className="d-flex flex-column justify-content-between mt-4 mt-lg-0 h-100">
                     <div className="d-flex align-items-center">
                       <div className="col-3">
                         <div className="d-flex flex-column gap-2">
                           <div className="d-flex align-items-center gap-2">
-                            <h6 className="input-label mb-0">Profile Image</h6>
+                            <h6 className="input-label mb-0">Logo</h6>
                             <HtmlTooltip
                               placement="top"
                               title={
@@ -538,7 +672,7 @@ const CollectionSettings = ({
                               title={
                                 <div className="d-flex flex-column gap-2">
                                   <p className="tooltip-text mb-0">
-                                    Recommended: 350px x 400px
+                                    Recommended: 400px x 800px
                                   </p>
                                   <p className="tooltip-text mb-0">
                                     Max size: 500KB
@@ -586,24 +720,6 @@ const CollectionSettings = ({
                 </div>
               </div>
               <div className="col-12 mt-4">
-                <div className="d-flex flex-column gap-2 mt-4 mt-lg-0">
-                  <h6 className="input-label mb-0">Description</h6>
-                  <textarea
-                    type="text"
-                    placeholder="Description"
-                    className="settings-input w-100"
-                    style={{ height: "100%" }}
-                    rows={5}
-                    value={collectionInfo.description}
-                    onChange={(e) =>
-                      setcollectionInfo((collectionInfo) => ({
-                        ...collectionInfo,
-                        description: e.target.value,
-                      }))
-                    }
-                    maxLength={350}
-                  />
-                </div>
                 <div className="row">
                   <div className="col-12 col-lg-6 mt-4">
                     <div className="d-flex flex-column gap-4">
@@ -735,22 +851,23 @@ const CollectionSettings = ({
                   <button
                     className="connect-social-btn px-3 py-1"
                     style={{ fontSize: "16px" }}
-                    onClick={() =>
-                      updateCollectionData(collectionInfo).then(() => {
-                        setcollectionInfo({
-                          collectionProfilePic: "",
-                          collectionBackgroundPic: "",
-                          collectionBannerPicture: "",
-                          featuredBannerPicture: "",
-                          websiteLink: "",
-                          twitterLink: "",
-                          tgLink: "",
-                          discordLink: "",
-                          instagramLink: "",
-                          tags: [],
-                          description: "",
-                        });
-                      })
+                    onClick={
+                      () => updateCollectionData(collectionInfo)
+                      // .then(() => {
+                      //   setcollectionInfo({
+                      //     collectionProfilePic: "",
+                      //     collectionBackgroundPic: "",
+                      //     collectionBannerPic: "",
+                      //     featuredBannerPic: "",
+                      //     websiteLink: "",
+                      //     twitterLink: "",
+                      //     tgLink: "",
+                      //     discordLink: "",
+                      //     instagramLink: "",
+                      //     tags: [],
+                      //     description: "",
+                      //   });
+                      // })
                     }
                   >
                     Save

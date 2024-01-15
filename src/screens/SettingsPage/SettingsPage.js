@@ -25,7 +25,7 @@ const SettingsPage = ({
 
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
-      <div className="container-lg pt-4">
+      <div className="container-lg  pt-4">
         <div className="row">
           <div className="settings-wrapper p-3" style={{ minHeight: "70vh" }}>
             <div className="row" style={{ height: "100%" }}>

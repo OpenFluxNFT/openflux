@@ -189,3 +189,10 @@ input:focus {
 .recently-listed-card:hover {
   border: 1px solid #2f80ed;
 }
+
+@media only screen and (min-width: 300px) and (max-width: 1400px) {
+  .container-lg{
+    max-width: 100% !important;
+  }
+
+}

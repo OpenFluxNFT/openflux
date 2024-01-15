@@ -28,6 +28,10 @@ const ProfileSettings = ({
 
   const [profileImage, setProfileImage] = useState();
   const [bannerImage, setBannerImage] = useState();
+  const [toastInfo, setToastInfo] = useState({
+    message: "",
+    error: false,
+  });
 
   const [userInfo, setUserInfo] = useState({
     username: "",
@@ -40,15 +44,15 @@ const ProfileSettings = ({
 
   const display = () => {
     if (userData && userData._id) {
-      // setUserInfo(userInfo => ({
-      //   ...userInfo,
-      //   username: userData?.username,
-      //   email: userData?.email,
-      //   website: userData?.website,
-      //   bio: userData?.bio,
-      //   profilePicture: userData?.profilePicture ? baseUrl + userData?.profilePicture : '',
-      //   bannerPicture: userData?.bannerPicture ? baseUrl + userData?.bannerPicture : '',
-      // }))
+      setUserInfo(userInfo => ({
+        ...userInfo,
+        username: userData?.username,
+        email: userData?.email,
+        website: userData?.website,
+        bio: userData?.bio,
+        profilePicture: userData?.profilePicture ? baseUrl + userData?.profilePicture : '',
+        bannerPicture: userData?.bannerPicture ? baseUrl + userData?.bannerPicture : '',
+      }))
 
       if (userData?.profilePicture) {
         setProfileImage(baseUrl + userData?.profilePicture);
@@ -68,10 +72,12 @@ const ProfileSettings = ({
     return new Promise((resolve) => {
       const img = new Image();
       img.onload = () => {
-        resolve(img.width <= targetWidth || img.height <= targetHeight);
+        console.log(img.width <= targetWidth && img.height <= targetHeight)
+        resolve(img.width <= targetWidth && img.height <= targetHeight);
       };
       img.src = URL.createObjectURL(file);
     });
+    
   };
 
   const uploadProfileImage = async (e) => {
@@ -104,14 +110,29 @@ const ProfileSettings = ({
       } else {
         // Display an error message or handle invalid file type, size, or aspect ratio
         if (!isImage(file)) {
-          alert("Please select a valid image file (PNG, JPG, JPEG)");
+          setToastInfo({
+            message: "Please select a valid image file (PNG, JPG, JPEG)",
+            error: true,
+          });
         } else if (file.size > maxSizeInBytes) {
-          alert("Selected image exceeds the maximum size of 500KB");
+          setToastInfo({
+            message: "Selected image exceeds the maximum size of 500KB",
+            error: true,
+          });
         } else {
-          alert("Selected image must be a maximum of 400px x 400px");
+          setToastInfo({
+            message: "Selected image must be a maximum of 400px x 400px",
+            error: true,
+          });
         }
       }
     }
+    setTimeout(() => {
+      setToastInfo({
+        message: "",
+        error: false,
+      });
+    }, 5000);
   };
   const uploadBannerImage = async (e) => {
     const maxSizeInBytes = 500 * 1024; // 500KB
@@ -142,14 +163,29 @@ const ProfileSettings = ({
       } else {
         // Display an error message or handle invalid file type, size, or aspect ratio
         if (!isImage(file)) {
-          alert("Please select a valid image file (PNG, JPG, JPEG)");
+          setToastInfo({
+            message: "Please select a valid image file (PNG, JPG, JPEG)",
+            error: true,
+          });
         } else if (file.size > maxSizeInBytes) {
-          alert("Selected image exceeds the maximum size of 500KB");
+          setToastInfo({
+            message: "Selected image exceeds the maximum size of 500KB",
+            error: true,
+          });
         } else {
-          alert("Selected image must be a maximum of 1400px x 350px");
+          setToastInfo({
+            message: "Selected image must be a maximum of 1400px x 350px",
+            error: true,
+          });
         }
       }
     }
+    setTimeout(() => {
+      setToastInfo({
+        message: "",
+        error: false,
+      });
+    }, 5000);
   };
 
   useEffect(() => {
@@ -229,8 +265,8 @@ const ProfileSettings = ({
           </div>
           <div className="col-12 col-lg-6">
             <div className="d-flex flex-column justify-content-between mt-4 mt-lg-0 h-100">
-              <div className="d-flex align-items-center">
-                <div className="col-3">
+              <div className="row">
+                <div className="col-12 col-lg-3 mb-4 mb-lg-0">
                   <div className="d-flex flex-column gap-2">
                     <div className="d-flex align-items-center gap-2">
                       <h6 className="input-label mb-0">Profile Image</h6>
@@ -274,7 +310,7 @@ const ProfileSettings = ({
                     </div>
                   </div>
                 </div>
-                <div className="col-9">
+                <div className="col-12 col-lg-9">
                   <div className="d-flex flex-column gap-2">
                     <div className="d-flex align-items-center gap-2">
                       <h6 className="input-label mb-0">Profile Banner</h6>
@@ -402,6 +438,10 @@ const ProfileSettings = ({
         isSuccess={successUpdateProfile.success ? true : false}
         isError={successUpdateProfile.success === false ? true : false}
         message={successUpdateProfile.message}
+      />
+      <Toast
+        isError={toastInfo.error}
+        message={toastInfo.message}
       />
       {/* } */}
     </>

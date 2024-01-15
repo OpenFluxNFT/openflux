@@ -201,7 +201,8 @@ function App() {
 
   const fetchuserCollection = async (walletAddr) => {
     const result = await axios
-      .get(`${baseURL}/api/users/checkCollections/${walletAddr}`, {
+      // .get(`${baseURL}/api/users/checkCollections/${walletAddr}`, {
+      .get(`${baseURL}/api/users/checkCollections/0xb33ed310d7d3c1f5a9b785be909f3790afc15bb2`, {
         headers: {
           "x-api-key":
             "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",

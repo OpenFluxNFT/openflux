@@ -96,8 +96,8 @@ const CollectionSettings = ({
         setBannerImage(baseUrl + collection?.collectionBackgroundPic);
       }
 
-      if (collection?.featuredBannerPic) {
-        setFeaturedImage(baseUrl + collection?.featuredBannerPic);
+      if (collection?.featuredBannerPicture) {
+        setFeaturedImage(baseUrl + collection?.featuredBannerPicture);
       }
       if (collection?.collectionBannerPicture) {
         setCollectionsImage(baseUrl + collection?.collectionBannerPicture);

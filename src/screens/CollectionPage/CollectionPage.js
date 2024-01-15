@@ -220,8 +220,14 @@ const CollectionPage = ({
     <div className="container-fluid py-4 home-wrapper px-0">
       <CollectionBanner
         title={currentCollection.collectionName}
-        logo={collectionIcon}
-        banner={banner}
+        logo={
+          currentCollection.collectionProfilePic
+            ? `https://confluxapi.worldofdypians.com/${currentCollection.collectionProfilePic}`
+            : collectionIcon
+        }
+        banner={ currentCollection.collectionBackgroundPic
+          ? `https://confluxapi.worldofdypians.com/${currentCollection.collectionBackgroundPic}`
+          : banner}
         socials={collectionSocials}
         desc={currentCollection.description ?? "No description"}
         info={collectionInfo}

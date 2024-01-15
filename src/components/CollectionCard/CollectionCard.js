@@ -9,11 +9,11 @@ const CollectionCard = ({ data }) => {
     <div className="d-flex flex-column collection-card ">
       <img
         src={
-          data.collectionBannerPicture
-            ? `https://confluxapi.worldofdypians.com/${data.collectionBannerPicture}`
+          data.featuredBannerPicture
+            ? `https://confluxapi.worldofdypians.com/${data.featuredBannerPicture}`
             : collectionCardPlaceholder1
         }
-        className="w-100"
+        className="w-100 featured-collection-pic"
         alt=""
       />
 

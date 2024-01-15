@@ -91,7 +91,7 @@ const HomeInfo = () => {
             <div className="info-icon-wrapper d-flex align-items-center justify-content-center">
               <img src={listIcon} alt="" />
             </div>
-            <span className="info-desc mb-0">List them for sale</span>
+            <span className="info-desc mb-0">Trade NFTs</span>
           </div>
         </div>
         <div className="d-flex justify-content-center w-100">

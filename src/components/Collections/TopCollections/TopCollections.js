@@ -23,36 +23,7 @@ const TopCollections = ({ allCollections }) => {
     dotsClass: "button__bar",
   };
 
-  const dummyCollections = [
-    {
-      title: "Cats and Watches Society",
-      img: collectionPlaceholder1,
-      floorPrice: 122.8,
-      collectionName: "catsandwatchessocietycaws",
-      collectionAddress: window.config.nft_caws_address,
-    },
-    {
-      title: "World of Dypians Land",
-      img: collectionPlaceholder2,
-      floorPrice: 142.7,
-      collectionName: "worldofdypians",
-      collectionAddress: window.config.nft_land_address,
-    },
-    {
-      title: "CAWS Timepiece",
-      img: collectionPlaceholder3,
-      floorPrice: "--",
-      collectionName: "cawstimepiece",
-      collectionAddress: window.config.nft_timepiece_address,
-    },
-    {
-      title: "Cats and Watches Society",
-      img: collectionPlaceholder4,
-      floorPrice: "--",
-      collectionName: "catsandwatchessocietycaws",
-      collectionAddress: window.config.nft_caws_address,
-    },
-  ];
+
 
   return (
     <div className="container-lg pt-0 pb-5 pt-lg-5">

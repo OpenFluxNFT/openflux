@@ -384,7 +384,7 @@ function App() {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner(coinbase);
       const signature = await signer
-        .signMessage(`I am updating my profile with wallet address ${coinbase}`)
+        .signMessage(`I am updating my collection with id ${collectionId}`)
         .catch((e) => {
           console.error(e);
         });

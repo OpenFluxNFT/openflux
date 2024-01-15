@@ -952,8 +952,8 @@ const CollectionSettings = ({
                       key={index}
                     >
                       <img
-                        src={require(`../Profile/assets/favoritesPlaceholder1.png`)}
-                        className="w-100"
+                        src={`https://confluxapi.worldofdypians.com/${item.featuredBannerPicture}`}
+                        className="w-100 featured-collection-pic"
                         alt=""
                       />
                       <div className="p-3 collection-lower d-flex align-items-center justify-content-between">

@@ -229,8 +229,8 @@ const ProfileSettings = ({
           </div>
           <div className="col-12 col-lg-6">
             <div className="d-flex flex-column justify-content-between mt-4 mt-lg-0 h-100">
-              <div className="d-flex align-items-center">
-                <div className="col-3">
+              <div className="row">
+                <div className="col-12 col-lg-3 mb-4 mb-lg-0">
                   <div className="d-flex flex-column gap-2">
                     <div className="d-flex align-items-center gap-2">
                       <h6 className="input-label mb-0">Profile Image</h6>
@@ -274,7 +274,7 @@ const ProfileSettings = ({
                     </div>
                   </div>
                 </div>
-                <div className="col-9">
+                <div className="col-12 col-lg-9">
                   <div className="d-flex flex-column gap-2">
                     <div className="d-flex align-items-center gap-2">
                       <h6 className="input-label mb-0">Profile Banner</h6>

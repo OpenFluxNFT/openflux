@@ -13,6 +13,7 @@ import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
 import styled from "@emotion/styled";
 import axios from "axios";
 import Toast from "../Toast/Toast";
+import { Checkbox } from "@mui/material";
 
 const HtmlTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -41,17 +42,17 @@ const CollectionSettings = ({
   const [collectionInfo, setcollectionInfo] = useState({
     collectionProfilePic: "",
     collectionBackgroundPic: "",
-    collectionBannerPicture: "",
-    featuredBannerPicture: "",
+    collectionBannerPic: "",
+    featuredBannerPic: "",
     websiteLink: "",
     twitterLink: "",
     tgLink: "",
     discordLink: "",
     instagramLink: "",
-    // tags: [],
+    tags: [],
     description: "",
   });
-
+  let tagsArray = [];
   const baseUrl = "https://confluxapi.worldofdypians.com/";
 
   const getCollectionOwner = async (collectionAddress) => {
@@ -83,10 +84,10 @@ const CollectionSettings = ({
         tgLink: collection.tgLink,
         discordLink: collection.discordLink,
         instagramLink: collection.instagramLink,
-        // tags: [],
+        tags: collection.tags,
         description: collection.description,
       }));
-
+      
       if (collection?.collectionProfilePic) {
         setProfileImage(baseUrl + collection?.collectionProfilePic);
       }
@@ -95,8 +96,8 @@ const CollectionSettings = ({
         setBannerImage(baseUrl + collection?.collectionBackgroundPic);
       }
 
-      if (collection?.featuredBannerPicture) {
-        setFeaturedImage(baseUrl + collection?.featuredBannerPicture);
+      if (collection?.featuredBannerPic) {
+        setFeaturedImage(baseUrl + collection?.featuredBannerPic);
       }
       if (collection?.collectionBannerPicture) {
         setCollectionsImage(baseUrl + collection?.collectionBannerPicture);
@@ -172,7 +173,7 @@ const CollectionSettings = ({
         file &&
         (await isImage(file)) &&
         file.size <= maxSizeInBytes &&
-        (await isAspectRatioValidProfile(file, 350, 400))
+        (await isAspectRatioValidProfile(file, 400, 800))
       ) {
         // Set the selected image
         const reader = new FileReader();
@@ -180,7 +181,7 @@ const CollectionSettings = ({
         reader.onload = () => {
           setcollectionInfo((collectionInfo) => ({
             ...collectionInfo,
-            collectionBannerPicture: file,
+            collectionBannerPic: file,
           }));
           setCollectionsImage(reader.result);
         };
@@ -219,7 +220,7 @@ const CollectionSettings = ({
           setFeaturedImage(reader.result);
           setcollectionInfo((collectionInfo) => ({
             ...collectionInfo,
-            featuredBannerPicture: file,
+            featuredBannerPic: file,
           }));
         };
         reader.readAsDataURL(file);
@@ -274,10 +275,26 @@ const CollectionSettings = ({
     }
   };
 
+  const addTags = (tag) => {
+    let tagArray = collectionInfo.tags
+    if (tagArray.includes(tag)) {
+      const index = tagArray.indexOf(tag);
+      tagArray.splice(index, 1);
+    } else {
+      tagArray.push(tag);
+    }
+    
+    setcollectionInfo((collectionInfo) => ({
+      ...collectionInfo,
+      tags: tagArray,
+    }));
+  };
+
   useEffect(() => {
     display();
   }, [collection]);
 
+  
   return (
     <>
       <div className="col-12 col-lg-10">
@@ -362,11 +379,87 @@ const CollectionSettings = ({
                 <div className="d-flex flex-column gap-4">
                   <div className="d-flex flex-column gap-2">
                     <h6 className="input-label mb-0">Tags</h6>
-                    <input
-                      type="text"
-                      placeholder="0xc...3453"
-                      className="settings-input w-100"
-                    />
+                    <div className="checkbox-grid">
+                      <div className="d-flex align-items-center gap-2">
+                        <Checkbox
+                          onChange={() => addTags("Gaming")}
+                          sx={{
+                            color: "white",
+                            "&.Mui-checked": {
+                              color: "#00FECF",
+                            },
+                          }}
+                          checked={
+                            collectionInfo.tags.find((item) => {
+                              return item === "Gaming";
+                            }) !== undefined
+                              ? true
+                              : false
+                          }
+                        />
+                        <span className="checkbox-title">Gaming</span>
+                      </div>
+                      <div className="d-flex align-items-center gap-2">
+                        <Checkbox
+                          onChange={() => addTags("Art")}
+                          sx={{
+                            color: "white",
+                            "&.Mui-checked": {
+                              color: "#00FECF",
+                            },
+                          }}
+                          checked={collectionInfo.tags.find((item) => {
+                            return item === "Art";
+                          })}
+                        />
+                        <span className="checkbox-title">Art</span>
+                      </div>
+                      <div className="d-flex align-items-center gap-2">
+                        <Checkbox
+                          onChange={() => addTags("Virtual World")}
+                          sx={{
+                            color: "white",
+                            "&.Mui-checked": {
+                              color: "#00FECF",
+                            },
+                          }}
+                          checked={collectionInfo.tags.find((item) => {
+                            return item === "Virtual World";
+                          })}
+                        />
+                        <span className="checkbox-title">Virtual World</span>
+                      </div>
+                      <div className="d-flex align-items-center gap-2">
+                        <Checkbox
+                          onChange={() => addTags("Music")}
+                          sx={{
+                            color: "white",
+                            "&.Mui-checked": {
+                              color: "#00FECF",
+                            },
+                          }}
+                          checked={collectionInfo.tags.find((item) => {
+                            return item === "Music";
+                          })}
+                        />
+                        <span className="checkbox-title">Music</span>
+                      </div>
+                      <div className="d-flex align-items-center gap-2">
+                        <Checkbox
+                          onChange={() => addTags("Sports")}
+                          sx={{
+                            color: "white",
+                            "&.Mui-checked": {
+                              color: "#00FECF",
+                            },
+                          }}
+                          checked={collectionInfo.tags.find((item) => {
+                            return item === "Sports";
+                          })}
+                        />
+                        <span className="checkbox-title">Sports</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -546,7 +639,7 @@ const CollectionSettings = ({
                               title={
                                 <div className="d-flex flex-column gap-2">
                                   <p className="tooltip-text mb-0">
-                                    Recommended: 350px x 400px
+                                    Recommended: 400px x 800px
                                   </p>
                                   <p className="tooltip-text mb-0">
                                     Max size: 500KB
@@ -743,14 +836,14 @@ const CollectionSettings = ({
                   <button
                     className="connect-social-btn px-3 py-1"
                     style={{ fontSize: "16px" }}
-                    onClick={() =>
-                      updateCollectionData(collectionInfo)
+                    onClick={
+                      () => updateCollectionData(collectionInfo)
                       // .then(() => {
                       //   setcollectionInfo({
                       //     collectionProfilePic: "",
                       //     collectionBackgroundPic: "",
-                      //     collectionBannerPicture: "",
-                      //     featuredBannerPicture: "",
+                      //     collectionBannerPic: "",
+                      //     featuredBannerPic: "",
                       //     websiteLink: "",
                       //     twitterLink: "",
                       //     tgLink: "",

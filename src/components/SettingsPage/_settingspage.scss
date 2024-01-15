@@ -374,3 +374,32 @@ font-style: normal;
 font-weight: 500;
 line-height: normal;
 }
+
+.checkbox-title{
+  font-weight: 400;
+font-size: 14px;
+line-height: 21px;
+color: #FFFFFF;
+}
+
+.checkbox-grid{
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+@media only screen and (max-width: 800px) {
+  .checkbox-grid{
+    grid-template-columns: repeat(3, 1fr);
+   
+  }
+  
+}
+
+@media only screen and (max-width: 480px) {
+  .checkbox-grid{
+    grid-template-columns: repeat(2, 1fr);
+   
+  }
+  
+}

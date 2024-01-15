@@ -379,6 +379,14 @@ function App() {
         )
       );
 
+      console.log(
+        Object.fromEntries(
+          Object.entries(collectionInfo).filter(
+            ([key, value]) => value !== "" && value !== undefined
+          )
+        )
+      );
+
       const formData = new FormData();
       for (const [key, value] of Object.entries(filteredInfo)) {
         formData.append(key, value);

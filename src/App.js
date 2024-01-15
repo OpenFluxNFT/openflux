@@ -650,6 +650,7 @@ function App() {
             setIsRedirect(true);
           }}
           handleDisconnect={handleDisconnect}
+          allCollections={allCollections}
         />
       ) : (
         <MobileHeader

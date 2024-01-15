@@ -61,5 +61,10 @@
 
 .collection-card:hover {
   border: 1px solid #2f80ed;
+}
 
+.featured-collection-pic {
+  height: 203px;
+  border-radius: 24px 24px 0 3px;
+  object-fit: cover;
 }

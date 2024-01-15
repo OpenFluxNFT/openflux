@@ -87,7 +87,7 @@ const CollectionSettings = ({
         tags: collection.tags,
         description: collection.description,
       }));
-      
+
       if (collection?.collectionProfilePic) {
         setProfileImage(baseUrl + collection?.collectionProfilePic);
       }
@@ -276,14 +276,14 @@ const CollectionSettings = ({
   };
 
   const addTags = (tag) => {
-    let tagArray = collectionInfo.tags
+    let tagArray = collectionInfo.tags;
     if (tagArray.includes(tag)) {
       const index = tagArray.indexOf(tag);
       tagArray.splice(index, 1);
     } else {
       tagArray.push(tag);
     }
-    
+
     setcollectionInfo((collectionInfo) => ({
       ...collectionInfo,
       tags: tagArray,
@@ -294,7 +294,6 @@ const CollectionSettings = ({
     display();
   }, [collection]);
 
-  
   return (
     <>
       <div className="col-12 col-lg-10">
@@ -332,7 +331,17 @@ const CollectionSettings = ({
                   <div className="d-flex flex-column gap-2">
                     <div className="d-flex align-items-center gap-2">
                       <h6 className="input-label mb-0">Blockchain</h6>
-                      <img src={infoIcon} width={16} height={16} alt="" />
+                      <HtmlTooltip
+                        placement="top"
+                        title={
+                          <p className="tooltip-text mb-0">
+                            Not editable for badged collections. Please contact
+                            support for additional help.
+                          </p>
+                        }
+                      >
+                        <img src={infoIcon} width={16} height={16} alt="" />
+                      </HtmlTooltip>
                     </div>
                     <input
                       type="text"
@@ -461,9 +470,33 @@ const CollectionSettings = ({
                       </div>
                     </div>
                   </div>
+                  <div className="d-flex flex-column gap-2 mt-4 mt-lg-0">
+                    <h6 className="input-label mb-0">Description</h6>
+                    <textarea
+                      type="text"
+                      placeholder="Description"
+                      className="settings-input w-100"
+                      style={{ height: "100%" }}
+                      rows={5}
+                      value={collectionInfo.description}
+                      onChange={(e) =>
+                        setcollectionInfo((collectionInfo) => ({
+                          ...collectionInfo,
+                          description: e.target.value,
+                        }))
+                      }
+                      maxLength={350}
+                    />
+                  </div>
                 </div>
               </div>
               <div className="row">
+                <h6 className="input-label mb-0 mt-5">Collection images</h6>
+                <span className="comment-txt">
+                  These images will be used for featuring your collection on the
+                  homepage, category pages, or other display areas of the
+                  Marketplace
+                </span>
                 <div className="col-12 col-lg-6 mt-4">
                   <div className="d-flex flex-column justify-content-between mt-4 mt-lg-0 h-100">
                     <div className="d-flex align-items-center">
@@ -687,24 +720,6 @@ const CollectionSettings = ({
                 </div>
               </div>
               <div className="col-12 mt-4">
-                <div className="d-flex flex-column gap-2 mt-4 mt-lg-0">
-                  <h6 className="input-label mb-0">Description</h6>
-                  <textarea
-                    type="text"
-                    placeholder="Description"
-                    className="settings-input w-100"
-                    style={{ height: "100%" }}
-                    rows={5}
-                    value={collectionInfo.description}
-                    onChange={(e) =>
-                      setcollectionInfo((collectionInfo) => ({
-                        ...collectionInfo,
-                        description: e.target.value,
-                      }))
-                    }
-                    maxLength={350}
-                  />
-                </div>
                 <div className="row">
                   <div className="col-12 col-lg-6 mt-4">
                     <div className="d-flex flex-column gap-4">

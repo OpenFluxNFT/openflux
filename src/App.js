@@ -708,6 +708,8 @@ function App() {
                 getOtherUserData(value);
               }}
               userCollection={userCollection}
+              userCollectionFavs={userCollectionFavs}
+              allCollections={allCollections}
             />
           }
         />

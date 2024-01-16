@@ -15,7 +15,7 @@ const Home = ({allCollections}) => {
 
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
-      <MainHero />
+      <MainHero allCollections={allCollections}/>
       <HomeStats />
       <HomeInfo />
       <TrendingSales />

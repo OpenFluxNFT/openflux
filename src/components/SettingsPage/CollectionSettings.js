@@ -38,6 +38,7 @@ const CollectionSettings = ({
   const [featuredImage, setFeaturedImage] = useState();
   const [collectionsImage, setCollectionsImage] = useState();
   const [collectionOwner, setcollectionOwner] = useState();
+  const [isEdit, setIsEdit] = useState(false);
 
   const [collectionInfo, setcollectionInfo] = useState({
     collectionProfilePic: "",
@@ -52,7 +53,6 @@ const CollectionSettings = ({
     tags: [],
     description: "",
   });
-
 
   const [toastInfo, setToastInfo] = useState({
     message: "",
@@ -128,10 +128,9 @@ const CollectionSettings = ({
     });
   };
 
-  
   const uploadProfileImage = async (e) => {
     const maxSizeInBytes = 500 * 1024; // 500KB
-
+    setIsEdit(true);
     const files = e.target.files;
 
     if (files.length > 0) {
@@ -185,7 +184,7 @@ const CollectionSettings = ({
   };
   const uploadCollectionsImage = async (e) => {
     const maxSizeInBytes = 500 * 1024; // 500KB
-
+    setIsEdit(true);
     const files = e.target.files;
 
     if (files.length > 0) {
@@ -237,7 +236,7 @@ const CollectionSettings = ({
   };
   const uploadFeaturedImage = async (e) => {
     const maxSizeInBytes = 500 * 1024; // 500KB
-
+    setIsEdit(true);
     const files = e.target.files;
 
     if (files.length > 0) {
@@ -290,7 +289,7 @@ const CollectionSettings = ({
   };
   const uploadBannerImage = async (e) => {
     const maxSizeInBytes = 500 * 1024; // 500KB
-
+    setIsEdit(true);
     const files = e.target.files;
 
     if (files.length > 0) {
@@ -300,7 +299,7 @@ const CollectionSettings = ({
         file &&
         (await isImage(file)) &&
         file.size <= maxSizeInBytes &&
-        (await isAspectRatioValidProfile(file, 1400, 350))
+        (await isAspectRatioValidProfile(file, 1400, 320))
       ) {
         // Set the selected image
         const reader = new FileReader();
@@ -328,7 +327,7 @@ const CollectionSettings = ({
           });
         } else {
           setToastInfo({
-            message: "Selected image must be a maximum of 1400px x 350px",
+            message: "Selected image must be a maximum of 1400px x 320px",
             error: true,
           });
         }
@@ -440,12 +439,13 @@ const CollectionSettings = ({
                       placeholder="https://opensea.io/"
                       className="settings-input w-100"
                       value={collectionInfo.websiteLink}
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        setIsEdit(true);
                         setcollectionInfo((collectionInfo) => ({
                           ...collectionInfo,
                           websiteLink: e.target.value,
-                        }))
-                      }
+                        }));
+                      }}
                     />
                   </div>
                 </div>
@@ -457,7 +457,10 @@ const CollectionSettings = ({
                     <div className="checkbox-grid">
                       <div className="d-flex align-items-center gap-2">
                         <Checkbox
-                          onChange={() => addTags("Gaming")}
+                          onChange={() => {
+                            addTags("Gaming");
+                            setIsEdit(true);
+                          }}
                           sx={{
                             color: "white",
                             "&.Mui-checked": {
@@ -476,61 +479,89 @@ const CollectionSettings = ({
                       </div>
                       <div className="d-flex align-items-center gap-2">
                         <Checkbox
-                          onChange={() => addTags("Art")}
+                          onChange={() => {
+                            addTags("Art");
+                            setIsEdit(true);
+                          }}
                           sx={{
                             color: "white",
                             "&.Mui-checked": {
                               color: "#00FECF",
                             },
                           }}
-                          checked={collectionInfo.tags.find((item) => {
-                            return item === "Art";
-                          })}
+                          checked={
+                            collectionInfo.tags.find((item) => {
+                              return item === "Art";
+                            }) !== undefined
+                              ? true
+                              : false
+                          }
                         />
                         <span className="checkbox-title">Art</span>
                       </div>
                       <div className="d-flex align-items-center gap-2">
                         <Checkbox
-                          onChange={() => addTags("Virtual World")}
+                          onChange={() => {
+                            addTags("Virtual World");
+                            setIsEdit(true);
+                          }}
                           sx={{
                             color: "white",
                             "&.Mui-checked": {
                               color: "#00FECF",
                             },
                           }}
-                          checked={collectionInfo.tags.find((item) => {
-                            return item === "Virtual World";
-                          })}
+                          checked={
+                            collectionInfo.tags.find((item) => {
+                              return item === "Virtual World";
+                            }) !== undefined
+                              ? true
+                              : false
+                          }
                         />
                         <span className="checkbox-title">Virtual World</span>
                       </div>
                       <div className="d-flex align-items-center gap-2">
                         <Checkbox
-                          onChange={() => addTags("Music")}
+                          onChange={() => {
+                            addTags("Music");
+                            setIsEdit(true);
+                          }}
                           sx={{
                             color: "white",
                             "&.Mui-checked": {
                               color: "#00FECF",
                             },
                           }}
-                          checked={collectionInfo.tags.find((item) => {
-                            return item === "Music";
-                          })}
+                          checked={
+                            collectionInfo.tags.find((item) => {
+                              return item === "Music";
+                            }) !== undefined
+                              ? true
+                              : false
+                          }
                         />
                         <span className="checkbox-title">Music</span>
                       </div>
                       <div className="d-flex align-items-center gap-2">
                         <Checkbox
-                          onChange={() => addTags("Sports")}
+                          onChange={() => {
+                            addTags("Sports");
+                            setIsEdit(true);
+                          }}
                           sx={{
                             color: "white",
                             "&.Mui-checked": {
                               color: "#00FECF",
                             },
                           }}
-                          checked={collectionInfo.tags.find((item) => {
-                            return item === "Sports";
-                          })}
+                          checked={
+                            collectionInfo.tags.find((item) => {
+                              return item === "Sports";
+                            }) !== undefined
+                              ? true
+                              : false
+                          }
                         />
                         <span className="checkbox-title">Sports</span>
                       </div>
@@ -545,12 +576,13 @@ const CollectionSettings = ({
                       style={{ height: "100%" }}
                       rows={5}
                       value={collectionInfo.description}
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        setIsEdit(true);
                         setcollectionInfo((collectionInfo) => ({
                           ...collectionInfo,
                           description: e.target.value,
-                        }))
-                      }
+                        }));
+                      }}
                       maxLength={350}
                     />
                   </div>
@@ -626,7 +658,7 @@ const CollectionSettings = ({
                               title={
                                 <div className="d-flex flex-column gap-2">
                                   <p className="tooltip-text mb-0">
-                                    Recommended: 1400px x 350px
+                                    Recommended: 1400px x 320px
                                   </p>
                                   <p className="tooltip-text mb-0">
                                     Max size: 500KB
@@ -803,12 +835,13 @@ const CollectionSettings = ({
                             placeholder="Twitter"
                             className="settings-input w-100"
                             value={collectionInfo.twitterLink}
-                            onChange={(e) =>
+                            onChange={(e) => {
+                              setIsEdit(true);
                               setcollectionInfo((collectionInfo) => ({
                                 ...collectionInfo,
                                 twitterLink: e.target.value,
-                              }))
-                            }
+                              }));
+                            }}
                           />
                           {/* <button className="connect-social-btn">
                             Connect
@@ -825,12 +858,13 @@ const CollectionSettings = ({
                           placeholder="Telegram"
                           className="settings-input w-100"
                           value={collectionInfo.tgLink}
-                          onChange={(e) =>
+                          onChange={(e) => {
+                            setIsEdit(true);
                             setcollectionInfo((collectionInfo) => ({
                               ...collectionInfo,
                               tgLink: e.target.value,
-                            }))
-                          }
+                            }));
+                          }}
                         />
                       </div>
                       <div className="d-flex flex-column gap-2">
@@ -864,12 +898,13 @@ const CollectionSettings = ({
                             placeholder="Instagram"
                             className="settings-input w-100"
                             value={collectionInfo.instagramLink}
-                            onChange={(e) =>
+                            onChange={(e) => {
+                              setIsEdit(true);
                               setcollectionInfo((collectionInfo) => ({
                                 ...collectionInfo,
                                 instagramLink: e.target.value,
-                              }))
-                            }
+                              }));
+                            }}
                           />
                           {/* <button className="connect-social-btn">
                             Connect
@@ -886,12 +921,13 @@ const CollectionSettings = ({
                           placeholder="Discord"
                           className="settings-input w-100"
                           value={collectionInfo.discordLink}
-                          onChange={(e) =>
+                          onChange={(e) => {
+                            setIsEdit(true);
                             setcollectionInfo((collectionInfo) => ({
                               ...collectionInfo,
                               discordLink: e.target.value,
-                            }))
-                          }
+                            }));
+                          }}
                         />
                       </div>
                     </div>
@@ -915,8 +951,9 @@ const CollectionSettings = ({
                 </div>
                 <div className="d-flex align-items-center justify-content-center mt-4">
                   <button
-                    className="connect-social-btn px-3 py-1"
+                    className={` ${!isEdit && 'disabled-save-btn'} connect-social-btn px-3 py-1`}
                     style={{ fontSize: "16px" }}
+                    disabled={!isEdit}
                     onClick={
                       () => updateCollectionData(collectionInfo)
                       // .then(() => {
@@ -997,10 +1034,7 @@ const CollectionSettings = ({
         }
         message={successUpdateCollectionProfile.message}
       />
-       <Toast
-        isError={toastInfo.error}
-        message={toastInfo.message}
-      />
+      <Toast isError={toastInfo.error} message={toastInfo.message} />
     </>
   );
 };

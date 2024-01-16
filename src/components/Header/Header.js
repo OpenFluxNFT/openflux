@@ -114,7 +114,12 @@ const Header = ({
             </NavLink>
           </div>
           <div className="col-4">
-            <div className="position-relative" onClick={()=>{searchResult!=="" && handleFilterCollection(searchResult)}}>
+            <div
+              className="position-relative"
+              onClick={() => {
+                searchResult !== "" && handleFilterCollection(searchResult);
+              }}
+            >
               <img src={searchIcon} alt="" className="search-icon" />
               <input
                 type="text"
@@ -136,7 +141,13 @@ const Header = ({
                 }}
               >
                 <div className="search-result-wrapper position-absolute p-3">
-                  <div className="d-flex flex-column gap-2">
+                  <div
+                    className={`d-flex flex-column gap-2 ${
+                      currentCollection &&
+                      currentCollection.length === 0 &&
+                      "justify-content-center align-items-center h-100"
+                    } `}
+                  >
                     {currentCollection &&
                       currentCollection.length > 0 &&
                       currentCollection.map((item, index) => {
@@ -147,7 +158,7 @@ const Header = ({
                             onClick={() => {
                               setcurrentCollection();
                               setSearchResult("");
-                              setisopen(false)
+                              setisopen(false);
                             }}
                           >
                             <div
@@ -171,7 +182,9 @@ const Header = ({
                       })}
                     {currentCollection && currentCollection.length === 0 && (
                       <div className="d-flex align-items-center gap-2">
-                        <span className="collection-title text-white">No items with this keyword</span>
+                        <span className="collection-title text-white">
+                          No items with this keyword
+                        </span>
                       </div>
                     )}
                     <div></div>

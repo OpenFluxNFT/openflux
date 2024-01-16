@@ -32,6 +32,7 @@ const ProfileSettings = ({
     message: "",
     error: false,
   });
+  const [isEdit, setIsEdit] = useState(false);
 
   const [userInfo, setUserInfo] = useState({
     username: "",
@@ -44,15 +45,19 @@ const ProfileSettings = ({
 
   const display = () => {
     if (userData && userData._id) {
-      setUserInfo(userInfo => ({
+      setUserInfo((userInfo) => ({
         ...userInfo,
         username: userData?.username,
         email: userData?.email,
         website: userData?.website,
         bio: userData?.bio,
-        profilePicture: userData?.profilePicture ? baseUrl + userData?.profilePicture : '',
-        bannerPicture: userData?.bannerPicture ? baseUrl + userData?.bannerPicture : '',
-      }))
+        profilePicture: userData?.profilePicture
+          ? baseUrl + userData?.profilePicture
+          : "",
+        bannerPicture: userData?.bannerPicture
+          ? baseUrl + userData?.bannerPicture
+          : "",
+      }));
 
       if (userData?.profilePicture) {
         setProfileImage(baseUrl + userData?.profilePicture);
@@ -72,16 +77,16 @@ const ProfileSettings = ({
     return new Promise((resolve) => {
       const img = new Image();
       img.onload = () => {
-        console.log(img.width <= targetWidth && img.height <= targetHeight)
+        console.log(img.width <= targetWidth && img.height <= targetHeight);
         resolve(img.width <= targetWidth && img.height <= targetHeight);
       };
       img.src = URL.createObjectURL(file);
     });
-    
   };
 
   const uploadProfileImage = async (e) => {
     const maxSizeInBytes = 500 * 1024; // 500KB
+    setIsEdit(true);
 
     const files = e.target.files;
 
@@ -136,6 +141,7 @@ const ProfileSettings = ({
   };
   const uploadBannerImage = async (e) => {
     const maxSizeInBytes = 500 * 1024; // 500KB
+    setIsEdit(true);
 
     const files = e.target.files;
 
@@ -208,12 +214,13 @@ const ProfileSettings = ({
                   }
                   className="settings-input w-100"
                   value={userInfo.username}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    setIsEdit(true);
                     setUserInfo((userInfo) => ({
                       ...userInfo,
                       username: e.target.value,
-                    }))
-                  }
+                    }));
+                  }}
                 />
               </div>
               <div className="d-flex flex-column gap-2">
@@ -236,12 +243,13 @@ const ProfileSettings = ({
                   placeholder={userData?.email ? userData?.email : "Email"}
                   className="settings-input w-100"
                   value={userInfo.email}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    setIsEdit(true);
                     setUserInfo((userInfo) => ({
                       ...userInfo,
                       email: e.target.value,
-                    }))
-                  }
+                    }));
+                  }}
                 />
               </div>
               <div className="d-flex flex-column gap-2">
@@ -253,12 +261,13 @@ const ProfileSettings = ({
                   }
                   className="settings-input w-100"
                   value={userInfo.website}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    setIsEdit(true);
                     setUserInfo((userInfo) => ({
                       ...userInfo,
                       website: e.target.value,
-                    }))
-                  }
+                    }));
+                  }}
                 />
               </div>
             </div>
@@ -377,12 +386,13 @@ const ProfileSettings = ({
                 style={{ height: "100%" }}
                 rows={5}
                 value={userInfo.bio}
-                onChange={(e) =>
+                onChange={(e) => {
+                  setIsEdit(true);
                   setUserInfo((userInfo) => ({
                     ...userInfo,
                     bio: e.target.value,
-                  }))
-                }
+                  }));
+                }}
               />
             </div>
             {/* <div className="mt-4 d-flex flex-column flex-lg-row align-items-start align-items-lg-center justify-content-between">
@@ -412,8 +422,11 @@ const ProfileSettings = ({
           </div> */}
             <div className="d-flex align-items-center justify-content-center mt-4">
               <button
-                className="connect-social-btn px-3 py-1"
+                className={` ${
+                  !isEdit && "disabled-save-btn"
+                } connect-social-btn px-3 py-1`}
                 style={{ fontSize: "16px" }}
+                disabled={!isEdit}
                 onClick={() =>
                   updateUserData(userInfo).then(() => {
                     setUserInfo({
@@ -439,10 +452,7 @@ const ProfileSettings = ({
         isError={successUpdateProfile.success === false ? true : false}
         message={successUpdateProfile.message}
       />
-      <Toast
-        isError={toastInfo.error}
-        message={toastInfo.message}
-      />
+      <Toast isError={toastInfo.error} message={toastInfo.message} />
       {/* } */}
     </>
   );

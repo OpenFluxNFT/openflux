@@ -44,7 +44,7 @@ const MainHero = () => {
       <Slider {...settings}>
         {mainHeroItems.map((item, index) => (
           <div
-            className={`d-flex align-items-center py-4 justify-content-between position-relative ${
+            className={`d-flex align-items-center p-4 justify-content-between position-relative ${
               index === 0 && "customTop"
             }`}
             key={index}

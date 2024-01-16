@@ -10,7 +10,7 @@ const settings = {
   dots: true,
   arrows: false,
   infinite: true,
-  autoplay: true,
+  autoplay: false,
   autoplaySpeed: 4000,
   speed: 500,
   slidesToShow: 1,
@@ -38,15 +38,13 @@ const mainHeroItems = [
   },
 ];
 
-const MainHero = () => {
+const MainHero = ({ allCollections }) => {
   return (
     <div className="container-lg main-hero-wrapper p-4 ">
       <Slider {...settings}>
         {mainHeroItems.map((item, index) => (
           <div
-            className={`d-flex align-items-center p-4 justify-content-between position-relative ${
-              index === 0 && "customTop"
-            }`}
+            className={`d-flex align-items-center p-4 justify-content-between position-relative`}
             key={index}
           >
             <div className="col-12 col-lg-6 mb-2">
@@ -70,7 +68,91 @@ const MainHero = () => {
                   />
                 </div>
               )}
-              {item.image && <img src={item.image} className="w-100 d-none d-lg-block" alt="" />}
+              {item.image && (
+                <img
+                  src={item.image}
+                  className="w-100 d-none d-lg-block"
+                  alt=""
+                />
+              )}
+              {index === 0 && (
+                <div className="small-collection-wrapper d-none d-lg-block d-md-block p-3">
+                  <div className="d-flex flex-column gap-3">
+                    <div className="d-flex gap-3 justify-content-end">
+                      {allCollections &&
+                        allCollections.length > 0 &&
+                        allCollections.slice(10, 14).map((item, index) => {
+                          return (
+                            <NavLink
+                              to={`/collection/${item.contractAddress}/${item.symbol}`}
+                            >
+                              <div
+                                className="single-small-collection-wrapper"
+                                key={index}
+                              >
+                                <img
+                                  src={require(`./assets/small-collection-${
+                                    index + 1
+                                  }.png`)}
+                                  alt=""
+                                  className="small-collection-img"
+                                />
+                              </div>
+                            </NavLink>
+                          );
+                        })}
+                    </div>
+                    <div className="d-flex gap-3 justify-content-start">
+                      {allCollections &&
+                        allCollections.length > 0 &&
+                        allCollections.slice(14, 18).map((item, index) => {
+                          return (
+                            <NavLink
+                              to={`/collection/${item.contractAddress}/${item.symbol}`}
+                            >
+                              <div
+                                className="single-small-collection-wrapper"
+                                key={index}
+                              >
+                                <img
+                                  src={require(`./assets/small-collection-${
+                                    index + 1
+                                  }.png`)}
+                                  alt=""
+                                  className="small-collection-img"
+                                />
+                              </div>
+                            </NavLink>
+                          );
+                        })}
+                    </div>
+                    <div className="d-flex gap-3 justify-content-end">
+                      {allCollections &&
+                        allCollections.length > 0 &&
+                        allCollections.slice(18, 22).map((item, index) => {
+                          return (
+                            <NavLink
+                              to={`/collection/${item.contractAddress}/${item.symbol}`}
+                            >
+                              <div
+                                className="single-small-collection-wrapper"
+                                key={index}
+                              >
+                                <img
+                                  src={require(`./assets/small-collection-${
+                                    index + 1
+                                  }.png`)}
+                                  alt=""
+                                  className="small-collection-img"
+                                />
+                              </div>
+                            </NavLink>
+                          );
+                        })}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         ))}

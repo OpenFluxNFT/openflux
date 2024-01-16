@@ -481,11 +481,17 @@ const ProfileNFTList = ({ option, userCollectionFavs, allCollections }) => {
                     >
                       <img
                         src={
-                          item.collectionBannerPicture
-                            ? `https://confluxapi.worldofdypians.com/${item.collectionBannerPicture}`
+                          allCollections.find((collection) => {
+                            return collection.contractAddress === item;
+                          })?.featuredBannerPicture
+                            ? `https://confluxapi.worldofdypians.com/${
+                                allCollections.find((collection) => {
+                                  return collection.contractAddress === item;
+                                })?.featuredBannerPicture
+                              }`
                             : require(`./assets/favoritesPlaceholder1.png`)
                         }
-                        className="w-100"
+                        className="w-100 featured-collection-pic"
                         alt=""
                       />
 

@@ -94,7 +94,7 @@ const HomeInfo = () => {
             <span className="info-desc mb-0">Trade NFTs</span>
           </div>
         </div>
-        <div className="d-flex justify-content-center w-100">
+        <div className="d-flex justify-content-center w-100 mt-5">
           <h6 className="info-title mb-4">
             Supported <span style={{ color: "#2F80ED" }}>Wallets</span>
           </h6>

@@ -64,7 +64,7 @@ const SingleNftBanner = ({ chainId, onShowMakeOfferPopup }) => {
                   </div>
                   <div className="d-flex align-items-center gap-2 border-bottom-div">
                     <span className="nft-info-left">Chain</span>
-                    <span className="nft-info-right">Conflux Network</span>
+                    <span className="nft-info-right">Conflux eSpace</span>
                   </div>
                 </div>
               </div>

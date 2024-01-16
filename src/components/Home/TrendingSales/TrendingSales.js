@@ -107,7 +107,7 @@ const TrendingSales = () => {
 
   return (
     <>
-      <div className="container-lg">
+      <div className="container-lg mt-5">
         <div className="row">
           <h6 className="info-title mb-4">
             Data <span style={{ color: "#2F80ED" }}>Tracking</span>

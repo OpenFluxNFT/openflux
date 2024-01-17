@@ -176,8 +176,6 @@ function App() {
         return dateB - dateA;
       });
 
-      console.log("newestCollections", newestCollections);
-
       setAllCollectionsOrdered(newestCollections);
     }
   };
@@ -336,7 +334,9 @@ function App() {
       });
 
       const filteredInfo = Object.fromEntries(
-        Object.entries(userInfo).filter(([key, value]) => value !== "")
+        Object.entries(userInfo).filter(
+          ([key, value]) => value !== "" && value !== undefined
+        )
       );
 
       const formData = new FormData();
@@ -393,8 +393,6 @@ function App() {
         });
     }
   };
-
- 
 
   const updateCollectionData = async (collectionInfo) => {
     if (coinbase && isConnected) {
@@ -654,8 +652,7 @@ function App() {
 
   useEffect(() => {
     getAllCollections();
-    handleSetOrderedCollection()
-
+    handleSetOrderedCollection();
   }, []);
 
   return (

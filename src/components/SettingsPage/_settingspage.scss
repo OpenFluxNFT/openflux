@@ -406,3 +406,10 @@
 .disabled-save-btn {
   background: linear-gradient(90deg, #2c2e31 0%, #68757b 100%);
 }
+
+.error-msg{
+  color: red;
+  font-size: 10px;
+  position: absolute;
+  bottom: -20px;
+}

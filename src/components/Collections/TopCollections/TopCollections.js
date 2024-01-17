@@ -9,7 +9,7 @@ import useWindowSize from "../../../hooks/useWindowSize";
 import Slider from "react-slick";
 import { NavLink } from "react-router-dom";
 
-const TopCollections = ({ allCollections }) => {
+const TopCollections = ({ allCollections, allCollectionsOrdered }) => {
   const windowSize = useWindowSize();
   const settings = {
     dots: true,
@@ -24,18 +24,16 @@ const TopCollections = ({ allCollections }) => {
   };
 
 
-
   return (
     <div className="container-lg pt-0 pb-5 pt-lg-5">
       <div className="row">
         <h6 className="main-hero-title mb-3">New Collections</h6>
         {windowSize.width > 786 ? (
           <div className="top-collections-grid pe-0">
-            {allCollections.slice(6,10).map((item, index) => (
+            {allCollectionsOrdered.slice(0,4).map((item, index) => (
               <div
                 className="position-relative top-collection-wrapper"
                 key={index}
-                style={{ width: "fit-content" }}
               >
                 <NavLink
                   to={`/collection/${item.contractAddress}/${item.symbol}`}
@@ -46,7 +44,7 @@ const TopCollections = ({ allCollections }) => {
                         ? `https://confluxapi.worldofdypians.com/${item.collectionBannerPicture}`
                         : collectionPlaceholder2
                     }
-                    className="top-collection-image"
+                    className="top-collection-image new-collection-img"
                     alt=""
                   />
                   <div className="top-collection-info d-flex flex-column p-3 gap-2">
@@ -72,7 +70,7 @@ const TopCollections = ({ allCollections }) => {
           </div>
         ) : (
           <Slider {...settings}>
-            {allCollections.map((item, index) => (
+            {allCollectionsOrdered.map((item, index) => (
               <div
                 className="position-relative top-collection-wrapper"
                 key={index}

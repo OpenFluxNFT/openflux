@@ -90,7 +90,7 @@ const NotificationSettings = () => {
                 </div>
               </div>
             </div>
-            <div className="notification-setting-item px-3 py-2 w-100">
+            {/* <div className="notification-setting-item px-3 py-2 w-100">
               <div className="d-flex align-items-center">
                 <FormControlLabel
                 sx={{
@@ -115,8 +115,8 @@ const NotificationSettings = () => {
                   </span>
                 </div>
               </div>
-            </div>
-            <div className="notification-setting-item px-3 py-2 w-100">
+            </div> */}
+            {/* <div className="notification-setting-item px-3 py-2 w-100">
               <div className="d-flex align-items-center">
                 <FormControlLabel
                 sx={{
@@ -141,7 +141,7 @@ const NotificationSettings = () => {
                   </span>
                 </div>
               </div>
-            </div>
+            </div> */}
             <div className="notification-setting-item px-3 py-2 w-100">
               <div className="d-flex align-items-center">
                 <FormControlLabel
@@ -168,7 +168,7 @@ const NotificationSettings = () => {
                 </div>
               </div>
             </div>
-            <div className="notification-setting-item px-3 py-2 w-100">
+            {/* <div className="notification-setting-item px-3 py-2 w-100">
               <div className="d-flex align-items-center">
                 <FormControlLabel
                 sx={{
@@ -193,7 +193,7 @@ const NotificationSettings = () => {
                   </span>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

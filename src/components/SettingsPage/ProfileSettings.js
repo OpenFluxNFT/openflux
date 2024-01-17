@@ -7,6 +7,7 @@ import editIcon from "./assets/editIcon.svg";
 import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
 import styled from "@emotion/styled";
 import Toast from "../Toast/Toast";
+import axios from "axios";
 
 const HtmlTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -28,12 +29,23 @@ const ProfileSettings = ({
 
   const [profileImage, setProfileImage] = useState();
   const [bannerImage, setBannerImage] = useState();
+  const [availability, setAvailability] = useState({
+    username: "",
+    email: "",
+    twitterLink: "",
+  });
+  const [errorMessage, setErrorMessage] = useState({
+    username: "",
+    email: "",
+    twitterLink: "",
+  });
+  // const [errorMessage, setErrorMessage] = useState("");
   const [toastInfo, setToastInfo] = useState({
     message: "",
     error: false,
   });
   const [isEdit, setIsEdit] = useState(false);
-
+  const baseURL = "https://confluxapi.worldofdypians.com";
   const [userInfo, setUserInfo] = useState({
     username: "",
     email: "",
@@ -58,6 +70,11 @@ const ProfileSettings = ({
           ? baseUrl + userData?.bannerPicture
           : "",
       }));
+      setAvailability({
+        ...availability,
+        username: userData?.username,
+        email: userData?.email,
+      });
 
       if (userData?.profilePicture) {
         setProfileImage(baseUrl + userData?.profilePicture);
@@ -66,6 +83,74 @@ const ProfileSettings = ({
         setBannerImage(baseUrl + userData?.bannerPicture);
       }
     }
+  };
+
+  const checkAvailability = async (e) => {
+    let name = e.target.name;
+    let value = e.target.value;
+
+    let upperName = name.charAt(0).toUpperCase() + name.slice(1);
+    axios
+      .post(
+        `${baseURL}/api/users/checkAvailability`,
+        { [name]: value },
+        {
+          headers: {
+            "x-api-key":
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res.data, "available");
+        if (res.data.message === "Available") {
+          setUserInfo((userInfo) => ({
+            ...userInfo,
+            [name]: value,
+          }));
+          console.log(userInfo, "infooo");
+          if(name === "username"){
+            setErrorMessage({
+              ...errorMessage, 
+              username: ""
+            });
+          }else if(name === "email"){
+            setErrorMessage({
+              ...errorMessage, 
+              email: ""
+            });
+          }else{
+            setErrorMessage({
+              ...errorMessage, 
+              twitterLink: ""
+            });
+          }
+        } else {
+          if(name === "username"){
+            setErrorMessage({
+              ...errorMessage, 
+              username: "Username is not available"
+            });
+          }else if(name === "email"){
+            setErrorMessage({
+              ...errorMessage, 
+              email: "Email is not available"
+            });
+          }else{
+            setErrorMessage({
+              ...errorMessage, 
+              twitterLink: "Twitter name is not available"
+            });
+          }
+          setUserInfo((userInfo) => ({
+            ...userInfo,
+            [name]: userData?.[name],
+          }));
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const isImage = async (file) => {
@@ -198,6 +283,8 @@ const ProfileSettings = ({
     display();
   }, [userData]);
 
+  // console.log(errorMessage);
+
   return (
     <>
       <div className="col-12 col-lg-10">
@@ -205,23 +292,28 @@ const ProfileSettings = ({
           <h6 className="settings-header mb-3">Profile Details</h6>
           <div className="col-12 col-lg-6">
             <div className="d-flex flex-column gap-4">
-              <div className="d-flex flex-column gap-2">
+              <div className="d-flex flex-column gap-2 position-relative">
                 <h6 className="input-label mb-0">Username</h6>
                 <input
                   type="text"
                   placeholder={
                     userData?.username ? userData.username : "Username"
                   }
+                  name="username"
                   className="settings-input w-100"
-                  value={userInfo.username}
+                  value={availability.username}
                   onChange={(e) => {
                     setIsEdit(true);
-                    setUserInfo((userInfo) => ({
-                      ...userInfo,
+                    setAvailability({
+                      ...availability,
                       username: e.target.value,
-                    }));
+                    });
+                    checkAvailability(e);
                   }}
                 />
+                {errorMessage.username !== "" && (
+                  <span className="error-msg">{errorMessage.username}</span>
+                )}
               </div>
               <div className="d-flex flex-column gap-2">
                 <div className="d-flex align-items-center gap-2">
@@ -242,15 +334,20 @@ const ProfileSettings = ({
                   type="email"
                   placeholder={userData?.email ? userData?.email : "Email"}
                   className="settings-input w-100"
-                  value={userInfo.email}
+                  name="email"
+                  value={availability.email}
                   onChange={(e) => {
                     setIsEdit(true);
-                    setUserInfo((userInfo) => ({
-                      ...userInfo,
+                    setAvailability({
+                      ...availability,
                       email: e.target.value,
-                    }));
+                    });
+                    checkAvailability(e);
                   }}
                 />
+                 {errorMessage.email !== "" && (
+                  <span className="error-msg">{errorMessage.email}</span>
+                )}
               </div>
               <div className="d-flex flex-column gap-2">
                 <h6 className="input-label mb-0">Website</h6>
@@ -423,10 +520,10 @@ const ProfileSettings = ({
             <div className="d-flex align-items-center justify-content-center mt-4">
               <button
                 className={` ${
-                  !isEdit && "disabled-save-btn"
+                  !isEdit || errorMessage.username !== "" || errorMessage.email !== "" || errorMessage.twitterLink !== "" ? "disabled-save-btn" : ""
                 } connect-social-btn px-3 py-1`}
                 style={{ fontSize: "16px" }}
-                disabled={!isEdit}
+                disabled={!isEdit || errorMessage.username !== "" || errorMessage.email !== "" || errorMessage.twitterLink !== ""}
                 onClick={() =>
                   updateUserData(userInfo).then(() => {
                     setUserInfo({

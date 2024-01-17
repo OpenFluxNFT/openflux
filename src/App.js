@@ -366,6 +366,8 @@ function App() {
     }
   };
 
+ 
+
   const updateCollectionData = async (collectionInfo) => {
     if (coinbase && isConnected) {
       setSuccessUpdateCollectionProfile({
@@ -720,6 +722,7 @@ function App() {
             <SettingsPage
               coinbase={coinbase}
               userData={userData}
+              // updateUserData={updateUserData}
               updateUserData={updateUserData}
               userCollection={userCollection}
               successUpdateProfile={successUpdateProfile}

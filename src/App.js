@@ -33,6 +33,8 @@ function App() {
   const [userCollection, setuserCollection] = useState([]);
 
   const [allCollections, setAllCollections] = useState([]);
+  const [allCollectionsOrdered, setAllCollectionsOrdered] = useState([]);
+
   const [userCollectionFavs, setuserCollectionFavs] = useState([]);
 
   const [isRedirect, setIsRedirect] = useState(false);
@@ -155,6 +157,31 @@ function App() {
     }
   };
 
+  const handleSetOrderedCollection = async () => {
+    const result = await axios
+      .get(`${baseURL}/api/collections`, {
+        headers: {
+          "x-api-key":
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+
+    if (result && result.status === 200) {
+      const newestCollections = result.data.sort((a, b) => {
+        const dateA = new Date(a.createdAt);
+        const dateB = new Date(b.createdAt);
+        return dateB - dateA;
+      });
+
+      console.log("newestCollections", newestCollections);
+
+      setAllCollectionsOrdered(newestCollections);
+    }
+  };
+
   const handleDisconnect = async () => {
     if (!window.gatewallet) {
       await window.disconnectWallet();
@@ -178,7 +205,8 @@ function App() {
       });
 
     if (result && result.status === 200) {
-      setAllCollections(result.data);
+      const regularCollection = result.data;
+      setAllCollections(regularCollection);
     }
   };
 
@@ -624,6 +652,8 @@ function App() {
 
   useEffect(() => {
     getAllCollections();
+    handleSetOrderedCollection()
+
   }, []);
 
   return (
@@ -674,7 +704,12 @@ function App() {
         <Route
           exact
           path="/collections"
-          element={<Collections allCollections={allCollections} />}
+          element={
+            <Collections
+              allCollections={allCollections}
+              allCollectionsOrdered={allCollectionsOrdered}
+            />
+          }
         />
         {/* <Route exact path="/mint" element={<Mint />} /> */}
         <Route exact path="/support" element={<Support />} />

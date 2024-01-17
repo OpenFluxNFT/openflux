@@ -1,12 +1,8 @@
 .top-collections-grid {
-
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 15px;
-
- 
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
 }
-
 
 .top-collection-image {
   border-radius: 30px;
@@ -21,7 +17,6 @@
 
 .top-collection-wrapper:hover {
   border: 1px solid #2f80ed;
-
 }
 
 .top-collection-info {
@@ -60,4 +55,9 @@
     font-weight: 300;
     line-height: 12px;
   }
+}
+
+.new-collection-img {
+  height: 400px !important;
+  object-fit: cover;
 }

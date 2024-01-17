@@ -194,7 +194,7 @@ const CollectionSettings = ({
         file &&
         (await isImage(file)) &&
         file.size <= maxSizeInBytes &&
-        (await isAspectRatioValidProfile(file, 400, 800))
+        (await isAspectRatioValidProfile(file, 350, 400))
       ) {
         // Set the selected image
         const reader = new FileReader();
@@ -221,7 +221,7 @@ const CollectionSettings = ({
           });
         } else {
           setToastInfo({
-            message: "Selected image must be a maximum of 400px x 800px",
+            message: "Selected image must be a maximum of 350px x 400px",
             error: true,
           });
         }
@@ -246,7 +246,7 @@ const CollectionSettings = ({
         file &&
         (await isImage(file)) &&
         file.size <= maxSizeInBytes &&
-        (await isAspectRatioValidProfile(file, 600, 400))
+        (await isAspectRatioValidProfile(file, 350, 230))
       ) {
         // Set the selected image
         const reader = new FileReader();
@@ -274,7 +274,7 @@ const CollectionSettings = ({
           });
         } else {
           setToastInfo({
-            message: "Selected image must be a maximum of 600px x 400px",
+            message: "Selected image must be a maximum of 350px x 230px",
             error: true,
           });
         }
@@ -717,7 +717,7 @@ const CollectionSettings = ({
                               title={
                                 <div className="d-flex flex-column gap-2">
                                   <p className="tooltip-text mb-0">
-                                    Recommended: 600px x 400px
+                                    Recommended: 350px x 230px
                                   </p>
                                   <p className="tooltip-text mb-0">
                                     Max size: 500KB
@@ -770,7 +770,7 @@ const CollectionSettings = ({
                               title={
                                 <div className="d-flex flex-column gap-2">
                                   <p className="tooltip-text mb-0">
-                                    Recommended: 400px x 800px
+                                    Recommended: 350px x 400px
                                   </p>
                                   <p className="tooltip-text mb-0">
                                     Max size: 500KB

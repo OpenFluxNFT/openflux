@@ -1,33 +1,55 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import "./_collectioncategories.scss";
-import Slider from "react-slick";
 import CollectionCard from "../../CollectionCard/CollectionCard";
-import collectionCardPlaceholder1 from "./assets/collectionCardPlaceholder1.png";
-import collectionCardPlaceholder2 from "./assets/collectionCardPlaceholder2.png";
-import collectionCardPlaceholder3 from "./assets/collectionCardPlaceholder3.png";
-import collectionCardPlaceholder4 from "./assets/collectionCardPlaceholder4.png";
 import useWindowSize from "../../../hooks/useWindowSize";
 import { NavLink } from "react-router-dom";
+import { FadeLoader } from "react-spinners";
 
-const CollectionCategories = ({allCollections}) => {
+const AllCollectionCategories = ({ allCollections }) => {
   const [category, setCategory] = useState("all");
-  const windowSize = useWindowSize();
-  const sliderRef = useRef();
+  const [next, setNext] = useState(24);
+  const [loading, setLoading] = useState(false);
 
-  const settings = {
-    dots: false,
-    arrows: false,
-    infinite: true,
-    autoplay: true,
-    autoplaySpeed: 6000,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    // dotsClass: "button__bar",
+  const collectionsPerRow = 12;
+
+  const override = {
+    display: "block",
+    margin: "20px auto 0",
+    borderColor: "#554fd8",
   };
 
+  const listInnerRef = useRef();
+
+  const loadMore = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setNext(next + collectionsPerRow);
+      setLoading(false);
+    }, 1000);
+  };
+
+  const onScroll = () => {
+    const wrappedElement = document.getElementById("header");
+    if (wrappedElement) {
+      const isBottom =
+        parseInt(wrappedElement.getBoundingClientRect()?.bottom) <=
+        window.innerHeight;
+      if (isBottom) {
+        if (next <= allCollections.length) {
+          loadMore();
+        }
+        document.removeEventListener("scroll", onScroll);
+      }
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("scroll", onScroll);
+  });
+
+  
   return (
-    <div className="container-lg py-5">
+    <div className="container-lg py-5" id="header" ref={listInnerRef}>
       <div className="row">
         <h6 className="info-title my-4">
           Collection <span style={{ color: "#2F80ED" }}>Categories</span>
@@ -82,39 +104,37 @@ const CollectionCategories = ({allCollections}) => {
             <h6 className="mb-0">Sports</h6>
           </div>
         </div>
-        {/* <Slider ref={sliderRef} {...settings}>
-          {dummyCollections.map((item, index) => (
-            <CollectionCard key={index} data={item} />
-          ))}
-        </Slider> */}
-        {windowSize.width > 786 ? (
-          <div className="collection-categories-grid">
-            {allCollections.slice(0, 4).map((item, index) => (
-              <NavLink
-                to={`/collection/${item.contractAddress}/${item.symbol}`}
-                key={index}
-                className={"text-decoration-none"}
-              >
-                <CollectionCard key={index} data={item} />
-              </NavLink>
-            ))}
-          </div>
-        ) : (
-          <Slider ref={sliderRef} {...settings}>
-            {allCollections.map((item, index) => (
-              <NavLink
+        <div className="collection-categories-grid">
+          {allCollections.slice(0, next).map((item, index) => (
+            <NavLink
               to={`/collection/${item.contractAddress}/${item.symbol}`}
-                className={"text-decoration-none"}
-                key={index}
-              >
-                <CollectionCard key={index} data={item} />
-              </NavLink>
-            ))}
-          </Slider>
+              key={index}
+              className={"text-decoration-none"}
+            >
+              <CollectionCard key={index} data={item} />
+            </NavLink>
+          ))}
+        </div>
+        {next <= allCollections.length && loading === false && (
+          <div className="d-flex justify-content-center mt-5">
+            <button className="buy-btn px-5 m-auto" onClick={loadMore}>
+              Load more
+            </button>
+          </div>
+        )}
+
+        {loading === true && (
+          <FadeLoader
+            color={"#554fd8"}
+            loading={loading}
+            cssOverride={override}
+            aria-label="Loading Spinner"
+            data-testid="loader"
+          />
         )}
       </div>
     </div>
   );
 };
 
-export default CollectionCategories;
+export default AllCollectionCategories;

@@ -20,6 +20,7 @@ import { useNavigate } from "react-router-dom";
 import Toast from "./components/Toast/Toast";
 import { ethers } from "ethers";
 import SignModal from "./components/SignModal/SignModal";
+import AllCollections from "./screens/AllCollections/AllCollections";
 
 function App() {
   const [walletModal, setWalletModal] = useState(false);
@@ -705,6 +706,16 @@ function App() {
           path="/collections"
           element={
             <Collections
+              allCollections={allCollections}
+              allCollectionsOrdered={allCollectionsOrdered}
+            />
+          }
+        />
+          <Route
+          exact
+          path="/all-collections"
+          element={
+            <AllCollections
               allCollections={allCollections}
               allCollectionsOrdered={allCollectionsOrdered}
             />

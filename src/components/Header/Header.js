@@ -124,7 +124,7 @@ const Header = ({
               <input
                 type="text"
                 className="search-input"
-                placeholder="Search anything"
+                placeholder="Search collections"
                 value={searchResult}
                 onChange={(e) => {
                   setSearchResult(e.target.value);

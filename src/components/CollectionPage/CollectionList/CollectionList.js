@@ -117,7 +117,7 @@ const CollectionList = ({
       timeListed: "11d Ago",
     },
   ];
-  
+
   const [gridView, setGridView] = useState("small-grid");
 
   return (
@@ -436,6 +436,12 @@ const CollectionList = ({
                 </div>
               </div>
             </div>
+            {allNftArray && allNftArray.length === 0 && (
+              <span className="text-white d-flex w-100 justify-content-center mt-5">
+                This collection doesn't have any NFTs.
+              </span>
+            )}
+
             <div
               className={`${
                 gridView === "list"
@@ -508,6 +514,7 @@ const CollectionList = ({
                   </tbody>
                 </table>
               ) : (
+                allNftArray &&
                 allNftArray.map((item, index) => (
                   <div
                     className="recently-listed-card p-3 d-flex flex-column"
@@ -524,7 +531,7 @@ const CollectionList = ({
                             ? item.image.includes("ipfs://")
                               ? item.nftImage
                               : item.image
-                            : require(`./assets/nftPlaceholder${index + 1}.png`)
+                            : require(`./assets/collectionCardPlaceholder2.png`)
                         }
                         className="card-img"
                         alt=""

@@ -110,14 +110,21 @@ const CollectionPage = ({
       }
       settotalSupplyPerCollection(totalSupply);
       console.log(totalSupply);
-      if ((totalSupply && totalSupply >= 4) || Number(totalSupply) === 1) {
-        for (let i = 0; i < totalSupply >= 4 ? 4 : 1; i++) {
-          const tokenByIndex = await collection_contract.methods
-            .tokenByIndex(i)
-            .call()
-            .catch((e) => {
-              console.error(e);
-            });
+      if (totalSupply && totalSupply > 0) {
+        const limit = totalSupply <= 4 ? totalSupply : 4;
+        for (let i = 0; i < limit; i++) {
+          let tokenByIndex = 0;
+          if (result.data.result.includes("tokenByIndex")) {
+            tokenByIndex = await collection_contract.methods
+              .tokenByIndex(i)
+              .call()
+              .catch((e) => {
+                console.error(e);
+              });
+          } else if (!result.data.result.includes("tokenByIndex")) {
+            tokenByIndex = i;
+          }
+
           const tokenURI = await collection_contract.methods
             .tokenURI(tokenByIndex)
             .call()
@@ -125,12 +132,23 @@ const CollectionPage = ({
               console.error(e);
               console.error(tokenByIndex);
             });
+          const tokenName = await collection_contract.methods
+            .symbol()
+            .call()
+            .catch((e) => {
+              console.error(e);
+            });
           if (tokenURI) {
-            console.log(tokenURI);
-            if (!tokenURI.includes("ipfs://")) {
-              if (tokenURI.endsWith(".svg")) {
-                nftArray.push(tokenURI);
-              } else {
+            if (!tokenURI.includes("ipfs://") && !tokenURI.includes("ipfs;//")) {
+              if (tokenURI.endsWith(".svg")|| tokenURI.endsWith(".gif")) {
+                nftArray.push({ name: tokenName, image: tokenURI });
+              } else if(tokenURI.includes('tokenURI:')) {
+                nftArray.push({
+                  name: tokenName,
+                  image: tokenURI.slice(9, tokenURI.length),
+                });
+              }  else {
+                console.log(tokenURI)
                 const result2 = await axios.get(tokenURI).catch((e) => {
                   console.error(e);
                 });
@@ -138,36 +156,35 @@ const CollectionPage = ({
                   nftArray.push(result2.data);
                 }
               }
-            } else if (tokenURI.includes("ipfs://")) {
+            } else if (tokenURI.includes("ipfs://") || tokenURI.includes("ipfs;//")) {
               const ipfs_key = tokenURI.slice(6, tokenURI.length);
+              console.log('ipfs_key',ipfs_key)
               const result2 = await axios
                 .get(`https://ipfs.io/ipfs${ipfs_key}`)
                 .catch((e) => {
                   console.error(e);
                 });
               if (result2 && result2.status === 200) {
-                const nftImage = result2.data.image.slice(
+               if(result2.data.image)
+               { const nftImage = result2.data.image.slice(
                   6,
                   result2.data.image.length
                 );
                 nftArray.push({
                   ...result2.data,
                   nftImage: `https://ipfs.io/ipfs${nftImage}`,
-                });
+                });}
+                else if(result2) {
+                  nftArray.push({
+                    name: tokenName,
+                    image: `https://ipfs.io/ipfs${ipfs_key}`,
+                  });
+                }
               }
             }
+          } else if (tokenURI === "") {
+            nftArray.push({ name: tokenName, image: undefined });
           }
-          // else {
-          //   const tokenURI2 = await collection_contract.methods
-          //     .uri()
-          //     .call(i)
-          //     .catch((e) => {
-          //       console.error(e);
-          //     });
-          //   if (tokenURI2) {
-          //     nftArray.push(tokenURI2);
-          //   }
-          // }
         }
         console.log("nftArray1", nftArray);
         setAllNftArray(nftArray);
@@ -204,12 +221,17 @@ const CollectionPage = ({
       }
       if (totalSupply && next <= totalSupply) {
         for (let i = next - nftPerRow; i < next; i++) {
-          const tokenByIndex = await collection_contract.methods
-            .tokenByIndex(i)
-            .call()
-            .catch((e) => {
-              console.error(e);
-            });
+          let tokenByIndex = 0;
+          if (result.data.result.includes("tokenByIndex")) {
+            tokenByIndex = await collection_contract.methods
+              .tokenByIndex(i)
+              .call()
+              .catch((e) => {
+                console.error(e);
+              });
+          } else if (!result.data.result.includes("tokenByIndex")) {
+            tokenByIndex = i;
+          }
           const tokenURI = await collection_contract.methods
             .tokenURI(tokenByIndex)
             .call()
@@ -217,16 +239,31 @@ const CollectionPage = ({
               console.error(e);
               console.error(tokenByIndex);
             });
+          const tokenName = await collection_contract.methods
+            .symbol()
+            .call()
+            .catch((e) => {
+              console.error(e);
+            });
           if (tokenURI) {
             console.log(tokenURI);
-            if (!tokenURI.includes("ipfs://")) {
-              const result2 = await axios.get(tokenURI).catch((e) => {
-                console.error(e);
-              });
-              if (result2 && result2.status === 200) {
-                nftArray.push(result2.data);
+            if (!tokenURI.includes("ipfs://") && !tokenURI.includes("ipfs;//")) {
+              if (tokenURI.endsWith(".svg") || tokenURI.endsWith(".gif")) {
+                nftArray.push({ name: tokenName, image: tokenURI });
+              } else if(tokenURI.includes('tokenURI:')) {
+                nftArray.push({
+                  name: tokenName,
+                  image: tokenURI.slice(9, tokenURI.length),
+                });
+              }  else {
+                const result2 = await axios.get(tokenURI).catch((e) => {
+                  console.error(e);
+                });
+                if (result2 && result2.status === 200) {
+                  nftArray.push(result2.data);
+                }
               }
-            } else if (tokenURI.includes("ipfs://")) {
+            } else if (tokenURI.includes("ipfs://") || tokenURI.includes("ipfs;//")) {
               const ipfs_key = tokenURI.slice(6, tokenURI.length);
               const result2 = await axios
                 .get(`https://ipfs.io/ipfs${ipfs_key}`)
@@ -244,18 +281,9 @@ const CollectionPage = ({
                 });
               }
             }
+          } else if (tokenURI === "") {
+            nftArray.push({ name: tokenName, image: undefined });
           }
-          // else {
-          //   const tokenURI2 = await collection_contract.methods
-          //     .uri()
-          //     .call(i)
-          //     .catch((e) => {
-          //       console.error(e);
-          //     });
-          //   if (tokenURI2) {
-          //     nftArray.push(tokenURI2);
-          //   }
-          // }
         }
         const finaldata = [...allNftArray, ...nftArray];
         setAllNftArray(finaldata);
@@ -456,23 +484,28 @@ const CollectionPage = ({
         collectionAddress={collectionAddress}
       />
 
-      {next <= totalSupplyPerCollection.length && loading === false && (
-        <div className="d-flex justify-content-center mt-5">
-          <button className="buy-btn px-5 m-auto" onClick={loadMore}>
-            Load more
-          </button>
-        </div>
-      )}
+      {totalSupplyPerCollection &&
+        next <= totalSupplyPerCollection &&
+        totalSupplyPerCollection > 0 &&
+        loading === false && (
+          <div className="d-flex justify-content-center mt-5">
+            <button className="buy-btn px-5 m-auto" onClick={loadMore}>
+              Load more
+            </button>
+          </div>
+        )}
 
-      {loading === true && (
-        <FadeLoader
-          color={"#554fd8"}
-          loading={loading}
-          cssOverride={override}
-          aria-label="Loading Spinner"
-          data-testid="loader"
-        />
-      )}
+      {loading === true &&
+        totalSupplyPerCollection > 0 &&
+        next <= totalSupplyPerCollection && (
+          <FadeLoader
+            color={"#554fd8"}
+            loading={loading}
+            cssOverride={override}
+            aria-label="Loading Spinner"
+            data-testid="loader"
+          />
+        )}
     </div>
   );
 };

@@ -31,7 +31,7 @@ const MakeOffer = ({
   nftId,
   deletestatus,
   updatestatus,
-  showPopup
+  showPopup,
 }) => {
   const windowSize = useWindowSize();
   const [filter1, setFilter1] = useState("weth");
@@ -69,8 +69,7 @@ const MakeOffer = ({
   };
 
   return (
-    <OutsideClickHandler onOutsideClick={() => showPopup(false)}>
-      <Modal
+    <Modal
       open={open}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
@@ -82,11 +81,15 @@ const MakeOffer = ({
             <img
               src={closeX}
               alt=""
-            
               onClick={() => {
-                showPopup(false)
+                showPopup(false);
               }}
-              style={{ bottom: "17px", right: "-22px", width: "auto", cursor: "pointer" }}
+              style={{
+                bottom: "17px",
+                right: "-22px",
+                width: "auto",
+                cursor: "pointer",
+              }}
             />
           </div>
           <div className="summarywrapper">
@@ -177,7 +180,7 @@ const MakeOffer = ({
             </div>
           )}
           <div className="row">
-            <div className="col-12 col-lg-6">
+            <div className="col-12 col-lg-6 mb-3 mb-lg-0">
               <input
                 type="number"
                 min={0}
@@ -198,10 +201,10 @@ const MakeOffer = ({
                 }}
               />
             </div>
-            <div className="col-2 col-lg-3">
+            <div className="col-6 col-lg-3">
               <div className="dropdown">
                 <button
-                  className="btn btn-secondary categories-dropdown p-3 dropdown-toggle  d-flex align-items-center justify-content-center justify-content-lg-between"
+                  className="btn btn-secondary categories-dropdown w-100 p-3 dropdown-toggle  d-flex align-items-center justify-content-center justify-content-lg-between"
                   type="button"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
@@ -215,7 +218,7 @@ const MakeOffer = ({
                       className="dropdown-item categories-dropdown-item"
                       href="#"
                     >
-                      Low to High
+                      3 days
                     </a>
                   </li>
                   <li>
@@ -223,7 +226,7 @@ const MakeOffer = ({
                       className="dropdown-item categories-dropdown-item"
                       href="#"
                     >
-                      High to Low
+                     7 Days
                     </a>
                   </li>
                   <li>
@@ -231,13 +234,13 @@ const MakeOffer = ({
                       className="dropdown-item categories-dropdown-item"
                       href="#"
                     >
-                      Recently Listed
+                      14 Days
                     </a>
                   </li>
                 </ul>
               </div>
             </div>
-            <div className="col-2 col-lg-3">
+            <div className="col-6 col-lg-3">
               <div className="categories-dropdown p-2 d-flex align-items-center justify-content-center gap-2">
                 <img src={confluxIcon} alt="" />
                 <h6 className="token-title mb-0">WCFX</h6>
@@ -295,62 +298,62 @@ const MakeOffer = ({
           ) : (
             <div className="d-flex align-items-center gap-2 justify-content-center w-100">
               {/* <button
-                className={`btn ${
-                  deletestatus === "faildelete" ? "errorbtn" : "mint-now-btn"
-                } gap-2  align-self-center align-self-xxl-end align-self-xl-end align-self-lg-end  mt-4`}
-                style={{ width: "fit-content" }}
-                onClick={() => {
-                  handleDeleteOffer(offerData[0].index);
-                }}
-              >
-                {deletestatus === "initial" ? (
-                  "Delete offer"
-                ) : deletestatus === "loadingdelete" ? (
-                  <>
-                    Deleting offer{" "}
-                    <div
-                      className="spinner-border mx-1"
-                      role="status"
-                      style={{ width: 16, height: 16 }}
-                    ></div>
-                  </>
-                ) : deletestatus === "successdelete" ? (
-                  "Success"
-                ) : (
-                  "Failed"
-                )}
-              </button>
-              <button
-                className={`btn ${
-                  updatestatus === "failupdate" ? "errorbtn" : "pill-btn"
-                } gap-2  align-self-center align-self-xxl-end align-self-xl-end align-self-lg-end  mt-4`}
-                style={{ width: "fit-content" }}
-                onClick={() => {
-                  handleUpdateOffer(
-                    price,
-                    filter1 === "weth" ? 0 : 1,
-                    offerData[0].index,
-                    filter1
-                  );
-                }}
-              >
-                {updatestatus === "initial" ? (
-                  "Update"
-                ) : updatestatus === "loadingupdate" ? (
-                  <>
-                    Updating offer{" "}
-                    <div
-                      className="spinner-border mx-1"
-                      role="status"
-                      style={{ width: 16, height: 16 }}
-                    ></div>
-                  </>
-                ) : updatestatus === "successupdate" ? (
-                  "Success"
-                ) : (
-                  "Failed"
-                )}
-              </button> */}
+              className={`btn ${
+                deletestatus === "faildelete" ? "errorbtn" : "mint-now-btn"
+              } gap-2  align-self-center align-self-xxl-end align-self-xl-end align-self-lg-end  mt-4`}
+              style={{ width: "fit-content" }}
+              onClick={() => {
+                handleDeleteOffer(offerData[0].index);
+              }}
+            >
+              {deletestatus === "initial" ? (
+                "Delete offer"
+              ) : deletestatus === "loadingdelete" ? (
+                <>
+                  Deleting offer{" "}
+                  <div
+                    className="spinner-border mx-1"
+                    role="status"
+                    style={{ width: 16, height: 16 }}
+                  ></div>
+                </>
+              ) : deletestatus === "successdelete" ? (
+                "Success"
+              ) : (
+                "Failed"
+              )}
+            </button>
+            <button
+              className={`btn ${
+                updatestatus === "failupdate" ? "errorbtn" : "pill-btn"
+              } gap-2  align-self-center align-self-xxl-end align-self-xl-end align-self-lg-end  mt-4`}
+              style={{ width: "fit-content" }}
+              onClick={() => {
+                handleUpdateOffer(
+                  price,
+                  filter1 === "weth" ? 0 : 1,
+                  offerData[0].index,
+                  filter1
+                );
+              }}
+            >
+              {updatestatus === "initial" ? (
+                "Update"
+              ) : updatestatus === "loadingupdate" ? (
+                <>
+                  Updating offer{" "}
+                  <div
+                    className="spinner-border mx-1"
+                    role="status"
+                    style={{ width: 16, height: 16 }}
+                  ></div>
+                </>
+              ) : updatestatus === "successupdate" ? (
+                "Success"
+              ) : (
+                "Failed"
+              )}
+            </button> */}
               <button className="updateoffer-btn">Update</button>
               <button className="deleteoffer-btn">Delete</button>
             </div>
@@ -358,7 +361,6 @@ const MakeOffer = ({
         </div>
       </Box>
     </Modal>
-    </OutsideClickHandler>
   );
 };
 

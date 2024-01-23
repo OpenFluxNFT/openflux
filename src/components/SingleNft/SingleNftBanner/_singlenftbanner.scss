@@ -148,3 +148,27 @@
     outline: none;
   }
 }
+
+.duration-tab {
+  background: linear-gradient(
+    90deg,
+    rgba(47, 128, 237, 0.2) 0%,
+    rgba(0, 169, 255, 0.2) 100%
+  );
+  cursor: pointer;
+  padding: 3px 5px;
+  border-radius: 16px;
+  span {
+    color: #fff;
+    text-align: center;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    text-transform: capitalize;
+  }
+}
+
+.duration-tab-active {
+  background: linear-gradient(90deg, #2F80ED 0%, #00A9FF 100%);
+}

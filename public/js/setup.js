@@ -74,8 +74,9 @@ class TOKEN {
 
 // ALL THE ADDRESSES IN CONFIG MUST BE LOWERCASE
 window.config = {
-  nft_marketplace_address: "0x0aa455890eab3d7109a5abaf35d1ab7c789a949c",
+  nft_marketplace_address: "0x74d66ecb2bdce89a794109371a30bb9080d7752a",
   conflux_endpoint: "https://evm.confluxrpc.com/",
+  wcfx_address: "0xfe97E85d13ABD9c1c33384E796F10B73905637cE",
 };
 
 window.confluxWeb3 = new Web3(window.config.conflux_endpoint);
@@ -476,8 +477,6 @@ window.listNFT = async (token, price, priceType, type = "", tokenType) => {
     gasPrice: window.web3.utils.toWei(increasedGwei.toString(), "gwei"),
   };
 
- 
-
   await marketplace.methods
     .listItem(nft_address, token, price, [price_nft, price_address])
     .send({ from: coinbase });
@@ -520,28 +519,16 @@ window.isApproved = async (token, type) => {
   }
 };
 
-window.makeOffer = async (nftAddress, tokenId, price, priceType, tokenType) => {
-  let price_address;
-
-  if (priceType === 0) {
-    price_address = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
-  }
-
-  if (priceType === 1) {
-    price_address =
-      tokenType === "dypv2"
-        ? window.config.token_dypius_new_address
-        : window.config.dyp_token_address;
-  }
-
+window.makeOffer = async (nftAddress, tokenId, price, duration) => {
+  let price_address = window.config.wcfx_address;
   const marketplace = new window.web3.eth.Contract(
     window.MARKETPLACE_ABI,
     window.config.nft_marketplace_address
   );
 
   await marketplace.methods
-    .makeOffer(nftAddress, tokenId, price, [priceType, price_address])
-    .send({ from: await getCoinbase(),  });
+    .makeOfferForNFT(nftAddress, tokenId, price, price_address, duration)
+    .send({ from: await getCoinbase() });
 };
 
 window.cancelOffer = async (nftAddress, tokenId, offerIndex) => {
@@ -549,8 +536,6 @@ window.cancelOffer = async (nftAddress, tokenId, offerIndex) => {
     window.MARKETPLACE_ABI,
     window.config.nft_marketplace_address
   );
-
- 
 
   await marketplace.methods
     .cancelOffer(nftAddress, tokenId, offerIndex)
@@ -588,7 +573,7 @@ window.updateOffer = async (
       priceType,
       price_address,
     ])
-    .send({ from: await getCoinbase(),  });
+    .send({ from: await getCoinbase() });
 };
 
 window.approveOffer = async (amount, priceType, tokenType) => {
@@ -2821,6 +2806,16 @@ window.MARKETPLACE_ABI = [
     type: "function",
   },
   {
+    inputs: [
+      { internalType: "address", name: "", type: "address" },
+      { internalType: "uint256", name: "", type: "uint256" },
+    ],
+    name: "activeTokenIdsForOffers",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [{ internalType: "address", name: "_token", type: "address" }],
     name: "addApprovedToken",
     outputs: [],
@@ -2887,16 +2882,89 @@ window.MARKETPLACE_ABI = [
     type: "function",
   },
   {
+    inputs: [
+      { internalType: "address", name: "_collectionAddress", type: "address" },
+    ],
+    name: "checkExpiredCollectionOffers",
+    outputs: [
+      {
+        components: [
+          { internalType: "address", name: "offeror", type: "address" },
+          { internalType: "uint256", name: "amount", type: "uint256" },
+          { internalType: "address", name: "paymentToken", type: "address" },
+          {
+            internalType: "enum OpenFlux.Duration",
+            name: "duration",
+            type: "uint8",
+          },
+          { internalType: "uint256", name: "expiresAt", type: "uint256" },
+        ],
+        internalType: "struct OpenFlux.CollectionOffer[]",
+        name: "",
+        type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
-    name: "collectionCommissionRate",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    name: "checkExpiredListings",
+    outputs: [
+      {
+        components: [
+          { internalType: "address", name: "nftAddress", type: "address" },
+          { internalType: "uint256", name: "tokenId", type: "uint256" },
+          { internalType: "address payable", name: "seller", type: "address" },
+          { internalType: "uint256", name: "price", type: "uint256" },
+          { internalType: "address", name: "paymentToken", type: "address" },
+          {
+            internalType: "enum OpenFlux.Duration",
+            name: "duration",
+            type: "uint8",
+          },
+          { internalType: "uint256", name: "expiresAt", type: "uint256" },
+        ],
+        internalType: "struct OpenFlux.Listing[]",
+        name: "",
+        type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "_nftAddress", type: "address" }],
+    name: "checkExpiredOffersForNFT",
+    outputs: [
+      {
+        components: [
+          { internalType: "uint256", name: "tokenId", type: "uint256" },
+          { internalType: "address", name: "offeror", type: "address" },
+          { internalType: "uint256", name: "amount", type: "uint256" },
+          { internalType: "address", name: "paymentToken", type: "address" },
+          {
+            internalType: "enum OpenFlux.Duration",
+            name: "duration",
+            type: "uint8",
+          },
+          { internalType: "uint256", name: "expiresAt", type: "uint256" },
+        ],
+        internalType: "struct OpenFlux.Offer[]",
+        name: "",
+        type: "tuple[]",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [{ internalType: "address", name: "", type: "address" }],
     name: "collections",
-    outputs: [{ internalType: "address", name: "owner", type: "address" }],
+    outputs: [
+      { internalType: "address", name: "owner", type: "address" },
+      { internalType: "uint256", name: "collectionFeeRate", type: "uint256" },
+    ],
     stateMutability: "view",
     type: "function",
   },
@@ -2965,8 +3033,14 @@ window.MARKETPLACE_ABI = [
           { internalType: "address payable", name: "seller", type: "address" },
           { internalType: "uint256", name: "price", type: "uint256" },
           { internalType: "address", name: "paymentToken", type: "address" },
+          {
+            internalType: "enum OpenFlux.Duration",
+            name: "duration",
+            type: "uint8",
+          },
+          { internalType: "uint256", name: "expiresAt", type: "uint256" },
         ],
-        internalType: "struct NFTMarketplace.Listing[]",
+        internalType: "struct OpenFlux.Listing[]",
         name: "",
         type: "tuple[]",
       },
@@ -2986,8 +3060,14 @@ window.MARKETPLACE_ABI = [
           { internalType: "address", name: "offeror", type: "address" },
           { internalType: "uint256", name: "amount", type: "uint256" },
           { internalType: "address", name: "paymentToken", type: "address" },
+          {
+            internalType: "enum OpenFlux.Duration",
+            name: "duration",
+            type: "uint8",
+          },
+          { internalType: "uint256", name: "expiresAt", type: "uint256" },
         ],
-        internalType: "struct NFTMarketplace.CollectionOffer[]",
+        internalType: "struct OpenFlux.CollectionOffer[]",
         name: "",
         type: "tuple[]",
       },
@@ -3009,10 +3089,46 @@ window.MARKETPLACE_ABI = [
           { internalType: "address", name: "offeror", type: "address" },
           { internalType: "uint256", name: "amount", type: "uint256" },
           { internalType: "address", name: "paymentToken", type: "address" },
+          {
+            internalType: "enum OpenFlux.Duration",
+            name: "duration",
+            type: "uint8",
+          },
+          { internalType: "uint256", name: "expiresAt", type: "uint256" },
         ],
-        internalType: "struct NFTMarketplace.Offer[]",
+        internalType: "struct OpenFlux.Offer[]",
         name: "",
         type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "_nftAddress", type: "address" },
+      { internalType: "uint256", name: "_tokenId", type: "uint256" },
+    ],
+    name: "getListingIfExists",
+    outputs: [
+      { internalType: "bool", name: "isListed", type: "bool" },
+      {
+        components: [
+          { internalType: "address", name: "nftAddress", type: "address" },
+          { internalType: "uint256", name: "tokenId", type: "uint256" },
+          { internalType: "address payable", name: "seller", type: "address" },
+          { internalType: "uint256", name: "price", type: "uint256" },
+          { internalType: "address", name: "paymentToken", type: "address" },
+          {
+            internalType: "enum OpenFlux.Duration",
+            name: "duration",
+            type: "uint8",
+          },
+          { internalType: "uint256", name: "expiresAt", type: "uint256" },
+        ],
+        internalType: "struct OpenFlux.Listing",
+        name: "listing",
+        type: "tuple",
       },
     ],
     stateMutability: "view",
@@ -3052,10 +3168,24 @@ window.MARKETPLACE_ABI = [
       { internalType: "uint256", name: "_tokenId", type: "uint256" },
       { internalType: "uint256", name: "_price", type: "uint256" },
       { internalType: "address", name: "_paymentToken", type: "address" },
+      {
+        internalType: "enum OpenFlux.Duration",
+        name: "_duration",
+        type: "uint8",
+      },
     ],
     name: "listNFT",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "enum OpenFlux.Duration", name: "", type: "uint8" },
+    ],
+    name: "listingFees",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -3070,6 +3200,12 @@ window.MARKETPLACE_ABI = [
       { internalType: "address payable", name: "seller", type: "address" },
       { internalType: "uint256", name: "price", type: "uint256" },
       { internalType: "address", name: "paymentToken", type: "address" },
+      {
+        internalType: "enum OpenFlux.Duration",
+        name: "duration",
+        type: "uint8",
+      },
+      { internalType: "uint256", name: "expiresAt", type: "uint256" },
     ],
     stateMutability: "view",
     type: "function",
@@ -3079,6 +3215,11 @@ window.MARKETPLACE_ABI = [
       { internalType: "address", name: "_collectionAddress", type: "address" },
       { internalType: "uint256", name: "_amount", type: "uint256" },
       { internalType: "address", name: "_paymentToken", type: "address" },
+      {
+        internalType: "enum OpenFlux.Duration",
+        name: "_duration",
+        type: "uint8",
+      },
     ],
     name: "makeOfferForCollection",
     outputs: [],
@@ -3091,10 +3232,22 @@ window.MARKETPLACE_ABI = [
       { internalType: "uint256", name: "_tokenId", type: "uint256" },
       { internalType: "uint256", name: "_amount", type: "uint256" },
       { internalType: "address", name: "paymentToken", type: "address" },
+      {
+        internalType: "enum OpenFlux.Duration",
+        name: "_duration",
+        type: "uint8",
+      },
     ],
     name: "makeOfferForNFT",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    name: "nftAddresses",
+    outputs: [{ internalType: "address", name: "", type: "address" }],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -3108,6 +3261,12 @@ window.MARKETPLACE_ABI = [
       { internalType: "address", name: "offeror", type: "address" },
       { internalType: "uint256", name: "amount", type: "uint256" },
       { internalType: "address", name: "paymentToken", type: "address" },
+      {
+        internalType: "enum OpenFlux.Duration",
+        name: "duration",
+        type: "uint8",
+      },
+      { internalType: "uint256", name: "expiresAt", type: "uint256" },
     ],
     stateMutability: "view",
     type: "function",
@@ -3124,6 +3283,12 @@ window.MARKETPLACE_ABI = [
       { internalType: "address", name: "offeror", type: "address" },
       { internalType: "uint256", name: "amount", type: "uint256" },
       { internalType: "address", name: "paymentToken", type: "address" },
+      {
+        internalType: "enum OpenFlux.Duration",
+        name: "duration",
+        type: "uint8",
+      },
+      { internalType: "uint256", name: "expiresAt", type: "uint256" },
     ],
     stateMutability: "view",
     type: "function",
@@ -3138,6 +3303,12 @@ window.MARKETPLACE_ABI = [
       { internalType: "address", name: "offeror", type: "address" },
       { internalType: "uint256", name: "amount", type: "uint256" },
       { internalType: "address", name: "paymentToken", type: "address" },
+      {
+        internalType: "enum OpenFlux.Duration",
+        name: "duration",
+        type: "uint8",
+      },
+      { internalType: "uint256", name: "expiresAt", type: "uint256" },
     ],
     stateMutability: "view",
     type: "function",
@@ -3166,8 +3337,32 @@ window.MARKETPLACE_ABI = [
     type: "function",
   },
   {
-    inputs: [{ internalType: "uint256", name: "_rate", type: "uint256" }],
-    name: "setCollectionCommissionRate",
+    inputs: [],
+    name: "removeExpiredCollectionOffers",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "removeExpiredListings",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "removeExpiredOffersForNFT",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "_collectionAddress", type: "address" },
+      { internalType: "uint256", name: "_newFeeRate", type: "uint256" },
+    ],
+    name: "setCollectionFeeRate",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -3177,6 +3372,34 @@ window.MARKETPLACE_ABI = [
     name: "setContractCommissionRate",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "enum OpenFlux.Duration",
+        name: "_duration",
+        type: "uint8",
+      },
+      { internalType: "uint256", name: "_fee", type: "uint256" },
+    ],
+    name: "setListingFee",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "_address", type: "address" }],
+    name: "setTreasuryAddress",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "treasuryAddress",
+    outputs: [{ internalType: "address", name: "", type: "address" }],
+    stateMutability: "view",
     type: "function",
   },
 ];

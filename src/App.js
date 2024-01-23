@@ -606,6 +606,10 @@ function App() {
     
     */
 
+  const handleMakeOffer = async()=>{
+   await window.makeOffer().then((console.log('success'))).catch((e)=>{console.log(e)})
+  }
+
   const logout = localStorage.getItem("logout");
   useEffect(() => {
     if (ethereum) {

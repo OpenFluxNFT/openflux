@@ -40,7 +40,7 @@ const CollectionPage = ({
   ];
 
   const [favorite, setFavorite] = useState(false);
-  const [collectionOwner, setcollectionOwner] = useState();
+
   const [isVerified, setisVerified] = useState(false);
   const [currentCollection, setcurrentCollection] = useState([]);
   const [collectionSocials, setcollectionSocials] = useState([]);
@@ -139,16 +139,19 @@ const CollectionPage = ({
               console.error(e);
             });
           if (tokenURI) {
-            if (!tokenURI.includes("ipfs://") && !tokenURI.includes("ipfs;//")) {
-              if (tokenURI.endsWith(".svg")|| tokenURI.endsWith(".gif")) {
+            if (
+              !tokenURI.includes("ipfs://") &&
+              !tokenURI.includes("ipfs;//")
+            ) {
+              if (tokenURI.endsWith(".svg") || tokenURI.endsWith(".gif")) {
                 nftArray.push({ name: tokenName, image: tokenURI });
-              } else if(tokenURI.includes('tokenURI:')) {
+              } else if (tokenURI.includes("tokenURI:")) {
                 nftArray.push({
                   name: tokenName,
                   image: tokenURI.slice(9, tokenURI.length),
                 });
-              }  else {
-                console.log(tokenURI)
+              } else {
+                console.log(tokenURI);
                 const result2 = await axios.get(tokenURI).catch((e) => {
                   console.error(e);
                 });
@@ -156,25 +159,28 @@ const CollectionPage = ({
                   nftArray.push(result2.data);
                 }
               }
-            } else if (tokenURI.includes("ipfs://") || tokenURI.includes("ipfs;//")) {
+            } else if (
+              tokenURI.includes("ipfs://") ||
+              tokenURI.includes("ipfs;//")
+            ) {
               const ipfs_key = tokenURI.slice(6, tokenURI.length);
-              console.log('ipfs_key',ipfs_key)
+              console.log("ipfs_key", ipfs_key);
               const result2 = await axios
                 .get(`https://ipfs.io/ipfs${ipfs_key}`)
                 .catch((e) => {
                   console.error(e);
                 });
               if (result2 && result2.status === 200) {
-               if(result2.data.image)
-               { const nftImage = result2.data.image.slice(
-                  6,
-                  result2.data.image.length
-                );
-                nftArray.push({
-                  ...result2.data,
-                  nftImage: `https://ipfs.io/ipfs${nftImage}`,
-                });}
-                else if(result2) {
+                if (result2.data.image) {
+                  const nftImage = result2.data.image.slice(
+                    6,
+                    result2.data.image.length
+                  );
+                  nftArray.push({
+                    ...result2.data,
+                    nftImage: `https://ipfs.io/ipfs${nftImage}`,
+                  });
+                } else if (result2) {
                   nftArray.push({
                     name: tokenName,
                     image: `https://ipfs.io/ipfs${ipfs_key}`,
@@ -247,15 +253,18 @@ const CollectionPage = ({
             });
           if (tokenURI) {
             console.log(tokenURI);
-            if (!tokenURI.includes("ipfs://") && !tokenURI.includes("ipfs;//")) {
+            if (
+              !tokenURI.includes("ipfs://") &&
+              !tokenURI.includes("ipfs;//")
+            ) {
               if (tokenURI.endsWith(".svg") || tokenURI.endsWith(".gif")) {
                 nftArray.push({ name: tokenName, image: tokenURI });
-              } else if(tokenURI.includes('tokenURI:')) {
+              } else if (tokenURI.includes("tokenURI:")) {
                 nftArray.push({
                   name: tokenName,
                   image: tokenURI.slice(9, tokenURI.length),
                 });
-              }  else {
+              } else {
                 const result2 = await axios.get(tokenURI).catch((e) => {
                   console.error(e);
                 });
@@ -263,7 +272,10 @@ const CollectionPage = ({
                   nftArray.push(result2.data);
                 }
               }
-            } else if (tokenURI.includes("ipfs://") || tokenURI.includes("ipfs;//")) {
+            } else if (
+              tokenURI.includes("ipfs://") ||
+              tokenURI.includes("ipfs;//")
+            ) {
               const ipfs_key = tokenURI.slice(6, tokenURI.length);
               const result2 = await axios
                 .get(`https://ipfs.io/ipfs${ipfs_key}`)
@@ -332,27 +344,6 @@ const CollectionPage = ({
       ];
 
       setcollectionSocials(socialsObject);
-    }
-  };
-
-  const getCollectionOwner = async () => {
-    const result = await axios
-      .get(
-        `https://confluxapi.worldofdypians.com/api/collections/getCollectionOwner/${collectionAddress}`,
-        {
-          headers: {
-            "x-api-key":
-              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-          },
-        }
-      )
-      .catch((e) => {
-        console.error(e);
-      });
-
-    if (result && result.status === 200) {
-      setcollectionOwner(result.data);
-      checkCollectionOwner(result.data);
     }
   };
 
@@ -442,7 +433,6 @@ const CollectionPage = ({
   }, [collectionAddress, userCollectionFavs]);
 
   useEffect(() => {
-    getCollectionOwner();
     fetchCurrentCollection(collectionAddress);
   }, [collectionAddress]);
 
@@ -475,7 +465,7 @@ const CollectionPage = ({
         handleFavorite={() => {
           favorite ? handleRemoveFavorite() : handleAddFavorite();
         }}
-        isVerified={isVerified}
+        isVerified={currentCollection.verified === "yes" ? true : false}
         currentCollection={currentCollection}
       />
       <CollectionList

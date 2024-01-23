@@ -20,7 +20,11 @@ import { NavLink } from "react-router-dom";
 import emptyFavorite from "../../Home/RecentlyListed/assets/emptyFavorite.svg";
 import redFavorite from "../../Home/RecentlyListed/assets/redFavorite.svg";
 
-const CollectionList = ({currentCollection}) => {
+const CollectionList = ({
+  currentCollection,
+  allNftArray,
+  collectionAddress,
+}) => {
   const windowSize = useWindowSize();
   const [openFilters, setOpenFilters] = useState(false);
 
@@ -274,7 +278,7 @@ const CollectionList = ({currentCollection}) => {
                     <div className="accordion-body">
                       <div className="" id="accordionExample2">
                         {dummyTraits.map((item, index) => (
-                          <div className="accordion-item">
+                          <div className="accordion-item" key={index}>
                             <h2
                               className="accordion-header"
                               id={`headingOne${item.title}`}
@@ -312,6 +316,7 @@ const CollectionList = ({currentCollection}) => {
                                           }}
                                         />
                                       }
+                                      key={index}
                                       label={trait}
                                     />
                                   ))}
@@ -431,6 +436,12 @@ const CollectionList = ({currentCollection}) => {
                 </div>
               </div>
             </div>
+            {allNftArray && allNftArray.length === 0 && (
+              <span className="text-white d-flex w-100 justify-content-center mt-5">
+                This collection doesn't have any NFTs.
+              </span>
+            )}
+
             <div
               className={`${
                 gridView === "list"
@@ -503,18 +514,25 @@ const CollectionList = ({currentCollection}) => {
                   </tbody>
                 </table>
               ) : (
-                dummyCards.map((item, index) => (
+                allNftArray &&
+                allNftArray.map((item, index) => (
                   <div
                     className="recently-listed-card p-3 d-flex flex-column"
                     key={index}
                   >
                     <NavLink
-                      to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
+                      to={`/nft/${index}/${collectionAddress}`}
                       style={{ textDecoration: "none" }}
                       className={"position-relative"}
                     >
                       <img
-                        src={require(`./assets/nftPlaceholder${index + 1}.png`)}
+                        src={
+                          item.image
+                            ? item.image.includes("ipfs://")
+                              ? item.nftImage
+                              : item.image
+                            : require(`./assets/collectionCardPlaceholder2.png`)
+                        }
                         className="card-img"
                         alt=""
                       />
@@ -535,7 +553,7 @@ const CollectionList = ({currentCollection}) => {
                           className="recently-listed-title mb-0"
                           style={{ fontSize: "12px" }}
                         >
-                          CAWS #1125
+                          {item.name}
                         </h6>
                         <img src={checkIcon} alt="" />
                       </div>
@@ -717,7 +735,7 @@ const CollectionList = ({currentCollection}) => {
                 <div className="accordion-body">
                   <div className="" id="accordionExample2">
                     {dummyTraits.map((item, index) => (
-                      <div className="accordion-item">
+                      <div className="accordion-item" key={index}>
                         <h2
                           className="accordion-header"
                           id={`headingOne${item.title}`}
@@ -755,6 +773,7 @@ const CollectionList = ({currentCollection}) => {
                                       }}
                                     />
                                   }
+                                  key={index}
                                   label={trait}
                                 />
                               ))}

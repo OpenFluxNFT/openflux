@@ -29,7 +29,7 @@ const CollectionBanner = ({
   isVerified,
   currentCollection,
 }) => {
- console.log(socials[0])
+  
   return (
     <div className="container-lg py-0 py-lg-5">
       <div className="row px-0">

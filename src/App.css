@@ -65,7 +65,8 @@ input:focus {
   border: 1px solid transparent;
 
   .card-img {
-    /* border-radius: 30px; */
+    border-radius: 11px;
+    aspect-ratio: 1/0.92;
   }
 
   .card-img2 {

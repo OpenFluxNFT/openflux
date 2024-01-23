@@ -30,7 +30,9 @@ const SingleNft = ({
       <SingleNftHistory />
       <NftTraits />
       <MoreFromCollection />
-      {showOfferPopup && <></>}
+      {showOfferPopup && 
+      <MakeOffer open={showOfferPopup} showPopup={() => setShowOfferPopup()} />
+      }
     </div>
   );
 };

@@ -49,6 +49,53 @@ const CollectionPage = ({
   const [totalSupplyPerCollection, settotalSupplyPerCollection] = useState(0);
 
   const [next, setnext] = useState(4);
+  const baseURL = "https://confluxapi.worldofdypians.com";
+
+  //https://confluxapi.worldofdypians.com/api/collections/contractAddress/listings
+
+  /*
+  
+  
+when a user lists an nft or edits/cancels a listing or a listing is bought or an offer is accepted
+
+
+you call this with the respective nftaddress:
+
+
+confluxapi.worldofdypians.com/api/collections/contractAddress/refresh-listings
+
+which will refresh the listings and give you a json of the current ones
+
+{
+  "listings": [
+    {
+      "nftAddress": "0x2dEeCF2a05F735890Eb3eA085d55CEc8F1a93895",
+      "tokenId": "1049",
+      "seller": "0x65C3d0F9438644945dF5BF321c9F0fCf333302b8",
+      "price": "1000000000000000000",
+      "paymentToken": "0x14b2D3bC65e74DAE1030EAFd8ac30c533c976A9b",
+      "duration": "0",
+      "expiresAt": "1706095685"
+    },
+    {
+      "nftAddress": "0x2dEeCF2a05F735890Eb3eA085d55CEc8F1a93895",
+      "tokenId": "2086",
+      "seller": "0x65C3d0F9438644945dF5BF321c9F0fCf333302b8",
+      "price": "1000000000000000000",
+      "paymentToken": "0x14b2D3bC65e74DAE1030EAFd8ac30c533c976A9b",
+      "duration": "1",
+      "expiresAt": "1706269322"
+    }
+  ]
+}
+
+if there are no listings
+
+
+{
+  "listings": "none"
+}
+  */
 
   const nftPerRow = 10;
 
@@ -79,6 +126,36 @@ const CollectionPage = ({
           setisVerified(true);
         }
       } else setisVerified(false);
+    }
+  };
+
+  const getCollectionTotalSupply = async () => {
+    let totalSupply = 0;
+
+    const result = await axios.get(
+      `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress}`
+    );
+
+    if (result && result.status === 200) {
+      const abi = JSON.parse(result.data.result);
+      const web3 = new Web3(window.ethereum);
+      const collection_contract = new web3.eth.Contract(abi, collectionAddress);
+      if (result.data.result.includes("_totalSupply")) {
+        totalSupply = await collection_contract.methods
+          ._totalSupply()
+          .call()
+          .catch((e) => {
+            console.error(e);
+          });
+      } else if (result.data.result.includes("totalSupply")) {
+        totalSupply = await collection_contract.methods
+          .totalSupply()
+          .call()
+          .catch((e) => {
+            console.error(e);
+          });
+      }
+      settotalSupplyPerCollection(totalSupply);
     }
   };
 
@@ -195,6 +272,24 @@ const CollectionPage = ({
         console.log("nftArray1", nftArray);
         setAllNftArray(nftArray);
       }
+    }
+  };
+
+  const getTestCollections = async () => {
+    const result = await axios
+      .get(`${baseURL}/api/nfts/${collectionAddress}?skip=0`, {
+        headers: {
+          "x-api-key":
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+
+    if (result && result.status === 200) {
+      console.log(result.data);
+      setAllNftArray(result.data);
     }
   };
 
@@ -418,15 +513,17 @@ const CollectionPage = ({
 
   useEffect(() => {
     if (next === 4) {
-      fetchInitialNftsPerCollection();
+      // fetchInitialNftsPerCollection();
+      getTestCollections();
+      getCollectionTotalSupply();
     }
   }, [collectionAddress, next]);
 
-  useEffect(() => {
-    if (next !== 4) {
-      fetchSlicedNftsPerCollection();
-    }
-  }, [collectionAddress, next]);
+  // useEffect(() => {
+  //   if (next !== 4) {
+  //     fetchSlicedNftsPerCollection();
+  //   }
+  // }, [collectionAddress, next]);
 
   useEffect(() => {
     checkifFavorite();

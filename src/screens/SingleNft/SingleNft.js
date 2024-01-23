@@ -18,7 +18,9 @@ const SingleNft = ({
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+///api/collections/:contractAddress/refresh-metadata/:tokenID
 
+///api/collections/:contractAddress/metadata/:tokenID
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
       <SingleNftBanner

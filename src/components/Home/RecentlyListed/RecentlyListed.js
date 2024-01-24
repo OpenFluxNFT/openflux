@@ -89,7 +89,7 @@ const RecentlyListed = ({ coinbase, onFavoriteNft, userNftFavs }) => {
           data,
           {
             headers: {
-              "x-api-key":
+              "cascadestyling":
                 "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
             },
           }
@@ -117,7 +117,7 @@ const RecentlyListed = ({ coinbase, onFavoriteNft, userNftFavs }) => {
           data,
           {
             headers: {
-              "x-api-key":
+              "cascadestyling":
                 "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
             },
           }

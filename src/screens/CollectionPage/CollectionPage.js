@@ -111,7 +111,7 @@ if there are no listings
       const result = await axios
         .get(`https://confluxapi.worldofdypians.com/api/users/${walletAddr}`, {
           headers: {
-            "x-api-key":
+            "cascadestyling":
               "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
           },
         })
@@ -464,7 +464,7 @@ if there are no listings
           data,
           {
             headers: {
-              "x-api-key":
+              "cascadestyling":
                 "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
             },
           }
@@ -492,7 +492,7 @@ if there are no listings
           data,
           {
             headers: {
-              "x-api-key":
+              "cascadestyling":
                 "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
             },
           }

@@ -109,7 +109,7 @@ if there are no listings
 
     if (result && result.status === 200) {
       const abi = JSON.parse(result.data.result);
-      const web3 = new Web3(window.ethereum);
+      const web3 = window.confluxWeb3;
       const collection_contract = new web3.eth.Contract(abi, collectionAddress);
       if (result.data.result.includes("_totalSupply")) {
         totalSupply = await collection_contract.methods
@@ -126,6 +126,8 @@ if there are no listings
             console.error(e);
           });
       }
+
+      console.log(totalSupply)
       settotalSupplyPerCollection(totalSupply);
     }
   };
@@ -139,7 +141,7 @@ if there are no listings
     );
     if (result && result.status === 200) {
       const abi = JSON.parse(result.data.result);
-      const web3 = new Web3(window.ethereum);
+      const web3 = window.confluxWeb3;
       const collection_contract = new web3.eth.Contract(abi, collectionAddress);
       if (result.data.result.includes("_totalSupply")) {
         totalSupply = await collection_contract.methods
@@ -157,7 +159,7 @@ if there are no listings
           });
       }
       settotalSupplyPerCollection(totalSupply);
-      console.log(totalSupply);
+      
       if (totalSupply && totalSupply > 0) {
         const limit = totalSupply <= 4 ? totalSupply : 4;
         for (let i = 0; i < limit; i++) {
@@ -245,7 +247,7 @@ if there are no listings
       }
     }
   };
-
+console.log(totalSupplyPerCollection)
   const getTestCollections = async () => {
     let nftArray = [];
     setLoading(true);
@@ -261,7 +263,7 @@ if there are no listings
       });
 
     if (result && result.status === 200) {
-      console.log(result.data);
+      console.log(result.data,totalSupplyPerCollection);
       if (result.data.metadatas === false && totalSupplyPerCollection === 0) {
         setAllNftArray([]);
         setLoading(false);
@@ -275,7 +277,7 @@ if there are no listings
         );
         if (result2 && result2.status === 200) {
           const abi = JSON.parse(result2.data.result);
-          const web3 = new Web3(window.ethereum);
+          const web3 = window.confluxWeb3;
           const collection_contract = new web3.eth.Contract(
             abi,
             collectionAddress
@@ -309,7 +311,7 @@ if there are no listings
     );
     if (result && result.status === 200) {
       const abi = JSON.parse(result.data.result);
-      const web3 = new Web3(window.ethereum);
+      const web3 = window.confluxWeb3;
       const collection_contract = new web3.eth.Contract(abi, collectionAddress);
 
       if (result.data.result.includes("_totalSupply")) {
@@ -414,10 +416,7 @@ if there are no listings
   const onScroll = () => {
     const wrappedElement = document.getElementById("header2");
     if (wrappedElement) {
-      console.log(
-        wrappedElement.getBoundingClientRect()?.bottom,
-        window.innerHeight
-      );
+       
       const isBottom =
         parseInt(wrappedElement.getBoundingClientRect()?.bottom) <=
         window.innerHeight;

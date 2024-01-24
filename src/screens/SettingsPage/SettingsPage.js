@@ -19,6 +19,11 @@ const SettingsPage = ({
   const [category, setCategory] = useState("profile");
   const [collectionId, setcollectionId] = useState();
 
+
+
+
+
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -40,7 +45,7 @@ const SettingsPage = ({
               ) : category === "notifications" ? (
                 <NotificationSettings />
               ) : category === "support" ? (
-                <SupportSettings />
+                <SupportSettings coinbase={coinbase} />
               ) : (
                 <CollectionSettings
                   userCollection={userCollection}

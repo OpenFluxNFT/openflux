@@ -162,7 +162,7 @@ function App() {
     const result = await axios
       .get(`${baseURL}/api/collections`, {
         headers: {
-          "x-api-key":
+          "cascadestyling":
             "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
         },
       })
@@ -195,7 +195,7 @@ function App() {
     const result = await axios
       .get(`${baseURL}/api/collections`, {
         headers: {
-          "x-api-key":
+          "cascadestyling":
             "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
         },
       })
@@ -213,7 +213,7 @@ function App() {
     const result = await axios
       .get(`${baseURL}/nft-amount/${walletAddr}`, {
         headers: {
-          "x-api-key":
+          "cascadestyling":
             "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
         },
       })
@@ -230,7 +230,7 @@ function App() {
     const result = await axios
       .get(`${baseURL}/api/users/checkCollections/${walletAddr}`, {
         headers: {
-          "x-api-key":
+          "cascadestyling":
             "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
         },
       })
@@ -264,7 +264,7 @@ function App() {
       const result = await axios
         .post(`${baseURL}/api/users/addWithSignature`, body, {
           headers: {
-            "x-api-key":
+            "cascadestyling":
               "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
           },
         })
@@ -304,7 +304,7 @@ function App() {
       const result = await axios
         .get(`${baseURL}/api/users/${walletAddr}`, {
           headers: {
-            "x-api-key":
+            "cascadestyling":
               "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
           },
         })
@@ -359,7 +359,7 @@ function App() {
       axios
         .post(`${baseURL}/api/users/edit`, formData, {
           headers: {
-            "x-api-key":
+            "cascadestyling":
               "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
             "Content-Type": "multipart/form-data",
           },
@@ -435,7 +435,7 @@ function App() {
       axios
         .post(`${baseURL}/api/collections/edit`, formData, {
           headers: {
-            "x-api-key":
+            "cascadestyling":
               "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
             "Content-Type": "multipart/form-data",
           },
@@ -476,7 +476,7 @@ function App() {
       const result = await axios
         .get(`${baseURL}/api/users/${walletAddr}`, {
           headers: {
-            "x-api-key":
+            "cascadestyling":
               "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
           },
         })

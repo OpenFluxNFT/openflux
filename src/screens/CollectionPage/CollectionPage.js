@@ -64,7 +64,7 @@ const CollectionPage = ({
       const result = await axios
         .get(`https://confluxapi.worldofdypians.com/api/users/${walletAddr}`, {
           headers: {
-            "x-api-key":
+            "cascadestyling":
               "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
           },
         })
@@ -369,7 +369,7 @@ const CollectionPage = ({
           data,
           {
             headers: {
-              "x-api-key":
+              "cascadestyling":
                 "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
             },
           }
@@ -397,7 +397,7 @@ const CollectionPage = ({
           data,
           {
             headers: {
-              "x-api-key":
+              "cascadestyling":
                 "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
             },
           }

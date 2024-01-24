@@ -7,7 +7,6 @@ import collectionIcon from "../../components/CollectionPage/CollectionBanner/ass
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import Web3 from "web3";
-import { FadeLoader } from "react-spinners";
 
 const CollectionPage = ({
   coinbase,
@@ -48,7 +47,7 @@ const CollectionPage = ({
   const [loading, setLoading] = useState(false);
   const [totalSupplyPerCollection, settotalSupplyPerCollection] = useState(0);
 
-  const [next, setnext] = useState(4);
+  const [next, setnext] = useState(0);
   const baseURL = "https://confluxapi.worldofdypians.com";
 
   //https://confluxapi.worldofdypians.com/api/collections/contractAddress/listings
@@ -97,37 +96,9 @@ if there are no listings
 }
   */
 
-  const nftPerRow = 10;
+  const nftPerRow = 20;
 
   const { collectionAddress } = useParams();
-  const override = {
-    display: "block",
-    margin: "20px auto 0",
-    borderColor: "#554fd8",
-  };
-
-  const checkCollectionOwner = async (walletAddr) => {
-    if (walletAddr) {
-      const result = await axios
-        .get(`https://confluxapi.worldofdypians.com/api/users/${walletAddr}`, {
-          headers: {
-            "cascadestyling":
-              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-          },
-        })
-        .catch((e) => {
-          console.error(e);
-        });
-
-      if (result && result.status === 200) {
-        if (result.data === "User not found") {
-          setisVerified(false);
-        } else {
-          setisVerified(true);
-        }
-      } else setisVerified(false);
-    }
-  };
 
   const getCollectionTotalSupply = async () => {
     let totalSupply = 0;
@@ -276,10 +247,12 @@ if there are no listings
   };
 
   const getTestCollections = async () => {
+    let nftArray = [];
+    setLoading(true);
     const result = await axios
-      .get(`${baseURL}/api/nfts/${collectionAddress}?skip=0`, {
+      .get(`${baseURL}/api/nfts/${collectionAddress}?skip=${next}`, {
         headers: {
-          "cascadestyling":
+          cascadestyling:
             "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
         },
       })
@@ -289,7 +262,41 @@ if there are no listings
 
     if (result && result.status === 200) {
       console.log(result.data);
-      setAllNftArray(result.data);
+      if (result.data.metadatas === false && totalSupplyPerCollection === 0) {
+        setAllNftArray([]);
+        setLoading(false);
+      } else if (
+        result.data.metadatas === false &&
+        Number(totalSupplyPerCollection) > 0
+      ) {
+        console.log("yes");
+        const result2 = await axios.get(
+          `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress}`
+        );
+        if (result2 && result2.status === 200) {
+          const abi = JSON.parse(result2.data.result);
+          const web3 = new Web3(window.ethereum);
+          const collection_contract = new web3.eth.Contract(
+            abi,
+            collectionAddress
+          );
+
+          const tokenName = await collection_contract.methods
+            .symbol()
+            .call()
+            .catch((e) => {
+              console.error(e);
+            });
+          const limit = next === 0 ? 20 : next;
+          for (let i = 0; i < limit; i++) {
+            nftArray.push({ name: tokenName, image: undefined });
+          }
+          setAllNftArray(nftArray);
+        }
+      } else {
+        setAllNftArray(result.data);
+        setLoading(false);
+      }
     }
   };
 
@@ -407,6 +414,10 @@ if there are no listings
   const onScroll = () => {
     const wrappedElement = document.getElementById("header2");
     if (wrappedElement) {
+      console.log(
+        wrappedElement.getBoundingClientRect()?.bottom,
+        window.innerHeight
+      );
       const isBottom =
         parseInt(wrappedElement.getBoundingClientRect()?.bottom) <=
         window.innerHeight;
@@ -464,7 +475,7 @@ if there are no listings
           data,
           {
             headers: {
-              "cascadestyling":
+              cascadestyling:
                 "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
             },
           }
@@ -492,7 +503,7 @@ if there are no listings
           data,
           {
             headers: {
-              "cascadestyling":
+              cascadestyling:
                 "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
             },
           }
@@ -509,15 +520,15 @@ if there are no listings
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    getCollectionTotalSupply();
   }, []);
 
   useEffect(() => {
-    if (next === 4) {
-      // fetchInitialNftsPerCollection();
-      getTestCollections();
-      getCollectionTotalSupply();
-    }
-  }, [collectionAddress, next]);
+    // if (next === 4) {
+    // fetchInitialNftsPerCollection();
+    getTestCollections();
+    // }
+  }, [collectionAddress, totalSupplyPerCollection, next]);
 
   // useEffect(() => {
   //   if (next !== 4) {
@@ -528,10 +539,6 @@ if there are no listings
   useEffect(() => {
     checkifFavorite();
   }, [collectionAddress, userCollectionFavs]);
-
-  useEffect(() => {
-    fetchCurrentCollection(collectionAddress);
-  }, [collectionAddress]);
 
   useEffect(() => {
     fetchCurrentCollection(collectionAddress);
@@ -569,6 +576,7 @@ if there are no listings
         currentCollection={currentCollection}
         allNftArray={allNftArray}
         collectionAddress={collectionAddress}
+        loading={loading}
       />
 
       {totalSupplyPerCollection &&
@@ -580,18 +588,6 @@ if there are no listings
               Load more
             </button>
           </div>
-        )}
-
-      {loading === true &&
-        totalSupplyPerCollection > 0 &&
-        next <= totalSupplyPerCollection && (
-          <FadeLoader
-            color={"#554fd8"}
-            loading={loading}
-            cssOverride={override}
-            aria-label="Loading Spinner"
-            data-testid="loader"
-          />
         )}
     </div>
   );

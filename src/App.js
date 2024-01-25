@@ -764,7 +764,7 @@ function App() {
         />
         <Route
           exact
-          path="/settings"
+          path="/settings/:type"
           element={
             <SettingsPage
               coinbase={coinbase}

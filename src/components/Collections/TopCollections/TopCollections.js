@@ -70,7 +70,7 @@ const TopCollections = ({ allCollections, allCollectionsOrdered }) => {
           </div>
         ) : (
           <Slider {...settings}>
-            {allCollectionsOrdered.map((item, index) => (
+            {allCollectionsOrdered.slice(0, 4).map((item, index) => (
               <div
                 className="position-relative top-collection-wrapper"
                 key={index}

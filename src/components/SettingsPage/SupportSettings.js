@@ -29,7 +29,7 @@ const SupportSettings = ({ coinbase }) => {
       <div className="col-12 col-lg-10">
         <div className="row">
           <h6 className="settings-header mb-3">Account Support</h6>
-          <div className="col-6 mb-4">
+          <div className="col-12 col-lg-6 mb-4">
             <div className="d-flex flex-column gap-2">
               <h6 className="input-label mb-0">Email</h6>
               <input
@@ -39,7 +39,7 @@ const SupportSettings = ({ coinbase }) => {
               />
             </div>
           </div>
-          <div className="col-6 mb-4">
+          <div className="col-12 col-lg-6 mb-4">
             <div className="d-flex flex-column gap-2">
               <h6 className="input-label mb-0">Wallet Address</h6>
               <input

@@ -68,7 +68,7 @@ const CollectionSettings = ({
         `https://confluxapi.worldofdypians.com/api/collections/getCollectionOwner/${collectionAddress}`,
         {
           headers: {
-            "cascadestyling":
+            cascadestyling:
               "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
           },
         }
@@ -951,27 +951,12 @@ const CollectionSettings = ({
                 </div>
                 <div className="d-flex align-items-center justify-content-center mt-4">
                   <button
-                    className={` ${!isEdit && 'disabled-save-btn'} connect-social-btn px-3 py-1`}
+                    className={` ${
+                      !isEdit && "disabled-save-btn"
+                    } connect-social-btn px-3 py-1`}
                     style={{ fontSize: "16px" }}
                     disabled={!isEdit}
-                    onClick={
-                      () => updateCollectionData(collectionInfo)
-                      // .then(() => {
-                      //   setcollectionInfo({
-                      //     collectionProfilePic: "",
-                      //     collectionBackgroundPic: "",
-                      //     collectionBannerPic: "",
-                      //     featuredBannerPic: "",
-                      //     websiteLink: "",
-                      //     twitterLink: "",
-                      //     tgLink: "",
-                      //     discordLink: "",
-                      //     instagramLink: "",
-                      //     tags: [],
-                      //     description: "",
-                      //   });
-                      // })
-                    }
+                    onClick={() => updateCollectionData(collectionInfo)}
                   >
                     Save
                   </button>
@@ -980,7 +965,11 @@ const CollectionSettings = ({
             </>
           ) : (
             <div className="col-12">
-              <h6 className="input-label">My Collections</h6>
+              {userCollection && userCollection.length > 0 ? (
+                <h6 className="input-label">My Collections</h6>
+              ) : (
+                <></>
+              )}
               {userCollection && userCollection.length > 0 ? (
                 <div className="small-cards-grid">
                   {userCollection.map((item, index) => (
@@ -1026,7 +1015,6 @@ const CollectionSettings = ({
             </div>
           )}
         </div>
-      </div>
       <Toast
         isSuccess={successUpdateCollectionProfile.success ? true : false}
         isError={
@@ -1035,6 +1023,7 @@ const CollectionSettings = ({
         message={successUpdateCollectionProfile.message}
       />
       <Toast isError={toastInfo.error} message={toastInfo.message} />
+      </div>
     </>
   );
 };

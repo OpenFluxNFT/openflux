@@ -39,6 +39,8 @@ function App() {
   const [allCollectionsOrdered, setAllCollectionsOrdered] = useState([]);
 
   const [userCollectionFavs, setuserCollectionFavs] = useState([]);
+  const [userNftFavs, setuserNftFavs] = useState([]);
+
 
   const [isRedirect, setIsRedirect] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -406,6 +408,7 @@ function App() {
         } else {
           setuserData(result.data);
           setuserCollectionFavs(result.data.collectionFavorites);
+          setuserNftFavs(result.data.nftFavorites)
           fetchTotalNftOwned(walletAddr);
           fetchuserCollection(walletAddr);
         }
@@ -837,6 +840,8 @@ function App() {
                 setCount(count + 1);
               }}
               userCollectionFavs={userCollectionFavs}
+              userNftFavs={userNftFavs}
+
               userData={userData}
               allCollections={allCollections}
             />
@@ -857,6 +862,7 @@ function App() {
               }}
               userCollection={userCollection}
               userCollectionFavs={userCollectionFavs}
+              userNftFavs={userNftFavs}
               allCollections={allCollections}
             />
           }

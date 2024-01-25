@@ -14,6 +14,7 @@ const CollectionPage = ({
   userCollectionFavs,
   userData,
   allCollections,
+  userNftFavs,
 }) => {
   const collectionInfo = [
     {
@@ -39,6 +40,7 @@ const CollectionPage = ({
   ];
 
   const [favorite, setFavorite] = useState(false);
+  const [favoriteNft, setFavoriteNft] = useState(false);
 
   const [isVerified, setisVerified] = useState(false);
   const [currentCollection, setcurrentCollection] = useState([]);
@@ -173,12 +175,12 @@ if there are no listings
           } else if (!result.data.result.includes("tokenByIndex")) {
             tokenByIndex = i;
           }
-      const owner = await collection_contract.methods
-      .ownerOf(tokenByIndex)
-      .call()
-      .catch((e) => {
-        console.error(e);
-      });
+          const owner = await collection_contract.methods
+            .ownerOf(tokenByIndex)
+            .call()
+            .catch((e) => {
+              console.error(e);
+            });
           const nft_data = await fetch(
             `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress}/${tokenByIndex}/metadata.json`
           )
@@ -375,11 +377,11 @@ if there are no listings
           }
 
           const owner = await collection_contract.methods
-          .ownerOf(tokenByIndex)
-          .call()
-          .catch((e) => {
-            console.error(e);
-          });
+            .ownerOf(tokenByIndex)
+            .call()
+            .catch((e) => {
+              console.error(e);
+            });
           const nft_data = await fetch(
             `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress}/${tokenByIndex}/metadata.json`
           )
@@ -390,7 +392,6 @@ if there are no listings
             .catch((err) => {
               console.log(err.message);
             });
-            
 
           if (nft_data) {
             nftArray.push({ ...nft_data, tokenId: tokenByIndex, owner: owner });
@@ -501,6 +502,63 @@ if there are no listings
         )
         .then(() => {
           setFavorite(false);
+          onFavoriteCollection();
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    }
+  };
+
+  const handleAddFavoriteNft = async (tokenId, nftContract) => {
+    if (coinbase && collectionAddress) {
+      const data = {
+        contractAddress: nftContract,
+        tokenId: tokenId,
+      };
+
+      await axios
+        .post(
+          `https://confluxapi.worldofdypians.com//users/addNftFavorite/${coinbase}`,
+          data,
+          {
+            headers: {
+              cascadestyling:
+                "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+            },
+          }
+        )
+        .then(() => {
+          setFavoriteNft(true);
+          onFavoriteCollection();
+        })
+        .catch((e) => {
+          console.error(e);
+          setFavoriteNft(false);
+        });
+    }
+  };
+
+  const handleRemoveFavoriteNft = async (tokenId, nftContract) => {
+    if (coinbase && collectionAddress) {
+      const data = {
+        contractAddress: nftContract,
+        tokenId: tokenId,
+      };
+
+      await axios
+        .post(
+          `https://confluxapi.worldofdypians.com/api/users/removeNftFavorite/${coinbase}`,
+          data,
+          {
+            headers: {
+              cascadestyling:
+                "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+            },
+          }
+        )
+        .then(() => {
+          setFavoriteNft(false);
           onFavoriteCollection();
         })
         .catch((e) => {

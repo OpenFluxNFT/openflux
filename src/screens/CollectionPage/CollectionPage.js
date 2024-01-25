@@ -142,6 +142,7 @@ if there are no listings
       const abi = JSON.parse(result.data.result);
       const web3 = window.confluxWeb3;
       const collection_contract = new web3.eth.Contract(abi, collectionAddress);
+
       if (result.data.result.includes("_totalSupply")) {
         totalSupply = await collection_contract.methods
           ._totalSupply()
@@ -172,7 +173,12 @@ if there are no listings
           } else if (!result.data.result.includes("tokenByIndex")) {
             tokenByIndex = i;
           }
-
+      const owner = await collection_contract.methods
+      .ownerOf(tokenByIndex)
+      .call()
+      .catch((e) => {
+        console.error(e);
+      });
           const nft_data = await fetch(
             `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress}/${tokenByIndex}/metadata.json`
           )
@@ -186,7 +192,7 @@ if there are no listings
 
           if (nft_data) {
             console.log(nft_data);
-            nftArray.push({ ...nft_data, tokenId: tokenByIndex });
+            nftArray.push({ ...nft_data, tokenId: tokenByIndex, owner: owner });
           }
         }
 
@@ -368,6 +374,12 @@ if there are no listings
             tokenByIndex = i;
           }
 
+          const owner = await collection_contract.methods
+          .ownerOf(tokenByIndex)
+          .call()
+          .catch((e) => {
+            console.error(e);
+          });
           const nft_data = await fetch(
             `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress}/${tokenByIndex}/metadata.json`
           )
@@ -378,9 +390,10 @@ if there are no listings
             .catch((err) => {
               console.log(err.message);
             });
+            
 
           if (nft_data) {
-            nftArray.push(nft_data);
+            nftArray.push({ ...nft_data, tokenId: tokenByIndex, owner: owner });
           }
         }
         const finaldata = [...allNftArray, ...nftArray];

@@ -20,6 +20,7 @@ import { NavLink } from "react-router-dom";
 import emptyFavorite from "../../Home/RecentlyListed/assets/emptyFavorite.svg";
 import redFavorite from "../../Home/RecentlyListed/assets/redFavorite.svg";
 import { FadeLoader } from "react-spinners";
+import { shortAddress } from "../../../hooks/shortAddress";
 
 const CollectionList = ({
   currentCollection,
@@ -448,7 +449,7 @@ const CollectionList = ({
                 This collection doesn't have any NFTs.
               </span>
             )}
-          
+
             <div
               className={`${
                 gridView === "list"
@@ -487,37 +488,34 @@ const CollectionList = ({
                     </tr>
                   </thead>
                   <tbody>
-                    {dummyCards.map((item, index) => (
-                      <tr className="nft-table-row p-1" key={index}>
-                        <td
-                          className="table-item col-2 d-flex align-items-center gap-1 w-100"
-                          scope="row"
-                        >
-                          <img
-                            src={require(`./assets/nftPlaceholder${
-                              index + 1
-                            }.png`)}
-                            className="table-img"
-                            height={36}
-                            width={36}
-                            alt=""
-                          />
+                    {allNftArray &&
+                      allNftArray.map((item, index) => (
+                        <tr className="nft-table-row p-1" key={index}>
+                          <td
+                            className="table-item col-2 d-flex align-items-center gap-1 w-100"
+                            scope="row"
+                          >
+                            <img
+                              src={`https://cdnflux.dypius.com/${item.image50}`}
+                              className="table-img"
+                              height={36}
+                              width={36}
+                              alt=""
+                            />
 
-                          {item.title}
-                        </td>
-                        <td className="table-item col-2">
-                          {item.cfxPrice} CFX
-                        </td>
-                        <td className="table-item col-2">
-                          {item.bestOffer} CFX
-                        </td>
-                        <td className="table-item col-2">
-                          {item.lastSale} CFX{" "}
-                        </td>
-                        <td className="table-item col-2">{item.owner}</td>
-                        <td className="table-item col-2">{item.timeListed}</td>
-                      </tr>
-                    ))}
+                            {item.name}
+                          </td>
+                          <td className="table-item col-2">TBD CFX</td>
+                          <td className="table-item col-2">TBD CFX</td>
+                          <td className="table-item col-2">
+                           TBD CFX{" "}
+                          </td>
+                          <td className="table-item col-2">{shortAddress(item.owner)}</td>
+                          <td className="table-item col-2">
+                            TBD
+                          </td>
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
               ) : (
@@ -545,14 +543,23 @@ const CollectionList = ({
                           controlsList="nodownload"
                         ></video>
                       )}
-                      {item.image  && (
+                      {item.image && gridView === "small-grid" ? (
                         <img
-                          src={
-                            `https://cdnflux.dypius.com/${item.image}`
-                          }
+                          src={`https://cdnflux.dypius.com/${item.image}`}
                           className="card-img"
                           alt=""
                         />
+                      ) : (
+                        <></>
+                      )}
+                      {item.image && gridView === "big-grid" ? (
+                        <img
+                          src={`https://cdnflux.dypius.com/${item.image170}`}
+                          className="card-img"
+                          alt=""
+                        />
+                      ) : (
+                        <></>
                       )}
                       {!item.image && (
                         <img

@@ -6,8 +6,14 @@ import websiteIcon from "./assets/websiteIcon.svg";
 import shareIcon from "./assets/shareIcon.svg";
 import cfx from "./assets/cfx.svg";
 import "../../MakeOffer/makeoffer.scss";
+import { shortAddress } from "../../../hooks/shortAddress";
 
-const SingleNftBanner = ({ chainId, onShowMakeOfferPopup }) => {
+const SingleNftBanner = ({
+  chainId,
+  onShowMakeOfferPopup,
+  nftData,
+  nftOwner,
+}) => {
   const [isOwner, setIsOwner] = useState(true);
   const [isListed, setIsListed] = useState(false);
   const [duration, setDuration] = useState(1);
@@ -20,7 +26,7 @@ const SingleNftBanner = ({ chainId, onShowMakeOfferPopup }) => {
             <div className="row mx-0 justify-content-start gap-2">
               <div className="col-lg-6">
                 <img
-                  src="https://dypmeta.s3.us-east-2.amazonaws.com/caws_400x400/2.png"
+                  src={`https://cdnflux.dypius.com/${nftData.image}`}
                   alt=""
                   className="nft-image"
                 />
@@ -34,16 +40,27 @@ const SingleNftBanner = ({ chainId, onShowMakeOfferPopup }) => {
                       className="nft-collection-logo"
                     />
                     <span className="collection-name">
-                      Cats and watches society
+                      {nftData.collectionName}
                     </span>
                     <img alt="" src={checkIcon} />
                   </div>
                   <div className="collection-info-owner-wrapper">
                     <div className="d-flex flex-column gap-1 px-3 py-2">
-                      <span className="nft-collection-name">CAWS #1264</span>
+                      <span className="nft-collection-name">
+                        {nftData.name}
+                      </span>
                       <div className="d-flex align-items-center gap-2">
                         <span className="nft-info-left">Owner</span>
-                        <span className="nft-info-right">0x9100...b38f</span>
+                        <span className="nft-info-right">
+                          <a
+                            href={`https://evm.confluxscan.net/address/${nftData.owner}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-white"
+                          >
+                            {shortAddress(nftData.owner)}
+                          </a>
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -61,11 +78,11 @@ const SingleNftBanner = ({ chainId, onShowMakeOfferPopup }) => {
                   </div>
                   <div className="d-flex align-items-center gap-2 border-bottom-div">
                     <span className="nft-info-left">Last Sale</span>
-                    <span className="nft-info-right">128,210 CFX</span>
+                    <span className="nft-info-right">128,210 WCFX</span>
                   </div>
                   <div className="d-flex align-items-center gap-2 border-bottom-div">
                     <span className="nft-info-left">Best offer</span>
-                    <span className="nft-info-right">100,000 CFX</span>
+                    <span className="nft-info-right">100,000 WCFX</span>
                   </div>
                   <div className="d-flex align-items-center gap-2 border-bottom-div">
                     <span className="nft-info-left">Chain</span>
@@ -80,7 +97,7 @@ const SingleNftBanner = ({ chainId, onShowMakeOfferPopup }) => {
               <div className="d-flex flex-column gap-2">
                 <div className="d-flex justify-content-between gap-2 align-items-center">
                   <div className="d-flex align-items-center gap-2">
-                    <span className="nft-item-name-right">CAWS #1264</span>
+                    <span className="nft-item-name-right"> {nftData.name}</span>
                     <img alt="" src={checkIcon} />
                   </div>
                   <div className="d-flex align-items-center gap-2">
@@ -103,25 +120,23 @@ const SingleNftBanner = ({ chainId, onShowMakeOfferPopup }) => {
                       <div className="d-flex flex-column flex-lg-row flex-md-row gap-2 align-items-center">
                         <img src={cfx} alt="" />
                         <input type="number" className="uni-input" />
-                        <span className="nft-price-crypto"> CFX</span>
+                        <span className="nft-price-crypto"> WCFX</span>
                         <span className="nft-price-usd">($ --)</span>
                       </div>
                     </div>
                   </div>
-                  
-                ) : isListed && !isOwner || isListed && isOwner ?
-                <div className="nft-price-wrapper p-3">
-                <div className="d-flex flex-column gap-2">
-                  <span className="current-price-text">Current Price</span>
-                  <div className="d-flex flex-column flex-lg-row flex-md-row gap-2 align-items-center">
-                    <img src={cfx} alt="" />
-                    <span className="nft-price-crypto">1000000 CFX</span>
-                    <span className="nft-price-usd">($ 1000000)</span>
+                ) : (isListed && !isOwner) || (isListed && isOwner) ? (
+                  <div className="nft-price-wrapper p-3">
+                    <div className="d-flex flex-column gap-2">
+                      <span className="current-price-text">Current Price</span>
+                      <div className="d-flex flex-column flex-lg-row flex-md-row gap-2 align-items-center">
+                        <img src={cfx} alt="" />
+                        <span className="nft-price-crypto">1000000 WCFX</span>
+                        <span className="nft-price-usd">($ 1000000)</span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              : 
-                (
+                ) : (
                   <></>
                 )}
                 {isOwner && !isListed ? (
@@ -192,9 +207,7 @@ const SingleNftBanner = ({ chainId, onShowMakeOfferPopup }) => {
                   <div className="nft-price-wrapper px-3 py-1 d-flex align-items-center justify-content-between">
                     <span className="current-price-text">Listing ends in</span>
                     <div className="duration-tab d-flex align-items-center justify-content-center">
-                      <span>
-                      23 Days
-                      </span>
+                      <span>23 Days</span>
                     </div>
                   </div>
                 ) : (

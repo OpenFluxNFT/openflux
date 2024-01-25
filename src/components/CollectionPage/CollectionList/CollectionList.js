@@ -19,11 +19,13 @@ import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
 import { NavLink } from "react-router-dom";
 import emptyFavorite from "../../Home/RecentlyListed/assets/emptyFavorite.svg";
 import redFavorite from "../../Home/RecentlyListed/assets/redFavorite.svg";
+import { FadeLoader } from "react-spinners";
 
 const CollectionList = ({
   currentCollection,
   allNftArray,
   collectionAddress,
+  loading,
 }) => {
   const windowSize = useWindowSize();
   const [openFilters, setOpenFilters] = useState(false);
@@ -118,6 +120,11 @@ const CollectionList = ({
     },
   ];
 
+  const override = {
+    display: "block",
+    margin: "20px auto 0",
+    borderColor: "#554fd8",
+  };
   const [gridView, setGridView] = useState("small-grid");
 
   return (
@@ -436,12 +443,12 @@ const CollectionList = ({
                 </div>
               </div>
             </div>
-            {allNftArray && allNftArray.length === 0 && (
+            {allNftArray && allNftArray.length === 0 && loading === false && (
               <span className="text-white d-flex w-100 justify-content-center mt-5">
                 This collection doesn't have any NFTs.
               </span>
             )}
-
+          
             <div
               className={`${
                 gridView === "list"
@@ -521,21 +528,39 @@ const CollectionList = ({
                     key={index}
                   >
                     <NavLink
-                      to={`/nft/${index}/${collectionAddress}`}
+                      to={`/nft/${item.tokenId}/${collectionAddress}`}
                       style={{ textDecoration: "none" }}
                       className={"position-relative"}
                     >
-                      <img
-                        src={
-                          item.image
-                            ? item.image.includes("ipfs://")
-                              ? item.nftImage
-                              : item.image
-                            : require(`./assets/collectionCardPlaceholder2.png`)
-                        }
-                        className="card-img"
-                        alt=""
-                      />
+                      {item.image && item.image.endsWith(".mp4") && (
+                        <video
+                          preload="auto"
+                          className="card-img"
+                          src={item.image}
+                          autoPlay={true}
+                          loop={true}
+                          muted="muted"
+                          playsInline={true}
+                          // onClick={player}
+                          controlsList="nodownload"
+                        ></video>
+                      )}
+                      {item.image  && (
+                        <img
+                          src={
+                            `https://cdnflux.dypius.com/${item.image}`
+                          }
+                          className="card-img"
+                          alt=""
+                        />
+                      )}
+                      {!item.image && (
+                        <img
+                          src={require(`./assets/collectionCardPlaceholder2.png`)}
+                          className="card-img"
+                          alt=""
+                        />
+                      )}
                       <div
                         className="position-absolute favorite-container"
                         onClick={(e) => {
@@ -576,6 +601,15 @@ const CollectionList = ({
                 ))
               )}
             </div>
+            {loading === true && (
+              <FadeLoader
+                color={"#554fd8"}
+                loading={loading}
+                cssOverride={override}
+                aria-label="Loading Spinner"
+                data-testid="loader"
+              />
+            )}
           </div>
         </div>
       </div>

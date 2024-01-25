@@ -39,7 +39,7 @@ const Profile = ({
   const assignUserData = () => {
     if (userData && userData._id) {
       const userTime = new Date(userData.joinedAt).toLocaleDateString();
-      const userTime2 = formatDate(userTime);
+      const userTime2 = userTime;
       const userAddr = userData.walletAddress;
       const totalNFTFavs = userData.nftFavorites.length;
       const profilepic = userData.profilePicture;

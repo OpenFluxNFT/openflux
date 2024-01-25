@@ -7,8 +7,15 @@ import { NavLink } from "react-router-dom";
 import emptyFavorite from "./assets/emptyFavorite.svg";
 import redFavorite from "./assets/redFavorite.svg";
 import axios from "axios";
+import getFormattedNumber from "../../../hooks/get-formatted-number";
 
-const RecentlyListed = ({ coinbase, onFavoriteNft, userNftFavs }) => {
+const RecentlyListed = ({
+  coinbase,
+  onFavoriteNft,
+  userNftFavs,
+  recentlyListedNfts,
+  cfxPrice,
+}) => {
   const settings = {
     // dots: true,
     arrows: false,
@@ -89,7 +96,7 @@ const RecentlyListed = ({ coinbase, onFavoriteNft, userNftFavs }) => {
           data,
           {
             headers: {
-              "cascadestyling":
+              cascadestyling:
                 "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
             },
           }
@@ -117,7 +124,7 @@ const RecentlyListed = ({ coinbase, onFavoriteNft, userNftFavs }) => {
           data,
           {
             headers: {
-              "cascadestyling":
+              cascadestyling:
                 "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
             },
           }
@@ -140,18 +147,22 @@ const RecentlyListed = ({ coinbase, onFavoriteNft, userNftFavs }) => {
         </h6>
         {windowSize.width < 786 ? (
           <Slider {...settings}>
-            {dummyCards.map((item, index) => (
+            {recentlyListedNfts.map((item, index) => (
               <div
                 className="recently-listed-card p-3 d-flex flex-column"
                 key={index}
               >
                 <NavLink
-                  to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
+                  to={`/nft/${item.tokenId}/${item.nftAddress}`}
                   style={{ textDecoration: "none" }}
                   className={"position-relative"}
                 >
                   <img
-                    src={require(`./assets/nftPlaceholder${index + 1}.png`)}
+                    src={
+                      item.image
+                        ? item.image
+                        : require(`./assets/nftPlaceholder${index + 1}.png`)
+                    }
                     className="card-img"
                     alt=""
                   />
@@ -172,12 +183,19 @@ const RecentlyListed = ({ coinbase, onFavoriteNft, userNftFavs }) => {
                     </div>
                   </div>
                   <div className="d-flex align-items-center gap-2 mt-2">
-                    <h6 className="recently-listed-title mb-0">CAWS #1125</h6>
+                    <h6 className="recently-listed-title mb-0">
+                      {item.tokenName} #{item.tokenId}
+                    </h6>
                     <img src={checkIcon} alt="" />
                   </div>
                   <div className="d-flex align-items-center mt-2 gap-3">
-                    <h6 className="cfx-price mb-0">1254.89 CFX</h6>
-                    <span className="usd-price">($ 654,874.86)</span>
+                    <h6 className="cfx-price mb-0">
+                      {getFormattedNumber(item.price / 10 ** 18)} WCFX
+                    </h6>
+                    <span className="usd-price">
+                      (${" "}
+                      {getFormattedNumber((item.price / 10 ** 18) * cfxPrice)})
+                    </span>
                   </div>
                   <div className="mt-3">
                     <button className="buy-btn w-100">Buy</button>
@@ -188,18 +206,22 @@ const RecentlyListed = ({ coinbase, onFavoriteNft, userNftFavs }) => {
           </Slider>
         ) : (
           <div className="recently-listed-grid mt-4">
-            {dummyCards.map((item, index) => (
+            {recentlyListedNfts.map((item, index) => (
               <div
                 className="recently-listed-card p-3 d-flex flex-column"
                 key={index}
               >
                 <NavLink
-                  to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
+                  to={`/nft/${item.tokenId}/${item.nftAddress}`}
                   style={{ textDecoration: "none" }}
                   className={"position-relative"}
                 >
                   <img
-                    src={require(`./assets/nftPlaceholder${index + 1}.png`)}
+                    src={
+                      item.image
+                        ? item.image
+                        : require(`./assets/nftPlaceholder${index + 1}.png`)
+                    }
                     className="card-img"
                     alt=""
                   />
@@ -220,12 +242,20 @@ const RecentlyListed = ({ coinbase, onFavoriteNft, userNftFavs }) => {
                     </div>
                   </div>
                   <div className="d-flex align-items-center gap-2 mt-2">
-                    <h6 className="recently-listed-title mb-0">CAWS #1125</h6>
+                    <h6 className="recently-listed-title mb-0">
+                      {item.tokenName} #{item.tokenId}
+                    </h6>
                     <img src={checkIcon} alt="" />
                   </div>
                   <div className="d-flex align-items-center mt-2 gap-3">
-                    <h6 className="cfx-price mb-0">1254.89 CFX</h6>
-                    <span className="usd-price">($ 654,874.86)</span>
+                    <h6 className="cfx-price mb-0">
+                      {getFormattedNumber(item.price / 10 ** 18)} WCFX
+                    </h6>
+                    <span className="usd-price">
+                      {" "}
+                      (${" "}
+                      {getFormattedNumber((item.price / 10 ** 18) * cfxPrice)})
+                    </span>
                   </div>
                   <div className="mt-3">
                     <button className="buy-btn w-100">Buy</button>

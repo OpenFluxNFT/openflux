@@ -59,6 +59,7 @@ const MobileHeader = ({
       <div
         className="container-fluid py-4 mobile-header-wrapper header-wrapper "
         style={{ height: "85px", pointerEvents: "auto", zIndex: 5 }}
+        
       >
         <div className="container-lg">
           <div className="row align-items-center justify-content-center">
@@ -118,7 +119,7 @@ const MobileHeader = ({
         <div className="d-flex align-items-center gap-3">
           {coinbase && isConnected && chainId === 1030 && (
             <button className="btn account-btn d-flex align-items-center gap-2">
-              <img src={conflux} alt="" /> Conflux eSpace
+              <img src={conflux} alt="" />
             </button>
           )}
           {coinbase && isConnected && chainId !== 1030 && (

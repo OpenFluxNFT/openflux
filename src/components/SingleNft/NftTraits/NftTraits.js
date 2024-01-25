@@ -1,7 +1,7 @@
 import React from "react";
 import "./_nfttraits.scss";
 
-const NftTraits = () => {
+const NftTraits = ({ nftData }) => {
   const dummyTraits = [
     {
       type: "Background",
@@ -51,14 +51,25 @@ const NftTraits = () => {
         <div className="traits-wrapper p-3">
           <h6 className="traits-title">Traits</h6>
           <div className="row">
-            {dummyTraits.map((item, index) => (
-              <div key={index} className="col-12 col-md-6 col-lg-3">
-                <div className="nft-trait pb-1 pt-2 d-flex align-items-start gap-1">
-                  <span className="trait-key mb-0">{item.type}</span>
-                  <span className="trait-value mb-0">{item.title}</span>
+            {nftData &&
+              nftData.attributes &&
+              nftData.attributes !== "false" &&
+              nftData.attributes.length > 0 &&
+              nftData.attributes.map((item, index) => (
+                <div key={index} className="col-12 col-md-6 col-lg-3">
+                  <div className="nft-trait pb-1 pt-2 d-flex align-items-start gap-1">
+                    <span className="trait-key mb-0">{item.trait_type}</span>
+                    <span className="trait-value mb-0">{item.value}</span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            {nftData &&
+              nftData.attributes &&
+              nftData.attributes === "false" && (
+                <span className="text-secondary d-flex justify-content-center">
+                  No attributes available for this nft
+                </span>
+              )}
           </div>
         </div>
       </div>

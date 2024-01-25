@@ -528,7 +528,7 @@ const CollectionList = ({
                     key={index}
                   >
                     <NavLink
-                      to={`/nft/${index}/${collectionAddress}`}
+                      to={`/nft/${item.tokenId}/${collectionAddress}`}
                       style={{ textDecoration: "none" }}
                       className={"position-relative"}
                     >
@@ -545,12 +545,10 @@ const CollectionList = ({
                           controlsList="nodownload"
                         ></video>
                       )}
-                      {item.image && !item.image.endsWith(".mp4") && (
+                      {item.image  && (
                         <img
                           src={
-                            item.image.includes("ipfs://")
-                              ? item.nftImage
-                              : item.image
+                            `https://cdnflux.dypius.com/${item.image}`
                           }
                           className="card-img"
                           alt=""

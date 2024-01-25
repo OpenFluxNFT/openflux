@@ -92,6 +92,7 @@ input:focus {
   .card-img {
     border-radius: 11px;
     aspect-ratio: 1/0.92;
+    object-fit: cover;
   }
 
   .card-img2 {

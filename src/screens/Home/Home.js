@@ -8,7 +8,7 @@ import RecentlyListed from "../../components/Home/RecentlyListed/RecentlyListed"
 import TrendingCollections from "../../components/Home/TrendingCollections/TrendingCollections";
 import CollectionCategories from "../../components/Collections/CollectionCategories/CollectionCategories";
 
-const Home = ({allCollections}) => {
+const Home = ({allCollections,recentlyListedNfts,cfxPrice}) => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -19,7 +19,7 @@ const Home = ({allCollections}) => {
       <HomeStats />
       <HomeInfo />
       <TrendingSales />
-      <RecentlyListed />
+      <RecentlyListed recentlyListedNfts={recentlyListedNfts} cfxPrice={cfxPrice} />
       <CollectionCategories allCollections={allCollections}/>
     </div>
   );

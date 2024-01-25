@@ -26,7 +26,7 @@ const SingleNftHistory = () => {
                     <td className="item-history-table-td left-border">
                       <img src={saleIcon} alt="" /> Sale
                     </td>
-                    <td className="item-history-table-td">128.50 CFX</td>
+                    <td className="item-history-table-td">128.50 WCFX</td>
                     <td className="item-history-table-td greentext">0x50c4</td>
                     <td className="item-history-table-td greentext">0x50c4</td>
                     <td className="item-history-table-td right-border">
@@ -37,7 +37,7 @@ const SingleNftHistory = () => {
                     <td className="item-history-table-td left-border">
                       <img src={saleIcon} alt="" /> Sale
                     </td>
-                    <td className="item-history-table-td">128.50 CFX</td>
+                    <td className="item-history-table-td">128.50 WCFX</td>
                     <td className="item-history-table-td greentext">0x50c4</td>
                     <td className="item-history-table-td greentext">0x50c4</td>
                     <td className="item-history-table-td right-border">
@@ -48,7 +48,7 @@ const SingleNftHistory = () => {
                     <td className="item-history-table-td left-border">
                       <img src={listIcon} alt="" /> Listing
                     </td>
-                    <td className="item-history-table-td">128.50 CFX</td>
+                    <td className="item-history-table-td">128.50 WCFX</td>
                     <td className="item-history-table-td greentext">0x50c4</td>
                     <td className="item-history-table-td greentext">0x50c4</td>
                     <td className="item-history-table-td right-border">
@@ -59,7 +59,7 @@ const SingleNftHistory = () => {
                     <td className="item-history-table-td left-border">
                       <img src={transferIcon} alt="" /> Transfer
                     </td>
-                    <td className="item-history-table-td">128.50 CFX</td>
+                    <td className="item-history-table-td">128.50 WCFX</td>
                     <td className="item-history-table-td greentext">0x50c4</td>
                     <td className="item-history-table-td greentext">0x50c4</td>
                     <td className="item-history-table-td right-border">
@@ -70,7 +70,7 @@ const SingleNftHistory = () => {
                     <td className="item-history-table-td left-border">
                       <img src={mintedIcon} alt="" /> Minted
                     </td>
-                    <td className="item-history-table-td">128.50 CFX</td>
+                    <td className="item-history-table-td">128.50 WCFX</td>
                     <td className="item-history-table-td greentext">0x50c4</td>
                     <td className="item-history-table-td greentext">0x50c4</td>
                     <td className="item-history-table-td right-border">
@@ -81,7 +81,7 @@ const SingleNftHistory = () => {
                     <td className="item-history-table-td left-border">
                       <img src={saleIcon} alt="" /> Sale
                     </td>
-                    <td className="item-history-table-td">128.50 CFX</td>
+                    <td className="item-history-table-td">128.50 WCFX</td>
                     <td className="item-history-table-td greentext">0x50c4</td>
                     <td className="item-history-table-td greentext">0x50c4</td>
                     <td className="item-history-table-td right-border">
@@ -92,7 +92,7 @@ const SingleNftHistory = () => {
                     <td className="item-history-table-td left-border">
                       <img src={saleIcon} alt="" /> Sale
                     </td>
-                    <td className="item-history-table-td">128.50 CFX</td>
+                    <td className="item-history-table-td">128.50 WCFX</td>
                     <td className="item-history-table-td greentext">0x50c4</td>
                     <td className="item-history-table-td greentext">0x50c4</td>
                     <td className="item-history-table-td right-border">
@@ -103,7 +103,7 @@ const SingleNftHistory = () => {
                     <td className="item-history-table-td left-border">
                       <img src={saleIcon} alt="" /> Sale
                     </td>
-                    <td className="item-history-table-td">128.50 CFX</td>
+                    <td className="item-history-table-td">128.50 WCFX</td>
                     <td className="item-history-table-td greentext">0x50c4</td>
                     <td className="item-history-table-td greentext">0x50c4</td>
                     <td className="item-history-table-td right-border">
@@ -114,7 +114,7 @@ const SingleNftHistory = () => {
                     <td className="item-history-table-td left-border">
                       <img src={saleIcon} alt="" /> Sale
                     </td>
-                    <td className="item-history-table-td">128.50 CFX</td>
+                    <td className="item-history-table-td">128.50 WCFX</td>
                     <td className="item-history-table-td greentext">0x50c4</td>
                     <td className="item-history-table-td greentext">0x50c4</td>
                     <td className="item-history-table-td right-border">
@@ -125,7 +125,7 @@ const SingleNftHistory = () => {
                     <td className="item-history-table-td left-border">
                       <img src={saleIcon} alt="" /> Sale
                     </td>
-                    <td className="item-history-table-td">128.50 CFX</td>
+                    <td className="item-history-table-td">128.50 WCFX</td>
                     <td className="item-history-table-td greentext">0x50c4</td>
                     <td className="item-history-table-td greentext">0x50c4</td>
                     <td className="item-history-table-td right-border">
@@ -136,7 +136,7 @@ const SingleNftHistory = () => {
                     <td className="item-history-table-td left-border">
                       <img src={saleIcon} alt="" /> Sale
                     </td>
-                    <td className="item-history-table-td">128.50 CFX</td>
+                    <td className="item-history-table-td">128.50 WCFX</td>
                     <td className="item-history-table-td greentext">0x50c4</td>
                     <td className="item-history-table-td greentext">0x50c4</td>
                     <td className="item-history-table-td right-border">
@@ -163,7 +163,7 @@ const SingleNftHistory = () => {
                 <tbody>
                   <tr>
                     <td className="item-history-table-td left-border">
-                      128.50 CFX
+                      128.50 WCFX
                     </td>
                     <td className="item-history-table-td">$120.00</td>
                     <td className="item-history-table-td">1 Day</td>
@@ -174,19 +174,7 @@ const SingleNftHistory = () => {
                   </tr>
                   <tr>
                     <td className="item-history-table-td left-border">
-                      128.50 CFX
-                    </td>
-                    <td className="item-history-table-td">$120.00</td>
-                    <td className="item-history-table-td">1 Day</td>
-
-                    <td className="item-history-table-td">24% below</td>
-                    <td className="item-history-table-td greentext right-border">
-                      0x50c4
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="item-history-table-td left-border">
-                      128.50 CFX
+                      128.50 WCFX
                     </td>
                     <td className="item-history-table-td">$120.00</td>
                     <td className="item-history-table-td">1 Day</td>
@@ -198,7 +186,7 @@ const SingleNftHistory = () => {
                   </tr>
                   <tr>
                     <td className="item-history-table-td left-border">
-                      128.50 CFX
+                      128.50 WCFX
                     </td>
                     <td className="item-history-table-td">$120.00</td>
                     <td className="item-history-table-td">1 Day</td>
@@ -210,7 +198,7 @@ const SingleNftHistory = () => {
                   </tr>
                   <tr>
                     <td className="item-history-table-td left-border">
-                      128.50 CFX
+                      128.50 WCFX
                     </td>
                     <td className="item-history-table-td">$120.00</td>
                     <td className="item-history-table-td">1 Day</td>
@@ -222,7 +210,7 @@ const SingleNftHistory = () => {
                   </tr>
                   <tr>
                     <td className="item-history-table-td left-border">
-                      128.50 CFX
+                      128.50 WCFX
                     </td>
                     <td className="item-history-table-td">$120.00</td>
                     <td className="item-history-table-td">1 Day</td>
@@ -234,7 +222,7 @@ const SingleNftHistory = () => {
                   </tr>
                   <tr>
                     <td className="item-history-table-td left-border">
-                      128.50 CFX
+                      128.50 WCFX
                     </td>
                     <td className="item-history-table-td">$120.00</td>
                     <td className="item-history-table-td">1 Day</td>
@@ -246,7 +234,7 @@ const SingleNftHistory = () => {
                   </tr>
                   <tr>
                     <td className="item-history-table-td left-border">
-                      128.50 CFX
+                      128.50 WCFX
                     </td>
                     <td className="item-history-table-td">$120.00</td>
                     <td className="item-history-table-td">1 Day</td>
@@ -258,7 +246,7 @@ const SingleNftHistory = () => {
                   </tr>
                   <tr>
                     <td className="item-history-table-td left-border">
-                      128.50 CFX
+                      128.50 WCFX
                     </td>
                     <td className="item-history-table-td">$120.00</td>
                     <td className="item-history-table-td">1 Day</td>
@@ -270,7 +258,7 @@ const SingleNftHistory = () => {
                   </tr>
                   <tr>
                     <td className="item-history-table-td left-border">
-                      128.50 CFX
+                      128.50 WCFX
                     </td>
                     <td className="item-history-table-td">$120.00</td>
                     <td className="item-history-table-td">1 Day</td>
@@ -282,7 +270,19 @@ const SingleNftHistory = () => {
                   </tr>
                   <tr>
                     <td className="item-history-table-td left-border">
-                      128.50 CFX
+                      128.50 WCFX
+                    </td>
+                    <td className="item-history-table-td">$120.00</td>
+                    <td className="item-history-table-td">1 Day</td>
+
+                    <td className="item-history-table-td">24% below</td>
+                    <td className="item-history-table-td greentext right-border">
+                      0x50c4
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="item-history-table-td left-border">
+                      128.50 WCFX
                     </td>
                     <td className="item-history-table-td">$120.00</td>
                     <td className="item-history-table-td">1 Day</td>

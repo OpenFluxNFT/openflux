@@ -844,6 +844,26 @@ async function getMyNFTs(address, type = "") {
   }
 }
 
+async function getMyConfluxNFTs(address, limit) {
+  let contract;
+  
+    contract = new window.confluxWeb3.eth.Contract(
+      window.CONFLUX_NFT_ABI,
+      window.config.nft_conflux_address
+    );
+
+    const balance = await contract.methods.balanceOf(address).call();
+
+    const tokens = await Promise.all(
+      range(0, limit - 1).map((i) =>
+        contract.methods.tokenByIndex(address, i).call()
+      )
+    );
+
+    return tokens;
+   
+}
+
 async function myNftListContract(address) {
   let nft_contract = await getContractNFT("NFT");
 

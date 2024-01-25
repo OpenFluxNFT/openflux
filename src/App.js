@@ -34,6 +34,8 @@ function App() {
   const [userCollection, setuserCollection] = useState([]);
 
   const [allCollections, setAllCollections] = useState([]);
+  const [recentlyListedNfts, setrecentlyListedNfts] = useState([]);
+
   const [allCollectionsOrdered, setAllCollectionsOrdered] = useState([]);
 
   const [userCollectionFavs, setuserCollectionFavs] = useState([]);
@@ -46,6 +48,8 @@ function App() {
   const [isErrorToast, setisErrorToast] = useState(false);
   const [isSuccestToast, setisSuccestToast] = useState(false);
   const [userTotalNftsOwned, setUserTotalNftsOwned] = useState(0);
+  const [cfxPrice, setCfxPrice] = useState(0);
+
   const [successUpdateProfile, setSuccessUpdateProfile] = useState({
     success: null,
     message: "",
@@ -162,7 +166,7 @@ function App() {
     const result = await axios
       .get(`${baseURL}/api/collections`, {
         headers: {
-          "cascadestyling":
+          cascadestyling:
             "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
         },
       })
@@ -181,6 +185,76 @@ function App() {
     }
   };
 
+  const handleGetRecentlyListedNfts = async () => {
+    const result = await axios
+      .get(`${baseURL}/api/recent-active-listings`, {
+        headers: {
+          cascadestyling:
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+    const web3 = window.confluxWeb3;
+    if (result && result.status === 200) {
+      const recentlyListed = await Promise.all(
+        result.data.map(async (item) => {
+          const abiresult = await axios.get(
+            `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
+          );
+          if (abiresult && abiresult.status === 200) {
+            const abi = JSON.parse(abiresult.data.result);
+            const collection_contract = new web3.eth.Contract(
+              abi,
+              item.nftAddress
+            );
+            const tokenName = await collection_contract.methods
+              .symbol()
+              .call()
+              .catch((e) => {
+                console.error(e);
+              });
+
+            const nft_data = await fetch(
+              `https://cdnflux.dypius.com/collectionsmetadatas/${item.nftAddress}/${item.tokenId}/metadata.json`
+            )
+              .then((res) => {
+                if (res.status === 200) {
+                  res.json();
+                }
+              })
+              .then((data) => {
+                return data;
+              })
+              .catch((err) => {
+                console.log(err.message);
+              });
+
+            if (nft_data) {
+              return {
+                ...item,
+                image: `https://cdnflux.dypius.com/${nft_data.image}`,
+                tokenName: tokenName,
+              };
+            } else if (
+              item.nftAddress === "0x2deecf2a05f735890eb3ea085d55cec8f1a93895"
+            ) {
+              return {
+                ...item,
+                image:
+                  "https://dypmeta.s3.us-east-2.amazonaws.com/Conflux+nft+400px.png",
+                tokenName: tokenName,
+              };
+            } else return { ...item, image: undefined, tokenName: tokenName };
+          }
+        })
+      );
+
+      setrecentlyListedNfts(recentlyListed);
+    }
+  };
+
   const handleDisconnect = async () => {
     if (!window.gatewallet) {
       await window.disconnectWallet();
@@ -195,7 +269,7 @@ function App() {
     const result = await axios
       .get(`${baseURL}/api/collections`, {
         headers: {
-          "cascadestyling":
+          cascadestyling:
             "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
         },
       })
@@ -213,7 +287,7 @@ function App() {
     const result = await axios
       .get(`${baseURL}/nft-amount/${walletAddr}`, {
         headers: {
-          "cascadestyling":
+          cascadestyling:
             "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
         },
       })
@@ -230,7 +304,7 @@ function App() {
     const result = await axios
       .get(`${baseURL}/api/users/checkCollections/${walletAddr}`, {
         headers: {
-          "cascadestyling":
+          cascadestyling:
             "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
         },
       })
@@ -241,6 +315,18 @@ function App() {
     if (result && result.status === 200) {
       setuserCollection(result.data.ownedCollections);
     }
+  };
+
+  const fetchCFXPrice = async () => {
+    await axios
+      .get(
+        "https://pro-api.coingecko.com/api/v3/simple/price?ids=conflux-token&vs_currencies=usd&x_cg_pro_api_key=CG-4cvtCNDCA4oLfmxagFJ84qev"
+      )
+      .then((obj) => {
+        if (obj.data["conflux-token"] && obj.data["conflux-token"] !== NaN) {
+          setCfxPrice(obj.data["conflux-token"].usd);
+        }
+      });
   };
 
   const handleAdduserWithSignature = async (walletAddr) => {
@@ -264,7 +350,7 @@ function App() {
       const result = await axios
         .post(`${baseURL}/api/users/addWithSignature`, body, {
           headers: {
-            "cascadestyling":
+            cascadestyling:
               "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
           },
         })
@@ -304,7 +390,7 @@ function App() {
       const result = await axios
         .get(`${baseURL}/api/users/${walletAddr}`, {
           headers: {
-            "cascadestyling":
+            cascadestyling:
               "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
           },
         })
@@ -359,7 +445,7 @@ function App() {
       axios
         .post(`${baseURL}/api/users/edit`, formData, {
           headers: {
-            "cascadestyling":
+            cascadestyling:
               "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
             "Content-Type": "multipart/form-data",
           },
@@ -435,7 +521,7 @@ function App() {
       axios
         .post(`${baseURL}/api/collections/edit`, formData, {
           headers: {
-            "cascadestyling":
+            cascadestyling:
               "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
             "Content-Type": "multipart/form-data",
           },
@@ -476,7 +562,7 @@ function App() {
       const result = await axios
         .get(`${baseURL}/api/users/${walletAddr}`, {
           headers: {
-            "cascadestyling":
+            cascadestyling:
               "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
           },
         })
@@ -606,9 +692,14 @@ function App() {
     
     */
 
-  const handleMakeOffer = async()=>{
-   await window.makeOffer().then((console.log('success'))).catch((e)=>{console.log(e)})
-  }
+  const handleMakeOffer = async () => {
+    await window
+      .makeOffer()
+      .then(console.log("success"))
+      .catch((e) => {
+        console.log(e);
+      });
+  };
 
   const logout = localStorage.getItem("logout");
   useEffect(() => {
@@ -658,6 +749,8 @@ function App() {
   useEffect(() => {
     getAllCollections();
     handleSetOrderedCollection();
+    handleGetRecentlyListedNfts();
+    fetchCFXPrice();
   }, []);
 
   return (
@@ -703,7 +796,13 @@ function App() {
         <Route
           exact
           path="/"
-          element={<Home allCollections={allCollections} />}
+          element={
+            <Home
+              allCollections={allCollections}
+              recentlyListedNfts={recentlyListedNfts}
+              cfxPrice={cfxPrice}
+            />
+          }
         />
         <Route
           exact
@@ -715,7 +814,7 @@ function App() {
             />
           }
         />
-          <Route
+        <Route
           exact
           path="/all-collections"
           element={

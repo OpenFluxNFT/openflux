@@ -12,6 +12,9 @@
       font-weight: 700;
       line-height: normal;
       text-transform: capitalize;
+      @media screen and (max-width: 500px) {
+        font-size: 12px;
+      }
     }
   }
 

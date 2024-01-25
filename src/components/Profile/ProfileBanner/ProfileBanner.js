@@ -272,7 +272,7 @@ const ProfileBanner = ({
                     style={{ height: "25px" }}
                   ></div>
                   <img src={uploadIcon} alt="" />
-                  <NavLink to="/settings">
+                  <NavLink to="/settings/profile">
                     <img src={settingsIcon} alt="" />
                   </NavLink>
                 </div>

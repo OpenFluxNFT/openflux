@@ -49,6 +49,11 @@ const MobileHeader = ({
     }
   }, [menu]);
 
+  useEffect(() => {
+    setMenu(false)
+  }, [])
+  
+
   return (
     <>
       <div
@@ -59,11 +64,13 @@ const MobileHeader = ({
         <div className="container-lg">
           <div className="row align-items-center justify-content-center">
             <div className="d-flex align-items-center justify-content-between">
-              <NavLink to='/'>
-              <img src={dypiusLogo} width={35} height={35} alt="" /></NavLink>
+              <NavLink to={'/'}>
+              <img src={dypiusLogo} width={35} height={35} alt="" />
+              </NavLink>
               <>
                 <input
                   id="menu-toggle"
+                  className={`${menu && 'menu-toggle-open'}`}
                   type="checkbox"
                   onChange={() => {
                     setMenu(!menu);
@@ -77,23 +84,26 @@ const MobileHeader = ({
           </div>
         </div>
       </div>
-      <div
+      <NavLink
         className={`mobile-menu-container ${
           menu && "mobile-active"
         } d-flex flex-column align-items-center justify-content-center gap-3 p-3`}
+        to={"/collections"}
+        style={{textDecoration: "none"}}
+
       >
-        <NavLink
+        <div
           className={
             "mobile-menu-item d-flex align-items-center justify-content-between p-3"
           }
-          to={"/collections"}
           onClick={() => {
             setMenu(false);
+            console.log(menu, "menu");
           }}
         >
           <h6 className="mb-0 text-white">Collections</h6>
           <img src={mobileNavArrow} alt="" />
-        </NavLink>
+        </div>
 
         {/* <div className="mobile-menu-item d-flex align-items-center justify-content-between p-3">
           <h6 className="mb-0 text-white">Mint</h6>
@@ -132,7 +142,7 @@ const MobileHeader = ({
             </button>
           )}
           {coinbase && isConnected ? (
-            <NavLink className="btn blue-btn" to={`/profile/${coinbase}`}>
+            <NavLink className="btn blue-btn" to={`/profile/${coinbase}`} onClick={() => setMenu(false)}>
               <img src={userIcon} alt="" />
             </NavLink>
           ) : (
@@ -144,7 +154,7 @@ const MobileHeader = ({
             </button>
           )}
         </div>
-      </div>
+      </NavLink>
     </>
   );
 };

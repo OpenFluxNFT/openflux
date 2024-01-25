@@ -542,8 +542,6 @@ const ProfileSettings = ({
             </div>
           </div>
         </div>
-      </div>
-      {/* {successUpdateProfile &&  */}
       <Toast
         isSuccess={successUpdateProfile.success ? true : false}
         isError={successUpdateProfile.success === false ? true : false}
@@ -551,6 +549,8 @@ const ProfileSettings = ({
       />
       <Toast isError={toastInfo.error} message={toastInfo.message} />
       {/* } */}
+      </div>
+      {/* {successUpdateProfile &&  */}
     </>
   );
 };

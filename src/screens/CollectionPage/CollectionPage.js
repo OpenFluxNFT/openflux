@@ -156,9 +156,11 @@ if there are no listings
           .catch((e) => {
             console.error(e);
           });
-      }  
+      }
+
       if (totalSupply && totalSupply > 0) {
-        for (let i = 0; i < 12; i++) {
+        const limit = totalSupply >= 12 ? 12 : totalSupply;
+        for (let i = 0; i < limit; i++) {
           let tokenByIndex = 0;
           if (result.data.result.includes("tokenByIndex")) {
             tokenByIndex = await collection_contract.methods
@@ -184,10 +186,10 @@ if there are no listings
 
           if (nft_data) {
             console.log(nft_data);
-            nftArray.push({...nft_data, tokenId: tokenByIndex});
+            nftArray.push({ ...nft_data, tokenId: tokenByIndex });
           }
         }
-    
+
         setAllNftArray(nftArray);
         setLoading(false);
 

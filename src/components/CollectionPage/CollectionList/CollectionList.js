@@ -133,6 +133,7 @@ const CollectionList = ({
   };
   const [gridView, setGridView] = useState("small-grid");
 
+
   return (
     <>
       <div className="container-lg">
@@ -607,6 +608,7 @@ const CollectionList = ({
                 </table>
               ) : allNftArray && allNftArray.length > 0 ? (
                 allNftArray.map((item, index) => (
+                  
                   <div
                     className="recently-listed-card p-3 d-flex flex-column"
                     key={index}
@@ -682,10 +684,8 @@ const CollectionList = ({
                           userNftFavs.length > 0 &&
                           userNftFavs.find((favitem) => {
                             return (
-                              favitem.contractAddress === collectionAddress &&
-                              favitem.tokenIds.find((id) => {
-                                return id === item.tokenId.toString();
-                              })
+                              favitem.contractAddress === collectionAddress                              &&
+                              favitem.tokenId === item.tokenId
                             );
                           })
                             ? handleRemoveFavoriteNft(
@@ -705,11 +705,8 @@ const CollectionList = ({
                               userNftFavs.length > 0 &&
                               userNftFavs.find((favitem) => {
                                 return (
-                                  favitem.contractAddress ===
-                                    collectionAddress &&
-                                  favitem.tokenIds.find((id) => {
-                                    return id === item.tokenId.toString();
-                                  })
+                                  favitem.contractAddress === collectionAddress &&
+                                  favitem.tokenId === item.tokenId
                                 );
                               })
                                 ? redFavorite
@@ -724,11 +721,8 @@ const CollectionList = ({
                               userNftFavs.length > 0 &&
                               userNftFavs.find((favitem) => {
                                 return (
-                                  favitem.contractAddress ===
-                                    collectionAddress &&
-                                  favitem.tokenIds.find((id) => {
-                                    return id === item.tokenId.toString();
-                                  })
+                                  favitem.contractAddress === collectionAddress &&
+                                  favitem.tokenId === item.tokenId
                                 );
                               })
                                 ? "fav-count-active"

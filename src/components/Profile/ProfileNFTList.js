@@ -24,6 +24,8 @@ const ProfileNFTList = ({
   userCollectionFavs,
   allCollections,
   userNftFavs,
+  handleAddFavoriteNft,
+  handleRemoveFavoriteNft,
 }) => {
   const [favoritesOption, setfavoritesOption] = useState("items");
 
@@ -365,26 +367,44 @@ const ProfileNFTList = ({
               } `}
             >
               {favoritesOption === "items" ? (
-                dummyCards.map((item, index) => (
+                userNftFavs.map((item, index) => (
                   <div
                     className="recently-listed-card p-3 d-flex flex-column"
                     key={index}
                   >
                     <NavLink
-                      to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
+                      to={`/nft/${item.tokenId}/${item.contractAddress}`}
                       style={{ textDecoration: "none" }}
                       className={"position-relative"}
                     >
-                      <img
-                        src={require(`./assets/nftPlaceholder${index + 1}.png`)}
-                        className="card-img"
-                        alt=""
-                      />
+                      {!item.isVideo ? (
+                              <img
+                                src={`https://cdnflux.dypius.com/${item.image}`}
+                                className="card-img"
+                                 
+                                alt=""
+                              />
+                            ) : (
+                              <video
+                                preload="auto" 
+                                className="card-img"
+                                src={`https://cdnflux.dypius.com/${item.image}`}
+                                autoPlay={true}
+                                loop={true}
+                                muted="muted"
+                                playsInline={true}
+                                // onClick={player}
+                                controlsList="nodownload"
+                              ></video>
+                            )}
+
+                       
                       <div
                         className="position-absolute favorite-container"
                         onClick={(e) => {
                           e.stopPropagation();
                           e.preventDefault();
+                          handleRemoveFavoriteNft(item.tokenId, item.contractAddress)
                         }}
                       >
                         <div className="d-flex align-items-center position-relative gap-2">
@@ -397,7 +417,7 @@ const ProfileNFTList = ({
                           className="recently-listed-title mb-0"
                           style={{ fontSize: "12px" }}
                         >
-                          CAWS #1125
+                          {item.name}
                         </h6>
                         <img src={checkIcon} alt="" />
                       </div>
@@ -406,10 +426,10 @@ const ProfileNFTList = ({
                           className="cfx-price mb-0"
                           style={{ fontSize: "10px" }}
                         >
-                          1254.89 CFX
+                          tbd WCFX
                         </h6>
                         <span className="usd-price" style={{ fontSize: "9px" }}>
-                          ($ 654,874.86)
+                          ($ tbd)
                         </span>
                       </div>
                       <div className="mt-3">

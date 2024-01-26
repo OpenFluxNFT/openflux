@@ -16,7 +16,7 @@ import useWindowSize from "../../../hooks/useWindowSize";
 import filterIcon from "./assets/filterIcon.svg";
 import xMark from "./assets/xMark.svg";
 import { Checkbox, FormControlLabel, FormGroup, Skeleton } from "@mui/material";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import emptyFavorite from "../../Home/RecentlyListed/assets/emptyFavorite.svg";
 import redFavorite from "../../Home/RecentlyListed/assets/redFavorite.svg";
 import { FadeLoader } from "react-spinners";
@@ -45,9 +45,6 @@ const CollectionList = ({
       traits: ["Pointy", "Straight", "Crooked", "Dark", "Light", "Brown"],
     },
   ];
-
-
-  const navigate = useNavigate()
 
   const dummyCards = [
     {
@@ -129,7 +126,7 @@ const CollectionList = ({
     margin: "20px auto 0",
     borderColor: "#554fd8",
   };
-  const [gridView, setGridView] = useState("small-grid");
+  const [gridView, setGridView] = useState("list");
 
   return (
     <>
@@ -490,10 +487,10 @@ const CollectionList = ({
                       </th>
                     </tr>
                   </thead>
-                  {allNftArray && allNftArray.length > 0 ? (
-                    <tbody>
-                      {allNftArray.map((item, index) => (
-                        <tr className="nft-table-row p-1" key={index} onClick={() => navigate(`/nft/${item.tokenId}/${collectionAddress}`)} style={{cursor: "pointer"}}>
+                  <tbody>
+                    {allNftArray &&
+                      allNftArray.map((item, index) => (
+                        <tr className="nft-table-row p-1" key={index}>
                           <td
                             className="table-item col-2 d-flex align-items-center gap-1 w-100"
                             scope="row"
@@ -510,71 +507,19 @@ const CollectionList = ({
                           </td>
                           <td className="table-item col-2">TBD CFX</td>
                           <td className="table-item col-2">TBD CFX</td>
-                          <td className="table-item col-2">TBD CFX </td>
                           <td className="table-item col-2">
-                            {shortAddress(item.owner)}
+                           TBD CFX{" "}
                           </td>
-                          <td className="table-item col-2">TBD</td>
+                          <td className="table-item col-2">{shortAddress(item.owner)}</td>
+                          <td className="table-item col-2">
+                            TBD
+                          </td>
                         </tr>
                       ))}
-                    </tbody>
-                  ) : (
-                    dummyCards.map((item, index) => (
-                      <>
-                      <tr></tr>
-                      <td>
-                        <Skeleton
-                          key={index}
-                          variant="rounded"
-                          width={"100%"}
-                          height={40}
-                        />
-                      </td>
-                      <td>
-                        <Skeleton
-                          key={index}
-                          variant="rounded"
-                          width={"100%"}
-                          height={40}
-                        />
-                      </td>
-                      <td>
-                        <Skeleton
-                          key={index}
-                          variant="rounded"
-                          width={"100%"}
-                          height={40}
-                        />
-                      </td>
-                      <td>
-                        <Skeleton
-                          key={index}
-                          variant="rounded"
-                          width={"100%"}
-                          height={40}
-                        />
-                      </td>
-                      <td>
-                        <Skeleton
-                          key={index}
-                          variant="rounded"
-                          width={"100%"}
-                          height={40}
-                        />
-                      </td>
-                      <td>
-                        <Skeleton
-                          key={index}
-                          variant="rounded"
-                          width={"100%"}
-                          height={40}
-                        />
-                      </td>
-                      </>
-                    ))
-                  )}
+                  </tbody>
                 </table>
-              ) : allNftArray && allNftArray.length > 0 ? (
+              ) : (
+                allNftArray &&
                 allNftArray.map((item, index) => (
                   <div
                     className="recently-listed-card p-3 d-flex flex-column"
@@ -661,21 +606,39 @@ const CollectionList = ({
                     </NavLink>
                   </div>
                 ))
-              ) : (
-                dummyCards.map((item, index) => (
-                  <Skeleton key={index} variant="rounded" width={"100%"} height={250} />
-                ))
               )}
             </div>
-            {/* {loading === true && (
-              <FadeLoader
-                color={"#554fd8"}
-                loading={loading}
-                cssOverride={override}
-                aria-label="Loading Spinner"
-                data-testid="loader"
-              />
-            )} */}
+            {loading === true && (gridView === "small-grid" || gridView === "big-grid") ?  (
+               <div
+               className={`${
+                 gridView === "list"
+                   ? "list-view-grid"
+                   : gridView === "big-grid"
+                   ? "big-cards-grid"
+                   : "small-cards-grid"
+               } mt-3`}
+             >
+             {dummyCards.map((item,index) => (
+              <Skeleton key={index} variant="rounded" width={"100%"} height={250} />
+             ))}
+             </div>
+            ):  loading === true && gridView === "list" ? 
+            <div
+            className={`${
+              gridView === "list"
+                ? "list-view-grid"
+                : gridView === "big-grid"
+                ? "big-cards-grid"
+                : "small-cards-grid"
+            } mt-3`}
+          >
+          {dummyCards.map((item,index) => (
+           <Skeleton key={index} variant="rounded" width={"100%"} height={40} />
+          ))}
+          </div>
+            : 
+            <></>
+          }
           </div>
         </div>
       </div>

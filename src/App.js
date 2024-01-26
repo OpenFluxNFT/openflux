@@ -900,7 +900,9 @@ function App() {
               chainId={chainId}
               coinbase={coinbase}
               handleSignup={handleShowWalletModal}
+              recentlyListedNfts={recentlyListedNfts}
               handleSwitchNetwork={handleSwitchNetwork}
+              cfxPrice={cfxPrice}
             />
           }
         />

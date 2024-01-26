@@ -6,6 +6,7 @@ import NotificationSettings from "../../components/SettingsPage/NotificationSett
 import SupportSettings from "../../components/SettingsPage/SupportSettings";
 import CollectionSettings from "../../components/SettingsPage/CollectionSettings";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 
 const SettingsPage = ({
   coinbase,
@@ -14,14 +15,23 @@ const SettingsPage = ({
   userCollection,
   successUpdateProfile,
   updateCollectionData,
-  onSelectCollection,successUpdateCollectionProfile
+  onSelectCollection,
+  successUpdateCollectionProfile,
 }) => {
-  const [category, setCategory] = useState("profile");
+  const { type } = useParams();
+  console.log(type, "type");
+
+  const [category, setCategory] = useState(type);
   const [collectionId, setcollectionId] = useState();
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+   setCategory(type)
+  }, [type])
+  
 
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
@@ -29,7 +39,7 @@ const SettingsPage = ({
         <div className="row">
           <div className="settings-wrapper p-3" style={{ minHeight: "70vh" }}>
             <div className="row" style={{ height: "100%" }}>
-              <Sidebar onChangeCategory={setCategory} category={category} />
+              <Sidebar category={category} />
               {category === "profile" ? (
                 <ProfileSettings
                   coinbase={coinbase}
@@ -40,13 +50,15 @@ const SettingsPage = ({
               ) : category === "notifications" ? (
                 <NotificationSettings />
               ) : category === "support" ? (
-                <SupportSettings />
+                <SupportSettings coinbase={coinbase} />
               ) : (
                 <CollectionSettings
                   userCollection={userCollection}
                   updateCollectionData={updateCollectionData}
                   onSelectCollection={onSelectCollection}
-                  successUpdateCollectionProfile={successUpdateCollectionProfile}
+                  successUpdateCollectionProfile={
+                    successUpdateCollectionProfile
+                  }
                 />
               )}
             </div>

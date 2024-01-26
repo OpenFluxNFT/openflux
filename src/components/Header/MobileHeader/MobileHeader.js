@@ -49,19 +49,28 @@ const MobileHeader = ({
     }
   }, [menu]);
 
+  useEffect(() => {
+    setMenu(false)
+  }, [])
+  
+
   return (
     <>
       <div
         className="container-fluid py-4 mobile-header-wrapper header-wrapper "
         style={{ height: "85px", pointerEvents: "auto", zIndex: 5 }}
+        
       >
         <div className="container-lg">
           <div className="row align-items-center justify-content-center">
             <div className="d-flex align-items-center justify-content-between">
+              <NavLink to={'/'}>
               <img src={dypiusLogo} width={35} height={35} alt="" />
+              </NavLink>
               <>
                 <input
                   id="menu-toggle"
+                  className={`${menu && 'menu-toggle-open'}`}
                   type="checkbox"
                   onChange={() => {
                     setMenu(!menu);
@@ -75,23 +84,26 @@ const MobileHeader = ({
           </div>
         </div>
       </div>
-      <div
+      <NavLink
         className={`mobile-menu-container ${
           menu && "mobile-active"
         } d-flex flex-column align-items-center justify-content-center gap-3 p-3`}
+        to={"/collections"}
+        style={{textDecoration: "none"}}
+
       >
-        <NavLink
+        <div
           className={
             "mobile-menu-item d-flex align-items-center justify-content-between p-3"
           }
-          to={"/collections"}
           onClick={() => {
             setMenu(false);
+            console.log(menu, "menu");
           }}
         >
           <h6 className="mb-0 text-white">Collections</h6>
           <img src={mobileNavArrow} alt="" />
-        </NavLink>
+        </div>
 
         {/* <div className="mobile-menu-item d-flex align-items-center justify-content-between p-3">
           <h6 className="mb-0 text-white">Mint</h6>
@@ -107,7 +119,7 @@ const MobileHeader = ({
         <div className="d-flex align-items-center gap-3">
           {coinbase && isConnected && chainId === 1030 && (
             <button className="btn account-btn d-flex align-items-center gap-2">
-              <img src={conflux} alt="" /> Conflux eSpace
+              <img src={conflux} alt="" />
             </button>
           )}
           {coinbase && isConnected && chainId !== 1030 && (
@@ -130,7 +142,7 @@ const MobileHeader = ({
             </button>
           )}
           {coinbase && isConnected ? (
-            <NavLink className="btn blue-btn" to={`/profile/${coinbase}`}>
+            <NavLink className="btn blue-btn" to={`/profile/${coinbase}`} onClick={() => setMenu(false)}>
               <img src={userIcon} alt="" />
             </NavLink>
           ) : (
@@ -142,7 +154,7 @@ const MobileHeader = ({
             </button>
           )}
         </div>
-      </div>
+      </NavLink>
     </>
   );
 };

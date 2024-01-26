@@ -29,13 +29,13 @@ const CollectionBanner = ({
   isVerified,
   currentCollection,
 }) => {
- console.log(socials[0])
+  
   return (
     <div className="container-lg py-0 py-lg-5">
       <div className="row px-0">
         <div className="collection-banner d-flex flex-column px-0">
           <div className="collection-banner-up position-relative">
-            <img src={banner} className="w-100 d-none d-lg-flex collection-banner-img" alt="" />
+            <img src={banner} className="w-100  d-lg-flex collection-banner-img" alt="" />
             <div className="ps-0 ps-lg-5 collection-position">
               <div className="collection-banner-main-info d-flex flex-column flex-lg-row gap-3 gap-lg-0 align-items-start ps-3 ps-lg-5 pe-3 py-3 justify-content-between">
                 <div className="d-flex flex-column gap-3">

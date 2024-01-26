@@ -31,7 +31,32 @@ input:focus {
 }
 
 
+.uni-input {
+  /* width: 80%; */
+  background: #141843;
+  border: 1px solid #828fbb;
+  height: 34px;
+  padding: 0 5px;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
 
+.uni-input::placeholder {
+  color: #828fbb;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.uni-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 
 
 .buy-btn {
@@ -65,7 +90,9 @@ input:focus {
   border: 1px solid transparent;
 
   .card-img {
-    /* border-radius: 30px; */
+    border-radius: 11px;
+    aspect-ratio: 1/0.92;
+    object-fit: cover;
   }
 
   .card-img2 {
@@ -110,6 +137,11 @@ input:focus {
   font-weight: 700;
   line-height: normal;
   text-transform: capitalize;
+}
+@media screen and (max-width: 786px) {
+  .trending-tab > h6{
+    font-size: 12px !important;
+  }
 }
 
 .trending-tab-active {

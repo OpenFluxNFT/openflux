@@ -121,7 +121,7 @@ const TrendingCollections = ({ allCollections }) => {
       <div className="container-lg">
         <div className="row">
           <div className="d-flex flex-column flex-lg-row gap-4 gap-lg-0 align-items-center justify-content-between">
-            <div className="d-flex align-items center gap-3">
+            <div className="d-flex align-items center gap-0 gap-lg-3">
               <div
                 className={`trending-tab ${
                   option === "trending" && "trending-tab-active"

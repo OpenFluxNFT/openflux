@@ -15,12 +15,19 @@ import checkIcon from "../../Home/RecentlyListed/assets/checkIcon.svg";
 import useWindowSize from "../../../hooks/useWindowSize";
 import filterIcon from "./assets/filterIcon.svg";
 import xMark from "./assets/xMark.svg";
-import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
-import { NavLink } from "react-router-dom";
+import { Checkbox, FormControlLabel, FormGroup, Skeleton } from "@mui/material";
+import { NavLink, useNavigate } from "react-router-dom";
 import emptyFavorite from "../../Home/RecentlyListed/assets/emptyFavorite.svg";
 import redFavorite from "../../Home/RecentlyListed/assets/redFavorite.svg";
+import { FadeLoader } from "react-spinners";
+import { shortAddress } from "../../../hooks/shortAddress";
 
-const CollectionList = ({currentCollection}) => {
+const CollectionList = ({
+  currentCollection,
+  allNftArray,
+  collectionAddress,
+  loading,
+}) => {
   const windowSize = useWindowSize();
   const [openFilters, setOpenFilters] = useState(false);
 
@@ -38,6 +45,9 @@ const CollectionList = ({currentCollection}) => {
       traits: ["Pointy", "Straight", "Crooked", "Dark", "Light", "Brown"],
     },
   ];
+
+
+  const navigate = useNavigate()
 
   const dummyCards = [
     {
@@ -114,6 +124,11 @@ const CollectionList = ({currentCollection}) => {
     },
   ];
 
+  const override = {
+    display: "block",
+    margin: "20px auto 0",
+    borderColor: "#554fd8",
+  };
   const [gridView, setGridView] = useState("small-grid");
 
   return (
@@ -274,7 +289,7 @@ const CollectionList = ({currentCollection}) => {
                     <div className="accordion-body">
                       <div className="" id="accordionExample2">
                         {dummyTraits.map((item, index) => (
-                          <div className="accordion-item">
+                          <div className="accordion-item" key={index}>
                             <h2
                               className="accordion-header"
                               id={`headingOne${item.title}`}
@@ -312,6 +327,7 @@ const CollectionList = ({currentCollection}) => {
                                           }}
                                         />
                                       }
+                                      key={index}
                                       label={trait}
                                     />
                                   ))}
@@ -431,6 +447,12 @@ const CollectionList = ({currentCollection}) => {
                 </div>
               </div>
             </div>
+            {allNftArray && allNftArray.length === 0 && loading === false && (
+              <span className="text-white d-flex w-100 justify-content-center mt-5">
+                This collection doesn't have any NFTs.
+              </span>
+            )}
+
             <div
               className={`${
                 gridView === "list"
@@ -468,56 +490,139 @@ const CollectionList = ({currentCollection}) => {
                       </th>
                     </tr>
                   </thead>
-                  <tbody>
-                    {dummyCards.map((item, index) => (
-                      <tr className="nft-table-row p-1" key={index}>
-                        <td
-                          className="table-item col-2 d-flex align-items-center gap-1 w-100"
-                          scope="row"
-                        >
-                          <img
-                            src={require(`./assets/nftPlaceholder${
-                              index + 1
-                            }.png`)}
-                            className="table-img"
-                            height={36}
-                            width={36}
-                            alt=""
-                          />
+                  {allNftArray && allNftArray.length > 0 ? (
+                    <tbody>
+                      {allNftArray.map((item, index) => (
+                        <tr className="nft-table-row p-1" key={index} onClick={() => navigate(`/nft/${item.tokenId}/${collectionAddress}`)} style={{cursor: "pointer"}}>
+                          <td
+                            className="table-item col-2 d-flex align-items-center gap-1 w-100"
+                            scope="row"
+                          >
+                            <img
+                              src={`https://cdnflux.dypius.com/${item.image50}`}
+                              className="table-img"
+                              height={36}
+                              width={36}
+                              alt=""
+                            />
 
-                          {item.title}
-                        </td>
-                        <td className="table-item col-2">
-                          {item.cfxPrice} CFX
-                        </td>
-                        <td className="table-item col-2">
-                          {item.bestOffer} CFX
-                        </td>
-                        <td className="table-item col-2">
-                          {item.lastSale} CFX{" "}
-                        </td>
-                        <td className="table-item col-2">{item.owner}</td>
-                        <td className="table-item col-2">{item.timeListed}</td>
-                      </tr>
-                    ))}
-                  </tbody>
+                            {item.name}
+                          </td>
+                          <td className="table-item col-2">TBD CFX</td>
+                          <td className="table-item col-2">TBD CFX</td>
+                          <td className="table-item col-2">TBD CFX </td>
+                          <td className="table-item col-2">
+                            {shortAddress(item.owner)}
+                          </td>
+                          <td className="table-item col-2">TBD</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  ) : (
+                    dummyCards.map((item, index) => (
+                      <>
+                      <tr></tr>
+                      <td>
+                        <Skeleton
+                          key={index}
+                          variant="rounded"
+                          width={"100%"}
+                          height={40}
+                        />
+                      </td>
+                      <td>
+                        <Skeleton
+                          key={index}
+                          variant="rounded"
+                          width={"100%"}
+                          height={40}
+                        />
+                      </td>
+                      <td>
+                        <Skeleton
+                          key={index}
+                          variant="rounded"
+                          width={"100%"}
+                          height={40}
+                        />
+                      </td>
+                      <td>
+                        <Skeleton
+                          key={index}
+                          variant="rounded"
+                          width={"100%"}
+                          height={40}
+                        />
+                      </td>
+                      <td>
+                        <Skeleton
+                          key={index}
+                          variant="rounded"
+                          width={"100%"}
+                          height={40}
+                        />
+                      </td>
+                      <td>
+                        <Skeleton
+                          key={index}
+                          variant="rounded"
+                          width={"100%"}
+                          height={40}
+                        />
+                      </td>
+                      </>
+                    ))
+                  )}
                 </table>
-              ) : (
-                dummyCards.map((item, index) => (
+              ) : allNftArray && allNftArray.length > 0 ? (
+                allNftArray.map((item, index) => (
                   <div
                     className="recently-listed-card p-3 d-flex flex-column"
                     key={index}
                   >
                     <NavLink
-                      to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
+                      to={`/nft/${item.tokenId}/${collectionAddress}`}
                       style={{ textDecoration: "none" }}
                       className={"position-relative"}
                     >
-                      <img
-                        src={require(`./assets/nftPlaceholder${index + 1}.png`)}
-                        className="card-img"
-                        alt=""
-                      />
+                      {item.image && item.image.endsWith(".mp4") && (
+                        <video
+                          preload="auto"
+                          className="card-img"
+                          src={item.image}
+                          autoPlay={true}
+                          loop={true}
+                          muted="muted"
+                          playsInline={true}
+                          // onClick={player}
+                          controlsList="nodownload"
+                        ></video>
+                      )}
+                      {item.image && gridView === "small-grid" ? (
+                        <img
+                          src={`https://cdnflux.dypius.com/${item.image}`}
+                          className="card-img"
+                          alt=""
+                        />
+                      ) : (
+                        <></>
+                      )}
+                      {item.image && gridView === "big-grid" ? (
+                        <img
+                          src={`https://cdnflux.dypius.com/${item.image170}`}
+                          className="card-img"
+                          alt=""
+                        />
+                      ) : (
+                        <></>
+                      )}
+                      {!item.image && (
+                        <img
+                          src={require(`./assets/collectionCardPlaceholder2.png`)}
+                          className="card-img"
+                          alt=""
+                        />
+                      )}
                       <div
                         className="position-absolute favorite-container"
                         onClick={(e) => {
@@ -535,7 +640,7 @@ const CollectionList = ({currentCollection}) => {
                           className="recently-listed-title mb-0"
                           style={{ fontSize: "12px" }}
                         >
-                          CAWS #1125
+                          {item.name}
                         </h6>
                         <img src={checkIcon} alt="" />
                       </div>
@@ -556,8 +661,21 @@ const CollectionList = ({currentCollection}) => {
                     </NavLink>
                   </div>
                 ))
+              ) : (
+                dummyCards.map((item, index) => (
+                  <Skeleton key={index} variant="rounded" width={"100%"} height={250} />
+                ))
               )}
             </div>
+            {/* {loading === true && (
+              <FadeLoader
+                color={"#554fd8"}
+                loading={loading}
+                cssOverride={override}
+                aria-label="Loading Spinner"
+                data-testid="loader"
+              />
+            )} */}
           </div>
         </div>
       </div>
@@ -717,7 +835,7 @@ const CollectionList = ({currentCollection}) => {
                 <div className="accordion-body">
                   <div className="" id="accordionExample2">
                     {dummyTraits.map((item, index) => (
-                      <div className="accordion-item">
+                      <div className="accordion-item" key={index}>
                         <h2
                           className="accordion-header"
                           id={`headingOne${item.title}`}
@@ -755,6 +873,7 @@ const CollectionList = ({currentCollection}) => {
                                       }}
                                     />
                                   }
+                                  key={index}
                                   label={trait}
                                 />
                               ))}

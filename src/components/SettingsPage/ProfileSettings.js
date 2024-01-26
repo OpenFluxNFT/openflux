@@ -96,7 +96,7 @@ const ProfileSettings = ({
         { [name]: value },
         {
           headers: {
-            "x-api-key":
+            "cascadestyling":
               "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
           },
         }
@@ -542,8 +542,6 @@ const ProfileSettings = ({
             </div>
           </div>
         </div>
-      </div>
-      {/* {successUpdateProfile &&  */}
       <Toast
         isSuccess={successUpdateProfile.success ? true : false}
         isError={successUpdateProfile.success === false ? true : false}
@@ -551,6 +549,8 @@ const ProfileSettings = ({
       />
       <Toast isError={toastInfo.error} message={toastInfo.message} />
       {/* } */}
+      </div>
+      {/* {successUpdateProfile &&  */}
     </>
   );
 };

@@ -66,6 +66,25 @@
     border-radius: 15px;
     border: 1px solid rgba(47, 128, 237, 0.2);
     background: rgba(47, 128, 237, 0.05);
+    min-height: 270px;
+  }
+
+  .flex-div {
+    flex: 1;
+  }
+
+  .connect-btn2 {
+    background: linear-gradient(90deg, #2F80ED 0%, #00A9FF 100%);
+    color: #FFF;
+    text-align: center;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    text-transform: capitalize;
+    border-radius: 20px;
+    padding: 5px 20px;
+
   }
 
   .nft-item-name-right {

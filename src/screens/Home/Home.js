@@ -8,19 +8,32 @@ import RecentlyListed from "../../components/Home/RecentlyListed/RecentlyListed"
 import TrendingCollections from "../../components/Home/TrendingCollections/TrendingCollections";
 import CollectionCategories from "../../components/Collections/CollectionCategories/CollectionCategories";
 
-const Home = ({allCollections,recentlyListedNfts,cfxPrice}) => {
+const Home = ({
+  allCollections,
+  recentlyListedNfts,
+  cfxPrice,
+  handleAddFavoriteNft,
+  handleRemoveFavoriteNft,
+  userNftFavs,
+}) => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
-      <MainHero allCollections={allCollections}/>
+      <MainHero allCollections={allCollections} />
       <HomeStats />
       <HomeInfo />
       <TrendingSales />
-      <RecentlyListed recentlyListedNfts={recentlyListedNfts} cfxPrice={cfxPrice} />
-      <CollectionCategories allCollections={allCollections}/>
+      <RecentlyListed
+        recentlyListedNfts={recentlyListedNfts}
+        cfxPrice={cfxPrice}
+        userNftFavs={userNftFavs}
+        handleAddFavoriteNft={handleAddFavoriteNft}
+        handleRemoveFavoriteNft={handleRemoveFavoriteNft}
+      />
+      <CollectionCategories allCollections={allCollections} />
     </div>
   );
 };

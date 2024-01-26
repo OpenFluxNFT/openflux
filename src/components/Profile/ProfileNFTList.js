@@ -19,58 +19,13 @@ import redFavorite from "../Home/RecentlyListed/assets/redFavorite.svg";
 import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
 import { NavLink } from "react-router-dom";
 
-const ProfileNFTList = ({ option, userCollectionFavs, allCollections }) => {
+const ProfileNFTList = ({
+  option,
+  userCollectionFavs,
+  allCollections,
+  userNftFavs,
+}) => {
   const [favoritesOption, setfavoritesOption] = useState("items");
-
-  const dummyTraits = [
-    {
-      title: "Background",
-      traits: ["Peach", "Gray", "Blue", "Purple", "White", "Brown"],
-    },
-    {
-      title: "Body",
-      traits: ["Fat", "Skinny", "Short", "Tall"],
-    },
-    {
-      title: "Ears",
-      traits: ["Pointy", "Straight", "Crooked", "Dark", "Light", "Brown"],
-    },
-  ];
-
-  const dummyFavorites = [
-    {
-      title: "Cats And Watches Society",
-      image: "favoritesPlaceholder1",
-    },
-    {
-      title: "CAWS Timepiece",
-      image: "favoritesPlaceholder2",
-    },
-    {
-      title: "World of Dypians Land",
-      image: "favoritesPlaceholder3",
-    },
-    {
-      title: "Cats And Watches Society",
-      image: "favoritesPlaceholder4",
-    },
-    {
-      title: "CAWS Timepiece",
-      image: "favoritesPlaceholder1",
-    },
-    {
-      title: "World of Dypians Land",
-      image: "favoritesPlaceholder2",
-    },
-    {
-      title: "Cats And Watches Society",
-      image: "favoritesPlaceholder3",
-    },
-    {
-      title: "CAWS Timepiece",
-      image: "favoritesPlaceholder4",
-    },
-  ];
 
   const dummyCards = [
     {
@@ -146,8 +101,7 @@ const ProfileNFTList = ({ option, userCollectionFavs, allCollections }) => {
       timeListed: "11d Ago",
     },
   ];
-
-  console.log(userCollectionFavs);
+ 
 
   const [gridView, setGridView] = useState("small-grid");
 

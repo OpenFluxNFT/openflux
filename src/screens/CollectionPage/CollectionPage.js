@@ -5,7 +5,7 @@ import CollectionList from "../../components/CollectionPage/CollectionList/Colle
 import banner from "../../components/CollectionPage/CollectionBanner/assets/bannerPlaceholder.png";
 import collectionIcon from "../../components/CollectionPage/CollectionBanner/assets/cawsIcon.png";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import axios, { isCancel } from "axios";
 import Web3 from "web3";
 
 const CollectionPage = ({
@@ -15,6 +15,7 @@ const CollectionPage = ({
   userData,
   allCollections,
   userNftFavs,
+  handleAddFavoriteNft,handleRemoveFavoriteNft
 }) => {
   const collectionInfo = [
     {
@@ -40,12 +41,12 @@ const CollectionPage = ({
   ];
 
   const [favorite, setFavorite] = useState(false);
-  const [favoriteNft, setFavoriteNft] = useState(false);
 
   const [isVerified, setisVerified] = useState(false);
   const [currentCollection, setcurrentCollection] = useState([]);
   const [collectionSocials, setcollectionSocials] = useState([]);
   const [allNftArray, setAllNftArray] = useState([]);
+
   const [loading, setLoading] = useState(false);
   const [totalSupplyPerCollection, settotalSupplyPerCollection] = useState(0);
 
@@ -136,12 +137,15 @@ if there are no listings
 
   const fetchInitialNftsPerCollection = async () => {
     setLoading(true);
+    const test = window.getCoinbase() 
+
     const result = await axios.get(
       `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress}`
     );
     if (result && result.status === 200) {
       let nftArray = [];
       let totalSupply = 0;
+      let favorite = false;
       const abi = JSON.parse(result.data.result);
       const web3 = window.confluxWeb3;
       const collection_contract = new web3.eth.Contract(abi, collectionAddress);
@@ -164,7 +168,7 @@ if there are no listings
 
       if (totalSupply && totalSupply > 0) {
         const limit = totalSupply >= 12 ? 12 : totalSupply;
-        const result34 = await Promise.all(
+        await Promise.all(
           window.range(0, limit - 1).map(async (i) => {
             let tokenByIndex = 0;
             if (result.data.result.includes("tokenByIndex")) {
@@ -183,6 +187,9 @@ if there are no listings
               .catch((e) => {
                 console.error(e);
               });
+              
+           
+
             const nft_data = await fetch(
               `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress}/${tokenByIndex}/metadata.json`
             )
@@ -204,7 +211,9 @@ if there are no listings
             }
           })
         );
-        const finalArray = nftArray.sort((a,b)=>{ return a.tokenId - b.tokenId})
+        const finalArray = nftArray.sort((a, b) => {
+          return a.tokenId - b.tokenId;
+        });
         setAllNftArray(finalArray);
         setLoading(false);
 
@@ -287,6 +296,7 @@ if there are no listings
       }
     }
   };
+
   const getTestCollections = async () => {
     let nftArray = [];
     setLoading(true);
@@ -517,63 +527,6 @@ if there are no listings
     }
   };
 
-  const handleAddFavoriteNft = async (tokenId, nftContract) => {
-    if (coinbase && collectionAddress) {
-      const data = {
-        contractAddress: nftContract,
-        tokenId: tokenId,
-      };
-
-      await axios
-        .post(
-          `https://confluxapi.worldofdypians.com//users/addNftFavorite/${coinbase}`,
-          data,
-          {
-            headers: {
-              cascadestyling:
-                "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-            },
-          }
-        )
-        .then(() => {
-          setFavoriteNft(true);
-          onFavoriteCollection();
-        })
-        .catch((e) => {
-          console.error(e);
-          setFavoriteNft(false);
-        });
-    }
-  };
-
-  const handleRemoveFavoriteNft = async (tokenId, nftContract) => {
-    if (coinbase && collectionAddress) {
-      const data = {
-        contractAddress: nftContract,
-        tokenId: tokenId,
-      };
-
-      await axios
-        .post(
-          `https://confluxapi.worldofdypians.com/api/users/removeNftFavorite/${coinbase}`,
-          data,
-          {
-            headers: {
-              cascadestyling:
-                "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-            },
-          }
-        )
-        .then(() => {
-          setFavoriteNft(false);
-          onFavoriteCollection();
-        })
-        .catch((e) => {
-          console.error(e);
-        });
-    }
-  };
-
   useEffect(() => {
     window.scrollTo(0, 0);
     getCollectionTotalSupply();
@@ -584,6 +537,8 @@ if there are no listings
     dataFetchedRef.current = true;
     fetchInitialNftsPerCollection();
   }, []);
+
+ 
 
   // useEffect(() => {
   //   if (next !== 12) {
@@ -632,6 +587,9 @@ if there are no listings
         allNftArray={allNftArray}
         collectionAddress={collectionAddress}
         loading={loading}
+        handleAddFavoriteNft={handleAddFavoriteNft}
+        handleRemoveFavoriteNft={handleRemoveFavoriteNft}
+        userNftFavs={userNftFavs}
       />
 
       {totalSupplyPerCollection &&

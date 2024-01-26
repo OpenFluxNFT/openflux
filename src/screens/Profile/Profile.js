@@ -11,7 +11,10 @@ const Profile = ({
   userTotalNftsOwned,
   onViewShared,
   updateUserData,
-  successUpdateProfile,userCollectionFavs,allCollections
+  successUpdateProfile,
+  userCollectionFavs,
+  allCollections,
+  userNftFavs,
 }) => {
   const [option, setOption] = useState("collected");
   const profileSocials = ["website", "twitter", "instagram"];
@@ -184,7 +187,12 @@ const Profile = ({
             </div>
           </div>
           <hr className="profile-divider mt-2" />
-          <ProfileNFTList option={option} userCollectionFavs={userCollectionFavs} allCollections={allCollections}/>
+          <ProfileNFTList
+            option={option}
+            userCollectionFavs={userCollectionFavs}
+            allCollections={allCollections}
+            userNftFavs={userNftFavs}
+          />
         </div>
       </div>
     </div>

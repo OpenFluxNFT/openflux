@@ -27,6 +27,9 @@ const CollectionList = ({
   allNftArray,
   collectionAddress,
   loading,
+  handleAddFavoriteNft,
+  userNftFavs,
+  handleRemoveFavoriteNft,
 }) => {
   const windowSize = useWindowSize();
   const [openFilters, setOpenFilters] = useState(false);
@@ -46,8 +49,7 @@ const CollectionList = ({
     },
   ];
 
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const dummyCards = [
     {
@@ -493,19 +495,43 @@ const CollectionList = ({
                   {allNftArray && allNftArray.length > 0 ? (
                     <tbody>
                       {allNftArray.map((item, index) => (
-                        <tr className="nft-table-row p-1" key={index} onClick={() => navigate(`/nft/${item.tokenId}/${collectionAddress}`)} style={{cursor: "pointer"}}>
+                        <tr
+                          className="nft-table-row p-1"
+                          key={index}
+                          onClick={() =>
+                            navigate(
+                              `/nft/${item.tokenId}/${collectionAddress}`
+                            )
+                          }
+                          style={{ cursor: "pointer" }}
+                        >
                           <td
                             className="table-item col-2 d-flex align-items-center gap-1 w-100"
                             scope="row"
                           >
-                            <img
-                              src={`https://cdnflux.dypius.com/${item.image50}`}
-                              className="table-img"
-                              height={36}
-                              width={36}
-                              alt=""
-                            />
-
+                            {!item.isVideo ? (
+                              <img
+                                src={`https://cdnflux.dypius.com/${item.image50}`}
+                                className="table-img"
+                                height={36}
+                                width={36}
+                                alt=""
+                              />
+                            ) : (
+                              <video
+                                preload="auto"
+                                height={36}
+                                width={36}
+                                className="card-img"
+                                src={`https://cdnflux.dypius.com/${item.image}`}
+                                autoPlay={true}
+                                loop={true}
+                                muted="muted"
+                                playsInline={true}
+                                // onClick={player}
+                                controlsList="nodownload"
+                              ></video>
+                            )}
                             {item.name}
                           </td>
                           <td className="table-item col-2">TBD CFX</td>
@@ -521,55 +547,60 @@ const CollectionList = ({
                   ) : (
                     dummyCards.map((item, index) => (
                       <>
-                      <tr></tr>
-                      <td>
-                        <Skeleton
-                          key={index}
-                          variant="rounded"
-                          width={"100%"}
-                          height={40}
-                        />
-                      </td>
-                      <td>
-                        <Skeleton
-                          key={index}
-                          variant="rounded"
-                          width={"100%"}
-                          height={40}
-                        />
-                      </td>
-                      <td>
-                        <Skeleton
-                          key={index}
-                          variant="rounded"
-                          width={"100%"}
-                          height={40}
-                        />
-                      </td>
-                      <td>
-                        <Skeleton
-                          key={index}
-                          variant="rounded"
-                          width={"100%"}
-                          height={40}
-                        />
-                      </td>
-                      <td>
-                        <Skeleton
-                          key={index}
-                          variant="rounded"
-                          width={"100%"}
-                          height={40}
-                        />
-                      </td>
-                      <td>
-                        <Skeleton
-                          key={index}
-                          variant="rounded"
-                          width={"100%"}
-                          height={40}
-                        />
-                      </td>
+                        <tr></tr>
+                        <td>
+                          <Skeleton
+                            key={index}
+                            variant="rounded"
+                            width={"100%"}
+                            height={40}
+                            sx={{bgcolor: "rgba(47, 128, 237, 0.05)"}}
+                          />
+                        </td>
+                        <td>
+                          <Skeleton
+                            key={index}
+                            variant="rounded"
+                            width={"100%"}
+                            height={40}
+                          />
+                        </td>
+                        <td>
+                          <Skeleton
+                            key={index}
+                            variant="rounded"
+                            width={"100%"}
+                            height={40}
+                            sx={{bgcolor: "rgba(47, 128, 237, 0.05)"}}
+                          />
+                        </td>
+                        <td>
+                          <Skeleton
+                            key={index}
+                            variant="rounded"
+                            width={"100%"}
+                            height={40}
+                            sx={{bgcolor: "rgba(47, 128, 237, 0.05)"}}
+                          />
+                        </td>
+                        <td>
+                          <Skeleton
+                            key={index}
+                            variant="rounded"
+                            width={"100%"}
+                            height={40}
+                            sx={{bgcolor: "rgba(47, 128, 237, 0.05)"}}
+                          />
+                        </td>
+                        <td>
+                          <Skeleton
+                            key={index}
+                            variant="rounded"
+                            width={"100%"}
+                            height={40}
+                            sx={{bgcolor: "rgba(47, 128, 237, 0.05)"}}
+                          />
+                        </td>
                       </>
                     ))
                   )}
@@ -585,11 +616,21 @@ const CollectionList = ({
                       style={{ textDecoration: "none" }}
                       className={"position-relative"}
                     >
-                      {item.image && item.image.endsWith(".mp4") && (
+                      {item.image &&
+                      !item.isVideo &&
+                      gridView === "small-grid" ? (
+                        <img
+                          src={`https://cdnflux.dypius.com/${item.image}`}
+                          className="card-img"
+                          alt=""
+                        />
+                      ) : item.image &&
+                        item.isVideo &&
+                        gridView === "small-grid" ? (
                         <video
                           preload="auto"
                           className="card-img"
-                          src={item.image}
+                          src={`https://cdnflux.dypius.com/${item.image}`}
                           autoPlay={true}
                           loop={true}
                           muted="muted"
@@ -597,22 +638,31 @@ const CollectionList = ({
                           // onClick={player}
                           controlsList="nodownload"
                         ></video>
-                      )}
-                      {item.image && gridView === "small-grid" ? (
-                        <img
-                          src={`https://cdnflux.dypius.com/${item.image}`}
-                          className="card-img"
-                          alt=""
-                        />
                       ) : (
                         <></>
                       )}
-                      {item.image && gridView === "big-grid" ? (
+                      {item.image &&
+                      !item.isVideo &&
+                      gridView === "big-grid" ? (
                         <img
                           src={`https://cdnflux.dypius.com/${item.image170}`}
                           className="card-img"
                           alt=""
                         />
+                      ) : item.image &&
+                        item.isVideo &&
+                        gridView === "big-grid" ? (
+                        <video
+                          preload="auto"
+                          className="card-img"
+                          src={`https://cdnflux.dypius.com/${item.image}`}
+                          autoPlay={true}
+                          loop={true}
+                          muted="muted"
+                          playsInline={true}
+                          // onClick={player}
+                          controlsList="nodownload"
+                        ></video>
                       ) : (
                         <></>
                       )}
@@ -628,11 +678,65 @@ const CollectionList = ({
                         onClick={(e) => {
                           e.stopPropagation();
                           e.preventDefault();
+                          userNftFavs &&
+                          userNftFavs.length > 0 &&
+                          userNftFavs.find((favitem) => {
+                            return (
+                              favitem.contractAddress === collectionAddress &&
+                              favitem.tokenIds.find((id) => {
+                                return id === item.tokenId.toString();
+                              })
+                            );
+                          })
+                            ? handleRemoveFavoriteNft(
+                                item.tokenId,
+                                collectionAddress
+                              )
+                            : handleAddFavoriteNft(
+                                item.tokenId,
+                                collectionAddress
+                              );
                         }}
                       >
                         <div className="d-flex align-items-center position-relative gap-2">
-                          <img src={emptyFavorite} alt="" className="fav-img" />
-                          <span className="fav-count">222</span>
+                          <img
+                            src={
+                              userNftFavs &&
+                              userNftFavs.length > 0 &&
+                              userNftFavs.find((favitem) => {
+                                return (
+                                  favitem.contractAddress ===
+                                    collectionAddress &&
+                                  favitem.tokenIds.find((id) => {
+                                    return id === item.tokenId.toString();
+                                  })
+                                );
+                              })
+                                ? redFavorite
+                                : emptyFavorite
+                            }
+                            alt=""
+                            className="fav-img"
+                          />
+                          <span
+                            className={
+                              userNftFavs &&
+                              userNftFavs.length > 0 &&
+                              userNftFavs.find((favitem) => {
+                                return (
+                                  favitem.contractAddress ===
+                                    collectionAddress &&
+                                  favitem.tokenIds.find((id) => {
+                                    return id === item.tokenId.toString();
+                                  })
+                                );
+                              })
+                                ? "fav-count-active"
+                                : "fav-count"
+                            }
+                          >
+                            222
+                          </span>
                         </div>
                       </div>
                       <div className="d-flex align-items-center gap-2 mt-2">
@@ -663,7 +767,13 @@ const CollectionList = ({
                 ))
               ) : (
                 dummyCards.map((item, index) => (
-                  <Skeleton key={index} variant="rounded" width={"100%"} height={250} />
+                  <Skeleton
+                    key={index}
+                    variant="rounded"
+                    width={"100%"}
+                    height={250}
+                    sx={{bgcolor: "rgba(47, 128, 237, 0.05)"}}
+                  />
                 ))
               )}
             </div>

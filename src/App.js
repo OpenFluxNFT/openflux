@@ -49,6 +49,7 @@ function App() {
   const [isSuccestToast, setisSuccestToast] = useState(false);
   const [userTotalNftsOwned, setUserTotalNftsOwned] = useState(0);
   const [cfxPrice, setCfxPrice] = useState(0);
+  const [favoriteNft, setFavoriteNft] = useState(false);
 
   const [successUpdateProfile, setSuccessUpdateProfile] = useState({
     success: null,
@@ -68,7 +69,6 @@ function App() {
   const baseURL = "https://confluxapi.worldofdypians.com";
   const navigate = useNavigate();
   const dataFetchedRef = useRef(false);
- 
 
   const handleShowWalletModal = () => {
     setWalletModal(true);
@@ -254,6 +254,87 @@ function App() {
       );
 
       setrecentlyListedNfts(recentlyListed);
+    }
+  };
+
+  const handleGetUserFavNfts = async (walletAddr) => {
+    if (walletAddr) {
+      const result = await axios
+        .get(`${baseURL}/api/users/${walletAddr}`, {
+          headers: {
+            cascadestyling:
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+      const web3 = window.confluxWeb3;
+      if (result && result.status === 200) {
+        if (result.data && result.data.nftFavorites) {
+          console.log(result.data.nftFavorites);
+          const recentlyListed = await Promise.all(
+            result.data &&
+              result.data.nftFavorites.length > 0 &&
+              result.data.nftFavorites.map(async (item1) => {
+                const abiresult = await axios.get(
+                  `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item1.contractAddress}`
+                );
+                if (abiresult && abiresult.status === 200) {
+                  const abi = JSON.parse(abiresult.data.result);
+                  const collection_contract = new web3.eth.Contract(
+                    abi,
+                    item1.contractAddress
+                  );
+                  // const tokenName = await collection_contract.methods
+                  //   .symbol()
+                  //   .call()
+                  //   .catch((e) => {
+                  //     console.error(e);
+                  //   });
+
+         if(result.data.nftFavorites.tokenIds)
+                  {  result.data.nftFavorites.tokenIds.forEach(async (item) => {
+                      const nft_data = await fetch(
+                        `https://cdnflux.dypius.com/collectionsmetadatas/${item1.contractAddress}/${item}/metadata.json`
+                      )
+                        .then((res) => {
+                          if (res.status === 200) {
+                            res.json();
+                          }
+                        })
+                        .then((data) => {
+                          console.log(data);
+                          return data;
+                        })
+                        .catch((err) => {
+                          console.log(err.message);
+                        });
+                      if (nft_data) {
+                        return {
+                          ...item,
+                          image: `https://cdnflux.dypius.com/${nft_data.image}`,
+                          // tokenName: tokenName,
+                        };
+                      } else if (
+                        item.nftAddress ===
+                        "0x2deecf2a05f735890eb3ea085d55cec8f1a93895"
+                      ) {
+                        return {
+                          ...item,
+                          image:
+                            "https://dypmeta.s3.us-east-2.amazonaws.com/Conflux+nft+400px.png",
+                          // tokenName: tokenName,
+                        };
+                      } else return { ...item, image: undefined };
+                    });}
+                }
+              })
+          );
+        }
+
+        // setrecentlyListedNfts(recentlyListed);
+      }
     }
   };
 
@@ -704,6 +785,64 @@ function App() {
       });
   };
 
+  const handleAddFavoriteNft = async (tokenId, nftContract) => {
+    if (coinbase) {
+      console.log(nftContract, tokenId);
+      const data = {
+        contractAddress: nftContract,
+        tokenId: tokenId,
+      };
+
+      await axios
+        .post(
+          `https://confluxapi.worldofdypians.com/api/users/addNftFavorite/${coinbase}`,
+          data,
+          {
+            headers: {
+              cascadestyling:
+                "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+            },
+          }
+        )
+        .then(() => {
+          setFavoriteNft(true);
+          setCount(count + 1);
+        })
+        .catch((e) => {
+          console.error(e);
+          setFavoriteNft(false);
+        });
+    }
+  };
+
+  const handleRemoveFavoriteNft = async (tokenId, nftContract) => {
+    if (coinbase) {
+      const data = {
+        contractAddress: nftContract,
+        tokenId: tokenId.toString(),
+      };
+
+      await axios
+        .post(
+          `https://confluxapi.worldofdypians.com/api/users/removeNftFavorite/${coinbase}`,
+          data,
+          {
+            headers: {
+              cascadestyling:
+                "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+            },
+          }
+        )
+        .then(() => {
+          setFavoriteNft(false);
+          setCount(count + 1);
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    }
+  };
+
   const logout = localStorage.getItem("logout");
   useEffect(() => {
     if (ethereum) {
@@ -747,12 +886,12 @@ function App() {
   useEffect(() => {
     checkNetworkId();
     getUserData(coinbase);
+    handleGetUserFavNfts(coinbase);
   }, [isConnected, coinbase, count]);
 
   useEffect(() => {
     getAllCollections();
     handleSetOrderedCollection();
-
     fetchCFXPrice();
   }, []);
 
@@ -810,6 +949,9 @@ function App() {
               allCollections={allCollections}
               recentlyListedNfts={recentlyListedNfts}
               cfxPrice={cfxPrice}
+              handleAddFavoriteNft={handleAddFavoriteNft}
+              handleRemoveFavoriteNft={handleRemoveFavoriteNft}
+              userNftFavs={userNftFavs}
             />
           }
         />
@@ -849,6 +991,8 @@ function App() {
               userNftFavs={userNftFavs}
               userData={userData}
               allCollections={allCollections}
+              handleAddFavoriteNft={handleAddFavoriteNft}
+              handleRemoveFavoriteNft={handleRemoveFavoriteNft}
             />
           }
         />

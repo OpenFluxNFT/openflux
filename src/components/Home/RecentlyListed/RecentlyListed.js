@@ -15,6 +15,8 @@ const RecentlyListed = ({
   userNftFavs,
   recentlyListedNfts,
   cfxPrice,
+  handleAddFavoriteNft,
+  handleRemoveFavoriteNft,
 }) => {
   const settings = {
     // dots: true,
@@ -28,116 +30,9 @@ const RecentlyListed = ({
     // dotsClass: "button__bar",
   };
 
-  const dummyCards = [
-    {
-      title: "CAWS #1125",
-      cfxPrice: 1254.89,
-      usdPrice: 654874.86,
-    },
-    {
-      title: "CAWS #1125",
-      cfxPrice: 1254.89,
-      usdPrice: 654874.86,
-    },
-    {
-      title: "CAWS #1125",
-      cfxPrice: 1254.89,
-      usdPrice: 654874.86,
-    },
-    {
-      title: "Timepiece #1125",
-      cfxPrice: 1254.89,
-      usdPrice: 654874.86,
-    },
-    {
-      title: "Timepiece #1125",
-      cfxPrice: 1254.89,
-      usdPrice: 654874.86,
-    },
-    {
-      title: "Timepiece #1125",
-      cfxPrice: 1254.89,
-      usdPrice: 654874.86,
-    },
-    {
-      title: "Land #9999",
-      cfxPrice: 1254.89,
-      usdPrice: 654874.86,
-    },
-    {
-      title: "Land #9999",
-      cfxPrice: 1254.89,
-      usdPrice: 654874.86,
-    },
-  ];
   const [favorite, setFavorite] = useState(false);
 
   const windowSize = useWindowSize();
-
-  const checkifFavorite = (collectionAddress) => {
-    if (userNftFavs && userNftFavs.length > 0) {
-      if (userNftFavs.find((obj) => obj === collectionAddress)) {
-        setFavorite(true);
-      } else {
-        setFavorite(false);
-      }
-    }
-  };
-
-  const handleAddFavorite = async (collectionAddress) => {
-    if (coinbase && collectionAddress) {
-      const data = {
-        contractAddress: collectionAddress,
-      };
-
-      await axios
-        .post(
-          `https://confluxapi.worldofdypians.com/api/users/addNftFavorite/${coinbase}`,
-          data,
-          {
-            headers: {
-              cascadestyling:
-                "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-            },
-          }
-        )
-        .then(() => {
-          setFavorite(true);
-          onFavoriteNft();
-        })
-        .catch((e) => {
-          console.error(e);
-          setFavorite(false);
-        });
-    }
-  };
-
-  const handleRemoveFavorite = async (collectionAddress) => {
-    if (coinbase && collectionAddress) {
-      const data = {
-        contractAddress: collectionAddress,
-      };
-
-      await axios
-        .post(
-          `https://confluxapi.worldofdypians.com/api/users/removeNftFavorite/${coinbase}`,
-          data,
-          {
-            headers: {
-              cascadestyling:
-                "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-            },
-          }
-        )
-        .then(() => {
-          setFavorite(false);
-          onFavoriteNft();
-        })
-        .catch((e) => {
-          console.error(e);
-        });
-    }
-  };
 
   return (
     <div className="container-lg mt-5">
@@ -171,15 +66,60 @@ const RecentlyListed = ({
                     onClick={(e) => {
                       e.stopPropagation();
                       e.preventDefault();
+                      userNftFavs &&
+                      userNftFavs.length > 0 &&
+                      userNftFavs.find((favitem) => {
+                        return (
+                          favitem.contractAddress === item.nftAddress &&
+                          favitem.tokenIds.find((id) => {
+                            return id === item.tokenId.toString();
+                          })
+                        );
+                      })
+                        ? handleRemoveFavoriteNft(
+                            item.tokenId,
+                            item.nftAddress
+                          )
+                        : handleAddFavoriteNft(item.tokenId, item.nftAddress);
                     }}
                   >
                     <div className="d-flex align-items-center position-relative gap-2">
                       <img
-                        src={favorite ? redFavorite : emptyFavorite}
+                        src={
+                          userNftFavs &&
+                          userNftFavs.length > 0 &&
+                          userNftFavs.find((favitem) => {
+                            return (
+                              favitem.contractAddress === item.nftAddress &&
+                              favitem.tokenIds.find((id) => {
+                                return id === item.tokenId.toString();
+                              })
+                            );
+                          })
+                            ? redFavorite
+                            : emptyFavorite
+                        }
                         alt=""
                         className="fav-img"
                       />
-                      <span className="fav-count">222</span>
+                      <span
+                        className={
+                          userNftFavs &&
+                          userNftFavs.length > 0 &&
+                          userNftFavs.find((favitem) => {
+                            return (
+                              favitem.contractAddress === item.nftAddress &&
+                              favitem.tokenIds.find((id) => {
+                                return id === item.tokenId.toString();
+                              })
+                            );
+                          })
+                            ? "fav-count-active"
+                            : "fav-count"
+                        }
+                      >
+                        222
+                      </span>
                     </div>
                   </div>
                   <div className="d-flex align-items-center gap-2 mt-2">
@@ -230,15 +170,54 @@ const RecentlyListed = ({
                     onClick={(e) => {
                       e.stopPropagation();
                       e.preventDefault();
+                      userNftFavs &&
+                      userNftFavs.length > 0 &&
+                      userNftFavs.find((favitem) => {
+                        return (
+                          favitem.contractAddress === item.nftAddress &&
+                          favitem.tokenIds.find((id) => {
+                            return id === item.tokenId.toString();
+                          })
+                        );
+                      })
+                        ? handleRemoveFavoriteNft(
+                            item.tokenId,
+                            item.nftAddress
+                          )
+                        : handleAddFavoriteNft(item.tokenId, item.nftAddress);
                     }}
                   >
                     <div className="d-flex align-items-center position-relative gap-2">
                       <img
-                        src={favorite ? redFavorite : emptyFavorite}
+                        src={ userNftFavs &&
+                          userNftFavs.length > 0 &&
+                          userNftFavs.find((favitem) => {
+                            return (
+                              favitem.contractAddress === item.nftAddress &&
+                              favitem.tokenIds.find((id) => {
+                                return id === item.tokenId.toString();
+                              })
+                            );
+                          })
+                            ? redFavorite
+                            : emptyFavorite}
                         alt=""
                         className="fav-img"
                       />{" "}
-                      <span className="fav-count">222</span>
+                      <span className={
+                          userNftFavs &&
+                          userNftFavs.length > 0 &&
+                          userNftFavs.find((favitem) => {
+                            return (
+                              favitem.contractAddress === item.nftAddress &&
+                              favitem.tokenIds.find((id) => {
+                                return id === item.tokenId.toString();
+                              })
+                            );
+                          })
+                            ? "fav-count-active"
+                            : "fav-count"
+                        }>222</span>
                     </div>
                   </div>
                   <div className="d-flex align-items-center gap-2 mt-2">

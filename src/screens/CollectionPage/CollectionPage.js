@@ -195,16 +195,17 @@ if there are no listings
               });
 
             if (nft_data) {
-              console.log(nft_data);
+              // console.log(nft_data);
               nftArray.push({
                 ...nft_data,
-                tokenId: tokenByIndex,
+                tokenId: Number(tokenByIndex),
                 owner: owner,
               });
             }
           })
         );
-        setAllNftArray(nftArray);
+        const finalArray = nftArray.sort((a,b)=>{ return a.tokenId - b.tokenId})
+        setAllNftArray(finalArray);
         setLoading(false);
 
         // const Http = new XMLHttpRequest();

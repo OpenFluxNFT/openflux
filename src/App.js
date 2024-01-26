@@ -1,10 +1,9 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Home from "./screens/Home/Home";
 import Collections from "./screens/Collections/Collections";
 import Header from "./components/Header/Header";
 import "./App.css";
-import { useState, useEffect } from "react";
-
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import WalletModal from "./components/WalletModal/WalletModal";
 import useWindowSize from "./hooks/useWindowSize";
@@ -41,7 +40,6 @@ function App() {
   const [userCollectionFavs, setuserCollectionFavs] = useState([]);
   const [userNftFavs, setuserNftFavs] = useState([]);
 
-
   const [isRedirect, setIsRedirect] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [showSignPopup, setshowSignPopup] = useState(false);
@@ -69,6 +67,8 @@ function App() {
   const { ethereum } = window;
   const baseURL = "https://confluxapi.worldofdypians.com";
   const navigate = useNavigate();
+  const dataFetchedRef = useRef(false);
+ 
 
   const handleShowWalletModal = () => {
     setWalletModal(true);
@@ -408,7 +408,7 @@ function App() {
         } else {
           setuserData(result.data);
           setuserCollectionFavs(result.data.collectionFavorites);
-          setuserNftFavs(result.data.nftFavorites)
+          setuserNftFavs(result.data.nftFavorites);
           fetchTotalNftOwned(walletAddr);
           fetchuserCollection(walletAddr);
         }
@@ -752,8 +752,14 @@ function App() {
   useEffect(() => {
     getAllCollections();
     handleSetOrderedCollection();
-    handleGetRecentlyListedNfts();
+
     fetchCFXPrice();
+  }, []);
+
+  useEffect(() => {
+    if (dataFetchedRef.current) return;
+    dataFetchedRef.current = true;
+    handleGetRecentlyListedNfts();
   }, []);
 
   return (
@@ -841,7 +847,6 @@ function App() {
               }}
               userCollectionFavs={userCollectionFavs}
               userNftFavs={userNftFavs}
-
               userData={userData}
               allCollections={allCollections}
             />

@@ -17,6 +17,7 @@ const RecentlyListed = ({
   cfxPrice,
   handleAddFavoriteNft,
   handleRemoveFavoriteNft,
+  userNftFavsInitial,
 }) => {
   const settings = {
     // dots: true,
@@ -34,7 +35,6 @@ const RecentlyListed = ({
 
   const windowSize = useWindowSize();
 
- 
 
   return (
     <div className="container-lg mt-5">
@@ -68,12 +68,15 @@ const RecentlyListed = ({
                     onClick={(e) => {
                       e.stopPropagation();
                       e.preventDefault();
-                      userNftFavs &&
-                      userNftFavs.length > 0 &&
-                      userNftFavs.find((favitem) => {
+                      userNftFavsInitial &&
+                      userNftFavsInitial.length > 0 &&
+                      userNftFavsInitial.find((favitem) => {
                         return (
                           favitem.contractAddress === item.nftAddress &&
-                          (favitem.tokenId).toString() === item.tokenId
+                          favitem.tokenIds.find(
+                            (itemTokenIds) =>
+                               itemTokenIds === item.tokenId
+                          )
                         );
                       })
                         ? handleRemoveFavoriteNft(item.tokenId, item.nftAddress)
@@ -83,12 +86,15 @@ const RecentlyListed = ({
                     <div className="d-flex align-items-center position-relative gap-2">
                       <img
                         src={
-                          userNftFavs &&
-                          userNftFavs.length > 0 &&
-                          userNftFavs.find((favitem) => {
+                          userNftFavsInitial &&
+                          userNftFavsInitial.length > 0 &&
+                          userNftFavsInitial.find((favitem) => {
                             return (
                               favitem.contractAddress === item.nftAddress &&
-                              (favitem.tokenId).toString() === item.tokenId
+                              favitem.tokenIds.find(
+                                (itemTokenIds) =>
+                                itemTokenIds === item.tokenId
+                              )
                             );
                           })
                             ? redFavorite
@@ -99,12 +105,15 @@ const RecentlyListed = ({
                       />
                       <span
                         className={
-                          userNftFavs &&
-                          userNftFavs.length > 0 &&
-                          userNftFavs.find((favitem) => {
+                          userNftFavsInitial &&
+                          userNftFavsInitial.length > 0 &&
+                          userNftFavsInitial.find((favitem) => {
                             return (
                               favitem.contractAddress === item.nftAddress &&
-                              (favitem.tokenId).toString() === item.tokenId
+                              favitem.tokenIds.find(
+                                (itemTokenIds) =>
+                                itemTokenIds === item.tokenId
+                              )
                             );
                           })
                             ? "fav-count-active"
@@ -163,12 +172,15 @@ const RecentlyListed = ({
                     onClick={(e) => {
                       e.stopPropagation();
                       e.preventDefault();
-                      userNftFavs &&
-                      userNftFavs.length > 0 &&
-                      userNftFavs.find((favitem) => {
+                      userNftFavsInitial &&
+                      userNftFavsInitial.length > 0 &&
+                      userNftFavsInitial.find((favitem) => {
                         return (
                           favitem.contractAddress === item.nftAddress &&
-                          (favitem.tokenId).toString() === item.tokenId
+                          favitem.tokenIds.find(
+                            (itemTokenIds) =>
+                            itemTokenIds === item.tokenId
+                          )
                         );
                       })
                         ? handleRemoveFavoriteNft(item.tokenId, item.nftAddress)
@@ -178,12 +190,15 @@ const RecentlyListed = ({
                     <div className="d-flex align-items-center position-relative gap-2">
                       <img
                         src={
-                          userNftFavs &&
-                          userNftFavs.length > 0 &&
-                          userNftFavs.find((favitem) => {
+                          userNftFavsInitial &&
+                          userNftFavsInitial.length > 0 &&
+                          userNftFavsInitial.find((favitem) => {
                             return (
                               favitem.contractAddress === item.nftAddress &&
-                              (favitem.tokenId).toString() === item.tokenId
+                              favitem.tokenIds.find(
+                                (itemTokenIds) =>
+                                itemTokenIds === item.tokenId
+                              )
                             );
                           })
                             ? redFavorite
@@ -194,12 +209,15 @@ const RecentlyListed = ({
                       />{" "}
                       <span
                         className={
-                          userNftFavs &&
-                          userNftFavs.length > 0 &&
-                          userNftFavs.find((favitem) => {
+                          userNftFavsInitial &&
+                          userNftFavsInitial.length > 0 &&
+                          userNftFavsInitial.find((favitem) => {
                             return (
                               favitem.contractAddress === item.nftAddress &&
-                              (favitem.tokenId).toString() === item.tokenId
+                              favitem.tokenIds.find(
+                                (itemTokenIds) =>
+                                itemTokenIds === item.tokenId
+                              )
                             );
                           })
                             ? "fav-count-active"

@@ -15,7 +15,8 @@ const CollectionPage = ({
   userData,
   allCollections,
   userNftFavs,
-  handleAddFavoriteNft,handleRemoveFavoriteNft
+  handleAddFavoriteNft,
+  handleRemoveFavoriteNft,
 }) => {
   const collectionInfo = [
     {
@@ -137,7 +138,7 @@ if there are no listings
 
   const fetchInitialNftsPerCollection = async () => {
     setLoading(true);
-    const test = window.getCoinbase() 
+    const test = window.getCoinbase();
 
     const result = await axios.get(
       `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress}`
@@ -187,8 +188,6 @@ if there are no listings
               .catch((e) => {
                 console.error(e);
               });
-              
-           
 
             const nft_data = await fetch(
               `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress}/${tokenByIndex}/metadata.json`
@@ -293,6 +292,9 @@ if there are no listings
         // } else if (tokenURI === "") {
         //   nftArray.push({ name: tokenName, image: undefined });
         // }
+      } else {
+        setLoading(false);
+        setAllNftArray([]);
       }
     }
   };
@@ -537,8 +539,6 @@ if there are no listings
     dataFetchedRef.current = true;
     fetchInitialNftsPerCollection();
   }, []);
-
- 
 
   // useEffect(() => {
   //   if (next !== 12) {

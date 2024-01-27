@@ -25,7 +25,7 @@ const ProfileNFTList = ({
   allCollections,
   userNftFavs,
   handleAddFavoriteNft,
-  handleRemoveFavoriteNft,
+  handleRemoveFavoriteNft,userNftFavsInitial
 }) => {
   const [favoritesOption, setfavoritesOption] = useState("items");
 
@@ -583,6 +583,8 @@ const ProfileNFTList = ({
                         onClick={(e) => {
                           e.stopPropagation();
                           e.preventDefault();
+                          handleRemoveFavoriteNft(item.tokenId, item.contractAddress)
+
                         }}
                       >
                         <div className="d-flex align-items-center position-relative gap-2">

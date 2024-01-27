@@ -606,7 +606,7 @@ const CollectionList = ({
                     ))
                   )}
                 </table>
-              ) : allNftArray && allNftArray.length > 0 ? (
+              ) : allNftArray && allNftArray.length > 0  && (
                 allNftArray.map((item, index) => (
                   
                   <div
@@ -685,7 +685,7 @@ const CollectionList = ({
                           userNftFavs.find((favitem) => {
                             return (
                               favitem.contractAddress === collectionAddress                              &&
-                              favitem.tokenId === item.tokenId
+                              favitem.tokenIds.find((itemTokenIds)=>Number(itemTokenIds) === item.tokenId)
                             );
                           })
                             ? handleRemoveFavoriteNft(
@@ -702,13 +702,13 @@ const CollectionList = ({
                           <img
                             src={
                               userNftFavs &&
-                              userNftFavs.length > 0 &&
-                              userNftFavs.find((favitem) => {
-                                return (
-                                  favitem.contractAddress === collectionAddress &&
-                                  favitem.tokenId === item.tokenId
-                                );
-                              })
+                          userNftFavs.length > 0 &&
+                          userNftFavs.find((favitem) => {
+                            return (
+                              favitem.contractAddress === collectionAddress                              &&
+                              favitem.tokenIds.find((itemTokenIds)=>Number(itemTokenIds) === item.tokenId)
+                            );
+                          })
                                 ? redFavorite
                                 : emptyFavorite
                             }
@@ -721,8 +721,8 @@ const CollectionList = ({
                               userNftFavs.length > 0 &&
                               userNftFavs.find((favitem) => {
                                 return (
-                                  favitem.contractAddress === collectionAddress &&
-                                  favitem.tokenId === item.tokenId
+                                  favitem.contractAddress === collectionAddress                              &&
+                                  favitem.tokenIds.find((itemTokenIds)=>Number(itemTokenIds) === item.tokenId)
                                 );
                               })
                                 ? "fav-count-active"
@@ -759,8 +759,8 @@ const CollectionList = ({
                     </NavLink>
                   </div>
                 ))
-              ) : (
-                dummyCards.map((item, index) => (
+              )}    {loading === true && (
+             dummyCards.map((item, index) => (
                   <Skeleton
                     key={index}
                     variant="rounded"
@@ -769,17 +769,9 @@ const CollectionList = ({
                     sx={{bgcolor: "rgba(47, 128, 237, 0.05)"}}
                   />
                 ))
-              )}
+            )}
             </div>
-            {/* {loading === true && (
-              <FadeLoader
-                color={"#554fd8"}
-                loading={loading}
-                cssOverride={override}
-                aria-label="Loading Spinner"
-                data-testid="loader"
-              />
-            )} */}
+        
           </div>
         </div>
       </div>

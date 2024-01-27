@@ -14,7 +14,7 @@ const Home = ({
   cfxPrice,
   handleAddFavoriteNft,
   handleRemoveFavoriteNft,
-  userNftFavs,
+  userNftFavs,userNftFavsInitial
 }) => {
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -30,6 +30,7 @@ const Home = ({
         recentlyListedNfts={recentlyListedNfts}
         cfxPrice={cfxPrice}
         userNftFavs={userNftFavs}
+        userNftFavsInitial={userNftFavsInitial}
         handleAddFavoriteNft={handleAddFavoriteNft}
         handleRemoveFavoriteNft={handleRemoveFavoriteNft}
       />

@@ -908,6 +908,7 @@ function App() {
               handleAddFavoriteNft={handleAddFavoriteNft}
               handleRemoveFavoriteNft={handleRemoveFavoriteNft}
               userNftFavs={userNftFavs}
+            userNftFavsInitial={userNftFavsInitial}
             />
           }
         />
@@ -944,7 +945,7 @@ function App() {
                 setCount(count + 1);
               }}
               userCollectionFavs={userCollectionFavs}
-              userNftFavs={userNftFavs}
+              userNftFavs={userNftFavsInitial}
               userData={userData}
               allCollections={allCollections}
               handleAddFavoriteNft={handleAddFavoriteNft}
@@ -971,6 +972,8 @@ function App() {
               allCollections={allCollections}
               handleAddFavoriteNft={handleAddFavoriteNft}
               handleRemoveFavoriteNft={handleRemoveFavoriteNft}
+              userNftFavsInitial={userNftFavsInitial}
+
             />
           }
         />

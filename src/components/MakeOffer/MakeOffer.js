@@ -115,7 +115,7 @@ const MakeOffer = ({
                       className="collection-name"
                       style={{ color: "white" }}
                     >
-                      Conflux Network
+                      Conflux eSpace
                     </span>
                   </div>
                 </div>

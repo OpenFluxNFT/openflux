@@ -22,7 +22,7 @@ const Footer = () => {
                   <h6 className="footer-title mb-0">Logo</h6>
                 </div>
                 <p className="footer-desc mb-0">
-                  The leading NFT Marketplace on Conflux Network. Home to the
+                  The leading NFT Marketplace on Conflux eSpace. Home to the
                   next generation of digital creators. Discover the best NFT
                   collections.
                 </p>

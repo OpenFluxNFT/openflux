@@ -21,7 +21,7 @@ const settings = {
 const mainHeroItems = [
   {
     title: "Discover, collect, & sell Extraordinary NFTs ",
-    desc: "The leading NFT Marketplace on Conflux Network, home to the next generation of digital creators, where you can discover the best NFT collections.",
+    desc: "The leading NFT Marketplace on Conflux eSpace, home to the next generation of digital creators, where you can discover the best NFT collections.",
     button: "explore",
   },
   {

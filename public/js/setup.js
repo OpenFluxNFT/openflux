@@ -1,3 +1,4 @@
+ 
 const BigNumber = window.BigNumber;
 window.IS_CONNECTED = false;
 window.WALLET_TYPE = "";
@@ -290,31 +291,23 @@ window.isApprovedBuy = async (tokenType, amount) => {
   // );
 };
 
-window.isApprovedNFT = async (token, type, address) => {
-  if (type === "timepiece") {
+window.isApprovedNFT = async (token, collectionAddress, address) => {
+  let abi_result = await fetch(
+    `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress}`,
+    { method: "GET" }
+  )
+    .then((res) => res.json())
+    .then((data) => {
+      return data;
+    })
+    .catch((e) => {
+      console.error(e);
+    });
+
+  if (abi_result && abi_result.message === "OK") {
+    const abi = JSON.parse(abi_result.result);
     window.web3 = new Web3(window.ethereum);
-    let contract = new window.web3.eth.Contract(
-      window.TIMEPIECE_ABI,
-      window.config.nft_timepiece_address
-    );
-
-    let approved = await contract.methods.getApproved(token).call();
-
-    let approvedAll = await contract.methods
-      .isApprovedForAll(address, window.config.nft_marketplace_address)
-      .call();
-
-    console.log(approvedAll, "approvedAll");
-    approved = approved.toLowerCase();
-
-    if (approved === window.config.nft_marketplace_address || approvedAll) {
-      return true;
-    } else return false;
-  } else if (type === "land") {
-    let contract = new window.web3.eth.Contract(
-      window.WOD_ABI,
-      window.config.nft_land_address
-    );
+    let contract = new window.web3.eth.Contract(abi, collectionAddress);
 
     let approved = await contract.methods.getApproved(token).call();
     let approvedAll = await contract.methods
@@ -325,56 +318,33 @@ window.isApprovedNFT = async (token, type, address) => {
     if (approved === window.config.nft_marketplace_address || approvedAll) {
       return true;
     } else return false;
-  } else {
-    let contract = new window.web3.eth.Contract(
-      window.CAWS_ABI,
-      window.config.nft_caws_address
-    );
-
-    let approved = await contract.methods.getApproved(token).call();
-    let approvedAll = await contract.methods
-      .isApprovedForAll(address, window.config.nft_marketplace_address)
-      .call();
-
-    approved = approved.toLowerCase();
-
-    if (approved === window.config.nft_marketplace_address || approvedAll) {
-      return true;
-    } else return false;
-  }
+  } else return false
 };
 
-window.approveNFT = async (type) => {
+window.approveNFT = async (collectionAddress) => {
   const coinbase = await getCoinbase();
   window.web3 = new Web3(window.ethereum);
-  if (type === "timepiece") {
-    let contract = new window.web3.eth.Contract(
-      window.TIMEPIECE_ABI,
-      window.config.nft_timepiece_address
-    );
+  let abi_result = await fetch(
+    `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress}`,
+    { method: "GET" }
+  )
+    .then((res) => res.json())
+    .then((data) => {
+      return data;
+    })
+    .catch((e) => {
+      console.error(e);
+    });
+    if (abi_result && abi_result.message === "OK") {
+      const abi = JSON.parse(abi_result.result);
+ 
+    let contract = new window.web3.eth.Contract(abi, collectionAddress);
 
     await contract.methods
       .setApprovalForAll(window.config.nft_marketplace_address, true)
       .send({ from: coinbase });
-  } else if (type === "land") {
-    console.log("land");
-    let contract = new window.web3.eth.Contract(
-      window.WOD_ABI,
-      window.config.nft_land_address
-    );
-
-    await contract.methods
-      .setApprovalForAll(window.config.nft_marketplace_address, true)
-      .send({ from: coinbase });
-  } else {
-    let contract = new window.web3.eth.Contract(
-      window.CAWS_ABI,
-      window.config.nft_caws_address
-    );
-    await contract.methods
-      .setApprovalForAll(window.config.nft_marketplace_address, true)
-      .send({ from: coinbase });
-  }
+    }
+   
 };
 
 window.cancelListNFT = async (nftAddress, tokenId, priceType, tokenType) => {
@@ -438,47 +408,19 @@ window.updateListingNFT = async (token, price, priceType, type, tokenType) => {
     .send({ from: coinbase });
 };
 
-window.listNFT = async (token, price, priceType, type = "", tokenType) => {
-  let nft_address, price_nft, price_address;
+window.listNFT = async (nftAddress, tokenId, price, tokenAddr, duration) => {
+ 
   const coinbase = await getCoinbase();
-
-  console.log(token, price, priceType, type, tokenType);
-  if (type === "timepiece") {
-    nft_address = window.config.nft_timepiece_address;
-  } else if (type === "land") {
-    nft_address = window.config.nft_land_address;
-  } else {
-    nft_address = window.config.nft_caws_address;
-  }
-
-  if (priceType === 0) {
-    price_nft = 0;
-    price_address = "0x0000000000000000000000000000000000000000";
-  }
-
-  if (priceType === 1) {
-    price_nft = 1;
-    price_address =
-      tokenType === "dypv2"
-        ? window.config.token_dypius_new_address
-        : window.config.dyp_token_address;
-  }
-
+  window.web3 = new Web3(window.ethereum);
+ 
   const marketplace = new window.web3.eth.Contract(
     window.MARKETPLACE_ABI,
     window.config.nft_marketplace_address
   );
-
-  const gasPrice = await window.web3.eth.getGasPrice();
-  const currentGwei = window.web3.utils.fromWei(gasPrice, "gwei");
-  const increasedGwei = parseInt(currentGwei) + 3;
-
-  const transactionParameters = {
-    gasPrice: window.web3.utils.toWei(increasedGwei.toString(), "gwei"),
-  };
+ 
 
   await marketplace.methods
-    .listItem(nft_address, token, price, [price_nft, price_address])
+    .listNFT(nftAddress, tokenId, price, tokenAddr, duration)
     .send({ from: coinbase });
 };
 
@@ -846,22 +788,21 @@ async function getMyNFTs(address, type = "") {
 
 async function getMyConfluxNFTs(address, limit) {
   let contract;
-  
-    contract = new window.confluxWeb3.eth.Contract(
-      window.CONFLUX_NFT_ABI,
-      window.config.nft_conflux_address
-    );
 
-    const balance = await contract.methods.balanceOf(address).call();
+  contract = new window.confluxWeb3.eth.Contract(
+    window.CONFLUX_NFT_ABI,
+    window.config.nft_conflux_address
+  );
 
-    const tokens = await Promise.all(
-      range(0, limit - 1).map((i) =>
-        contract.methods.tokenByIndex(address, i).call()
-      )
-    );
+  const balance = await contract.methods.balanceOf(address).call();
 
-    return tokens;
-   
+  const tokens = await Promise.all(
+    range(0, limit - 1).map((i) =>
+      contract.methods.tokenByIndex(address, i).call()
+    )
+  );
+
+  return tokens;
 }
 
 async function myNftListContract(address) {
@@ -3894,7 +3835,7 @@ async function connectWallet() {
       console.error(e);
       throw new Error("User denied wallet connection!");
     }
-  }else if (window.web3) {
+  } else if (window.web3) {
     window.web3 = new Web3(window.web3.currentProvider);
     console.log("connected to old web3");
     onConnect();

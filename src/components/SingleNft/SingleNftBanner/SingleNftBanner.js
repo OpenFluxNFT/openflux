@@ -11,6 +11,7 @@ import { Skeleton } from "@mui/material";
 import Box from "@mui/material/Box";
 import getFormattedNumber from "../../../hooks/get-formatted-number";
 import { FadeLoader } from "react-spinners";
+import { useParams } from "react-router-dom";
 
 const SingleNftBanner = ({
   chainId,
@@ -24,7 +25,13 @@ const SingleNftBanner = ({
 }) => {
   const [isOwner, setIsOwner] = useState(false);
   const [isListed, setIsListed] = useState(false);
-  const [duration, setDuration] = useState(1);
+  const [duration, setDuration] = useState(0);
+  const [nftPrice, setNftPrice] = useState(1);
+  const [IsApproveList, setIsApproveList] = useState(false);
+  const [purchaseStatus, setPurchaseStatus] = useState("");
+  const [purchaseColor, setPurchaseColor] = useState("#00FECF");
+  const [sellStatus, setsellStatus] = useState(""); //sell
+  const [sellLoading, setsellLoading] = useState(false); //sell
 
   const override = {
     display: "block",
@@ -32,9 +39,96 @@ const SingleNftBanner = ({
     borderColor: "#554fd8",
   };
 
+  const { nftId, nftAddress } = useParams();
+  const { BigNumber } = window;
+  const checkNftApprovalForListing = async () => {
+    await window.isApprovedNFT(nftId, nftAddress, coinbase).then((data) => {
+      setsellStatus('sell')
+      setIsApproveList(data);
+    });
+  };
+
+  const handleListNft = async () => {
+    const isApproved = await window
+      .isApprovedNFT(nftId, nftAddress, coinbase)
+      .then((data) => {
+        return data;
+      });
+    const newPrice = new BigNumber(nftPrice * 10e18).toFixed();
+    console.log(isApproved);
+    if (isApproved) {
+      setsellLoading(true);
+      setsellStatus("sell");
+      setPurchaseStatus("Listing NFT in progress...");
+      setPurchaseColor("#00FECF");
+
+      await window
+        .listNFT(nftAddress,nftId, newPrice, window.config.wcfx_address, duration)
+        .then((result) => {
+          setsellLoading(false);
+          setsellStatus("success");
+          setPurchaseStatus("NFT successfully listed!");
+          setPurchaseColor("#00FECF");
+          setIsListed(true);
+          setTimeout(() => {
+            setPurchaseStatus("");
+            setPurchaseColor("#00FECF");
+            setsellStatus("sell");
+          }, 3000);
+        })
+        .catch((e) => {
+          setsellLoading(false);
+          setsellStatus("failed");
+          setPurchaseStatus(e?.message);
+          setPurchaseColor("#FF6232");
+          setTimeout(() => {
+            setPurchaseStatus("");
+            setPurchaseColor("#00FECF");
+            setsellStatus("sell");
+          }, 3000);
+          console.error(e);
+        });
+    } else {
+      setsellLoading(true);
+      setsellStatus("approve");
+      setPurchaseStatus("Approving NFT for listing in progress..");
+      setPurchaseColor("#00FECF");
+
+      await window
+        .approveNFT(nftAddress)
+        .then((result) => {
+          setTimeout(() => {
+            setsellStatus("sell");
+            setPurchaseStatus("");
+            setPurchaseColor("#00FECF");
+          }, 3000);
+          setIsApproveList(true);
+          setsellLoading(false);
+          setsellStatus("success");
+          setPurchaseStatus("Successfully approved! You can list your nft");
+          setPurchaseColor("#00FECF");
+        })
+        .catch((e) => {
+          setTimeout(() => {
+            setsellStatus("approve");
+            setPurchaseStatus("");
+            setPurchaseColor("#00FECF");
+          }, 3000);
+
+          setsellLoading(false);
+          setsellStatus("failed");
+          setPurchaseStatus(e?.message);
+          setPurchaseColor("#FF6232");
+          console.log(e);
+        });
+    }
+  };
+
   useEffect(() => {
     if (nftData && nftData.owner) {
+      checkNftApprovalForListing();
       if (coinbase) {
+        checkNftApprovalForListing();
         if (coinbase.toLowerCase() === nftData.owner.toLowerCase()) {
           setIsOwner(true);
         }
@@ -46,7 +140,8 @@ const SingleNftBanner = ({
     }
   }, [nftData]);
 
-  console.log(nftData);
+  // console.log(nftId, nftAddress)
+
   return (
     <div className="container-lg">
       <div className="nft-banner-wrapper p-3">
@@ -189,7 +284,13 @@ const SingleNftBanner = ({
           </div>
           <div className="col-lg-5">
             <div className="single-nft-right-info-wrapper d-flex flex-column p-3">
-              <div className={`d-flex flex-column gap-2 flex-div ${nftData.name ? 'justify-content-between' : 'justify-content-start'}`}>
+              <div
+                className={`d-flex flex-column gap-2 flex-div ${
+                  nftData.name
+                    ? "justify-content-between"
+                    : "justify-content-start"
+                }`}
+              >
                 <div className="d-flex justify-content-between gap-2 align-items-center">
                   <div className="d-flex align-items-center gap-2">
                     <span className="nft-item-name-right">
@@ -245,9 +346,18 @@ const SingleNftBanner = ({
                       <span className="current-price-text">Current Price</span>
                       <div className="d-flex flex-column flex-lg-row flex-md-row gap-2 align-items-center">
                         <img src={cfx} alt="" />
-                        <input type="number" className="uni-input" />
+                        <input
+                          type="number"
+                          className="uni-input"
+                          value={nftPrice}
+                          onChange={(e) => {
+                            setNftPrice(e.target.value);
+                          }}
+                        />
                         <span className="nft-price-crypto"> WCFX</span>
-                        <span className="nft-price-usd">($ --)</span>
+                        <span className="nft-price-usd">
+                          ($ {getFormattedNumber(nftPrice * cfxPrice)})
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -283,11 +393,27 @@ const SingleNftBanner = ({
                       <div className="d-flex align-items-center gap-1">
                         <div
                           className={`duration-tab ${
+                            duration === 0 && "duration-tab-active"
+                          } d-flex align-items-center justify-content-center`}
+                          onClick={() => setDuration(0)}
+                        >
+                          <span>1 Day</span>
+                        </div>
+                        <div
+                          className={`duration-tab ${
                             duration === 1 && "duration-tab-active"
                           } d-flex align-items-center justify-content-center`}
                           onClick={() => setDuration(1)}
                         >
-                          <span>1 Day</span>
+                          <span>3 Days</span>
+                        </div>
+                        <div
+                          className={`duration-tab ${
+                            duration === 2 && "duration-tab-active"
+                          } d-flex align-items-center justify-content-center`}
+                          onClick={() => setDuration(2)}
+                        >
+                          <span>7 Days</span>
                         </div>
                         <div
                           className={`duration-tab ${
@@ -295,48 +421,32 @@ const SingleNftBanner = ({
                           } d-flex align-items-center justify-content-center`}
                           onClick={() => setDuration(3)}
                         >
-                          <span>3 Days</span>
-                        </div>
-                        <div
-                          className={`duration-tab ${
-                            duration === 7 && "duration-tab-active"
-                          } d-flex align-items-center justify-content-center`}
-                          onClick={() => setDuration(7)}
-                        >
-                          <span>7 Days</span>
-                        </div>
-                        <div
-                          className={`duration-tab ${
-                            duration === 14 && "duration-tab-active"
-                          } d-flex align-items-center justify-content-center`}
-                          onClick={() => setDuration(14)}
-                        >
                           <span>14 Days</span>
                         </div>
                         <div
                           className={`duration-tab ${
-                            duration === 21 && "duration-tab-active"
+                            duration === 5 && "duration-tab-active"
                           } d-flex align-items-center justify-content-center`}
-                          onClick={() => setDuration(21)}
+                          onClick={() => setDuration(5)}
                         >
                           <span>21 Days</span>
                         </div>
                         <div
                           className={`duration-tab ${
-                            duration === 30 && "duration-tab-active"
+                            duration === 6 && "duration-tab-active"
                           } d-flex align-items-center justify-content-center`}
-                          onClick={() => setDuration(30)}
+                          onClick={() => setDuration(6)}
                         >
                           <span>1 Month</span>
                         </div>
                       </div>
                     </div>
-                    <span
+                    {/* <span
                       className="current-price-text"
                       style={{ fontSize: "10px" }}
                     >
                       There is a listing fee of 0.1% for the selected duration
-                    </span>
+                    </span> */}
                   </>
                 ) : isOwner && nftData.name && isListed ? (
                   <div className="nft-price-wrapper px-3 py-1 d-flex align-items-center justify-content-between">
@@ -380,18 +490,59 @@ const SingleNftBanner = ({
                   </div>
                 ) : isOwner && !isListed ? (
                   <div className="d-flex align-items-center gap-2 justify-content-center mt-4">
-                    <button className="updateoffer-btn  px-3 py-1 col-lg-3">
-                      List Item
-                    </button>
+                    {isConnected ? (
+                      <button
+                        className="updateoffer-btn  px-3 py-1 col-lg-4"
+                        onClick={handleListNft}
+                      >
+                        {sellLoading  ? (
+                              <div
+                                className="spinner-border spinner-border-sm text-light"
+                                role="status"
+                              >
+                                <span className="visually-hidden">
+                                  Loading...
+                                </span>
+                              </div>
+                            ) : sellStatus === "sell" ? (
+                              "List NFT"
+                            ) : sellStatus === "success" ? (
+                              "Success"
+                            ) : sellStatus === "approve" ||
+                              sellStatus === "" ? (
+                              "Approve list"
+                            ) : (
+                              "Failed"
+                            )}
+                      </button>
+                    ) : (
+                      <button
+                        className="btn connect-btn2 d-flex align-items-center gap-2"
+                        onClick={handleSignup}
+                      >
+                        Connect Wallet
+                      </button>
+                    )}
                   </div>
                 ) : isOwner && isListed ? (
                   <div className="d-flex align-items-center gap-2 justify-content-center mt-4">
-                    <button className="updateoffer-btn px-3 py-1 col-lg-3">
-                      Update
-                    </button>
-                    <button className="deleteoffer-btn  px-3 py-1 col-lg-3">
-                      Unlist
-                    </button>
+                    {isConnected ? (
+                      <>
+                        <button className="updateoffer-btn px-3 py-1 col-lg-3">
+                          Update
+                        </button>
+                        <button className="deleteoffer-btn  px-3 py-1 col-lg-3">
+                          Unlist
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        className="btn connect-btn2 d-flex align-items-center gap-2"
+                        onClick={handleSignup}
+                      >
+                        Connect Wallet
+                      </button>
+                    )}
                   </div>
                 ) : (
                   <></>

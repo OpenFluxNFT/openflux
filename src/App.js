@@ -202,6 +202,7 @@ function App() {
       });
     const web3 = window.confluxWeb3;
     if (result && result.status === 200) {
+      console.log(result.data)
       const recentlyListed = await Promise.all(
         result.data.map(async (item) => {
           const abiresult = await axios.get(

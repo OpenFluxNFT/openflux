@@ -1009,6 +1009,7 @@ function App() {
               recentlyListedNfts={recentlyListedNfts}
               handleSwitchNetwork={handleSwitchNetwork}
               cfxPrice={cfxPrice}
+              onRefreshListings={handleGetRecentlyListedNfts}
             />
           }
         />

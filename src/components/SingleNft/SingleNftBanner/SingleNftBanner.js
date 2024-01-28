@@ -61,8 +61,8 @@ const SingleNftBanner = ({
       .then((data) => {
         return data;
       });
-    const newPrice = new BigNumber(nftPrice * 10e18).toFixed();
-    console.log(isApproved);
+    const newPrice = new BigNumber(nftPrice * 1e18).toFixed();
+    console.log(newPrice);
     if (isApproved) {
       setsellLoading(true);
       setsellStatus("sell");
@@ -150,9 +150,12 @@ const SingleNftBanner = ({
           setcancelStatus("");
           setPurchaseColor("#00FECF");
           setPurchaseStatus("");
+          
         }, 3000);
         // handleRefreshList(type, tokenId);
         handleRefreshData();
+        setIsListed(false)
+        setNftPrice(1)
         setcancelLoading(false);
         setcancelStatus("success");
         setPurchaseColor("#00FECF");
@@ -204,7 +207,7 @@ const SingleNftBanner = ({
     }
   }, [nftData]);
 
-  console.log(nftData);
+  // console.log(nftData);
 
   return (
     <div className="container-lg">

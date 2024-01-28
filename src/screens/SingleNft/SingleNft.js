@@ -74,7 +74,6 @@ const SingleNft = ({
       let expiresAt = 0;
       if (listednftsArray.length > 0) {
         const filteredResult = listednftsArray.find((item) => {
-          console.log(item.nftAddress, nftAddress);
           return (
             item.tokenId === nftId &&
             item.nftAddress.toLowerCase() === nftAddress.toLowerCase()
@@ -136,80 +135,84 @@ const SingleNft = ({
       .catch((e) => {
         console.error(e);
       });
-    if (
-      abiresult &&
-      abiresult.status === 200 &&
-      listednfts &&
-      listednfts.status === 200
-    ) {
-      const listednftsArray = listednfts.data.listings;
-      const abi = JSON.parse(abiresult.data.result);
-      const collection_contract = new web3.eth.Contract(abi, nftAddress);
-      const owner = await collection_contract.methods
-        .ownerOf(nftId)
-        .call()
-        .catch((e) => {
-          console.error(e);
-        });
+    if (listednfts && listednfts.status === 200) {
+      if (
+        abiresult &&
+        abiresult.status === 200 &&
+        listednfts &&
+        listednfts.status === 200
+      ) {
+        const listednftsArray = listednfts.data.listings;
+        const abi = JSON.parse(abiresult.data.result);
+        const collection_contract = new web3.eth.Contract(abi, nftAddress);
+        const owner = await collection_contract.methods
+          .ownerOf(nftId)
+          .call()
+          .catch((e) => {
+            console.error(e);
+          });
 
-      const collectionName = await collection_contract.methods
-        .name()
-        .call()
-        .catch((e) => {
-          console.error(e);
-        });
-      let isListed = false;
-      let price = 0;
-      let expiresAt = 0;
-      if (listednftsArray.length > 0) {
-        const filteredResult = listednftsArray.find((item) => {
-          return (
-            item.tokenId === nftId &&
-            item.nftAddress.toLowerCase() === nftAddress.toLowerCase()
+        const collectionName = await collection_contract.methods
+          .name()
+          .call()
+          .catch((e) => {
+            console.error(e);
+          });
+        let isListed = false;
+        let price = 0;
+        let expiresAt = 0;
+        if (listednftsArray.length > 0) {
+          const filteredResult = listednftsArray.find((item) => {
+            return (
+              item.tokenId === nftId &&
+              item.nftAddress.toLowerCase() === nftAddress.toLowerCase()
+            );
+          });
+
+          if (filteredResult) {
+            isListed = true;
+            price = filteredResult.price;
+            expiresAt = filteredResult.expiresAt;
+          } else {
+            isListed = false;
+            price = 0;
+            expiresAt = 0;
+          }
+          const listingIndex = listednftsArray.findIndex(
+            (object) =>
+              object.nftAddress.toLowerCase() === nftAddress.toLowerCase() &&
+              object.tokenId === nftId
           );
-        });
+          const nftdata = await fetch(
+            `https://cdnflux.dypius.com/collectionsmetadatas/${nftAddress}/${nftId}/metadata.json`
+          )
+            .then((res) => res.json())
+            .then((data) => {
+              return data;
+            })
+            .catch((err) => {
+              console.log(err.message);
+            });
+          if (nftdata) {
+            finalArray.push({
+              ...nftdata,
+              ...filteredResult,
+              owner: owner,
+              collectionName: collectionName,
+              isListed: isListed,
+              price: price,
+              listingIndex: listingIndex,
+              expiresAt: expiresAt,
+            });
 
-        if (filteredResult) {
-          isListed = true;
-          price = filteredResult.price;
-          expiresAt = filteredResult.expiresAt;
-        } else {
-          isListed = false;
-          price = 0;
-          expiresAt = 0;
+            setNftData(...finalArray);
+          }
         }
-        const listingIndex = listednftsArray.findIndex(
-          (object) =>
-            object.nftAddress.toLowerCase() === nftAddress.toLowerCase() &&
-            object.tokenId === nftId
-        );
-        const nftdata = await fetch(
-          `https://cdnflux.dypius.com/collectionsmetadatas/${nftAddress}/${nftId}/metadata.json`
-        )
-          .then((res) => res.json())
-          .then((data) => {
-            return data;
-          })
-          .catch((err) => {
-            console.log(err.message);
-          });
-        if (nftdata) {
-          finalArray.push({
-            ...nftdata,
-            ...filteredResult,
-            owner: owner,
-            collectionName: collectionName,
-            isListed: isListed,
-            price: price,
-            listingIndex: listingIndex,
-            expiresAt: expiresAt,
-          });
-
-          setNftData(...finalArray);
-        }
+        onRefreshListings();
       }
     }
   };
+
 
   const fetchInitialNftsPerCollection = async () => {
     setLoading(true);
@@ -243,7 +246,7 @@ const SingleNft = ({
       }
 
       if (totalSupply && totalSupply > 0) {
-        const limit = totalSupply >= 12 ? 12 : totalSupply;
+        const limit = totalSupply >= 30 ? 30 : totalSupply;
         await Promise.all(
           window.range(0, limit - 1).map(async (i) => {
             let tokenByIndex = 0;
@@ -320,9 +323,7 @@ const SingleNft = ({
         handleSignup={handleSignup}
         cfxPrice={cfxPrice}
         handleRefreshData={() => {
-          getUpdatedNftData().then(() => {
-            onRefreshListings();
-          });
+          getUpdatedNftData();
         }}
         handleSwitchNetwork={handleSwitchNetwork}
       />

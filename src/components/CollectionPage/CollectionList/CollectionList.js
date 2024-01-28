@@ -21,7 +21,8 @@ import emptyFavorite from "../../Home/RecentlyListed/assets/emptyFavorite.svg";
 import redFavorite from "../../Home/RecentlyListed/assets/redFavorite.svg";
 import { FadeLoader } from "react-spinners";
 import { shortAddress } from "../../../hooks/shortAddress";
-
+import getFormattedNumber from "../../../hooks/get-formatted-number";
+import moment from "moment";
 const CollectionList = ({
   currentCollection,
   allNftArray,
@@ -30,6 +31,7 @@ const CollectionList = ({
   handleAddFavoriteNft,
   userNftFavs,
   handleRemoveFavoriteNft,
+  cfxPrice,
 }) => {
   const windowSize = useWindowSize();
   const [openFilters, setOpenFilters] = useState(false);
@@ -132,7 +134,6 @@ const CollectionList = ({
     borderColor: "#554fd8",
   };
   const [gridView, setGridView] = useState("small-grid");
-
 
   return (
     <>
@@ -535,13 +536,25 @@ const CollectionList = ({
                             )}
                             {item.name}
                           </td>
-                          <td className="table-item col-2">TBD CFX</td>
-                          <td className="table-item col-2">TBD CFX</td>
-                          <td className="table-item col-2">TBD CFX </td>
                           <td className="table-item col-2">
-                            {shortAddress(item.owner)}
+                            {item.seller &&
+                              getFormattedNumber(item.price / 10 ** 18)}
                           </td>
-                          <td className="table-item col-2">TBD</td>
+                          <td className="table-item col-2">
+                            {item.seller && " TBD CFX"}
+                          </td>
+                          <td className="table-item col-2">
+                            {item.seller && " TBD CFX"}{" "}
+                          </td>
+                          <td className="table-item col-2">
+                            {shortAddress(item.owner ?? item.seller)}
+                          </td>
+                          <td className="table-item col-2">
+                            {" "}
+                            {moment
+                              .duration(item.blockTimestamp * 1000 - Date.now())
+                              .humanize(true)}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -555,7 +568,7 @@ const CollectionList = ({
                             variant="rounded"
                             width={"100%"}
                             height={40}
-                            sx={{bgcolor: "rgba(47, 128, 237, 0.05)"}}
+                            sx={{ bgcolor: "rgba(47, 128, 237, 0.05)" }}
                           />
                         </td>
                         <td>
@@ -572,7 +585,7 @@ const CollectionList = ({
                             variant="rounded"
                             width={"100%"}
                             height={40}
-                            sx={{bgcolor: "rgba(47, 128, 237, 0.05)"}}
+                            sx={{ bgcolor: "rgba(47, 128, 237, 0.05)" }}
                           />
                         </td>
                         <td>
@@ -581,7 +594,7 @@ const CollectionList = ({
                             variant="rounded"
                             width={"100%"}
                             height={40}
-                            sx={{bgcolor: "rgba(47, 128, 237, 0.05)"}}
+                            sx={{ bgcolor: "rgba(47, 128, 237, 0.05)" }}
                           />
                         </td>
                         <td>
@@ -590,7 +603,7 @@ const CollectionList = ({
                             variant="rounded"
                             width={"100%"}
                             height={40}
-                            sx={{bgcolor: "rgba(47, 128, 237, 0.05)"}}
+                            sx={{ bgcolor: "rgba(47, 128, 237, 0.05)" }}
                           />
                         </td>
                         <td>
@@ -599,16 +612,17 @@ const CollectionList = ({
                             variant="rounded"
                             width={"100%"}
                             height={40}
-                            sx={{bgcolor: "rgba(47, 128, 237, 0.05)"}}
+                            sx={{ bgcolor: "rgba(47, 128, 237, 0.05)" }}
                           />
                         </td>
                       </>
                     ))
                   )}
                 </table>
-              ) : allNftArray && allNftArray.length > 0  && (
+              ) : (
+                allNftArray &&
+                allNftArray.length > 0 &&
                 allNftArray.map((item, index) => (
-                  
                   <div
                     className="recently-listed-card p-3 d-flex flex-column"
                     key={index}
@@ -684,8 +698,11 @@ const CollectionList = ({
                           userNftFavs.length > 0 &&
                           userNftFavs.find((favitem) => {
                             return (
-                              favitem.contractAddress === collectionAddress                              &&
-                              favitem.tokenIds.find((itemTokenIds)=>Number(itemTokenIds) === item.tokenId)
+                              favitem.contractAddress === collectionAddress &&
+                              favitem.tokenIds.find(
+                                (itemTokenIds) =>
+                                  Number(itemTokenIds) === item.tokenId
+                              )
                             );
                           })
                             ? handleRemoveFavoriteNft(
@@ -702,13 +719,17 @@ const CollectionList = ({
                           <img
                             src={
                               userNftFavs &&
-                          userNftFavs.length > 0 &&
-                          userNftFavs.find((favitem) => {
-                            return (
-                              favitem.contractAddress === collectionAddress                              &&
-                              favitem.tokenIds.find((itemTokenIds)=>Number(itemTokenIds) === item.tokenId)
-                            );
-                          })
+                              userNftFavs.length > 0 &&
+                              userNftFavs.find((favitem) => {
+                                return (
+                                  favitem.contractAddress ===
+                                    collectionAddress &&
+                                  favitem.tokenIds.find(
+                                    (itemTokenIds) =>
+                                      Number(itemTokenIds) === item.tokenId
+                                  )
+                                );
+                              })
                                 ? redFavorite
                                 : emptyFavorite
                             }
@@ -721,8 +742,12 @@ const CollectionList = ({
                               userNftFavs.length > 0 &&
                               userNftFavs.find((favitem) => {
                                 return (
-                                  favitem.contractAddress === collectionAddress                              &&
-                                  favitem.tokenIds.find((itemTokenIds)=>Number(itemTokenIds) === item.tokenId)
+                                  favitem.contractAddress ===
+                                    collectionAddress &&
+                                  favitem.tokenIds.find(
+                                    (itemTokenIds) =>
+                                      Number(itemTokenIds) === item.tokenId
+                                  )
                                 );
                               })
                                 ? "fav-count-active"
@@ -742,36 +767,54 @@ const CollectionList = ({
                         </h6>
                         <img src={checkIcon} alt="" />
                       </div>
-                      <div className="d-flex align-items-center mt-2 gap-3">
-                        <h6
-                          className="cfx-price mb-0"
-                          style={{ fontSize: "10px" }}
-                        >
-                          1254.89 CFX
-                        </h6>
-                        <span className="usd-price" style={{ fontSize: "9px" }}>
-                          ($ 654,874.86)
-                        </span>
-                      </div>
+                      {item.seller && (
+                        <div className="d-flex align-items-center mt-2 gap-3">
+                          <h6
+                            className="cfx-price mb-0"
+                            style={{ fontSize: "10px" }}
+                          >
+                            {getFormattedNumber(item.price / 10 ** 18)} WCFX
+                          </h6>
+                          <span
+                            className="usd-price"
+                            style={{ fontSize: "9px" }}
+                          >
+                            (${" "}
+                            {getFormattedNumber(
+                              (item.price / 10 ** 18) * cfxPrice
+                            )}
+                            )
+                          </span>
+                        </div>
+                      )}
                       <div className="mt-3">
-                        <button className="buy-btn w-100">Buy</button>
+                        {item.seller ? (
+                          <button className="buy-btn w-100">Buy</button>
+                        ) : (
+                          <NavLink
+                            className="buy-btn w-100 d-flex justify-content-center "
+                            to={`/nft/${item.tokenId}/${collectionAddress}`}
+                            style={{ textDecoration: "none" }}
+                          >
+                            View Details
+                          </NavLink>
+                        )}
                       </div>
                     </NavLink>
                   </div>
                 ))
-              )}    {loading === true && (
-             dummyCards.map((item, index) => (
+              )}{" "}
+              {loading === true &&
+                dummyCards.map((item, index) => (
                   <Skeleton
                     key={index}
                     variant="rounded"
                     width={"100%"}
                     height={250}
-                    sx={{bgcolor: "rgba(47, 128, 237, 0.05)"}}
+                    sx={{ bgcolor: "rgba(47, 128, 237, 0.05)" }}
                   />
-                ))
-            )}
+                ))}
             </div>
-        
           </div>
         </div>
       </div>

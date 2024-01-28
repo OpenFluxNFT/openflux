@@ -273,7 +273,7 @@ function App() {
       });
     const web3 = window.confluxWeb3;
     if (result && result.status === 200) {
-      console.log(result.data)
+      handleGetRecentlyListedNfts()
     }
   };
 
@@ -968,6 +968,7 @@ function App() {
               allCollections={allCollections}
               handleAddFavoriteNft={handleAddFavoriteNft}
               handleRemoveFavoriteNft={handleRemoveFavoriteNft}
+              cfxPrice={cfxPrice}
             />
           }
         />

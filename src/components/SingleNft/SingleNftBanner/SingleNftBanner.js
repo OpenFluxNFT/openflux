@@ -155,7 +155,8 @@ const SingleNftBanner = ({
         // handleRefreshList(type, tokenId);
         handleRefreshData();
         setIsListed(false)
-        setNftPrice(1)
+        setNftPrice(1);
+        setDuration(0);
         setcancelLoading(false);
         setcancelStatus("success");
         setPurchaseColor("#00FECF");

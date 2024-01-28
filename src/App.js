@@ -260,6 +260,23 @@ function App() {
     }
   };
 
+  const handleGetRecentlyListedNftsCache = async () => {
+    const result = await axios
+      .get(`${baseURL}/api/refresh-recent-listings-cache`, {
+        headers: {
+          cascadestyling:
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+    const web3 = window.confluxWeb3;
+    if (result && result.status === 200) {
+      console.log(result.data)
+    }
+  };
+
   const handleGetUserFavNfts = async (nftData) => {
     // setuserNftFavs(result.data.nftFavorites);
     if (nftData.length > 0) {
@@ -1009,7 +1026,7 @@ function App() {
               recentlyListedNfts={recentlyListedNfts}
               handleSwitchNetwork={handleSwitchNetwork}
               cfxPrice={cfxPrice}
-              onRefreshListings={handleGetRecentlyListedNfts}
+              onRefreshListings={handleGetRecentlyListedNftsCache}
             />
           }
         />

@@ -77,7 +77,7 @@ class TOKEN {
 window.config = {
   nft_marketplace_address: "0x74d66ecb2bdce89a794109371a30bb9080d7752a",
   conflux_endpoint: "https://evm.confluxrpc.com/",
-  wcfx_address: "0xfe97E85d13ABD9c1c33384E796F10B73905637cE",
+  wcfx_address: "0x14b2d3bc65e74dae1030eafd8ac30c533c976a9b",
 };
 
 window.confluxWeb3 = new Web3(window.config.conflux_endpoint);
@@ -347,19 +347,9 @@ window.approveNFT = async (collectionAddress) => {
    
 };
 
-window.cancelListNFT = async (nftAddress, tokenId, priceType, tokenType) => {
-  let price_address;
-
-  if (priceType === 0) {
-    price_address = "0x0000000000000000000000000000000000000000";
-  }
-
-  if (priceType === 1) {
-    price_address =
-      tokenType === "dypv2"
-        ? window.config.token_dypius_new_address
-        : window.config.dyp_token_address;
-  }
+window.cancelListNFT = async (nftAddress,listingIndex) => {
+  const coinbase = await getCoinbase();
+ 
 
   const marketplace = new window.web3.eth.Contract(
     window.MARKETPLACE_ABI,
@@ -367,8 +357,8 @@ window.cancelListNFT = async (nftAddress, tokenId, priceType, tokenType) => {
   );
 
   await marketplace.methods
-    .cancelListing(nftAddress, tokenId, [priceType, price_address])
-    .send({ from: window.ethereum.selectedAddress });
+    .cancelListing(nftAddress,listingIndex)
+    .send({ from: coinbase });
 };
 
 window.updateListingNFT = async (token, price, priceType, type, tokenType) => {

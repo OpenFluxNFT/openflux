@@ -12,6 +12,8 @@ import Box from "@mui/material/Box";
 import getFormattedNumber from "../../../hooks/get-formatted-number";
 import { FadeLoader } from "react-spinners";
 import { useParams } from "react-router-dom";
+import moment from "moment";
+import { handleSwitchNetworkhook } from "../../../hooks/switchNetwork";
 
 const SingleNftBanner = ({
   chainId,
@@ -22,6 +24,8 @@ const SingleNftBanner = ({
   isConnected,
   handleSignup,
   cfxPrice,
+  handleRefreshData,
+  handleSwitchNetwork,
 }) => {
   const [isOwner, setIsOwner] = useState(false);
   const [isListed, setIsListed] = useState(false);
@@ -33,6 +37,9 @@ const SingleNftBanner = ({
   const [sellStatus, setsellStatus] = useState(""); //sell
   const [sellLoading, setsellLoading] = useState(false); //sell
 
+  const [cancelStatus, setcancelStatus] = useState("cancel"); //cancel
+  const [cancelLoading, setcancelLoading] = useState(false); //cancel
+
   const override = {
     display: "block",
     margin: "20px auto 0",
@@ -43,7 +50,7 @@ const SingleNftBanner = ({
   const { BigNumber } = window;
   const checkNftApprovalForListing = async () => {
     await window.isApprovedNFT(nftId, nftAddress, coinbase).then((data) => {
-      setsellStatus('sell')
+      setsellStatus("sell");
       setIsApproveList(data);
     });
   };
@@ -63,13 +70,20 @@ const SingleNftBanner = ({
       setPurchaseColor("#00FECF");
 
       await window
-        .listNFT(nftAddress,nftId, newPrice, window.config.wcfx_address, duration)
+        .listNFT(
+          nftAddress,
+          nftId,
+          newPrice,
+          window.config.wcfx_address,
+          duration
+        )
         .then((result) => {
           setsellLoading(false);
           setsellStatus("success");
           setPurchaseStatus("NFT successfully listed!");
           setPurchaseColor("#00FECF");
           setIsListed(true);
+          handleRefreshData();
           setTimeout(() => {
             setPurchaseStatus("");
             setPurchaseColor("#00FECF");
@@ -124,6 +138,56 @@ const SingleNftBanner = ({
     }
   };
 
+  const cancelListNft = async () => {
+    setcancelLoading(true);
+    setcancelStatus("cancel");
+    setPurchaseColor("#00FECF");
+    setPurchaseStatus("Unlisting your nft...");
+    return window
+      .cancelListNFT(nftAddress, nftData.listingIndex)
+      .then(() => {
+        setTimeout(() => {
+          setcancelStatus("");
+          setPurchaseColor("#00FECF");
+          setPurchaseStatus("");
+        }, 3000);
+        // handleRefreshList(type, tokenId);
+        handleRefreshData();
+        setcancelLoading(false);
+        setcancelStatus("success");
+        setPurchaseColor("#00FECF");
+        setPurchaseStatus("Nft successfully unlisted");
+      })
+      .catch((e) => {
+        setTimeout(() => {
+          setcancelStatus("");
+          setPurchaseColor("");
+          setPurchaseStatus("");
+        }, 3000);
+
+        setcancelLoading(false);
+        setcancelStatus("failed");
+        setPurchaseColor("#FF6232");
+        setPurchaseStatus(e?.message);
+      });
+  };
+
+  const handleConfluxChain = async()=>{
+    if (window.ethereum) {
+      if (!window.gatewallet) {
+        await handleSwitchNetworkhook("0x406")
+          .then(() => {
+            handleSwitchNetwork(1030);
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+      }
+    } else {
+      window.alertify.error("No web3 detected. Please install Metamask!");
+    }
+  }
+
   useEffect(() => {
     if (nftData && nftData.owner) {
       checkNftApprovalForListing();
@@ -140,7 +204,7 @@ const SingleNftBanner = ({
     }
   }, [nftData]);
 
-  // console.log(nftId, nftAddress)
+  console.log(nftData);
 
   return (
     <div className="container-lg">
@@ -452,7 +516,11 @@ const SingleNftBanner = ({
                   <div className="nft-price-wrapper px-3 py-1 d-flex align-items-center justify-content-between">
                     <span className="current-price-text">Listing ends in</span>
                     <div className="duration-tab d-flex align-items-center justify-content-center">
-                      <span>23 Days</span>
+                      <span>
+                        {moment
+                          .duration(nftData.expiresAt * 1000 - Date.now())
+                          .humanize(true)}
+                      </span>
                     </div>
                   </div>
                 ) : (
@@ -493,27 +561,30 @@ const SingleNftBanner = ({
                     {isConnected ? (
                       <button
                         className="updateoffer-btn  px-3 py-1 col-lg-4"
-                        onClick={handleListNft}
+                        onClick={() => {
+                          chainId === 1030
+                            ? handleListNft()
+                            : handleConfluxChain();
+                        }}
                       >
-                        {sellLoading  ? (
-                              <div
-                                className="spinner-border spinner-border-sm text-light"
-                                role="status"
-                              >
-                                <span className="visually-hidden">
-                                  Loading...
-                                </span>
-                              </div>
-                            ) : sellStatus === "sell" ? (
-                              "List NFT"
-                            ) : sellStatus === "success" ? (
-                              "Success"
-                            ) : sellStatus === "approve" ||
-                              sellStatus === "" ? (
-                              "Approve list"
-                            ) : (
-                              "Failed"
-                            )}
+                        {sellLoading && chainId === 1030 ? (
+                          <div
+                            className="spinner-border spinner-border-sm text-light"
+                            role="status"
+                          >
+                            <span className="visually-hidden">Loading...</span>
+                          </div>
+                        ) : !sellLoading && chainId !== 1030 ? (
+                          "Switch Network"
+                        ) : sellStatus === "sell" ? (
+                          "List NFT"
+                        ) : sellStatus === "success" ? (
+                          "Success"
+                        ) : sellStatus === "approve" || sellStatus === "" ? (
+                          "Approve list"
+                        ) : (
+                          "Failed"
+                        )}
                       </button>
                     ) : (
                       <button
@@ -531,8 +602,29 @@ const SingleNftBanner = ({
                         <button className="updateoffer-btn px-3 py-1 col-lg-3">
                           Update
                         </button>
-                        <button className="deleteoffer-btn  px-3 py-1 col-lg-3">
-                          Unlist
+                        <button
+                          className="deleteoffer-btn  px-3 py-1 col-lg-3"
+                          onClick={() => {
+                            chainId === 1030
+                              ? cancelListNft()
+                              : handleConfluxChain();
+                          }}
+                        >
+                          {cancelLoading && chainId === 1030 ? (
+                            <div
+                              className="spinner-border spinner-border-sm text-light"
+                              role="status"
+                            ></div>
+                          ) : !cancelLoading && chainId !== 1030 ? (
+                            "Switch Network"
+                          ) : cancelStatus === "cancel" ||
+                            cancelStatus === "" ? (
+                            "Unlist"
+                          ) : cancelStatus === "success" ? (
+                            "Success"
+                          ) : (
+                            "Failed"
+                          )}
                         </button>
                       </>
                     ) : (

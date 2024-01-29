@@ -1,4 +1,3 @@
- 
 const BigNumber = window.BigNumber;
 window.IS_CONNECTED = false;
 window.WALLET_TYPE = "";
@@ -176,119 +175,43 @@ class CONFLUX_NFT {
 
 window.conflux_nft = new CONFLUX_NFT();
 
-window.buyNFT = async (
-  price,
-  nft_address,
-  tokenId,
-  priceType,
-  priceAddress
-) => {
-  console.log("priceType", price, nft_address, tokenId, [
-    priceType,
-    priceAddress,
-  ]);
-
+window.buyNFT = async (nft_address, listingIndex, amount) => {
   const marketplace = new window.web3.eth.Contract(
     window.MARKETPLACE_ABI,
     window.config.nft_marketplace_address
   );
 
-  const gasPrice = await window.web3.eth.getGasPrice();
-  console.log("gasPrice", gasPrice);
-  const currentGwei = window.web3.utils.fromWei(gasPrice, "gwei");
-  const increasedGwei = parseInt(currentGwei) + 3;
-  console.log("increasedGwei", increasedGwei);
-
-  const transactionParameters = {
-    gasPrice: window.web3.utils.toWei(increasedGwei.toString(), "gwei"),
-  };
-  // console.log( transactionParameters )
-
   await marketplace.methods
-    .buyItem(nft_address, tokenId, [priceType, priceAddress])
-    .estimateGas({ from: await getCoinbase(), value: price })
-    .then((gas) => {
-      transactionParameters.gas = window.web3.utils.toHex(gas);
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-  console.log("transactionParameters", transactionParameters);
-
-  if (priceType === 1) {
-    await marketplace.methods
-      .buyItem(nft_address, tokenId, [priceType, priceAddress])
-      .send({ from: await getCoinbase(), value: 0, ...transactionParameters });
-  } else if (priceType === 0) {
-    await marketplace.methods
-      .buyItem(nft_address, tokenId, [priceType, priceAddress])
-      .send({
-        from: await getCoinbase(),
-        value: price,
-        ...transactionParameters,
-      });
-  }
+    .buyNFT(nft_address, listingIndex, amount)
+    .send({ from: await getCoinbase(), value: 0, ...transactionParameters });
 };
 
-window.approveBuy = async (tokenType, amount) => {
-  const contract = new window.web3.eth.Contract(
-    window.DYP_ABI,
-    window.config.token_dypius_new_address
-  );
-
-  const contract_old = new window.web3.eth.Contract(
-    window.DYP_ABI,
-    window.config.dyp_token_address
-  );
-
-  console.log("amount", amount);
-  console.log(
-    "window.config.nft_marketplace_address",
-    window.config.nft_marketplace_address
-  );
-
-  if (tokenType === "dypv2") {
-    await contract.methods
-      .approve(window.config.nft_marketplace_address, amount)
-      .send({ from: await getCoinbase() });
-  } else if (tokenType === "dypv1") {
-    await contract_old.methods
-      .approve(window.config.nft_marketplace_address, amount)
-      .send({ from: await getCoinbase() });
-  }
-};
-
-window.isApprovedBuy = async (tokenType, amount) => {
+window.approveBuy = async (amount) => {
   window.web3 = new Web3(window.ethereum);
-  const contract_old = new window.web3.eth.Contract(
-    window.DYP_ABI,
-    window.config.dyp_token_address
-  );
-
   const contract = new window.web3.eth.Contract(
     window.DYP_ABI,
-    window.config.token_dypius_new_address
+    window.config.wcfx_address
+  );
+
+  await contract.methods
+      .approve(window.config.nft_marketplace_address, amount)
+      .send({ from: await getCoinbase() });
+};
+
+window.isApprovedBuy = async (amount) => {
+  window.web3 = new Web3(window.ethereum);
+
+  const contract = new window.web3.eth.Contract(
+    window.TOKEN_ABI,
+    window.config.wcfx_address
   );
 
   const coinbase = await getCoinbase();
 
-  if (tokenType === "dypv2") {
-    const allowance = await contract.methods
-      .allowance(coinbase, window.config.nft_marketplace_address)
-      .call({ from: await getCoinbase() });
-    return Number(allowance) >= Number(amount);
-  } else if (tokenType === "dypv1") {
-    const allowance = await contract_old.methods
-      .allowance(coinbase, window.config.nft_marketplace_address)
-      .call({ from: await getCoinbase() });
-    return Number(allowance) >= Number(amount);
-  }
-
-  // console.log(
-  //   Number(allowance) >= Number(amount),
-  //   Number(allowance),
-  //   Number(amount)
-  // );
+  const allowance = await contract.methods
+    .allowance(coinbase, window.config.nft_marketplace_address)
+    .call({ from: await getCoinbase() });
+  return Number(allowance) >= Number(amount);
 };
 
 window.isApprovedNFT = async (token, collectionAddress, address) => {
@@ -318,7 +241,7 @@ window.isApprovedNFT = async (token, collectionAddress, address) => {
     if (approved === window.config.nft_marketplace_address || approvedAll) {
       return true;
     } else return false;
-  } else return false
+  } else return false;
 };
 
 window.approveNFT = async (collectionAddress) => {
@@ -335,21 +258,19 @@ window.approveNFT = async (collectionAddress) => {
     .catch((e) => {
       console.error(e);
     });
-    if (abi_result && abi_result.message === "OK") {
-      const abi = JSON.parse(abi_result.result);
- 
+  if (abi_result && abi_result.message === "OK") {
+    const abi = JSON.parse(abi_result.result);
+
     let contract = new window.web3.eth.Contract(abi, collectionAddress);
 
     await contract.methods
       .setApprovalForAll(window.config.nft_marketplace_address, true)
       .send({ from: coinbase });
-    }
-   
+  }
 };
 
-window.cancelListNFT = async (nftAddress,listingIndex) => {
+window.cancelListNFT = async (nftAddress, listingIndex) => {
   const coinbase = await getCoinbase();
- 
 
   const marketplace = new window.web3.eth.Contract(
     window.MARKETPLACE_ABI,
@@ -357,7 +278,7 @@ window.cancelListNFT = async (nftAddress,listingIndex) => {
   );
 
   await marketplace.methods
-    .cancelListing(nftAddress,listingIndex)
+    .cancelListing(nftAddress, listingIndex)
     .send({ from: coinbase });
 };
 
@@ -399,15 +320,13 @@ window.updateListingNFT = async (token, price, priceType, type, tokenType) => {
 };
 
 window.listNFT = async (nftAddress, tokenId, price, tokenAddr, duration) => {
- 
   const coinbase = await getCoinbase();
   window.web3 = new Web3(window.ethereum);
- 
+
   const marketplace = new window.web3.eth.Contract(
     window.MARKETPLACE_ABI,
     window.config.nft_marketplace_address
   );
- 
 
   await marketplace.methods
     .listNFT(nftAddress, tokenId, price, tokenAddr, duration)

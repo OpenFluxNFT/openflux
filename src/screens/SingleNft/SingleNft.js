@@ -32,6 +32,7 @@ const SingleNft = ({
   const getNftData = async () => {
     const web3 = window.confluxWeb3;
     let finalArray = [];
+    let favoriteCount = 0;
     const abiresult = await axios.get(
       `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${nftAddress}`
     );
@@ -62,6 +63,20 @@ const SingleNft = ({
         .catch((e) => {
           console.error(e);
         });
+      const fav_count = await axios
+        .get(`${baseURL}/api/nftFavoritesCount/${nftAddress}/${nftId}`, {
+          headers: {
+            cascadestyling:
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+
+      if (fav_count && fav_count.status === 200) {
+        favoriteCount = fav_count.data.count;
+      }
 
       const collectionName = await collection_contract.methods
         .name()
@@ -72,7 +87,7 @@ const SingleNft = ({
       let isListed = false;
       let price = 0;
       let expiresAt = 0;
-      if (listednftsArray !== 'none' && listednftsArray.length > 0) {
+      if (listednftsArray !== "none" && listednftsArray.length > 0) {
         const filteredResult = listednftsArray.find((item) => {
           return (
             item.tokenId === nftId &&
@@ -111,6 +126,7 @@ const SingleNft = ({
             price: price,
             listingIndex: listingIndex,
             expiresAt: expiresAt,
+            favoriteCount: favoriteCount,
           });
           setNftData(...finalArray);
         }
@@ -125,6 +141,7 @@ const SingleNft = ({
           .catch((err) => {
             console.log(err.message);
           });
+
         if (nftdata) {
           finalArray.push({
             ...nftdata,
@@ -134,6 +151,7 @@ const SingleNft = ({
             price: 0,
             listingIndex: 0,
             expiresAt: expiresAt,
+            favoriteCount: favoriteCount,
           });
           setNftData(...finalArray);
         }
@@ -236,7 +254,6 @@ const SingleNft = ({
     }
   };
 
-
   const fetchInitialNftsPerCollection = async () => {
     setLoading(true);
     const test = window.getCoinbase();
@@ -290,6 +307,13 @@ const SingleNft = ({
                 console.error(e);
               });
 
+            const collectionName = await collection_contract.methods
+              .name()
+              .call()
+              .catch((e) => {
+                console.error(e);
+              });
+
             const nft_data = await fetch(
               `https://cdnflux.dypius.com/collectionsmetadatas/${nftAddress}/${tokenByIndex}/metadata.json`
             )
@@ -307,6 +331,7 @@ const SingleNft = ({
                 ...nft_data,
                 tokenId: Number(tokenByIndex),
                 owner: owner,
+                collectionName: collectionName,
               });
             }
           })

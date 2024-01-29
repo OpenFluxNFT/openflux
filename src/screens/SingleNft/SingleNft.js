@@ -51,6 +51,9 @@ const SingleNft = ({
         console.error(e);
       });
 
+      
+   
+
     if (
       abiresult &&
       abiresult.status === 200 &&
@@ -60,6 +63,14 @@ const SingleNft = ({
       const listednftsArray = listednfts.data.listings;
       const abi = JSON.parse(abiresult.data.result);
       const collection_contract = new web3.eth.Contract(abi, nftAddress);
+
+      const nftSymbol = await collection_contract.methods
+      .symbol()
+      .call()
+      .catch((e) => {
+        console.error(e);
+      });
+
       const owner = await collection_contract.methods
         .ownerOf(nftID)
         .call()
@@ -134,6 +145,7 @@ const SingleNft = ({
             listingIndex: listingIndex,
             expiresAt: expiresAt,
             favoriteCount: favoriteCount,
+            nftSymbol: nftSymbol
           });
           setNftData(...finalArray);
           setLoading(false);
@@ -160,6 +172,7 @@ const SingleNft = ({
             listingIndex: 0,
             expiresAt: expiresAt,
             favoriteCount: favoriteCount,
+            nftSymbol: nftSymbol
           });
           setNftData(...finalArray);
           setLoading(false);
@@ -196,6 +209,14 @@ const SingleNft = ({
         const listednftsArray = listednfts.data.listings;
         const abi = JSON.parse(abiresult.data.result);
         const collection_contract = new web3.eth.Contract(abi, nftAddress);
+
+        const nftSymbol = await collection_contract.methods
+        .symbol()
+        .call()
+        .catch((e) => {
+          console.error(e);
+        });
+
         const owner = await collection_contract.methods
           .ownerOf(nftId)
           .call()
@@ -254,18 +275,19 @@ const SingleNft = ({
               price: price,
               listingIndex: listingIndex,
               expiresAt: expiresAt,
+              nftSymbol: nftSymbol
             });
 
             setNftData(...finalArray);
           }
         }
-        onRefreshListings();
+        
       }
     }
   };
 
   const fetchInitialNftsPerCollection = async () => {
-    console.log(nftId, nftAddress);
+    
     setLoading(true);
     const result = await axios.get(
       `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${nftAddress}`
@@ -312,6 +334,12 @@ const SingleNft = ({
           });
       }
 
+      const nftSymbol = await collection_contract.methods
+      .symbol()
+      .call()
+      .catch((e) => {
+        console.error(e);
+      });
       if (totalSupply && totalSupply > 0) {
         const limit = totalSupply >= 12 ? 12 : totalSupply;
 
@@ -320,6 +348,7 @@ const SingleNft = ({
           listednftsArray &&
           listednftsArray.length > 0
         ) {
+          
           await Promise.all(
             window.range(0, listednftsArray.length - 1).map(async (j) => {
               const nft_data_listed = await fetch(
@@ -337,6 +366,8 @@ const SingleNft = ({
                 nftListedArray.push({
                   ...nft_data_listed,
                   ...listednftsArray[j],
+                nftSymbol: nftSymbol
+
                 });
               }
             })
@@ -363,6 +394,7 @@ const SingleNft = ({
                 console.error(e);
               });
 
+
             const nft_data = await fetch(
               `https://cdnflux.dypius.com/collectionsmetadatas/${nftAddress}/${tokenByIndex}/metadata.json`
             )
@@ -380,7 +412,8 @@ const SingleNft = ({
                 ...nft_data,
                 tokenId: Number(tokenByIndex),
                 owner: owner,
-                nftAddress: nftAddress
+                nftAddress: nftAddress,
+                nftSymbol: nftSymbol
               });
             }
           })
@@ -430,7 +463,10 @@ const SingleNft = ({
         handleSignup={handleSignup}
         cfxPrice={cfxPrice}
         handleRefreshData={() => {
-          getUpdatedNftData();
+          getUpdatedNftData().then(()=>{
+            onRefreshListings();  
+          })
+        
         }}
         handleSwitchNetwork={handleSwitchNetwork}
         loading={loading}

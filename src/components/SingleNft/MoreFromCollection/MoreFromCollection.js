@@ -163,7 +163,7 @@ const MoreFromCollection = ({ loading, allNftArray, cfxPrice, onNftClick }) => {
                           className="recently-listed-title mb-0"
                           style={{ fontSize: "12px" }}
                         >
-                          {item.name}
+                         {item.nftSymbol} {item.name}
                         </h6>
                         <img src={checkIcon} alt="" />
                       </div>

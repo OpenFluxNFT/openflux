@@ -921,11 +921,11 @@ function App() {
     handleGetUserFavNfts(userNftFavsInitial);
   }, [userNftFavsInitial]);
 
-  useEffect(() => {
-    if (coinbase) {
-      handleMapUserNftsOwned(coinbase);
-    }
-  }, [coinbase, userNftsOwned]);
+  // useEffect(() => {
+  //   if (coinbase) {
+  //     handleMapUserNftsOwned(coinbase);
+  //   }
+  // }, [coinbase, userNftsOwned]);
 
   return (
     <div

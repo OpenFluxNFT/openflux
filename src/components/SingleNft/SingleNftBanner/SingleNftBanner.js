@@ -41,8 +41,12 @@ const SingleNftBanner = ({
   const [cancelStatus, setcancelStatus] = useState("cancel"); //cancel
   const [cancelLoading, setcancelLoading] = useState(false); //cancel
 
-  const [buyStatus, setbuyStatus] = useState(""); //buy
+  const [buyStatus, setbuyStatus] = useState("buy"); //buy
   const [buyloading, setbuyLoading] = useState(false); //buy
+
+  const [updateStatus, setupdateStatus] = useState("update"); //update
+  const [updateLoading, setupdateLoading] = useState(false); //update
+
 
   const override = {
     display: "block",
@@ -60,96 +64,95 @@ const SingleNftBanner = ({
     });
   };
 
-  const checkNftApprovalForBuying = async (amount) => {
-    console.log(amount)
-    const result = await window.isApprovedBuy(amount).catch((e) => {
-      console.error(e);
-    });
+  // const checkNftApprovalForBuying = async (amount) => {
+  //   const result = await window.isApprovedBuy(amount).catch((e) => {
+  //     console.error(e);
+  //   });
 
-    if (result === true) {
-      setbuyStatus("buy");
-      return true;
-    } else {
-      setbuyStatus("approve");
-      return false
-    }
-  };
+  //   if (result === true) {
+  //     setbuyStatus("buy");
+  //     return true;
+  //   } else {
+  //     setbuyStatus("approve");
+  //     return false
+  //   }
+  // };
 
   const handleBuyNft = async () => {
-    const isApproved = await checkNftApprovalForBuying(nftData.price).then(
-      (data) => {
-        return data;
-      }
-    );
-    const newprice = new BigNumber(nftPrice * 1e18).toFixed();
+    // const isApproved = await checkNftApprovalForBuying(nftData.price).then(
+    //   (data) => {
+    //     return data;
+    //   }
+    // );
+
     // console.log(isApproved);
-    if (isApproved) {
-      setPurchaseColor("#00FECF");
-      setbuyLoading(true);
-      setbuyStatus("buy");
-      setPurchaseStatus("Buying NFT in progress..");
+    // if (isApproved) {
+    setPurchaseColor("#00FECF");
+    setbuyLoading(true);
+    setbuyStatus("buy");
+    setPurchaseStatus("Buying NFT in progress..");
 
-      await window
-        .buyNFT(nftAddress, nftData.listingIndex, nftData.price)
-        .then((result) => {
-          setbuyLoading(false);
-          
-          setbuyStatus("success");
-          setPurchaseStatus("Successfully purchased!");
+    await window
+      .buyNFT(nftAddress, nftData.listingIndex, nftData.price)
+      .then((result) => {
+        setbuyLoading(false);
+
+        setbuyStatus("success");
+        setPurchaseStatus("Successfully purchased!");
+        setPurchaseColor("#00FECF");
+        handleRefreshData();
+        setTimeout(() => {
+          setPurchaseStatus("");
           setPurchaseColor("#00FECF");
-          handleRefreshData();
-          setTimeout(() => {
-            setPurchaseStatus("");
-            setPurchaseColor("#00FECF");
-            setIsListed(false);
+          setIsListed(false);
           setIsOwner(true);
-            setbuyStatus("");
-          }, 2000);
-        })
-        .catch((e) => {
-          setbuyStatus("failed");
-          setbuyLoading(false);
-          setPurchaseStatus(e?.message);
-          setPurchaseColor("#FF6232");
-          setTimeout(() => {
-            setPurchaseStatus("");
-            setPurchaseColor("#00FECF");
-            setbuyStatus("");
-          }, 3000);
-          console.error(e);
-        });
-    } else {
-      setbuyStatus("approve");
-      setbuyLoading(true);
-      setPurchaseStatus("Approving in progress...");
-      setPurchaseColor("#00FECF");
-
-      await window
-        .approveBuy(newprice)
-        .then(() => {
-          setTimeout(() => {
-            setbuyStatus("buy");
-            setPurchaseStatus("");
-            setPurchaseColor("#00FECF");
-          }, 3000);
-          setbuyStatus("success");
-          setbuyLoading(false);
-          setPurchaseStatus("Successfully approved");
+          setbuyStatus("");
+        }, 2000);
+      })
+      .catch((e) => {
+        setbuyStatus("failed");
+        setbuyLoading(false);
+        setPurchaseStatus(e?.message);
+        setPurchaseColor("#FF6232");
+        setTimeout(() => {
+          setPurchaseStatus("");
           setPurchaseColor("#00FECF");
-        })
-        .catch((e) => {
-          console.error(e);
-          setbuyStatus("failed");
-          setTimeout(() => {
-            setbuyStatus("approve");
-            setPurchaseStatus("");
-            setPurchaseColor("#00FECF");
-          }, 3000);
-          setbuyLoading(false);
-          setPurchaseStatus(e?.message);
-          setPurchaseColor("#FF6232");
-        });
-    }
+          setbuyStatus("buy");
+        }, 3000);
+        console.error(e);
+      });
+    // } else {
+    //   setbuyStatus("approve");
+    //   setbuyLoading(true);
+    //   setPurchaseStatus("Approving in progress...");
+    //   setPurchaseColor("#00FECF");
+
+    //   await window
+    //     .approveBuy(nftData.price)
+    //     .then(() => {
+    //       setTimeout(() => {
+    //         setbuyStatus("buy");
+    //         setPurchaseStatus("");
+    //         setPurchaseColor("#00FECF");
+    //       }, 3000);
+    //       setbuyStatus("success");
+    //       setbuyLoading(false);
+    //       setPurchaseStatus("Successfully approved");
+    //       setPurchaseColor("#00FECF");
+    //     })
+    //     .catch((e) => {
+    //       console.error(e);
+    //       setbuyStatus("failed");
+    //       setTimeout(() => {
+    //         setbuyStatus("approve");
+    //         setPurchaseStatus("");
+    //         setPurchaseColor("#00FECF");
+    //       }, 3000);
+    //       setbuyLoading(false);
+    //       setPurchaseStatus(e?.message);
+    //       setPurchaseColor("#FF6232");
+    //     });
+    // }
   };
 
   const handleListNft = async () => {
@@ -272,6 +275,45 @@ const SingleNftBanner = ({
       });
   };
 
+  const handleUpdateListing= async()=>{
+     if(nftPrice !== '')
+    {const newPrice = new BigNumber(nftPrice * 1e18).toFixed();
+
+    setPurchaseColor("#00FECF");
+    setPurchaseStatus("Price is being updated...");
+    setupdateLoading(true);
+    setupdateStatus("update"); 
+
+    return await window
+      .updateListingNFT(nftAddress, nftData.listingIndex, newPrice)
+      .then((result) => {
+        setTimeout(() => {
+          setPurchaseColor("#00FECF");
+          setPurchaseStatus("");
+          setupdateStatus("");
+        }, 3000); 
+        
+        handleRefreshData();
+        setPurchaseColor("#00FECF");
+        setPurchaseStatus("Price updated successfully.");
+        setupdateLoading(false);
+        setupdateStatus("success");
+      })
+      .catch((e) => {
+        setTimeout(() => {
+          setPurchaseColor("#00FECF");
+          setPurchaseStatus("");
+          setupdateStatus("");
+        }, 3000);
+
+        setPurchaseColor("#FF6232");
+        setPurchaseStatus(e?.message);
+        setupdateLoading(false);
+        setupdateStatus("failed");
+      });}
+     window.alertify.error("Listing price shouldn't be empty!");
+  }
+
   const handleConfluxChain = async () => {
     if (window.ethereum) {
       if (!window.gatewallet) {
@@ -295,9 +337,12 @@ const SingleNftBanner = ({
         if (coinbase.toLowerCase() === nftData.owner.toLowerCase()) {
           setIsOwner(true);
           checkNftApprovalForListing();
+          if (nftData.isListed === true) {
+            setNftPrice(nftData.price / 1e18);
+          }
         } else {
           setIsOwner(false);
-          checkNftApprovalForBuying(nftData.price);
+          // checkNftApprovalForBuying(nftData.price);
         }
       } else setIsOwner(false);
 
@@ -415,7 +460,7 @@ const SingleNftBanner = ({
                   <div className="collection-info-owner-wrapper">
                     <div className="d-flex flex-column gap-1 px-3 py-2">
                       <span className="nft-collection-name">
-                        {nftData.name
+                      {nftData.nftSymbol}  {nftData.name
                           ? nftData.name
                           : nftData.collectionName
                           ? nftData.collectionName
@@ -483,7 +528,7 @@ const SingleNftBanner = ({
                   <div className="d-flex align-items-center gap-2">
                     <span className="nft-item-name-right">
                       {" "}
-                      {nftData.name
+                      {nftData.nftSymbol} {nftData.name
                         ? nftData.name
                         : nftData.collectionName
                         ? nftData.collectionName
@@ -565,17 +610,26 @@ const SingleNftBanner = ({
                   <div className="nft-price-wrapper p-3">
                     <div className="d-flex flex-column gap-2">
                       <span className="current-price-text">Current Price</span>
+
                       <div className="d-flex flex-column flex-lg-row flex-md-row gap-2 align-items-center">
                         <img src={cfx} alt="" />
-                        <span className="nft-price-crypto">
-                          {getFormattedNumber(nftData?.price / 10 ** 18)} WCFX
-                        </span>
+                        {isOwner ? (
+                          <input
+                            type="number"
+                            className="uni-input"
+                            value={nftPrice}
+                            onChange={(e) => {
+                              setNftPrice(e.target.value);
+                            }}
+                          />
+                        ) : (
+                          <span className="nft-price-crypto">
+                            {getFormattedNumber(nftData?.price / 10 ** 18)} WCFX
+                          </span>
+                        )}
+                        
                         <span className="nft-price-usd">
-                          (${" "}
-                          {getFormattedNumber(
-                            (nftData?.price / 10 ** 18) * cfxPrice
-                          )}
-                          )
+                          ($ {getFormattedNumber(nftPrice * cfxPrice)})
                         </span>
                       </div>
                     </div>
@@ -776,8 +830,28 @@ const SingleNftBanner = ({
                   <div className="d-flex align-items-center gap-2 justify-content-center mt-4">
                     {isConnected ? (
                       <>
-                        <button className="updateoffer-btn px-3 py-1 col-lg-3">
-                          Update
+                        <button className="updateoffer-btn px-3 py-1 col-lg-3" onClick={()=>{
+                          chainId === 1030 ? handleUpdateListing() : handleConfluxChain()
+                        }}>
+                          {updateLoading &&
+                            (chainId === 1030) ? (
+                              <div
+                                className="spinner-border spinner-border-sm text-light"
+                                role="status"
+                              >
+                               
+                              </div>
+                            ) : !updateLoading &&
+                              chainId !== 1030  ? (
+                              "Switch Network"
+                            ) : updateStatus === "update" ||
+                              updateStatus === "" ? (
+                              "Update"
+                            ) : updateStatus === "success" ? (
+                              "Success"
+                            ) : (
+                              "Failed"
+                            )}
                         </button>
                         <button
                           className="deleteoffer-btn  px-3 py-1 col-lg-3"

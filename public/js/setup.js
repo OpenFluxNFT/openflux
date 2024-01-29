@@ -194,6 +194,7 @@ window.approveBuy = async (amount) => {
     window.TOKEN_ABI,
     window.config.wcfx_address
   );
+  console.log(amount)
 
   await contract.methods
       .approve(window.config.nft_marketplace_address, amount)
@@ -284,40 +285,18 @@ window.cancelListNFT = async (nftAddress, listingIndex) => {
     .send({ from: coinbase });
 };
 
-window.updateListingNFT = async (token, price, priceType, type, tokenType) => {
-  let nft_address, price_nft, price_address;
+window.updateListingNFT = async (nftAddress, listingIndex, newPrice) => {
+  window.web3 = new Web3(window.ethereum);
+ 
   const coinbase = await getCoinbase();
-
-  if (type === "timepiece") {
-    nft_address = window.config.nft_timepiece_address;
-  } else if (type === "land") {
-    nft_address = window.config.nft_land_address;
-  } else {
-    nft_address = window.config.nft_caws_address;
-  }
-
-  if (priceType === 0) {
-    price_nft = 0;
-    price_address = "0x0000000000000000000000000000000000000000";
-  }
-
-  if (priceType === 1) {
-    price_nft = 1;
-    price_address =
-      tokenType === "dypv2"
-        ? window.config.token_dypius_new_address
-        : window.config.dyp_token_address;
-  }
-
+ 
   const marketplace = new window.web3.eth.Contract(
     window.MARKETPLACE_ABI,
     window.config.nft_marketplace_address
   );
-
-  console.log(nft_address, token, price, [price_nft, price_address]);
-
+ 
   await marketplace.methods
-    .updateListing(nft_address, token, price, [price_nft, price_address])
+    .editListing(nftAddress, listingIndex, newPrice)
     .send({ from: coinbase });
 };
 

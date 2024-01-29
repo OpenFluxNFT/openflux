@@ -164,7 +164,6 @@ if there are no listings
       let nftArray = [];
       let nftListedArray = [];
       let totalSupply = 0;
-      let favorite = false;
       const abi = JSON.parse(result.data.result);
       const listednftsArray = listednfts.data.listings;
 
@@ -250,7 +249,7 @@ if there are no listings
               });
 
             if (nft_data) {
-              // console.log(nft_data);
+              // console.log('nft_data', nft_data);
               nftArray.push({
                 ...nft_data,
                 tokenId: Number(tokenByIndex),
@@ -350,7 +349,7 @@ if there are no listings
           })
         );
 
-        console.log(next,next-nftPerRow)
+        console.log(next, next - nftPerRow);
 
         const finaldata = [...allNftArray, ...nftArray];
         setAllNftArray(finaldata);
@@ -372,8 +371,8 @@ if there are no listings
         if (next <= totalSupplyPerCollection) {
           loadMore();
         }
-       
-      } document.removeEventListener("scroll", onScroll);
+      }
+      document.removeEventListener("scroll", onScroll);
     }
 
     // const { clientHeight, scrollHeight, scrollTop } =
@@ -513,10 +512,14 @@ if there are no listings
 
   useEffect(() => {
     window.addEventListener("scroll", onScroll);
-  } );
+  });
 
   return (
-    <div className="container-fluid py-4 home-wrapper px-0" ref={containerRef} id="header2" >
+    <div
+      className="container-fluid py-4 home-wrapper px-0"
+      ref={containerRef}
+      id="header2"
+    >
       <CollectionBanner
         title={currentCollection.collectionName}
         logo={

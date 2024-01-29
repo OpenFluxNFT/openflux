@@ -41,7 +41,6 @@ function App() {
   const [userNftFavs, setuserNftFavs] = useState([]);
   const [userNftFavsInitial, setuserNftFavsInitial] = useState([]);
 
-
   const [isRedirect, setIsRedirect] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [showSignPopup, setshowSignPopup] = useState(false);
@@ -202,7 +201,7 @@ function App() {
       });
     const web3 = window.confluxWeb3;
     if (result && result.status === 200) {
-      console.log(result.data)
+      // console.log(result.data);
       const recentlyListed = await Promise.all(
         result.data.map(async (item) => {
           const abiresult = await axios.get(
@@ -273,7 +272,7 @@ function App() {
       });
     const web3 = window.confluxWeb3;
     if (result && result.status === 200) {
-      handleGetRecentlyListedNfts()
+      handleGetRecentlyListedNfts();
     }
   };
 
@@ -336,6 +335,33 @@ function App() {
       setAllCollections(regularCollection);
     }
   };
+
+  const getAllUserNfts = async (wallet) => {
+    if (allCollections && allCollections.length > 0) {
+      // await Promise.all(
+      //   window.range(0, allCollections.length - 1).map(async (i) => {
+          const result = await axios
+            .get(
+              `${baseURL}/nft-amount/${wallet}/0x2deecf2a05f735890eb3ea085d55cec8f1a93895`,
+              {
+                headers: {
+                  cascadestyling:
+                    "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+                },
+              }
+            )
+            .catch((e) => {
+              console.error(e);
+            });
+
+          if (result && result.status === 200) {
+            console.log(result.data);
+          }
+        // })
+      // );
+    }
+  };
+
 
   const fetchTotalNftOwned = async (walletAddr) => {
     const result = await axios
@@ -420,7 +446,7 @@ function App() {
 
       if ((result && result.status === 200) || result.status === 201) {
         getUserData(walletAddr);
-        fetchTotalNftOwned(walletAddr);
+        // fetchTotalNftOwned(walletAddr);
 
         setSignStatus("success");
 
@@ -460,8 +486,8 @@ function App() {
         } else {
           setuserData(result.data);
           setuserCollectionFavs(result.data.collectionFavorites);
-          setuserNftFavsInitial(result.data.nftFavorites) 
-          fetchTotalNftOwned(walletAddr);
+          setuserNftFavsInitial(result.data.nftFavorites);
+          // fetchTotalNftOwned(walletAddr);
           fetchuserCollection(walletAddr);
         }
       } else setuserData([]);
@@ -630,7 +656,7 @@ function App() {
           setuserData([]);
         } else {
           setuserData(result.data);
-          fetchTotalNftOwned(walletAddr);
+          // fetchTotalNftOwned(walletAddr);
         }
       } else setuserData([]);
     }
@@ -859,6 +885,12 @@ function App() {
     getUserData(coinbase);
   }, [isConnected, coinbase, count]);
 
+  // useEffect(() => {
+  //   if (coinbase) {
+  //     getAllUserNfts(coinbase);
+  //   }
+  // }, [allCollections]);
+
   useEffect(() => {
     getAllCollections();
     handleSetOrderedCollection();
@@ -872,7 +904,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    handleGetUserFavNfts(userNftFavsInitial)
+    handleGetUserFavNfts(userNftFavsInitial);
   }, [userNftFavsInitial]);
 
   return (
@@ -926,7 +958,7 @@ function App() {
               handleAddFavoriteNft={handleAddFavoriteNft}
               handleRemoveFavoriteNft={handleRemoveFavoriteNft}
               userNftFavs={userNftFavs}
-            userNftFavsInitial={userNftFavsInitial}
+              userNftFavsInitial={userNftFavsInitial}
             />
           }
         />
@@ -992,7 +1024,6 @@ function App() {
               handleAddFavoriteNft={handleAddFavoriteNft}
               handleRemoveFavoriteNft={handleRemoveFavoriteNft}
               userNftFavsInitial={userNftFavsInitial}
-
             />
           }
         />

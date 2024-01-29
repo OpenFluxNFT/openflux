@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./_collectionlist.scss";
 import bigGrid from "./assets/bigGrid.svg";
 import bigGridActive from "./assets/bigGridActive.svg";
@@ -19,12 +19,12 @@ import { Checkbox, FormControlLabel, FormGroup, Skeleton } from "@mui/material";
 import { NavLink } from "react-router-dom";
 import emptyFavorite from "../../Home/RecentlyListed/assets/emptyFavorite.svg";
 import redFavorite from "../../Home/RecentlyListed/assets/redFavorite.svg";
-import { FadeLoader } from "react-spinners";
 import { shortAddress } from "../../../hooks/shortAddress";
 import getFormattedNumber from "../../../hooks/get-formatted-number";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
- 
+import axios from "axios";
+
 const CollectionList = ({
   currentCollection,
   allNftArray,
@@ -130,12 +130,75 @@ const CollectionList = ({
     },
   ];
 
-  const override = {
-    display: "block",
-    margin: "20px auto 0",
-    borderColor: "#554fd8",
-  };
   const [gridView, setGridView] = useState("small-grid");
+  const [nftFinalArray, setnftFinalArray] = useState([]);
+
+  const baseURL = "https://confluxapi.worldofdypians.com";
+
+  const fetchFavoriteCounts = async () => {
+    if (allNftArray && allNftArray.length > 0) {
+      let favoriteCount = 0;
+      let nftArray = [];
+      await Promise.all(
+        window.range(0, allNftArray.length - 1).map(async (i) => {
+          const fav_count_listed = await axios
+            .get(
+              `${baseURL}/api/nftFavoritesCount/${collectionAddress}/${allNftArray[i].tokenId}`,
+              {
+                headers: {
+                  cascadestyling:
+                    "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+                },
+              }
+            )
+            .catch((e) => {
+              console.error(e);
+            });
+
+          if (fav_count_listed && fav_count_listed.status === 200) {
+            favoriteCount = fav_count_listed.data;
+            // console.log(favoriteCount);
+            nftArray.push({
+              ...favoriteCount,
+            });
+          }
+        })
+      );
+      setnftFinalArray(nftArray);
+    }
+  };
+
+  const handleLikeStates = (tokenid) => {
+    const stringTokenid = (tokenid).toString()
+    if (
+      userNftFavs &&
+      userNftFavs.length > 0 &&
+      userNftFavs.find((favitem) => {
+        return (
+          favitem.contractAddress === collectionAddress &&
+          favitem.tokenIds.find(
+            (itemTokenIds) => itemTokenIds === stringTokenid
+          )
+        );
+      })
+    ) {
+   
+      handleRemoveFavoriteNft(stringTokenid, collectionAddress).then(() => {
+        fetchFavoriteCounts();
+      });
+    } else {
+    
+
+      handleAddFavoriteNft(stringTokenid, collectionAddress).then(() => {
+        fetchFavoriteCounts();
+      });
+    }
+  };
+
+
+  useEffect(() => {
+    fetchFavoriteCounts();
+  }, [allNftArray]);
 
   return (
     <>
@@ -696,25 +759,7 @@ const CollectionList = ({
                         onClick={(e) => {
                           e.stopPropagation();
                           e.preventDefault();
-                          userNftFavs &&
-                          userNftFavs.length > 0 &&
-                          userNftFavs.find((favitem) => {
-                            return (
-                              favitem.contractAddress === collectionAddress &&
-                              favitem.tokenIds.find(
-                                (itemTokenIds) =>
-                                  Number(itemTokenIds) === item.tokenId
-                              )
-                            );
-                          })
-                            ? handleRemoveFavoriteNft(
-                                item.tokenId,
-                                collectionAddress
-                              )
-                            : handleAddFavoriteNft(
-                                item.tokenId,
-                                collectionAddress
-                              );
+                          handleLikeStates(item.tokenId);
                         }}
                       >
                         <div className="d-flex align-items-center position-relative gap-2">
@@ -728,7 +773,8 @@ const CollectionList = ({
                                     collectionAddress &&
                                   favitem.tokenIds.find(
                                     (itemTokenIds) =>
-                                      Number(itemTokenIds) === item.tokenId
+                                      Number(itemTokenIds) ===
+                                      Number(item.tokenId)
                                   )
                                 );
                               })
@@ -748,7 +794,8 @@ const CollectionList = ({
                                     collectionAddress &&
                                   favitem.tokenIds.find(
                                     (itemTokenIds) =>
-                                      Number(itemTokenIds) === item.tokenId
+                                      Number(itemTokenIds) ===
+                                      Number(item.tokenId)
                                   )
                                 );
                               })
@@ -756,7 +803,16 @@ const CollectionList = ({
                                 : "fav-count"
                             }
                           >
-                            222
+                            {
+                              nftFinalArray.find((object) => {
+                                return (
+                                  object.contractAddress ===
+                                    collectionAddress &&
+                                  Number(object.tokenId) ===
+                                    Number(item.tokenId)
+                                );
+                              })?.count
+                            }
                           </span>
                         </div>
                       </div>
@@ -765,7 +821,7 @@ const CollectionList = ({
                           className="recently-listed-title mb-0"
                           style={{ fontSize: "12px" }}
                         >
-                          {item.name}
+                          {item.name ?? `#${item.tokenId}`}
                         </h6>
                         <img src={checkIcon} alt="" />
                       </div>

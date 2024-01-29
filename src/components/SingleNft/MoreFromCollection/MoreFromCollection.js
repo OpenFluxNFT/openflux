@@ -3,8 +3,10 @@ import "./_morefromcollection.scss";
 import Slider from "react-slick";
 import checkIcon from "../../Collections/TopCollections/assets/checkIcon.svg";
 import { NavLink } from "react-router-dom";
+import { Skeleton } from "@mui/material";
+import getFormattedNumber from "../../../hooks/get-formatted-number";
 
-const MoreFromCollection = ({ loading, allNftArray }) => {
+const MoreFromCollection = ({ loading, allNftArray, cfxPrice }) => {
   const settings = {
     // dots: true,
     arrows: false,
@@ -114,52 +116,89 @@ const MoreFromCollection = ({ loading, allNftArray }) => {
       timeListed: "11d Ago",
     },
   ];
+
+  console.log(allNftArray);
   return (
     <div className="container-lg py-3">
       <div className="row mx-0">
         <div className="more-collection-wrapper p-3">
           <h6 className="more-collection-title">More From This Collection</h6>
+
           <Slider {...settings}>
-            {dummyCards.map((item, index) => (
-              <div
-                className="recently-listed-card p-3 d-flex flex-column"
-                key={index}
-              >
-                <NavLink
-                  to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
-                  style={{ textDecoration: "none" }}
-                  onClick={() => {
-                    window.scrollTo(0, 0);
-                  }}
-                >
-                  <img
-                    src={require(`./assets/nftPlaceholder${index + 1}.png`)}
-                    className="card-img"
-                    alt=""
-                  />
-                  <div className="d-flex align-items-center gap-2 mt-2">
-                    <h6
-                      className="recently-listed-title mb-0"
-                      style={{ fontSize: "12px" }}
+            {allNftArray && allNftArray.length > 0
+              ? allNftArray.map((item, index) => (
+                  <div
+                    className="recently-listed-card p-3 d-flex flex-column"
+                    key={index}
+                  >
+                    <NavLink
+                      to={`/nft/${item.tokenId}/${item.nftAddress}`}
+                      style={{ textDecoration: "none" }}
+                      onClick={() => {
+                        window.scrollTo(0, 0);
+                      }}
                     >
-                      {item.title}
-                    </h6>
-                    <img src={checkIcon} alt="" />
+                      {!item.isVideo ? (
+                        <img src={`https://cdnflux.dypius.com/${item.image}`} className="card-img" alt="" />
+                      ) : (
+                        <video
+                          src={`https://cdnflux.dypius.com/${item.image}`}
+                          alt=""
+                          className="card-img"
+                          controlsList="nodownload"
+                          autoPlay={true}
+                          loop={true}
+                          muted="muted"
+                          playsInline={true}
+                        />
+                      )}
+                      <div className="d-flex align-items-center gap-2 mt-2">
+                        <h6
+                          className="recently-listed-title mb-0"
+                          style={{ fontSize: "12px" }}
+                        >
+                          {item.name}
+                        </h6>
+                        <img src={checkIcon} alt="" />
+                      </div>
+                      {item?.price ?
+                        <div className="d-flex align-items-center mt-2 gap-3">
+                        <h6
+                          className="cfx-price mb-0"
+                          style={{ fontSize: "10px" }}
+                        >
+                          {getFormattedNumber(item?.price / 10 ** 18)} WCFX
+                        </h6>
+                        <span className="usd-price" style={{ fontSize: "9px" }}>
+                        (${" "}
+                          {getFormattedNumber(
+                            (item?.price / 10 ** 18) * cfxPrice
+                          )}
+                          )
+                        </span>
+                      </div>
+                      :
+                      <div className="d-flex align-items-center mt-2 gap-3">
+                      <h6
+                        className="cfx-price mb-0"
+                        style={{ fontSize: "10px" }}
+                      >
+                        --
+                      </h6>
+                      <span className="usd-price" style={{ fontSize: "9px" }}>
+                 (--)
+                      </span>
+                    </div>
+                      }
+                      <div className="mt-3">
+                        <button className="buy-btn w-100">Buy</button>
+                      </div>
+                    </NavLink>
                   </div>
-                  <div className="d-flex align-items-center mt-2 gap-3">
-                    <h6 className="cfx-price mb-0" style={{ fontSize: "10px" }}>
-                      1254.89 CFX
-                    </h6>
-                    <span className="usd-price" style={{ fontSize: "9px" }}>
-                      ($ 654,874.86)
-                    </span>
-                  </div>
-                  <div className="mt-3">
-                    <button className="buy-btn w-100">Buy</button>
-                  </div>
-                </NavLink>
-              </div>
-            ))}
+                ))
+              : dummyCards.map((item, index) => (
+                  <Skeleton variant="rounded" height={240} width={"100%"} />
+                ))}
           </Slider>
         </div>
       </div>

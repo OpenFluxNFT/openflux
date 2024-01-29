@@ -62,7 +62,7 @@ const SingleNftBanner = ({
         return data;
       });
     const newPrice = new BigNumber(nftPrice * 1e18).toFixed();
- 
+
     if (isApproved) {
       setsellLoading(true);
       setsellStatus("sell");
@@ -215,11 +215,24 @@ const SingleNftBanner = ({
             <div className="row mx-0 justify-content-start gap-2">
               {nftData.image ? (
                 <div className="col-lg-6">
-                  <img
-                    src={`https://cdnflux.dypius.com/${nftData.image}`}
-                    alt=""
-                    className="nft-image"
-                  />
+                  {!nftData.isVideo ? (
+                    <img
+                      src={`https://cdnflux.dypius.com/${nftData.image}`}
+                      alt=""
+                      className="nft-image"
+                    />
+                  ) : (
+                    <video
+                      src={`https://cdnflux.dypius.com/${nftData.image}`}
+                      alt=""
+                      className="nft-image"
+                      controlsList="nodownload"
+                      autoPlay={true}
+                      loop={true}
+                      muted="muted"
+                      playsInline={true}
+                    />
+                  )}
                 </div>
               ) : (
                 <div className="col-12 col-lg-6 mb-3 position-relative">
@@ -302,20 +315,27 @@ const SingleNftBanner = ({
                   <div className="collection-info-owner-wrapper">
                     <div className="d-flex flex-column gap-1 px-3 py-2">
                       <span className="nft-collection-name">
-                        {nftData.name ? nftData.name : nftData.collectionName ? nftData.collectionName : "..."}
+                        {nftData.name
+                          ? nftData.name
+                          : nftData.collectionName
+                          ? nftData.collectionName
+                          : "..."}
                       </span>
                       <div className="d-flex align-items-center gap-2">
                         <span className="nft-info-left">Owner</span>
                         <span className="nft-info-right">
-                          {nftData && nftData.owner ?
-                          <a
-                            href={`https://evm.confluxscan.net/address/${nftData.owner}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-white"
-                          >
-                            {shortAddress(nftData.owner) ?? "..."}
-                          </a> : 'Not Available' }
+                          {nftData && nftData.owner ? (
+                            <a
+                              href={`https://evm.confluxscan.net/address/${nftData.owner}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-white"
+                            >
+                              {shortAddress(nftData.owner) ?? "..."}
+                            </a>
+                          ) : (
+                            "Not Available"
+                          )}
                         </span>
                       </div>
                     </div>
@@ -326,7 +346,9 @@ const SingleNftBanner = ({
                   </div>
                   <div className="d-flex align-items-center gap-2 border-bottom-div">
                     <span className="nft-info-left">Favorites</span>
-                    <span className="nft-info-right">{nftData.favoriteCount ?? '...'}</span>
+                    <span className="nft-info-right">
+                      {nftData.favoriteCount ?? "..."}
+                    </span>
                   </div>
                   <div className="d-flex align-items-center gap-2 border-bottom-div">
                     <span className="nft-info-left">Creator earning</span>
@@ -361,7 +383,11 @@ const SingleNftBanner = ({
                   <div className="d-flex align-items-center gap-2">
                     <span className="nft-item-name-right">
                       {" "}
-                      {nftData.name ? nftData.name : nftData.collectionName ? nftData.collectionName : "..."}
+                      {nftData.name
+                        ? nftData.name
+                        : nftData.collectionName
+                        ? nftData.collectionName
+                        : "..."}
                     </span>
                     <img alt="" src={checkIcon} />
                   </div>

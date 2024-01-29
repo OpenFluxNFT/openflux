@@ -19,58 +19,15 @@ import redFavorite from "../Home/RecentlyListed/assets/redFavorite.svg";
 import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
 import { NavLink } from "react-router-dom";
 
-const ProfileNFTList = ({ option, userCollectionFavs, allCollections }) => {
+const ProfileNFTList = ({
+  option,
+  userCollectionFavs,
+  allCollections,
+  userNftFavs,
+  handleAddFavoriteNft,
+  handleRemoveFavoriteNft,userNftFavsInitial
+}) => {
   const [favoritesOption, setfavoritesOption] = useState("items");
-
-  const dummyTraits = [
-    {
-      title: "Background",
-      traits: ["Peach", "Gray", "Blue", "Purple", "White", "Brown"],
-    },
-    {
-      title: "Body",
-      traits: ["Fat", "Skinny", "Short", "Tall"],
-    },
-    {
-      title: "Ears",
-      traits: ["Pointy", "Straight", "Crooked", "Dark", "Light", "Brown"],
-    },
-  ];
-
-  const dummyFavorites = [
-    {
-      title: "Cats And Watches Society",
-      image: "favoritesPlaceholder1",
-    },
-    {
-      title: "CAWS Timepiece",
-      image: "favoritesPlaceholder2",
-    },
-    {
-      title: "World of Dypians Land",
-      image: "favoritesPlaceholder3",
-    },
-    {
-      title: "Cats And Watches Society",
-      image: "favoritesPlaceholder4",
-    },
-    {
-      title: "CAWS Timepiece",
-      image: "favoritesPlaceholder1",
-    },
-    {
-      title: "World of Dypians Land",
-      image: "favoritesPlaceholder2",
-    },
-    {
-      title: "Cats And Watches Society",
-      image: "favoritesPlaceholder3",
-    },
-    {
-      title: "CAWS Timepiece",
-      image: "favoritesPlaceholder4",
-    },
-  ];
 
   const dummyCards = [
     {
@@ -146,8 +103,7 @@ const ProfileNFTList = ({ option, userCollectionFavs, allCollections }) => {
       timeListed: "11d Ago",
     },
   ];
-
-  console.log(userCollectionFavs);
+ 
 
   const [gridView, setGridView] = useState("small-grid");
 
@@ -411,26 +367,44 @@ const ProfileNFTList = ({ option, userCollectionFavs, allCollections }) => {
               } `}
             >
               {favoritesOption === "items" ? (
-                dummyCards.map((item, index) => (
+                userNftFavs.map((item, index) => (
                   <div
                     className="recently-listed-card p-3 d-flex flex-column"
                     key={index}
                   >
                     <NavLink
-                      to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
+                      to={`/nft/${item.tokenId}/${item.contractAddress}`}
                       style={{ textDecoration: "none" }}
                       className={"position-relative"}
                     >
-                      <img
-                        src={require(`./assets/nftPlaceholder${index + 1}.png`)}
-                        className="card-img"
-                        alt=""
-                      />
+                      {!item.isVideo ? (
+                              <img
+                                src={`https://cdnflux.dypius.com/${item.image}`}
+                                className="card-img"
+                                 
+                                alt=""
+                              />
+                            ) : (
+                              <video
+                                preload="auto" 
+                                className="card-img"
+                                src={`https://cdnflux.dypius.com/${item.image}`}
+                                autoPlay={true}
+                                loop={true}
+                                muted="muted"
+                                playsInline={true}
+                                // onClick={player}
+                                controlsList="nodownload"
+                              ></video>
+                            )}
+
+                       
                       <div
                         className="position-absolute favorite-container"
                         onClick={(e) => {
                           e.stopPropagation();
                           e.preventDefault();
+                          handleRemoveFavoriteNft(item.tokenId, item.contractAddress)
                         }}
                       >
                         <div className="d-flex align-items-center position-relative gap-2">
@@ -443,7 +417,7 @@ const ProfileNFTList = ({ option, userCollectionFavs, allCollections }) => {
                           className="recently-listed-title mb-0"
                           style={{ fontSize: "12px" }}
                         >
-                          CAWS #1125
+                          {item.name}
                         </h6>
                         <img src={checkIcon} alt="" />
                       </div>
@@ -452,10 +426,10 @@ const ProfileNFTList = ({ option, userCollectionFavs, allCollections }) => {
                           className="cfx-price mb-0"
                           style={{ fontSize: "10px" }}
                         >
-                          1254.89 CFX
+                          tbd WCFX
                         </h6>
                         <span className="usd-price" style={{ fontSize: "9px" }}>
-                          ($ 654,874.86)
+                          ($ tbd)
                         </span>
                       </div>
                       <div className="mt-3">
@@ -609,6 +583,8 @@ const ProfileNFTList = ({ option, userCollectionFavs, allCollections }) => {
                         onClick={(e) => {
                           e.stopPropagation();
                           e.preventDefault();
+                          handleRemoveFavoriteNft(item.tokenId, item.contractAddress)
+
                         }}
                       >
                         <div className="d-flex align-items-center position-relative gap-2">

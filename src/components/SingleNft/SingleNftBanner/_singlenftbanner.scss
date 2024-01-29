@@ -9,6 +9,11 @@
     border-radius: 15px;
     width: 290px;
     height: 290px;
+
+    @media only screen and (max-width: 700px) {
+      height: auto;
+      width: inherit;
+    }
   }
   .nft-collection-logo {
     width: 24px;
@@ -67,6 +72,10 @@
     border: 1px solid rgba(47, 128, 237, 0.2);
     background: rgba(47, 128, 237, 0.05);
     min-height: 270px;
+
+    @media only screen and (max-width: 700px) {
+      min-height: auto; 
+    }
   }
 
   .flex-div {

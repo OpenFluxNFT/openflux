@@ -4,7 +4,7 @@ import Slider from "react-slick";
 import checkIcon from "../../Collections/TopCollections/assets/checkIcon.svg";
 import { NavLink } from "react-router-dom";
 
-const MoreFromCollection = () => {
+const MoreFromCollection = ({ loading, allNftArray }) => {
   const settings = {
     // dots: true,
     arrows: false,

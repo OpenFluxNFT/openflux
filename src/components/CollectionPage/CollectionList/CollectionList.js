@@ -16,13 +16,15 @@ import useWindowSize from "../../../hooks/useWindowSize";
 import filterIcon from "./assets/filterIcon.svg";
 import xMark from "./assets/xMark.svg";
 import { Checkbox, FormControlLabel, FormGroup, Skeleton } from "@mui/material";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import emptyFavorite from "../../Home/RecentlyListed/assets/emptyFavorite.svg";
 import redFavorite from "../../Home/RecentlyListed/assets/redFavorite.svg";
 import { FadeLoader } from "react-spinners";
 import { shortAddress } from "../../../hooks/shortAddress";
 import getFormattedNumber from "../../../hooks/get-formatted-number";
 import moment from "moment";
+import { useNavigate } from "react-router-dom";
+ 
 const CollectionList = ({
   currentCollection,
   allNftArray,
@@ -803,18 +805,50 @@ const CollectionList = ({
                     </NavLink>
                   </div>
                 ))
-              )}{" "}
-              {loading === true &&
-                dummyCards.map((item, index) => (
+              )}
+            </div>
+            {loading === true &&
+            (gridView === "small-grid" || gridView === "big-grid") ? (
+              <div
+                className={`${
+                  gridView === "list"
+                    ? "list-view-grid"
+                    : gridView === "big-grid"
+                    ? "big-cards-grid"
+                    : "small-cards-grid"
+                } mt-3`}
+              >
+                {dummyCards.map((item, index) => (
                   <Skeleton
                     key={index}
                     variant="rounded"
                     width={"100%"}
                     height={250}
-                    sx={{ bgcolor: "rgba(47, 128, 237, 0.05)" }}
                   />
                 ))}
-            </div>
+              </div>
+            ) : loading === true && gridView === "list" ? (
+              <div
+                className={`${
+                  gridView === "list"
+                    ? "list-view-grid"
+                    : gridView === "big-grid"
+                    ? "big-cards-grid"
+                    : "small-cards-grid"
+                } mt-3`}
+              >
+                {dummyCards.map((item, index) => (
+                  <Skeleton
+                    key={index}
+                    variant="rounded"
+                    width={"100%"}
+                    height={40}
+                  />
+                ))}
+              </div>
+            ) : (
+              <></>
+            )}
           </div>
         </div>
       </div>

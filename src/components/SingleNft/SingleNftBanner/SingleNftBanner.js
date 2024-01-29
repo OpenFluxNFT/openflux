@@ -150,11 +150,10 @@ const SingleNftBanner = ({
           setcancelStatus("");
           setPurchaseColor("#00FECF");
           setPurchaseStatus("");
-          
         }, 3000);
         // handleRefreshList(type, tokenId);
         handleRefreshData();
-        setIsListed(false)
+        setIsListed(false);
         setNftPrice(1);
         setDuration(0);
         setcancelLoading(false);
@@ -176,7 +175,7 @@ const SingleNftBanner = ({
       });
   };
 
-  const handleConfluxChain = async()=>{
+  const handleConfluxChain = async () => {
     if (window.ethereum) {
       if (!window.gatewallet) {
         await handleSwitchNetworkhook("0x406")
@@ -190,15 +189,15 @@ const SingleNftBanner = ({
     } else {
       window.alertify.error("No web3 detected. Please install Metamask!");
     }
-  }
+  };
 
   useEffect(() => {
     if (nftData && nftData.owner) {
       checkNftApprovalForListing();
       if (coinbase) {
-        checkNftApprovalForListing();
         if (coinbase.toLowerCase() === nftData.owner.toLowerCase()) {
           setIsOwner(true);
+          checkNftApprovalForListing();
         }
       } else setIsOwner(false);
 
@@ -207,8 +206,6 @@ const SingleNftBanner = ({
       }
     }
   }, [nftData]);
-
-  // console.log(nftData);
 
   return (
     <div className="container-lg">

@@ -72,7 +72,7 @@ const SingleNft = ({
       let isListed = false;
       let price = 0;
       let expiresAt = 0;
-      if (listednftsArray.length > 0) {
+      if (listednftsArray !== 'none' && listednftsArray.length > 0) {
         const filteredResult = listednftsArray.find((item) => {
           return (
             item.tokenId === nftId &&
@@ -110,6 +110,29 @@ const SingleNft = ({
             isListed: isListed,
             price: price,
             listingIndex: listingIndex,
+            expiresAt: expiresAt,
+          });
+          setNftData(...finalArray);
+        }
+      } else {
+        const nftdata = await fetch(
+          `https://cdnflux.dypius.com/collectionsmetadatas/${nftAddress}/${nftId}/metadata.json`
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            return data;
+          })
+          .catch((err) => {
+            console.log(err.message);
+          });
+        if (nftdata) {
+          finalArray.push({
+            ...nftdata,
+            owner: owner,
+            collectionName: collectionName,
+            isListed: false,
+            price: 0,
+            listingIndex: 0,
             expiresAt: expiresAt,
           });
           setNftData(...finalArray);

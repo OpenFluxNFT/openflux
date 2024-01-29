@@ -31,10 +31,70 @@ const RecentlyListed = ({
     // dotsClass: "button__bar",
   };
 
-  const [favorite, setFavorite] = useState(false);
+  const baseURL = "https://confluxapi.worldofdypians.com";
+  const [nftFinalArray, setnftFinalArray] = useState([]);
 
   const windowSize = useWindowSize();
 
+  const fetchFavoriteCounts = async () => {
+    if (recentlyListedNfts && recentlyListedNfts.length > 0) {
+      let favoriteCount = 0;
+      let nftArray = [];
+      await Promise.all(
+        window.range(0, recentlyListedNfts.length - 1).map(async (i) => {
+          const fav_count_listed = await axios
+            .get(
+              `${baseURL}/api/nftFavoritesCount/${recentlyListedNfts[i].nftAddress}/${recentlyListedNfts[i].tokenId}`,
+              {
+                headers: {
+                  cascadestyling:
+                    "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+                },
+              }
+            )
+            .catch((e) => {
+              console.error(e);
+            });
+
+          if (fav_count_listed && fav_count_listed.status === 200) {
+            favoriteCount = fav_count_listed.data;
+
+            nftArray.push({
+              ...favoriteCount,
+            });
+          }
+        })
+      );
+      setnftFinalArray(nftArray);
+    }
+  };
+
+  const handleLikeStates = (tokenid, nftAddr) => {
+    const stringTokenid = tokenid.toString();
+
+    if (
+      userNftFavs &&
+      userNftFavs.length > 0 &&
+      userNftFavs.find((favitem) => {
+        return (
+          favitem.contractAddress.toLowerCase() === nftAddr.toLowerCase() &&
+          favitem.tokenId.toString() === stringTokenid
+        );
+      })
+    ) {
+      handleRemoveFavoriteNft(stringTokenid, nftAddr).then(() => {
+        fetchFavoriteCounts();
+      });
+    } else {
+      handleAddFavoriteNft(stringTokenid, nftAddr).then(() => {
+        fetchFavoriteCounts();
+      });
+    }
+  };
+
+  useEffect(() => {
+    fetchFavoriteCounts();
+  }, [recentlyListedNfts]);
 
   return (
     <div className="container-lg mt-5">
@@ -68,19 +128,7 @@ const RecentlyListed = ({
                     onClick={(e) => {
                       e.stopPropagation();
                       e.preventDefault();
-                      userNftFavsInitial &&
-                      userNftFavsInitial.length > 0 &&
-                      userNftFavsInitial.find((favitem) => {
-                        return (
-                          favitem.contractAddress === item.nftAddress &&
-                          favitem.tokenIds.find(
-                            (itemTokenIds) =>
-                               itemTokenIds === item.tokenId
-                          )
-                        );
-                      })
-                        ? handleRemoveFavoriteNft(item.tokenId, item.nftAddress)
-                        : handleAddFavoriteNft(item.tokenId, item.nftAddress);
+                      handleLikeStates(item.tokenId, item.nftAddress);
                     }}
                   >
                     <div className="d-flex align-items-center position-relative gap-2">
@@ -92,8 +140,7 @@ const RecentlyListed = ({
                             return (
                               favitem.contractAddress === item.nftAddress &&
                               favitem.tokenIds.find(
-                                (itemTokenIds) =>
-                                itemTokenIds === item.tokenId
+                                (itemTokenIds) => itemTokenIds === item.tokenId
                               )
                             );
                           })
@@ -111,8 +158,7 @@ const RecentlyListed = ({
                             return (
                               favitem.contractAddress === item.nftAddress &&
                               favitem.tokenIds.find(
-                                (itemTokenIds) =>
-                                itemTokenIds === item.tokenId
+                                (itemTokenIds) => itemTokenIds === item.tokenId
                               )
                             );
                           })
@@ -120,7 +166,14 @@ const RecentlyListed = ({
                             : "fav-count"
                         }
                       >
-                        222
+                        {
+                          nftFinalArray.find((object) => {
+                            return (
+                              object.contractAddress === item.nftAddress &&
+                              Number(object.tokenId) === Number(item.tokenId)
+                            );
+                          })?.count
+                        }
                       </span>
                     </div>
                   </div>
@@ -172,19 +225,7 @@ const RecentlyListed = ({
                     onClick={(e) => {
                       e.stopPropagation();
                       e.preventDefault();
-                      userNftFavsInitial &&
-                      userNftFavsInitial.length > 0 &&
-                      userNftFavsInitial.find((favitem) => {
-                        return (
-                          favitem.contractAddress === item.nftAddress &&
-                          favitem.tokenIds.find(
-                            (itemTokenIds) =>
-                            itemTokenIds === item.tokenId
-                          )
-                        );
-                      })
-                        ? handleRemoveFavoriteNft(item.tokenId, item.nftAddress)
-                        : handleAddFavoriteNft(item.tokenId, item.nftAddress);
+                      handleLikeStates(item.tokenId, item.nftAddress);
                     }}
                   >
                     <div className="d-flex align-items-center position-relative gap-2">
@@ -196,8 +237,7 @@ const RecentlyListed = ({
                             return (
                               favitem.contractAddress === item.nftAddress &&
                               favitem.tokenIds.find(
-                                (itemTokenIds) =>
-                                itemTokenIds === item.tokenId
+                                (itemTokenIds) => itemTokenIds === item.tokenId
                               )
                             );
                           })
@@ -215,8 +255,7 @@ const RecentlyListed = ({
                             return (
                               favitem.contractAddress === item.nftAddress &&
                               favitem.tokenIds.find(
-                                (itemTokenIds) =>
-                                itemTokenIds === item.tokenId
+                                (itemTokenIds) => itemTokenIds === item.tokenId
                               )
                             );
                           })
@@ -224,7 +263,14 @@ const RecentlyListed = ({
                             : "fav-count"
                         }
                       >
-                        222
+                        {
+                          nftFinalArray.find((object) => {
+                            return (
+                              object.contractAddress === item.nftAddress &&
+                              Number(object.tokenId) === Number(item.tokenId)
+                            );
+                          })?.count
+                        }
                       </span>
                     </div>
                   </div>

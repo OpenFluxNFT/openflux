@@ -181,15 +181,17 @@ window.buyNFT = async (nft_address, listingIndex, amount) => {
     window.config.nft_marketplace_address
   );
 
+  console.log(nft_address, listingIndex, amount)
+
   await marketplace.methods
     .buyNFT(nft_address, listingIndex, amount)
-    .send({ from: await getCoinbase(), value: 0, ...transactionParameters });
+    .send({ from: await getCoinbase(), value: 0 });
 };
 
 window.approveBuy = async (amount) => {
   window.web3 = new Web3(window.ethereum);
   const contract = new window.web3.eth.Contract(
-    window.DYP_ABI,
+    window.TOKEN_ABI,
     window.config.wcfx_address
   );
 

@@ -41,6 +41,9 @@ const SingleNftBanner = ({
   const [cancelStatus, setcancelStatus] = useState("cancel"); //cancel
   const [cancelLoading, setcancelLoading] = useState(false); //cancel
 
+  const [buyStatus, setbuyStatus] = useState(""); //buy
+  const [buyloading, setbuyLoading] = useState(false); //buy
+
   const override = {
     display: "block",
     margin: "20px auto 0",
@@ -49,11 +52,104 @@ const SingleNftBanner = ({
 
   const { nftId, nftAddress } = useParams();
   const { BigNumber } = window;
+
   const checkNftApprovalForListing = async () => {
     await window.isApprovedNFT(nftId, nftAddress, coinbase).then((data) => {
       setsellStatus("sell");
       setIsApproveList(data);
     });
+  };
+
+  const checkNftApprovalForBuying = async (amount) => {
+    console.log(amount)
+    const result = await window.isApprovedBuy(amount).catch((e) => {
+      console.error(e);
+    });
+
+    if (result === true) {
+      setbuyStatus("buy");
+      return true;
+    } else {
+      setbuyStatus("approve");
+      return false
+    }
+  };
+
+  const handleBuyNft = async () => {
+    const isApproved = await checkNftApprovalForBuying(nftData.price).then(
+      (data) => {
+        return data;
+      }
+    );
+    const newprice = new BigNumber(nftPrice * 1e18).toFixed();
+    // console.log(isApproved);
+    if (isApproved) {
+      setPurchaseColor("#00FECF");
+      setbuyLoading(true);
+      setbuyStatus("buy");
+      setPurchaseStatus("Buying NFT in progress..");
+
+      await window
+        .buyNFT(nftAddress, nftData.listingIndex, nftData.price)
+        .then((result) => {
+          setbuyLoading(false);
+          
+          setbuyStatus("success");
+          setPurchaseStatus("Successfully purchased!");
+          setPurchaseColor("#00FECF");
+          handleRefreshData();
+          setTimeout(() => {
+            setPurchaseStatus("");
+            setPurchaseColor("#00FECF");
+            setIsListed(false);
+          setIsOwner(true);
+            setbuyStatus("");
+          }, 2000);
+        })
+        .catch((e) => {
+          setbuyStatus("failed");
+          setbuyLoading(false);
+          setPurchaseStatus(e?.message);
+          setPurchaseColor("#FF6232");
+          setTimeout(() => {
+            setPurchaseStatus("");
+            setPurchaseColor("#00FECF");
+            setbuyStatus("");
+          }, 3000);
+          console.error(e);
+        });
+    } else {
+      setbuyStatus("approve");
+      setbuyLoading(true);
+      setPurchaseStatus("Approving in progress...");
+      setPurchaseColor("#00FECF");
+
+      await window
+        .approveBuy(newprice)
+        .then(() => {
+          setTimeout(() => {
+            setbuyStatus("buy");
+            setPurchaseStatus("");
+            setPurchaseColor("#00FECF");
+          }, 3000);
+          setbuyStatus("success");
+          setbuyLoading(false);
+          setPurchaseStatus("Successfully approved");
+          setPurchaseColor("#00FECF");
+        })
+        .catch((e) => {
+          console.error(e);
+          setbuyStatus("failed");
+          setTimeout(() => {
+            setbuyStatus("approve");
+            setPurchaseStatus("");
+            setPurchaseColor("#00FECF");
+          }, 3000);
+          setbuyLoading(false);
+          setPurchaseStatus(e?.message);
+          setPurchaseColor("#FF6232");
+        });
+    }
   };
 
   const handleListNft = async () => {
@@ -199,12 +295,15 @@ const SingleNftBanner = ({
         if (coinbase.toLowerCase() === nftData.owner.toLowerCase()) {
           setIsOwner(true);
           checkNftApprovalForListing();
-        } else setIsOwner(false);
+        } else {
+          setIsOwner(false);
+          checkNftApprovalForBuying(nftData.price);
+        }
       } else setIsOwner(false);
 
       if (nftData.isListed === true) {
         setIsListed(true);
-      } else setIsListed(false)
+      } else setIsListed(false);
     }
   }, [nftData, nftId, coinbase, chainId]);
 
@@ -592,8 +691,30 @@ const SingleNftBanner = ({
                         >
                           Make Offer
                         </button>
-                        <button className="btn buy-nft-btn px-3 py-1 col-lg-3">
-                          Buy
+                        <button
+                          className="btn buy-nft-btn px-3 py-1 col-lg-3"
+                          onClick={() => {
+                            chainId === 1030
+                              ? handleBuyNft()
+                              : handleConfluxChain();
+                          }}
+                        >
+                          {buyloading && chainId === 1030 ? (
+                            <div
+                              className="spinner-border spinner-border-sm text-light"
+                              role="status"
+                            ></div>
+                          ) : !buyloading && chainId !== 1030 ? (
+                            "Switch Network"
+                          ) : buyStatus === "buy" ? (
+                            "Buy"
+                          ) : buyStatus === "approve" || buyStatus === "" ? (
+                            "Approve buy"
+                          ) : buyStatus === "success" ? (
+                            "Success"
+                          ) : (
+                            "Failed"
+                          )}
                         </button>
                       </>
                     ) : !isConnected && chainId === 1030 ? (

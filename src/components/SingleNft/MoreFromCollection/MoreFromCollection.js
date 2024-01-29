@@ -6,7 +6,7 @@ import { NavLink } from "react-router-dom";
 import { Skeleton } from "@mui/material";
 import getFormattedNumber from "../../../hooks/get-formatted-number";
 
-const MoreFromCollection = ({ loading, allNftArray, cfxPrice }) => {
+const MoreFromCollection = ({ loading, allNftArray, cfxPrice, onNftClick }) => {
   const settings = {
     // dots: true,
     arrows: false,
@@ -117,7 +117,6 @@ const MoreFromCollection = ({ loading, allNftArray, cfxPrice }) => {
     },
   ];
 
-  console.log(allNftArray);
   return (
     <div className="container-lg py-3">
       <div className="row mx-0">
@@ -132,14 +131,21 @@ const MoreFromCollection = ({ loading, allNftArray, cfxPrice }) => {
                     key={index}
                   >
                     <NavLink
-                      to={`/nft/${item.tokenId}/${item.nftAddress}`}
+                      to={`/nft/${
+                        item.tokenId
+                      }/${item.nftAddress?.toLowerCase()}`}
                       style={{ textDecoration: "none" }}
                       onClick={() => {
                         window.scrollTo(0, 0);
+                        onNftClick(item.tokenId);
                       }}
                     >
                       {!item.isVideo ? (
-                        <img src={`https://cdnflux.dypius.com/${item.image}`} className="card-img" alt="" />
+                        <img
+                          src={`https://cdnflux.dypius.com/${item.image}`}
+                          className="card-img"
+                          alt=""
+                        />
                       ) : (
                         <video
                           src={`https://cdnflux.dypius.com/${item.image}`}
@@ -161,35 +167,37 @@ const MoreFromCollection = ({ loading, allNftArray, cfxPrice }) => {
                         </h6>
                         <img src={checkIcon} alt="" />
                       </div>
-                      {item?.price ?
+                      {item?.price ? (
                         <div className="d-flex align-items-center mt-2 gap-3">
-                        <h6
-                          className="cfx-price mb-0"
-                          style={{ fontSize: "10px" }}
-                        >
-                          {getFormattedNumber(item?.price / 10 ** 18)} WCFX
-                        </h6>
-                        <span className="usd-price" style={{ fontSize: "9px" }}>
-                        (${" "}
-                          {getFormattedNumber(
-                            (item?.price / 10 ** 18) * cfxPrice
-                          )}
-                          )
-                        </span>
-                      </div>
-                      :
-                      <div className="d-flex align-items-center mt-2 gap-3">
-                      <h6
-                        className="cfx-price mb-0"
-                        style={{ fontSize: "10px" }}
-                      >
-                        --
-                      </h6>
-                      <span className="usd-price" style={{ fontSize: "9px" }}>
-                 (--)
-                      </span>
-                    </div>
-                      }
+                          <h6
+                            className="cfx-price mb-0"
+                            style={{ fontSize: "10px" }}
+                          >
+                            {getFormattedNumber(item?.price / 10 ** 18)} WCFX
+                          </h6>
+                          <span
+                            className="usd-price"
+                            style={{ fontSize: "9px" }}
+                          >
+                            (${" "}
+                            {getFormattedNumber(
+                              (item?.price / 10 ** 18) * cfxPrice
+                            )}
+                            )
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="d-flex align-items-center mt-2 gap-3">
+                          <h6
+                            className="cfx-price mb-0"
+                            style={{ fontSize: "10px" }}
+                          ></h6>
+                          <span
+                            className="usd-price"
+                            style={{ fontSize: "9px" }}
+                          ></span>
+                        </div>
+                      )}
                       <div className="mt-3">
                         <button className="buy-btn w-100">Buy</button>
                       </div>

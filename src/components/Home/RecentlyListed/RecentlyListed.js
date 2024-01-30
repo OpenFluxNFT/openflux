@@ -192,8 +192,18 @@ const RecentlyListed = ({
                       {getFormattedNumber((item.price / 10 ** 18) * cfxPrice)})
                     </span>
                   </div>
+
                   <div className="mt-3">
-                    <button className="buy-btn w-100">Buy</button>
+                    <button
+                      className="buy-btn w-100"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        console.log("lot");
+                      }}
+                    >
+                      Buy
+                    </button>
                   </div>
                 </NavLink>
               </div>
@@ -211,15 +221,30 @@ const RecentlyListed = ({
                   style={{ textDecoration: "none" }}
                   className={"position-relative"}
                 >
-                  <img
-                    src={
-                      item.image
-                        ? item.image
-                        : require(`./assets/nftPlaceholder${index + 1}.png`)
-                    }
-                    className="card-img"
-                    alt=""
-                  />
+                  {!item.isVideo ? (
+                    <img
+                      src={
+                        item.image
+                          ? item.image
+                          : require(`./assets/nftPlaceholder1.png`)
+                      }
+                      className="card-img"
+                      alt=""
+                    />
+                  ) : (
+                    <video
+                      preload="auto"
+                      className="card-img"
+                      src={item.image}
+                      autoPlay={true}
+                      loop={true}
+                      muted="muted"
+                      playsInline={true}
+                      // onClick={player}
+                      controlsList="nodownload"
+                    ></video>
+                  )}
+
                   <div
                     className="position-absolute favorite-container"
                     onClick={(e) => {
@@ -291,7 +316,16 @@ const RecentlyListed = ({
                     </span>
                   </div>
                   <div className="mt-3">
-                    <button className="buy-btn w-100">Buy</button>
+                    <button
+                      className="buy-btn w-100"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        console.log("lot");
+                      }}
+                    >
+                      Buy
+                    </button>
                   </div>
                 </NavLink>
               </div>

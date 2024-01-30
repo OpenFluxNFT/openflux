@@ -2,7 +2,6 @@ import React from "react";
 import "./_nfttraits.scss";
 
 const NftTraits = ({ nftData }) => {
-
   return (
     <div className="container-lg py-3">
       <div className="row mx-0">

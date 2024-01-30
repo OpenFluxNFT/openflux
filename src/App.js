@@ -20,6 +20,8 @@ import Toast from "./components/Toast/Toast";
 import { ethers } from "ethers";
 import SignModal from "./components/SignModal/SignModal";
 import AllCollections from "./screens/AllCollections/AllCollections";
+import Web3 from "web3";
+
 
 function App() {
   const [walletModal, setWalletModal] = useState(false);
@@ -52,6 +54,7 @@ function App() {
 
   const [cfxPrice, setCfxPrice] = useState(0);
   const [favoriteNft, setFavoriteNft] = useState(false);
+  const [balance, setUserBalance] = useState(0);
 
   const [successUpdateProfile, setSuccessUpdateProfile] = useState({
     success: null,
@@ -222,7 +225,7 @@ function App() {
               });
 
             const nft_data = await fetch(
-              `https://cdnflux.dypius.com/collectionsmetadatas/${item.nftAddress}/${item.tokenId}/metadata.json`
+              `https://cdnflux.dypius.com/collectionsmetadatas/${item.nftAddress.toLowerCase()}/${item.tokenId}/metadata.json`
             )
               .then((res) => {
                 if (res.status === 200) {
@@ -289,7 +292,7 @@ function App() {
         nftData.map(async (item1) => {
           item1.tokenIds.forEach(async (i) => {
             const nft_data = await fetch(
-              `https://cdnflux.dypius.com/collectionsmetadatas/${item1.contractAddress}/${i}/metadata.json`
+              `https://cdnflux.dypius.com/collectionsmetadatas/${item1.contractAddress.toLowerCase()}/${i}/metadata.json`
             )
               .then((res) => res.json())
               .then((data) => {
@@ -682,6 +685,10 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    getUserBalance();
+  }, [coinbase, isConnected, chainId]);
+
   //const message = I am updating my profile with wallet address ${walletAddress}
   /*
 
@@ -860,6 +867,22 @@ function App() {
     }
   };
 
+  const getUserBalance = async () => {
+    if (isConnected && coinbase && chainId === 1030) {
+      const balance = await window.ethereum.request({
+        method: "eth_getBalance",
+        params: [coinbase, "latest"],
+      });
+
+      if (balance) {
+        const web3cfx = new Web3(window.config.conflux_endpoint);
+        const stringBalance = web3cfx.utils.hexToNumberString(balance);
+        const amount = web3cfx.utils.fromWei(stringBalance, "ether");
+        setUserBalance(amount);
+      }
+    }
+  };
+
   const logout = localStorage.getItem("logout");
   useEffect(() => {
     if (ethereum) {
@@ -951,6 +974,7 @@ function App() {
           }}
           handleDisconnect={handleDisconnect}
           allCollections={allCollections}
+          balance={balance}
         />
       ) : (
         <MobileHeader
@@ -963,6 +987,7 @@ function App() {
             handleShowWalletModal();
             setIsRedirect(true);
           }}
+          balance={balance}
         />
       )}
 
@@ -1079,6 +1104,7 @@ function App() {
               handleSwitchNetwork={handleSwitchNetwork}
               cfxPrice={cfxPrice}
               onRefreshListings={handleGetRecentlyListedNftsCache}
+              balance={balance}
             />
           }
         />

@@ -191,11 +191,11 @@ const MoreFromCollection = ({ loading, allNftArray, cfxPrice, onNftClick }) => {
                           <h6
                             className="cfx-price mb-0"
                             style={{ fontSize: "10px" }}
-                          ></h6>
+                          >--- WCFX</h6>
                           <span
                             className="usd-price"
                             style={{ fontSize: "9px" }}
-                          ></span>
+                          >($ ---)</span>
                         </div>
                       )}
                       <div className="mt-3">

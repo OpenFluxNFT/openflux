@@ -197,7 +197,7 @@ if there are no listings
           await Promise.all(
             window.range(0, listednftsArray.length - 1).map(async (j) => {
               const nft_data_listed = await fetch(
-                `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress}/${listednftsArray[j].tokenId}/metadata.json`
+                `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress.toLowerCase()}/${listednftsArray[j].tokenId}/metadata.json`
               )
                 .then((res) => res.json())
                 .then((data) => {
@@ -238,7 +238,7 @@ if there are no listings
               });
 
             const nft_data = await fetch(
-              `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress}/${tokenByIndex}/metadata.json`
+              `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress.toLowerCase()}/${tokenByIndex}/metadata.json`
             )
               .then((res) => res.json())
               .then((data) => {
@@ -328,7 +328,7 @@ if there are no listings
               });
 
             const nft_data = await fetch(
-              `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress}/${tokenByIndex}/metadata.json`
+              `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress.toLowerCase()}/${tokenByIndex}/metadata.json`
             )
               .then((res) => res.json())
               .then((data) => {

@@ -1,6 +1,6 @@
 import React from "react";
 import "./_footer.scss";
-import dypiusLogo from "../Header/assets/dypiusLogo.svg";
+import footerLogo from "./assets/footerLogo.svg";
 import twitterLogo from "./assets/twitterLogo.svg";
 import telegramLogo from "./assets/telegramLogo.svg";
 import discordLogo from "./assets/discordLogo.svg";
@@ -18,8 +18,7 @@ const Footer = () => {
             <div className="d-flex flex-column flex-lg-row align-items-start justify-content-between gap-2">
               <div className="d-flex flex-column gap-3">
                 <div className="d-flex align-items-center gap-2">
-                  <img src={dypiusLogo} alt="" />
-                  <h6 className="footer-title mb-0">Logo</h6>
+                  <img src={footerLogo} alt="" />
                 </div>
                 <p className="footer-desc mb-0">
                   The leading NFT Marketplace on Conflux eSpace. Home to the
@@ -27,13 +26,21 @@ const Footer = () => {
                   collections.
                 </p>
                 <div className="d-flex align-items-center gap-3">
-                  <a href="https://twitter.com/OpenFluxNFT" target="_blank" rel='noreferrer'>
+                  <a
+                    href="https://twitter.com/OpenFluxNFT"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     <img src={twitterLogo} alt="" />
                   </a>
-                  <a href="https://t.me/OpenFlux" target="_blank" rel='noreferrer'>
+                  <a
+                    href="https://t.me/OpenFlux"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     <img src={telegramLogo} alt="" />
                   </a>
-                  <a href="#" target="_blank" rel='noreferrer'>
+                  <a href="#" target="_blank" rel="noreferrer">
                     <img src={discordLogo} alt="" />
                   </a>
                   {/* <a href="#" target="_blank" rel='noreferrer'>
@@ -44,15 +51,15 @@ const Footer = () => {
               <div className="d-flex flex-column align-items-start gap-4">
                 <h6 className="footer-title mb-0">Marketplace</h6>
                 <div className="d-flex flex-column gap-2">
-                  <NavLink to={"/collections"} className="footer-link mb-0">
+                  <NavLink to={"/all-collections"} className="footer-link mb-0">
                     Collections
                   </NavLink>
                   {/* <NavLink to={"/"} className="footer-link mb-0">
                   Mint
                 </NavLink> */}
-                  <NavLink to={"/"} className="footer-link mb-0">
-                    Become Partners
-                  </NavLink>
+                  <a href={"https://drive.google.com/drive/folders/1SeWA1dwUQISV5rUK4m60Xs_NhJbYO3xG?usp=sharing"} target="_blank" rel='noreferrer' className="footer-link mb-0">
+                    Brand
+                  </a>
                   <a
                     className={"footer-link mb-0"}
                     href="mailto:someone@support.com"

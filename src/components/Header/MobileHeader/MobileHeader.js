@@ -18,7 +18,7 @@ const MobileHeader = ({
   isConnected,
   chainId,
   handleSwitchNetwork,
-  handleSignupAndRedirectToAccount,
+  handleSignupAndRedirectToAccount,balance
 }) => {
   const [menu, setMenu] = useState(false);
 

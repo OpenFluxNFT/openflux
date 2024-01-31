@@ -27,18 +27,18 @@ const Footer = () => {
                   collections.
                 </p>
                 <div className="d-flex align-items-center gap-3">
-                  <a href="#" target="_blank">
+                  <a href="https://twitter.com/OpenFluxNFT" target="_blank" rel='noreferrer'>
                     <img src={twitterLogo} alt="" />
                   </a>
-                  <a href="#" target="_blank">
+                  <a href="https://t.me/OpenFlux" target="_blank" rel='noreferrer'>
                     <img src={telegramLogo} alt="" />
                   </a>
-                  <a href="#" target="_blank">
+                  <a href="#" target="_blank" rel='noreferrer'>
                     <img src={discordLogo} alt="" />
                   </a>
-                  <a href="#" target="_blank">
+                  {/* <a href="#" target="_blank" rel='noreferrer'>
                     <img src={instagramLogo} alt="" />
-                  </a>
+                  </a> */}
                 </div>
               </div>
               <div className="d-flex flex-column align-items-start gap-4">

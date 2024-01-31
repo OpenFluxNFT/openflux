@@ -105,6 +105,25 @@
   font-size: 12px;
 }
 
+.usd-price-wrapper {
+  padding: 0 10px;
+  background: #252743;
+  border-radius: 12px;
+  bottom: 1px;
+  height: 94%;
+  right: 2px;
+}
+
+.nft-price-usd {
+  color: #3dbda7;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+  letter-spacing: 0.6px;
+  text-transform: capitalize;
+}
+
 .nft-dropdown {
   background: #252743 !important;
   border-radius: 12px;

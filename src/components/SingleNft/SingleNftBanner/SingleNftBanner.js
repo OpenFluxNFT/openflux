@@ -11,7 +11,7 @@ import { Skeleton } from "@mui/material";
 import Box from "@mui/material/Box";
 import getFormattedNumber from "../../../hooks/get-formatted-number";
 import { FadeLoader } from "react-spinners";
-import { useParams } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 import moment from "moment";
 import { handleSwitchNetworkhook } from "../../../hooks/switchNetwork";
 
@@ -26,6 +26,8 @@ const SingleNftBanner = ({
   cfxPrice,
   handleRefreshData,
   handleSwitchNetwork,
+  loading,
+  offerData,
 }) => {
   const [isOwner, setIsOwner] = useState(false);
   const [isListed, setIsListed] = useState(false);
@@ -40,6 +42,12 @@ const SingleNftBanner = ({
   const [cancelStatus, setcancelStatus] = useState("cancel"); //cancel
   const [cancelLoading, setcancelLoading] = useState(false); //cancel
 
+  const [buyStatus, setbuyStatus] = useState("buy"); //buy
+  const [buyloading, setbuyLoading] = useState(false); //buy
+
+  const [updateStatus, setupdateStatus] = useState("update"); //update
+  const [updateLoading, setupdateLoading] = useState(false); //update
+
   const override = {
     display: "block",
     margin: "20px auto 0",
@@ -48,11 +56,110 @@ const SingleNftBanner = ({
 
   const { nftId, nftAddress } = useParams();
   const { BigNumber } = window;
+
   const checkNftApprovalForListing = async () => {
-    await window.isApprovedNFT(nftId, nftAddress, coinbase).then((data) => {
-      setsellStatus("sell");
-      setIsApproveList(data);
+    if (chainId === 1030) {
+      await window
+        .isApprovedNFT(nftId, nftAddress, coinbase)
+        .then((data) => {
+          setsellStatus("sell");
+          setIsApproveList(data);
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    }
+  };
+
+  const checkNftApprovalForBuying = async (amount) => {
+    const result = await window.isApprovedBuy(amount).catch((e) => {
+      console.error(e);
     });
+
+    if (result === true) {
+      setbuyStatus("buy");
+      return true;
+    } else {
+      setbuyStatus("approve");
+      return false;
+    }
+  };
+
+  const handleBuyNft = async () => {
+    const isApproved = await checkNftApprovalForBuying(nftData.price).then(
+      (data) => {
+        return data;
+      }
+    );
+
+    console.log(isApproved);
+    if (isApproved) {
+      setPurchaseColor("#00FECF");
+      setbuyLoading(true);
+      setbuyStatus("buy");
+      setPurchaseStatus("Buying NFT in progress..");
+
+      await window
+        .buyNFT(nftAddress, nftData.listingIndex, nftData.price)
+        .then((result) => {
+          setbuyLoading(false);
+
+          setbuyStatus("success");
+          setPurchaseStatus("Successfully purchased!");
+          setPurchaseColor("#00FECF");
+          handleRefreshData();
+          setTimeout(() => {
+            setPurchaseStatus("");
+            setPurchaseColor("#00FECF");
+            setIsListed(false);
+            setIsOwner(true);
+            setbuyStatus("");
+          }, 2000);
+        })
+        .catch((e) => {
+          setbuyStatus("failed");
+          setbuyLoading(false);
+          setPurchaseStatus(e?.message);
+          setPurchaseColor("#FF6232");
+          setTimeout(() => {
+            setPurchaseStatus("");
+            setPurchaseColor("#00FECF");
+            setbuyStatus("buy");
+          }, 3000);
+          console.error(e);
+        });
+    } else {
+      setbuyStatus("approve");
+      setbuyLoading(true);
+      setPurchaseStatus("Approving in progress...");
+      setPurchaseColor("#00FECF");
+
+      await window
+        .approveBuy(nftData.price)
+        .then(() => {
+          setTimeout(() => {
+            setbuyStatus("buy");
+            setPurchaseStatus("");
+            setPurchaseColor("#00FECF");
+          }, 3000);
+          setbuyStatus("success");
+          setbuyLoading(false);
+          setPurchaseStatus("Successfully approved");
+          setPurchaseColor("#00FECF");
+        })
+        .catch((e) => {
+          console.error(e);
+          setbuyStatus("failed");
+          setTimeout(() => {
+            setbuyStatus("approve");
+            setPurchaseStatus("");
+            setPurchaseColor("#00FECF");
+          }, 3000);
+          setbuyLoading(false);
+          setPurchaseStatus(e?.message);
+          setPurchaseColor("#FF6232");
+        });
+    }
   };
 
   const handleListNft = async () => {
@@ -175,6 +282,46 @@ const SingleNftBanner = ({
       });
   };
 
+  const handleUpdateListing = async () => {
+    if (nftPrice !== "") {
+      const newPrice = new BigNumber(nftPrice * 1e18).toFixed();
+
+      setPurchaseColor("#00FECF");
+      setPurchaseStatus("Price is being updated...");
+      setupdateLoading(true);
+      setupdateStatus("update");
+
+      return await window
+        .updateListingNFT(nftAddress, nftData.listingIndex, newPrice)
+        .then((result) => {
+          setTimeout(() => {
+            setPurchaseColor("#00FECF");
+            setPurchaseStatus("");
+            setupdateStatus("");
+          }, 3000);
+
+          handleRefreshData();
+          setPurchaseColor("#00FECF");
+          setPurchaseStatus("Price updated successfully.");
+          setupdateLoading(false);
+          setupdateStatus("success");
+        })
+        .catch((e) => {
+          setTimeout(() => {
+            setPurchaseColor("#00FECF");
+            setPurchaseStatus("");
+            setupdateStatus("");
+          }, 3000);
+
+          setPurchaseColor("#FF6232");
+          setPurchaseStatus(e?.message);
+          setupdateLoading(false);
+          setupdateStatus("failed");
+        });
+    }
+    window.alertify.error("Listing price shouldn't be empty!");
+  };
+
   const handleConfluxChain = async () => {
     if (window.ethereum) {
       if (!window.gatewallet) {
@@ -193,19 +340,25 @@ const SingleNftBanner = ({
 
   useEffect(() => {
     if (nftData && nftData.owner) {
-      checkNftApprovalForListing();
-      if (coinbase) {
+      if (coinbase && chainId === 1030) {
+        checkNftApprovalForListing();
         if (coinbase.toLowerCase() === nftData.owner.toLowerCase()) {
           setIsOwner(true);
           checkNftApprovalForListing();
+          if (nftData.isListed === true) {
+            setNftPrice(nftData.price / 1e18);
+          }
+        } else {
+          setIsOwner(false);
+          checkNftApprovalForBuying(nftData.price);
         }
       } else setIsOwner(false);
 
       if (nftData.isListed === true) {
         setIsListed(true);
-      }
+      } else setIsListed(false);
     }
-  }, [nftData]);
+  }, [nftData, nftId, coinbase, chainId]);
 
   return (
     <div className="container-lg">
@@ -213,7 +366,7 @@ const SingleNftBanner = ({
         <div className="row mx-0 gap-2 align-items-center justify-content-between">
           <div className="col-lg-6">
             <div className="row mx-0 justify-content-start gap-2">
-              {nftData.image ? (
+              {nftData.image && loading === false ? (
                 <div className="col-lg-6">
                   {!nftData.isVideo ? (
                     <img
@@ -307,14 +460,18 @@ const SingleNftBanner = ({
                       src={cawsLogo}
                       className="nft-collection-logo"
                     />
-                    <span className="collection-name">
+                    <NavLink
+                      className="collection-name"
+                      to={`/collection/${nftAddress}/${nftData.nftSymbol}`}
+                    >
                       {nftData.collectionName ?? "..."}
-                    </span>
+                    </NavLink>
                     <img alt="" src={checkIcon} />
                   </div>
                   <div className="collection-info-owner-wrapper">
                     <div className="d-flex flex-column gap-1 px-3 py-2">
                       <span className="nft-collection-name">
+                        {nftData.nftSymbol}{" "}
                         {nftData.name
                           ? nftData.name
                           : nftData.collectionName
@@ -383,6 +540,7 @@ const SingleNftBanner = ({
                   <div className="d-flex align-items-center gap-2">
                     <span className="nft-item-name-right">
                       {" "}
+                      {nftData.nftSymbol}{" "}
                       {nftData.name
                         ? nftData.name
                         : nftData.collectionName
@@ -396,18 +554,21 @@ const SingleNftBanner = ({
                     <img alt="" src={shareIcon} />
                   </div>
                 </div>
-                {!nftData.collectionName && (
+                {loading && (
                   <div className="nft-price-wrapper w-100 p-3">
                     <FadeLoader
                       color={"#554fd8"}
-                      loading={!nftData.collectionName}
+                      loading={loading}
                       cssOverride={override}
                       aria-label="Loading Spinner"
                       data-testid="loader"
                     />
                   </div>
                 )}
-                {!isListed && nftData.collectionName && !isOwner ? (
+                {!isListed &&
+                nftData.collectionName &&
+                loading === false &&
+                !isOwner ? (
                   <div className="d-flex flex-column gap-2 w-100 flex-div align-items-center justify-content-between">
                     <div className="nft-price-wrapper w-100 p-3">
                       <div className="d-flex flex-column gap-2">
@@ -418,21 +579,26 @@ const SingleNftBanner = ({
                     </div>
                     {isConnected ? (
                       <button
-                        className="btn make-offer-btn px-3 py-1 col-lg-3"
+                        className="btn make-offer-btn px-3 py-1 col-lg-3 col-5"
                         onClick={onShowMakeOfferPopup}
                       >
-                        Make Offer
+                        {offerData && offerData.amount
+                          ? "Update Offer"
+                          : "Make Offer"}
                       </button>
                     ) : (
                       <button
-                        className="btn connect-btn2 d-flex align-items-center gap-2"
+                        className="btn connect-btn2 d-flex align-items-center gap-2 col-5"
                         onClick={handleSignup}
                       >
                         Connect Wallet
                       </button>
                     )}
                   </div>
-                ) : !isListed && nftData.collectionName && isOwner ? (
+                ) : !isListed &&
+                  nftData.collectionName &&
+                  isOwner &&
+                  loading === false ? (
                   <div className="nft-price-wrapper p-3">
                     <div className="d-flex flex-column gap-2">
                       <span className="current-price-text">Current Price</span>
@@ -453,22 +619,32 @@ const SingleNftBanner = ({
                       </div>
                     </div>
                   </div>
-                ) : (isListed && !isOwner) ||
-                  (isListed && isOwner && nftData.collectionName) ? (
+                ) : ((isListed && !isOwner) ||
+                    (isListed && isOwner && nftData.collectionName)) &&
+                  loading === false ? (
                   <div className="nft-price-wrapper p-3">
                     <div className="d-flex flex-column gap-2">
                       <span className="current-price-text">Current Price</span>
+
                       <div className="d-flex flex-column flex-lg-row flex-md-row gap-2 align-items-center">
                         <img src={cfx} alt="" />
-                        <span className="nft-price-crypto">
-                          {getFormattedNumber(nftData?.price / 10 ** 18)} WCFX
-                        </span>
+                        {isOwner ? (
+                          <input
+                            type="number"
+                            className="uni-input"
+                            value={nftPrice}
+                            onChange={(e) => {
+                              setNftPrice(e.target.value);
+                            }}
+                          />
+                        ) : (
+                          <span className="nft-price-crypto">
+                            {getFormattedNumber(nftData?.price / 10 ** 18)} WCFX
+                          </span>
+                        )}
+
                         <span className="nft-price-usd">
-                          (${" "}
-                          {getFormattedNumber(
-                            (nftData?.price / 10 ** 18) * cfxPrice
-                          )}
-                          )
+                          ($ {getFormattedNumber(nftPrice * cfxPrice)})
                         </span>
                       </div>
                     </div>
@@ -476,7 +652,10 @@ const SingleNftBanner = ({
                 ) : (
                   <></>
                 )}
-                {isOwner && nftData.collectionName && !isListed ? (
+                {isOwner &&
+                nftData.collectionName &&
+                !isListed &&
+                loading === false ? (
                   <>
                     <div className="nft-price-wrapper px-3 py-1 d-flex align-items-center justify-content-between">
                       <span className="current-price-text">
@@ -540,7 +719,10 @@ const SingleNftBanner = ({
                       There is a listing fee of 0.1% for the selected duration
                     </span> */}
                   </>
-                ) : isOwner && nftData.collectionName && isListed ? (
+                ) : isOwner &&
+                  nftData.collectionName &&
+                  isListed &&
+                  loading === false ? (
                   <div className="nft-price-wrapper px-3 py-1 d-flex align-items-center justify-content-between">
                     <span className="current-price-text">Listing ends</span>
                     <div className="duration-tab d-flex align-items-center justify-content-center">
@@ -554,41 +736,79 @@ const SingleNftBanner = ({
                 ) : (
                   <></>
                 )}
-                {chainId !== 1030 && isConnected && nftData.collectionName && (
-                  <span className="error-status-text">
-                    *Unsupported network. please change the chain on your wallet
-                  </span>
-                )}
-                {!isOwner && !isListed && nftData.collectionName ? (
+                {chainId !== 1030 &&
+                  isConnected &&
+                  nftData.collectionName &&
+                  loading === false && (
+                    <span className="error-status-text">
+                      *Unsupported network. please change the chain on your
+                      wallet
+                    </span>
+                  )}
+                {!isOwner &&
+                !isListed &&
+                nftData.collectionName &&
+                loading === false ? (
                   <></>
                 ) : !isOwner && isListed ? (
                   <div className="d-flex align-items-center gap-2 justify-content-center mt-4">
-                    {isConnected ? (
+                    {isConnected && chainId === 1030 ? (
                       <>
                         <button
-                          className="btn make-offer-btn px-3 py-1 col-lg-3"
+                          className="btn make-offer-btn px-3 py-1 col-lg-3 col-5"
                           onClick={onShowMakeOfferPopup}
                         >
-                          Make Offer
+                          {offerData && offerData.amount
+                            ? "Update Offer"
+                            : "Make Offer"}
                         </button>
-                        <button className="btn buy-nft-btn px-3 py-1 col-lg-3">
-                          Buy
+                        <button
+                          className="btn buy-nft-btn px-3 py-1 col-lg-3 col-5"
+                          onClick={() => {
+                            chainId === 1030
+                              ? handleBuyNft()
+                              : handleConfluxChain();
+                          }}
+                        >
+                          {buyloading && chainId === 1030 ? (
+                            <div
+                              className="spinner-border spinner-border-sm text-light"
+                              role="status"
+                            ></div>
+                          ) : !buyloading && chainId !== 1030 ? (
+                            "Switch Network"
+                          ) : buyStatus === "buy" ? (
+                            "Buy"
+                          ) : buyStatus === "approve" || buyStatus === "" ? (
+                            "Approve buy"
+                          ) : buyStatus === "success" ? (
+                            "Success"
+                          ) : (
+                            "Failed"
+                          )}
                         </button>
                       </>
-                    ) : (
+                    ) : !isConnected && chainId === 1030 ? (
                       <button
-                        className="btn connect-btn2 d-flex align-items-center gap-2"
+                        className="btn connect-btn2 d-flex align-items-center gap-2 col-5"
                         onClick={handleSignup}
                       >
                         Connect Wallet
                       </button>
+                    ) : (
+                      <button
+                        onClick={handleConfluxChain}
+                        className="deleteoffer-btn  px-3 py-1 col-lg-4 col-5"
+                      >
+                        Switch Network
+                      </button>
                     )}
                   </div>
-                ) : isOwner && !isListed ? (
+                ) : isOwner && !isListed && loading === false ? (
                   <div className="d-flex align-items-center gap-2 justify-content-center mt-4">
                     {isConnected ? (
                       <button
-                        className="updateoffer-btn  px-3 py-1 col-lg-4"
+                        className="updateoffer-btn  px-3 py-1 col-lg-4 col-5"
                         onClick={() => {
                           chainId === 1030
                             ? handleListNft()
@@ -616,22 +836,43 @@ const SingleNftBanner = ({
                       </button>
                     ) : (
                       <button
-                        className="btn connect-btn2 d-flex align-items-center gap-2"
+                        className="btn connect-btn2 d-flex align-items-center gap-2 col-5"
                         onClick={handleSignup}
                       >
                         Connect Wallet
                       </button>
                     )}
                   </div>
-                ) : isOwner && isListed ? (
+                ) : isOwner && isListed && loading === false ? (
                   <div className="d-flex align-items-center gap-2 justify-content-center mt-4">
                     {isConnected ? (
                       <>
-                        <button className="updateoffer-btn px-3 py-1 col-lg-3">
-                          Update
+                        <button
+                          className="updateoffer-btn px-3 py-1 col-lg-3 col-5"
+                          onClick={() => {
+                            chainId === 1030
+                              ? handleUpdateListing()
+                              : handleConfluxChain();
+                          }}
+                        >
+                          {updateLoading && chainId === 1030 ? (
+                            <div
+                              className="spinner-border spinner-border-sm text-light"
+                              role="status"
+                            ></div>
+                          ) : !updateLoading && chainId !== 1030 ? (
+                            "Switch Network"
+                          ) : updateStatus === "update" ||
+                            updateStatus === "" ? (
+                            "Update"
+                          ) : updateStatus === "success" ? (
+                            "Success"
+                          ) : (
+                            "Failed"
+                          )}
                         </button>
                         <button
-                          className="deleteoffer-btn  px-3 py-1 col-lg-3"
+                          className="deleteoffer-btn  px-3 py-1 col-lg-3 col-5"
                           onClick={() => {
                             chainId === 1030
                               ? cancelListNft()
@@ -657,7 +898,7 @@ const SingleNftBanner = ({
                       </>
                     ) : (
                       <button
-                        className="btn connect-btn2 d-flex align-items-center gap-2"
+                        className="btn connect-btn2 d-flex align-items-center gap-2 col-5"
                         onClick={handleSignup}
                       >
                         Connect Wallet

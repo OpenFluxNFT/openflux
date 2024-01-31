@@ -18,6 +18,7 @@ import emptyFavorite from "../Home/RecentlyListed/assets/emptyFavorite.svg";
 import redFavorite from "../Home/RecentlyListed/assets/redFavorite.svg";
 import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
 import { NavLink } from "react-router-dom";
+import { Skeleton } from "@mui/material";
 
 const ProfileNFTList = ({
   option,
@@ -25,9 +26,14 @@ const ProfileNFTList = ({
   allCollections,
   userNftFavs,
   handleAddFavoriteNft,
-  handleRemoveFavoriteNft,userNftFavsInitial
+  handleRemoveFavoriteNft,
+  userNftFavsInitial,
+  nftFinalArray,
+  fetchFavoriteCounts,
 }) => {
   const [favoritesOption, setfavoritesOption] = useState("items");
+  const [gridView, setGridView] = useState("small-grid");
+  const [loading, setLoading] = useState(false);
 
   const dummyCards = [
     {
@@ -103,9 +109,17 @@ const ProfileNFTList = ({
       timeListed: "11d Ago",
     },
   ];
- 
 
-  const [gridView, setGridView] = useState("small-grid");
+  const handleLikeStates = (tokenid, contractAddress) => {
+    const stringTokenid = tokenid.toString();
+    setLoading(true);
+    handleRemoveFavoriteNft(stringTokenid, contractAddress).then(() => {
+      fetchFavoriteCounts();
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+    });
+  };
 
   return (
     <div className="container-lg">
@@ -367,77 +381,111 @@ const ProfileNFTList = ({
               } `}
             >
               {favoritesOption === "items" ? (
-                userNftFavs.map((item, index) => (
-                  <div
-                    className="recently-listed-card p-3 d-flex flex-column"
-                    key={index}
-                  >
-                    <NavLink
-                      to={`/nft/${item.tokenId}/${item.contractAddress}`}
-                      style={{ textDecoration: "none" }}
-                      className={"position-relative"}
+                loading === true ? (
+                  dummyCards.map((item, index) => (
+                    <Skeleton
+                      key={index}
+                      variant="rounded"
+                      width={"100%"}
+                      height={250}
+                    />
+                  ))
+                ) : (
+                  userNftFavs &&
+                  userNftFavs.length > 0 &&
+                  userNftFavs.map((item, index) => (
+                    <div
+                      className="recently-listed-card p-3 d-flex flex-column"
+                      key={index}
                     >
-                      {!item.isVideo ? (
-                              <img
-                                src={`https://cdnflux.dypius.com/${item.image}`}
-                                className="card-img"
-                                 
-                                alt=""
-                              />
-                            ) : (
-                              <video
-                                preload="auto" 
-                                className="card-img"
-                                src={`https://cdnflux.dypius.com/${item.image}`}
-                                autoPlay={true}
-                                loop={true}
-                                muted="muted"
-                                playsInline={true}
-                                // onClick={player}
-                                controlsList="nodownload"
-                              ></video>
-                            )}
-
-                       
-                      <div
-                        className="position-absolute favorite-container"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          e.preventDefault();
-                          handleRemoveFavoriteNft(item.tokenId, item.contractAddress)
-                        }}
+                      <NavLink
+                        to={`/nft/${item.tokenId}/${item.contractAddress}`}
+                        style={{ textDecoration: "none" }}
+                        className={"position-relative"}
                       >
-                        <div className="d-flex align-items-center position-relative gap-2">
-                          <img src={redFavorite} alt="" className="fav-img" />
-                          <span className="fav-count-active">222</span>
+                        {!item.isVideo && item.image ? (
+                          <img
+                            src={`https://cdnflux.dypius.com/${item.image}`}
+                            className="card-img"
+                            alt=""
+                          />
+                        ) : item.isVideo && !item.image ? (
+                          <video
+                            preload="auto"
+                            className="card-img"
+                            src={`https://cdnflux.dypius.com/${item.image}`}
+                            autoPlay={true}
+                            loop={true}
+                            muted="muted"
+                            playsInline={true}
+                            // onClick={player}
+                            controlsList="nodownload"
+                          ></video>
+                        ) : (
+                          <img
+                            src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                            className="card-img"
+                            alt=""
+                          />
+                        )}
+
+                        <div
+                          className="position-absolute favorite-container"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            handleLikeStates(
+                              item.tokenId,
+                              item.contractAddress
+                            );
+                          }}
+                        >
+                          <div className="d-flex align-items-center position-relative gap-2">
+                            <img src={redFavorite} alt="" className="fav-img" />
+                            <span className="fav-count-active">
+                              {
+                                nftFinalArray.find((object) => {
+                                  return (
+                                    object.contractAddress ===
+                                      item.contractAddress &&
+                                    Number(object.tokenId) ===
+                                      Number(item.tokenId)
+                                  );
+                                })?.count
+                              }
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                      <div className="d-flex align-items-center gap-2 mt-2">
-                        <h6
-                          className="recently-listed-title mb-0"
-                          style={{ fontSize: "12px" }}
-                        >
-                          {item.name}
-                        </h6>
-                        <img src={checkIcon} alt="" />
-                      </div>
-                      <div className="d-flex align-items-center mt-2 gap-3">
-                        <h6
-                          className="cfx-price mb-0"
-                          style={{ fontSize: "10px" }}
-                        >
-                          tbd WCFX
-                        </h6>
-                        <span className="usd-price" style={{ fontSize: "9px" }}>
-                          ($ tbd)
-                        </span>
-                      </div>
-                      <div className="mt-3">
-                        <button className="buy-btn w-100">Buy</button>
-                      </div>
-                    </NavLink>
-                  </div>
-                ))
+                        <div className="d-flex align-items-center gap-2 mt-2">
+                          <h6
+                            className="recently-listed-title mb-0"
+                            style={{ fontSize: "12px" }}
+                          >
+                            {item.name ?? `#${item.tokenId}`}
+                          </h6>
+                          <img src={checkIcon} alt="" />
+                        </div>
+                        <div className="d-flex align-items-center mt-2 gap-3">
+                          <h6
+                            className="cfx-price mb-0"
+                            style={{ fontSize: "10px" }}
+                          >
+                            tbd WCFX
+                          </h6>
+                          <span
+                            className="usd-price"
+                            style={{ fontSize: "9px" }}
+                          >
+                            ($ tbd)
+                          </span>
+                        </div>
+                        <div className="mt-3">
+                          <button className="buy-btn w-100">Buy</button>
+                        </div>
+                      </NavLink>
+                    </div>
+                  ))
+                )
               ) : userCollectionFavs && userCollectionFavs.length > 0 ? (
                 userCollectionFavs.map((item, index) => (
                   <div
@@ -583,8 +631,7 @@ const ProfileNFTList = ({
                         onClick={(e) => {
                           e.stopPropagation();
                           e.preventDefault();
-                          handleRemoveFavoriteNft(item.tokenId, item.contractAddress)
-
+                          handleLikeStates(item.tokenId, item.contractAddress);
                         }}
                       >
                         <div className="d-flex align-items-center position-relative gap-2">

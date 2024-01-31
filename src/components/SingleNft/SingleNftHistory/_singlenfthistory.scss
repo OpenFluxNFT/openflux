@@ -18,7 +18,7 @@
   }
 
   .single-nft-table-wrapper {
-    display: grid;
+    // display: grid;
     height: 300px;
     overflow-y: auto;
   }
@@ -30,6 +30,7 @@
     width: 99%;
     tr {
       border-color: #1b1e49;
+      border-width: 1px;
     }
 
     tbody {
@@ -70,6 +71,34 @@
     text-transform: capitalize;
   }
 
+  .active-accept-btn {
+    background: linear-gradient(90deg, #2f80ed 0%, #00a9ff 100%);
+    border: none;
+    outline: none;
+    color: #fff;
+    text-align: center;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    text-transform: capitalize;
+    border-radius: 12px;
+  }
+
+  .disabled-accept-btn {
+    background: linear-gradient(90deg, rgba(47, 128, 237, 0.20) 0%, rgba(0, 169, 255, 0.20) 100%);
+    border: none;
+    outline: none;
+    color: #fff;
+    text-align: center;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    text-transform: capitalize;
+    border-radius: 12px;
+  }
+
   .greentext {
     color: #3dbda7;
     text-align: center;
@@ -81,7 +110,7 @@
     text-transform: capitalize;
   }
   .left-border {
-    border-radius: 10px 0 0 10px;
+    border-radius: 0px 0 0 10px;
   }
 
   .right-border {

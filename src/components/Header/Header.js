@@ -28,11 +28,10 @@ const Header = ({
   handleSwitchNetwork,
   handleSignupAndRedirectToAccount,
   handleDisconnect,
-  allCollections,
+  allCollections,balance
 }) => {
   const [showmenu, setShowMenu] = useState(false);
   const [tooltip, setTooltip] = useState(false);
-  const [balance, setUserBalance] = useState(0);
   const [searchResult, setSearchResult] = useState("");
   const [currentCollection, setcurrentCollection] = useState();
   const [isopen, setisopen] = useState(false);
@@ -40,21 +39,7 @@ const Header = ({
   const location = useLocation();
   const navigate = useNavigate();
 
-  const getUserBalance = async () => {
-    if (isConnected && coinbase && chainId === 1030) {
-      const balance = await window.ethereum.request({
-        method: "eth_getBalance",
-        params: [coinbase, "latest"],
-      });
 
-      if (balance) {
-        const web3cfx = new Web3(window.config.conflux_endpoint);
-        const stringBalance = web3cfx.utils.hexToNumberString(balance);
-        const amount = web3cfx.utils.fromWei(stringBalance, "ether");
-        setUserBalance(amount);
-      }
-    }
-  };
 
   const handleConfluxPool = async () => {
     if (window.ethereum) {
@@ -97,9 +82,7 @@ const Header = ({
     }
   };
 
-  useEffect(() => {
-    getUserBalance();
-  }, [coinbase, isConnected, chainId]);
+
 
   return (
     <div className="container-fluid py-3 header-wrapper">

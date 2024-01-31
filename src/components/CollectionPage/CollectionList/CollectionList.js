@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./_collectionlist.scss";
 import bigGrid from "./assets/bigGrid.svg";
 import bigGridActive from "./assets/bigGridActive.svg";
@@ -16,17 +16,24 @@ import useWindowSize from "../../../hooks/useWindowSize";
 import filterIcon from "./assets/filterIcon.svg";
 import xMark from "./assets/xMark.svg";
 import { Checkbox, FormControlLabel, FormGroup, Skeleton } from "@mui/material";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import emptyFavorite from "../../Home/RecentlyListed/assets/emptyFavorite.svg";
 import redFavorite from "../../Home/RecentlyListed/assets/redFavorite.svg";
-import { FadeLoader } from "react-spinners";
 import { shortAddress } from "../../../hooks/shortAddress";
+import getFormattedNumber from "../../../hooks/get-formatted-number";
+import moment from "moment";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const CollectionList = ({
   currentCollection,
   allNftArray,
   collectionAddress,
   loading,
+  handleAddFavoriteNft,
+  userNftFavs,
+  handleRemoveFavoriteNft,
+  cfxPrice,
 }) => {
   const windowSize = useWindowSize();
   const [openFilters, setOpenFilters] = useState(false);
@@ -46,8 +53,7 @@ const CollectionList = ({
     },
   ];
 
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const dummyCards = [
     {
@@ -124,12 +130,75 @@ const CollectionList = ({
     },
   ];
 
-  const override = {
-    display: "block",
-    margin: "20px auto 0",
-    borderColor: "#554fd8",
-  };
   const [gridView, setGridView] = useState("small-grid");
+  const [nftFinalArray, setnftFinalArray] = useState([]);
+
+  const baseURL = "https://confluxapi.worldofdypians.com";
+
+  const fetchFavoriteCounts = async () => {
+    if (allNftArray && allNftArray.length > 0) {
+      let favoriteCount = 0;
+      let nftArray = [];
+      await Promise.all(
+        window.range(0, allNftArray.length - 1).map(async (i) => {
+          const fav_count_listed = await axios
+            .get(
+              `${baseURL}/api/nftFavoritesCount/${collectionAddress}/${allNftArray[i].tokenId}`,
+              {
+                headers: {
+                  cascadestyling:
+                    "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+                },
+              }
+            )
+            .catch((e) => {
+              console.error(e);
+            });
+
+          if (fav_count_listed && fav_count_listed.status === 200) {
+            favoriteCount = fav_count_listed.data;
+            // console.log(favoriteCount);
+            nftArray.push({
+              ...favoriteCount,
+            });
+          }
+        })
+      );
+      setnftFinalArray(nftArray);
+    }
+  };
+
+  const handleLikeStates = (tokenid) => {
+    const stringTokenid = (tokenid).toString()
+    if (
+      userNftFavs &&
+      userNftFavs.length > 0 &&
+      userNftFavs.find((favitem) => {
+        return (
+          favitem.contractAddress === collectionAddress &&
+          favitem.tokenIds.find(
+            (itemTokenIds) => itemTokenIds === stringTokenid
+          )
+        );
+      })
+    ) {
+   
+      handleRemoveFavoriteNft(stringTokenid, collectionAddress).then(() => {
+        fetchFavoriteCounts();
+      });
+    } else {
+    
+
+      handleAddFavoriteNft(stringTokenid, collectionAddress).then(() => {
+        fetchFavoriteCounts();
+      });
+    }
+  };
+
+
+  useEffect(() => {
+    fetchFavoriteCounts();
+  }, [allNftArray]);
 
   return (
     <>
@@ -493,88 +562,131 @@ const CollectionList = ({
                   {allNftArray && allNftArray.length > 0 ? (
                     <tbody>
                       {allNftArray.map((item, index) => (
-                        <tr className="nft-table-row p-1" key={index} onClick={() => navigate(`/nft/${item.tokenId}/${collectionAddress}`)} style={{cursor: "pointer"}}>
+                        <tr
+                          className="nft-table-row p-1"
+                          key={index}
+                          onClick={() =>
+                            navigate(
+                              `/nft/${item.tokenId}/${collectionAddress}`
+                            )
+                          }
+                          style={{ cursor: "pointer" }}
+                        >
                           <td
                             className="table-item col-2 d-flex align-items-center gap-1 w-100"
                             scope="row"
                           >
-                            <img
-                              src={`https://cdnflux.dypius.com/${item.image50}`}
-                              className="table-img"
-                              height={36}
-                              width={36}
-                              alt=""
-                            />
-
+                            {!item.isVideo ? (
+                              <img
+                                src={`https://cdnflux.dypius.com/${item.image50}`}
+                                className="table-img"
+                                height={36}
+                                width={36}
+                                alt=""
+                              />
+                            ) : (
+                              <video
+                                preload="auto"
+                                height={36}
+                                width={36}
+                                className="card-img"
+                                src={`https://cdnflux.dypius.com/${item.image}`}
+                                autoPlay={true}
+                                loop={true}
+                                muted="muted"
+                                playsInline={true}
+                                // onClick={player}
+                                controlsList="nodownload"
+                              ></video>
+                            )}
                             {item.name}
                           </td>
-                          <td className="table-item col-2">TBD CFX</td>
-                          <td className="table-item col-2">TBD CFX</td>
-                          <td className="table-item col-2">TBD CFX </td>
                           <td className="table-item col-2">
-                            {shortAddress(item.owner)}
+                            {item.seller &&
+                              getFormattedNumber(item.price / 10 ** 18)}
                           </td>
-                          <td className="table-item col-2">TBD</td>
+                          <td className="table-item col-2">
+                            {item.seller && " TBD CFX"}
+                          </td>
+                          <td className="table-item col-2">
+                            {item.seller && " TBD CFX"}{" "}
+                          </td>
+                          <td className="table-item col-2">
+                            {shortAddress(item.owner ?? item.seller)}
+                          </td>
+                          <td className="table-item col-2">
+                            {" "}
+                            {moment
+                              .duration(item.blockTimestamp * 1000 - Date.now())
+                              .humanize(true)}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
                   ) : (
                     dummyCards.map((item, index) => (
                       <>
-                      <tr></tr>
-                      <td>
-                        <Skeleton
-                          key={index}
-                          variant="rounded"
-                          width={"100%"}
-                          height={40}
-                        />
-                      </td>
-                      <td>
-                        <Skeleton
-                          key={index}
-                          variant="rounded"
-                          width={"100%"}
-                          height={40}
-                        />
-                      </td>
-                      <td>
-                        <Skeleton
-                          key={index}
-                          variant="rounded"
-                          width={"100%"}
-                          height={40}
-                        />
-                      </td>
-                      <td>
-                        <Skeleton
-                          key={index}
-                          variant="rounded"
-                          width={"100%"}
-                          height={40}
-                        />
-                      </td>
-                      <td>
-                        <Skeleton
-                          key={index}
-                          variant="rounded"
-                          width={"100%"}
-                          height={40}
-                        />
-                      </td>
-                      <td>
-                        <Skeleton
-                          key={index}
-                          variant="rounded"
-                          width={"100%"}
-                          height={40}
-                        />
-                      </td>
+                        <tr></tr>
+                        <td>
+                          <Skeleton
+                            key={index}
+                            variant="rounded"
+                            width={"100%"}
+                            height={40}
+                            sx={{ bgcolor: "rgba(47, 128, 237, 0.05)" }}
+                          />
+                        </td>
+                        <td>
+                          <Skeleton
+                            key={index}
+                            variant="rounded"
+                            width={"100%"}
+                            height={40}
+                          />
+                        </td>
+                        <td>
+                          <Skeleton
+                            key={index}
+                            variant="rounded"
+                            width={"100%"}
+                            height={40}
+                            sx={{ bgcolor: "rgba(47, 128, 237, 0.05)" }}
+                          />
+                        </td>
+                        <td>
+                          <Skeleton
+                            key={index}
+                            variant="rounded"
+                            width={"100%"}
+                            height={40}
+                            sx={{ bgcolor: "rgba(47, 128, 237, 0.05)" }}
+                          />
+                        </td>
+                        <td>
+                          <Skeleton
+                            key={index}
+                            variant="rounded"
+                            width={"100%"}
+                            height={40}
+                            sx={{ bgcolor: "rgba(47, 128, 237, 0.05)" }}
+                          />
+                        </td>
+                        <td>
+                          <Skeleton
+                            key={index}
+                            variant="rounded"
+                            width={"100%"}
+                            height={40}
+                            sx={{ bgcolor: "rgba(47, 128, 237, 0.05)" }}
+                          />
+                        </td>
                       </>
                     ))
                   )}
                 </table>
-              ) : allNftArray && allNftArray.length > 0 ? (
+              ) : (
+                allNftArray &&
+                allNftArray.length > 0 &&
                 allNftArray.map((item, index) => (
                   <div
                     className="recently-listed-card p-3 d-flex flex-column"
@@ -585,11 +697,21 @@ const CollectionList = ({
                       style={{ textDecoration: "none" }}
                       className={"position-relative"}
                     >
-                      {item.image && item.image.endsWith(".mp4") && (
+                      {item.image &&
+                      !item.isVideo &&
+                      gridView === "small-grid" ? (
+                        <img
+                          src={`https://cdnflux.dypius.com/${item.image}`}
+                          className="card-img"
+                          alt=""
+                        />
+                      ) : item.image &&
+                        item.isVideo &&
+                        gridView === "small-grid" ? (
                         <video
                           preload="auto"
                           className="card-img"
-                          src={item.image}
+                          src={`https://cdnflux.dypius.com/${item.image}`}
                           autoPlay={true}
                           loop={true}
                           muted="muted"
@@ -597,22 +719,31 @@ const CollectionList = ({
                           // onClick={player}
                           controlsList="nodownload"
                         ></video>
-                      )}
-                      {item.image && gridView === "small-grid" ? (
-                        <img
-                          src={`https://cdnflux.dypius.com/${item.image}`}
-                          className="card-img"
-                          alt=""
-                        />
                       ) : (
                         <></>
                       )}
-                      {item.image && gridView === "big-grid" ? (
+                      {item.image &&
+                      !item.isVideo &&
+                      gridView === "big-grid" ? (
                         <img
                           src={`https://cdnflux.dypius.com/${item.image170}`}
                           className="card-img"
                           alt=""
                         />
+                      ) : item.image &&
+                        item.isVideo &&
+                        gridView === "big-grid" ? (
+                        <video
+                          preload="auto"
+                          className="card-img"
+                          src={`https://cdnflux.dypius.com/${item.image}`}
+                          autoPlay={true}
+                          loop={true}
+                          muted="muted"
+                          playsInline={true}
+                          // onClick={player}
+                          controlsList="nodownload"
+                        ></video>
                       ) : (
                         <></>
                       )}
@@ -628,11 +759,61 @@ const CollectionList = ({
                         onClick={(e) => {
                           e.stopPropagation();
                           e.preventDefault();
+                          handleLikeStates(item.tokenId);
                         }}
                       >
                         <div className="d-flex align-items-center position-relative gap-2">
-                          <img src={emptyFavorite} alt="" className="fav-img" />
-                          <span className="fav-count">222</span>
+                          <img
+                            src={
+                              userNftFavs &&
+                              userNftFavs.length > 0 &&
+                              userNftFavs.find((favitem) => {
+                                return (
+                                  favitem.contractAddress ===
+                                    collectionAddress &&
+                                  favitem.tokenIds.find(
+                                    (itemTokenIds) =>
+                                      Number(itemTokenIds) ===
+                                      Number(item.tokenId)
+                                  )
+                                );
+                              })
+                                ? redFavorite
+                                : emptyFavorite
+                            }
+                            alt=""
+                            className="fav-img"
+                          />
+                          <span
+                            className={
+                              userNftFavs &&
+                              userNftFavs.length > 0 &&
+                              userNftFavs.find((favitem) => {
+                                return (
+                                  favitem.contractAddress ===
+                                    collectionAddress &&
+                                  favitem.tokenIds.find(
+                                    (itemTokenIds) =>
+                                      Number(itemTokenIds) ===
+                                      Number(item.tokenId)
+                                  )
+                                );
+                              })
+                                ? "fav-count-active"
+                                : "fav-count"
+                            }
+                          >
+                            {
+                              nftFinalArray.find((object) => {
+                                return (
+                                  object.contractAddress ===
+                                    collectionAddress &&
+                                  Number(object.tokenId) ===
+                                    Number(item.tokenId)
+                                );
+                              })?.count
+                            }
+                          </span>
                         </div>
                       </div>
                       <div className="d-flex align-items-center gap-2 mt-2">
@@ -640,42 +821,90 @@ const CollectionList = ({
                           className="recently-listed-title mb-0"
                           style={{ fontSize: "12px" }}
                         >
-                          {item.name}
+                          {item.name ?? `#${item.tokenId}`}
                         </h6>
                         <img src={checkIcon} alt="" />
                       </div>
-                      <div className="d-flex align-items-center mt-2 gap-3">
-                        <h6
-                          className="cfx-price mb-0"
-                          style={{ fontSize: "10px" }}
-                        >
-                          1254.89 CFX
-                        </h6>
-                        <span className="usd-price" style={{ fontSize: "9px" }}>
-                          ($ 654,874.86)
-                        </span>
-                      </div>
+                      {item.seller && (
+                        <div className="d-flex align-items-center mt-2 gap-3">
+                          <h6
+                            className="cfx-price mb-0"
+                            style={{ fontSize: "10px" }}
+                          >
+                            {getFormattedNumber(item.price / 10 ** 18)} WCFX
+                          </h6>
+                          <span
+                            className="usd-price"
+                            style={{ fontSize: "9px" }}
+                          >
+                            (${" "}
+                            {getFormattedNumber(
+                              (item.price / 10 ** 18) * cfxPrice
+                            )}
+                            )
+                          </span>
+                        </div>
+                      )}
                       <div className="mt-3">
-                        <button className="buy-btn w-100">Buy</button>
+                        {item.seller ? (
+                          <button className="buy-btn w-100">Buy</button>
+                        ) : (
+                          <NavLink
+                            className="buy-btn w-100 d-flex justify-content-center "
+                            to={`/nft/${item.tokenId}/${collectionAddress}`}
+                            style={{ textDecoration: "none" }}
+                          >
+                            View Details
+                          </NavLink>
+                        )}
                       </div>
                     </NavLink>
                   </div>
                 ))
-              ) : (
-                dummyCards.map((item, index) => (
-                  <Skeleton key={index} variant="rounded" width={"100%"} height={250} />
-                ))
               )}
             </div>
-            {/* {loading === true && (
-              <FadeLoader
-                color={"#554fd8"}
-                loading={loading}
-                cssOverride={override}
-                aria-label="Loading Spinner"
-                data-testid="loader"
-              />
-            )} */}
+            {loading === true &&
+            (gridView === "small-grid" || gridView === "big-grid") ? (
+              <div
+                className={`${
+                  gridView === "list"
+                    ? "list-view-grid"
+                    : gridView === "big-grid"
+                    ? "big-cards-grid"
+                    : "small-cards-grid"
+                } mt-3`}
+              >
+                {dummyCards.map((item, index) => (
+                  <Skeleton
+                    key={index}
+                    variant="rounded"
+                    width={"100%"}
+                    height={250}
+                  />
+                ))}
+              </div>
+            ) : loading === true && gridView === "list" ? (
+              <div
+                className={`${
+                  gridView === "list"
+                    ? "list-view-grid"
+                    : gridView === "big-grid"
+                    ? "big-cards-grid"
+                    : "small-cards-grid"
+                } mt-3`}
+              >
+                {dummyCards.map((item, index) => (
+                  <Skeleton
+                    key={index}
+                    variant="rounded"
+                    width={"100%"}
+                    height={40}
+                  />
+                ))}
+              </div>
+            ) : (
+              <></>
+            )}
           </div>
         </div>
       </div>

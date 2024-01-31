@@ -5,7 +5,7 @@ import CollectionList from "../../components/CollectionPage/CollectionList/Colle
 import banner from "../../components/CollectionPage/CollectionBanner/assets/bannerPlaceholder.png";
 import collectionIcon from "../../components/CollectionPage/CollectionBanner/assets/cawsIcon.png";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import axios, { isCancel } from "axios";
 import Web3 from "web3";
 
 const CollectionPage = ({
@@ -15,6 +15,9 @@ const CollectionPage = ({
   userData,
   allCollections,
   userNftFavs,
+  handleAddFavoriteNft,
+  handleRemoveFavoriteNft,
+  cfxPrice,
 }) => {
   const collectionInfo = [
     {
@@ -40,18 +43,19 @@ const CollectionPage = ({
   ];
 
   const [favorite, setFavorite] = useState(false);
-  const [favoriteNft, setFavoriteNft] = useState(false);
 
   const [isVerified, setisVerified] = useState(false);
   const [currentCollection, setcurrentCollection] = useState([]);
   const [collectionSocials, setcollectionSocials] = useState([]);
   const [allNftArray, setAllNftArray] = useState([]);
+
   const [loading, setLoading] = useState(false);
   const [totalSupplyPerCollection, settotalSupplyPerCollection] = useState(0);
 
   const [next, setnext] = useState(12);
   const baseURL = "https://confluxapi.worldofdypians.com";
   const dataFetchedRef = useRef(false);
+  const containerRef = useRef(false);
 
   //https://confluxapi.worldofdypians.com/api/collections/contractAddress/listings
 
@@ -136,13 +140,33 @@ if there are no listings
 
   const fetchInitialNftsPerCollection = async () => {
     setLoading(true);
+
     const result = await axios.get(
       `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress}`
     );
-    if (result && result.status === 200) {
+    const listednfts = await axios
+      .get(`${baseURL}/api/collections/${collectionAddress}/listings`, {
+        headers: {
+          cascadestyling:
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+
+    if (
+      result &&
+      result.status === 200 &&
+      listednfts &&
+      listednfts.status === 200
+    ) {
       let nftArray = [];
+      let nftListedArray = [];
       let totalSupply = 0;
       const abi = JSON.parse(result.data.result);
+      const listednftsArray = listednfts.data.listings;
+
       const web3 = window.confluxWeb3;
       const collection_contract = new web3.eth.Contract(abi, collectionAddress);
 
@@ -164,7 +188,36 @@ if there are no listings
 
       if (totalSupply && totalSupply > 0) {
         const limit = totalSupply >= 12 ? 12 : totalSupply;
-        const result34 = await Promise.all(
+
+        if (
+          listednftsArray !== "none" &&
+          listednftsArray &&
+          listednftsArray.length > 0
+        ) {
+          await Promise.all(
+            window.range(0, listednftsArray.length - 1).map(async (j) => {
+              const nft_data_listed = await fetch(
+                `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress.toLowerCase()}/${listednftsArray[j].tokenId}/metadata.json`
+              )
+                .then((res) => res.json())
+                .then((data) => {
+                  return data;
+                })
+                .catch((err) => {
+                  console.log(err.message);
+                });
+
+              if (nft_data_listed) {
+                nftListedArray.push({
+                  ...nft_data_listed,
+                  ...listednftsArray[j],
+                });
+              }
+            })
+          );
+        }
+
+        await Promise.all(
           window.range(0, limit - 1).map(async (i) => {
             let tokenByIndex = 0;
             if (result.data.result.includes("tokenByIndex")) {
@@ -183,8 +236,9 @@ if there are no listings
               .catch((e) => {
                 console.error(e);
               });
+
             const nft_data = await fetch(
-              `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress}/${tokenByIndex}/metadata.json`
+              `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress.toLowerCase()}/${tokenByIndex}/metadata.json`
             )
               .then((res) => res.json())
               .then((data) => {
@@ -195,7 +249,7 @@ if there are no listings
               });
 
             if (nft_data) {
-              // console.log(nft_data);
+              // console.log('nft_data', nft_data);
               nftArray.push({
                 ...nft_data,
                 tokenId: Number(tokenByIndex),
@@ -204,139 +258,22 @@ if there are no listings
             }
           })
         );
-        const finalArray = nftArray.sort((a,b)=>{ return a.tokenId - b.tokenId})
+
+        const finalArray_sorted = nftArray.sort((a, b) => {
+          return a.tokenId - b.tokenId;
+        });
+
+        const uniqueArray = finalArray_sorted.filter(
+          ({ tokenId: id1 }) =>
+            !nftListedArray.some(({ tokenId: id2 }) => id2 === id1.toString())
+        );
+
+        const finalArray = [...nftListedArray, ...uniqueArray];
         setAllNftArray(finalArray);
         setLoading(false);
-
-        // const Http = new XMLHttpRequest();
-        // const url =
-        //   "https://cdnflux.dypius.com/collectionsmetadatas/0x634e34e0f9c09dba2e61a398f7b76e6327b97916/12115004/metadata.json";
-        // Http.open("GET", url);
-        // Http.send();
-
-        // Http.onreadystatechange = (e) => {
-        //   console.log(Http.responseText);
-        // };
-
-        // const tokenURI = await collection_contract.methods
-        //   .tokenURI(tokenByIndex)
-        //   .call()
-        //   .catch((e) => {
-        //     console.error(e);
-        //     console.error(tokenByIndex);
-        //   });
-        // const tokenName = await collection_contract.methods
-        //   .symbol()
-        //   .call()
-        //   .catch((e) => {
-        //     console.error(e);
-        //   });
-        // if (tokenURI) {
-        //   if (
-        //     !tokenURI.includes("ipfs://") &&
-        //     !tokenURI.includes("ipfs;//")
-        //   ) {
-        //     if (tokenURI.endsWith(".svg") || tokenURI.endsWith(".gif")) {
-        //       nftArray.push({ name: tokenName, image: tokenURI });
-        //     } else if (tokenURI.includes("tokenURI:")) {
-        //       nftArray.push({
-        //         name: tokenName,
-        //         image: tokenURI.slice(9, tokenURI.length),
-        //       });
-        //     } else {
-        //       console.log(tokenURI);
-        //       const result2 = await axios.get(tokenURI).catch((e) => {
-        //         console.error(e);
-        //       });
-        //       if (result2 && result2.status === 200) {
-        //         nftArray.push(result2.data);
-        //       }
-        //     }
-        //   } else if (
-        //     tokenURI.includes("ipfs://") ||
-        //     tokenURI.includes("ipfs;//")
-        //   ) {
-        //     const ipfs_key = tokenURI.slice(6, tokenURI.length);
-        //     console.log("ipfs_key", ipfs_key);
-        //     const result2 = await axios
-        //       .get(`https://ipfs.io/ipfs${ipfs_key}`)
-        //       .catch((e) => {
-        //         console.error(e);
-        //       });
-        //     if (result2 && result2.status === 200) {
-        //       if (result2.data.image) {
-        //         const nftImage = result2.data.image.slice(
-        //           6,
-        //           result2.data.image.length
-        //         );
-        //         nftArray.push({
-        //           ...result2.data,
-        //           nftImage: `https://ipfs.io/ipfs${nftImage}`,
-        //         });
-        //       } else if (result2) {
-        //         nftArray.push({
-        //           name: tokenName,
-        //           image: `https://ipfs.io/ipfs${ipfs_key}`,
-        //         });
-        //       }
-        //     }
-        //   }
-        // } else if (tokenURI === "") {
-        //   nftArray.push({ name: tokenName, image: undefined });
-        // }
-      }
-    }
-  };
-  const getTestCollections = async () => {
-    let nftArray = [];
-    setLoading(true);
-    const result = await axios
-      .get(`${baseURL}/api/nfts/${collectionAddress}?skip=${next}`, {
-        headers: {
-          cascadestyling:
-            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-        },
-      })
-      .catch((e) => {
-        console.error(e);
-      });
-
-    if (result && result.status === 200) {
-      console.log(result.data, totalSupplyPerCollection);
-      if (result.data.metadatas === false && totalSupplyPerCollection === 0) {
-        setAllNftArray([]);
-        setLoading(false);
-      } else if (
-        result.data.metadatas === false &&
-        Number(totalSupplyPerCollection) > 0
-      ) {
-        console.log("yes");
-        const result2 = await axios.get(
-          `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress}`
-        );
-        if (result2 && result2.status === 200) {
-          const abi = JSON.parse(result2.data.result);
-          const web3 = window.confluxWeb3;
-          const collection_contract = new web3.eth.Contract(
-            abi,
-            collectionAddress
-          );
-
-          const tokenName = await collection_contract.methods
-            .symbol()
-            .call()
-            .catch((e) => {
-              console.error(e);
-            });
-          const limit = next === 0 ? 20 : next;
-          for (let i = 0; i < limit; i++) {
-            nftArray.push({ name: tokenName, image: undefined });
-          }
-          setAllNftArray(nftArray);
-        }
       } else {
-        setAllNftArray(result.data);
         setLoading(false);
+        setAllNftArray([]);
       }
     }
   };
@@ -370,40 +307,50 @@ if there are no listings
       }
 
       if (totalSupply && totalSupply > 0) {
-        for (let i = next - nftPerRow; i < next; i++) {
-          let tokenByIndex = 0;
-          if (result.data.result.includes("tokenByIndex")) {
-            tokenByIndex = await collection_contract.methods
-              .tokenByIndex(i)
+        await Promise.all(
+          window.range(next - nftPerRow, next - 1).map(async (i) => {
+            let tokenByIndex = 0;
+            if (result.data.result.includes("tokenByIndex")) {
+              tokenByIndex = await collection_contract.methods
+                .tokenByIndex(i)
+                .call()
+                .catch((e) => {
+                  console.error(e);
+                });
+            } else if (!result.data.result.includes("tokenByIndex")) {
+              tokenByIndex = i;
+            }
+            const owner = await collection_contract.methods
+              .ownerOf(tokenByIndex)
               .call()
               .catch((e) => {
                 console.error(e);
               });
-          } else if (!result.data.result.includes("tokenByIndex")) {
-            tokenByIndex = i;
-          }
 
-          const owner = await collection_contract.methods
-            .ownerOf(tokenByIndex)
-            .call()
-            .catch((e) => {
-              console.error(e);
-            });
-          const nft_data = await fetch(
-            `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress}/${tokenByIndex}/metadata.json`
-          )
-            .then((res) => res.json())
-            .then((data) => {
-              return data;
-            })
-            .catch((err) => {
-              console.log(err.message);
-            });
+            const nft_data = await fetch(
+              `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress.toLowerCase()}/${tokenByIndex}/metadata.json`
+            )
+              .then((res) => res.json())
+              .then((data) => {
+                return data;
+              })
+              .catch((err) => {
+                console.log(err.message);
+              });
 
-          if (nft_data) {
-            nftArray.push({ ...nft_data, tokenId: tokenByIndex, owner: owner });
-          }
-        }
+            if (nft_data) {
+              // console.log(nft_data);
+              nftArray.push({
+                ...nft_data,
+                tokenId: Number(tokenByIndex),
+                owner: owner,
+              });
+            }
+          })
+        );
+
+        console.log(next, next - nftPerRow);
+
         const finaldata = [...allNftArray, ...nftArray];
         setAllNftArray(finaldata);
         setLoading(false);
@@ -421,12 +368,33 @@ if there are no listings
         parseInt(wrappedElement.getBoundingClientRect()?.bottom) <=
         window.innerHeight;
       if (isBottom) {
-        if (next <= allCollections.length) {
+        if (next <= totalSupplyPerCollection) {
           loadMore();
         }
-        document.removeEventListener("scroll", onScroll);
       }
+      document.removeEventListener("scroll", onScroll);
     }
+
+    // const { clientHeight, scrollHeight, scrollTop } =
+    //   document.documentElement || document.body;
+
+    // // Adjust the threshold as needed
+    // const threshold = 100;
+    // console.log(scrollHeight, scrollTop, clientHeight);
+    // if (scrollHeight - scrollTop - clientHeight < threshold) {
+    //   // You've reached the bottom, trigger your API request here
+    //   // console.log('Reached bottom, trigger API request');
+    //   console.log("yes1", totalSupplyPerCollection);
+    //   if (next <= totalSupplyPerCollection || next === 12) {
+    //     console.log("yes2");
+
+    //     setnext(next + nftPerRow);
+    //     fetchSlicedNftsPerCollection();
+    //   }
+
+    //   // Optionally, you can remove the event listener to stop further calls
+    //   window.removeEventListener("scroll", onScroll);
+    // }
   };
 
   const fetchCurrentCollection = (collectionAddr) => {
@@ -517,63 +485,6 @@ if there are no listings
     }
   };
 
-  const handleAddFavoriteNft = async (tokenId, nftContract) => {
-    if (coinbase && collectionAddress) {
-      const data = {
-        contractAddress: nftContract,
-        tokenId: tokenId,
-      };
-
-      await axios
-        .post(
-          `https://confluxapi.worldofdypians.com//users/addNftFavorite/${coinbase}`,
-          data,
-          {
-            headers: {
-              cascadestyling:
-                "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-            },
-          }
-        )
-        .then(() => {
-          setFavoriteNft(true);
-          onFavoriteCollection();
-        })
-        .catch((e) => {
-          console.error(e);
-          setFavoriteNft(false);
-        });
-    }
-  };
-
-  const handleRemoveFavoriteNft = async (tokenId, nftContract) => {
-    if (coinbase && collectionAddress) {
-      const data = {
-        contractAddress: nftContract,
-        tokenId: tokenId,
-      };
-
-      await axios
-        .post(
-          `https://confluxapi.worldofdypians.com/api/users/removeNftFavorite/${coinbase}`,
-          data,
-          {
-            headers: {
-              cascadestyling:
-                "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-            },
-          }
-        )
-        .then(() => {
-          setFavoriteNft(false);
-          onFavoriteCollection();
-        })
-        .catch((e) => {
-          console.error(e);
-        });
-    }
-  };
-
   useEffect(() => {
     window.scrollTo(0, 0);
     getCollectionTotalSupply();
@@ -585,11 +496,11 @@ if there are no listings
     fetchInitialNftsPerCollection();
   }, []);
 
-  // useEffect(() => {
-  //   if (next !== 12) {
-  //     fetchSlicedNftsPerCollection();
-  //   }
-  // }, [next]);
+  useEffect(() => {
+    if (next !== 12) {
+      fetchSlicedNftsPerCollection();
+    }
+  }, [next]);
 
   useEffect(() => {
     checkifFavorite();
@@ -600,11 +511,15 @@ if there are no listings
   }, [collectionAddress, allCollections]);
 
   useEffect(() => {
-    document.addEventListener("scroll", onScroll);
+    window.addEventListener("scroll", onScroll);
   });
 
   return (
-    <div className="container-fluid py-4 home-wrapper px-0" id="header2">
+    <div
+      className="container-fluid py-4 home-wrapper px-0"
+      ref={containerRef}
+      id="header2"
+    >
       <CollectionBanner
         title={currentCollection.collectionName}
         logo={
@@ -632,6 +547,10 @@ if there are no listings
         allNftArray={allNftArray}
         collectionAddress={collectionAddress}
         loading={loading}
+        handleAddFavoriteNft={handleAddFavoriteNft}
+        handleRemoveFavoriteNft={handleRemoveFavoriteNft}
+        userNftFavs={userNftFavs}
+        cfxPrice={cfxPrice}
       />
 
       {totalSupplyPerCollection &&

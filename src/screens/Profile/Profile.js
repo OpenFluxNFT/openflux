@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./_profile.scss";
 import ProfileNFTList from "../../components/Profile/ProfileNFTList";
 import ProfileBanner from "../../components/Profile/ProfileBanner/ProfileBanner";
-
+import axios from "axios";
 import { useParams } from "react-router-dom";
 
 const Profile = ({
@@ -11,7 +11,13 @@ const Profile = ({
   userTotalNftsOwned,
   onViewShared,
   updateUserData,
-  successUpdateProfile,userCollectionFavs,allCollections
+  successUpdateProfile,
+  userCollectionFavs,
+  allCollections,
+  userNftFavs,
+  handleAddFavoriteNft,
+  handleRemoveFavoriteNft,
+  userNftFavsInitial,
 }) => {
   const [option, setOption] = useState("collected");
   const profileSocials = ["website", "twitter", "instagram"];
@@ -21,7 +27,8 @@ const Profile = ({
   const [userName, setUserName] = useState("");
   const [profilePicture, setprofilePicture] = useState("");
   const [bannerPicture, setbannerPicturePicture] = useState("");
-
+  const baseURL = "https://confluxapi.worldofdypians.com";
+  const [nftFinalArray, setnftFinalArray] = useState([]);
   const [userTotalNftsFavs, setUserTotalNftsFavs] = useState(0);
 
   const { id } = useParams();
@@ -71,6 +78,70 @@ const Profile = ({
       setuserWallet("-");
     }
   };
+
+  const fetchFavoriteCounts = async () => {
+    if (userNftFavsInitial && userNftFavsInitial.length > 0) {
+      let favoriteCount = 0;
+      let nftArray = [];
+
+      await Promise.all(
+        userNftFavsInitial.map(async (item1) => {
+          item1.tokenIds.forEach(async (i) => {
+            const nft_data = await fetch(
+              `https://cdnflux.dypius.com/collectionsmetadatas/${item1.contractAddress}/${i}/metadata.json`
+            )
+              .then((res) => res.json())
+              .then((data) => {
+                // console.log(data);
+                return data;
+              })
+              .catch((err) => {
+                console.log(err.message);
+              });
+
+            const fav_count_listed = await axios
+              .get(
+                `${baseURL}/api/nftFavoritesCount/${item1.contractAddress}/${i}`,
+                {
+                  headers: {
+                    cascadestyling:
+                      "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+                  },
+                }
+              )
+              .catch((e) => {
+                console.error(e);
+              });
+            if (fav_count_listed && fav_count_listed.status === 200) {
+              favoriteCount = fav_count_listed.data;
+            }
+
+            if (
+              nft_data &&
+              nft_data.code !== 404 &&
+              typeof nft_data !== "string"
+            ) {
+              nftArray.push({
+                ...nft_data,
+                tokenId: Number(i),
+                contractAddress: item1.contractAddress,
+                ...favoriteCount,
+              });
+            }
+          });
+        })
+      );
+
+      await Promise.all(
+        window.range(0, userNftFavs.length - 1).map(async (i) => {})
+      );
+      setnftFinalArray(nftArray);
+    }
+  };
+
+  useEffect(() => {
+    fetchFavoriteCounts();
+  }, [userNftFavsInitial]);
 
   const checkIfSameAccount = () => {
     if (userData && userData.walletAddress) {
@@ -184,7 +255,17 @@ const Profile = ({
             </div>
           </div>
           <hr className="profile-divider mt-2" />
-          <ProfileNFTList option={option} userCollectionFavs={userCollectionFavs} allCollections={allCollections}/>
+          <ProfileNFTList
+            option={option}
+            userCollectionFavs={userCollectionFavs}
+            allCollections={allCollections}
+            userNftFavs={userNftFavs}
+            userNftFavsInitial={userNftFavsInitial}
+            handleAddFavoriteNft={handleAddFavoriteNft}
+            handleRemoveFavoriteNft={handleRemoveFavoriteNft}
+            nftFinalArray={nftFinalArray}
+            fetchFavoriteCounts={fetchFavoriteCounts}
+          />
         </div>
       </div>
     </div>

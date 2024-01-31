@@ -15,6 +15,9 @@ const RecentlyListed = ({
   userNftFavs,
   recentlyListedNfts,
   cfxPrice,
+  handleAddFavoriteNft,
+  handleRemoveFavoriteNft,
+  userNftFavsInitial,
 }) => {
   const settings = {
     // dots: true,
@@ -28,116 +31,70 @@ const RecentlyListed = ({
     // dotsClass: "button__bar",
   };
 
-  const dummyCards = [
-    {
-      title: "CAWS #1125",
-      cfxPrice: 1254.89,
-      usdPrice: 654874.86,
-    },
-    {
-      title: "CAWS #1125",
-      cfxPrice: 1254.89,
-      usdPrice: 654874.86,
-    },
-    {
-      title: "CAWS #1125",
-      cfxPrice: 1254.89,
-      usdPrice: 654874.86,
-    },
-    {
-      title: "Timepiece #1125",
-      cfxPrice: 1254.89,
-      usdPrice: 654874.86,
-    },
-    {
-      title: "Timepiece #1125",
-      cfxPrice: 1254.89,
-      usdPrice: 654874.86,
-    },
-    {
-      title: "Timepiece #1125",
-      cfxPrice: 1254.89,
-      usdPrice: 654874.86,
-    },
-    {
-      title: "Land #9999",
-      cfxPrice: 1254.89,
-      usdPrice: 654874.86,
-    },
-    {
-      title: "Land #9999",
-      cfxPrice: 1254.89,
-      usdPrice: 654874.86,
-    },
-  ];
-  const [favorite, setFavorite] = useState(false);
+  const baseURL = "https://confluxapi.worldofdypians.com";
+  const [nftFinalArray, setnftFinalArray] = useState([]);
 
   const windowSize = useWindowSize();
 
-  const checkifFavorite = (collectionAddress) => {
-    if (userNftFavs && userNftFavs.length > 0) {
-      if (userNftFavs.find((obj) => obj === collectionAddress)) {
-        setFavorite(true);
-      } else {
-        setFavorite(false);
-      }
-    }
-  };
+  const fetchFavoriteCounts = async () => {
+    if (recentlyListedNfts && recentlyListedNfts.length > 0) {
+      let favoriteCount = 0;
+      let nftArray = [];
+      await Promise.all(
+        window.range(0, recentlyListedNfts.length - 1).map(async (i) => {
+          const fav_count_listed = await axios
+            .get(
+              `${baseURL}/api/nftFavoritesCount/${recentlyListedNfts[i].nftAddress}/${recentlyListedNfts[i].tokenId}`,
+              {
+                headers: {
+                  cascadestyling:
+                    "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+                },
+              }
+            )
+            .catch((e) => {
+              console.error(e);
+            });
 
-  const handleAddFavorite = async (collectionAddress) => {
-    if (coinbase && collectionAddress) {
-      const data = {
-        contractAddress: collectionAddress,
-      };
+          if (fav_count_listed && fav_count_listed.status === 200) {
+            favoriteCount = fav_count_listed.data;
 
-      await axios
-        .post(
-          `https://confluxapi.worldofdypians.com/api/users/addNftFavorite/${coinbase}`,
-          data,
-          {
-            headers: {
-              cascadestyling:
-                "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-            },
+            nftArray.push({
+              ...favoriteCount,
+            });
           }
-        )
-        .then(() => {
-          setFavorite(true);
-          onFavoriteNft();
         })
-        .catch((e) => {
-          console.error(e);
-          setFavorite(false);
-        });
+      );
+      setnftFinalArray(nftArray);
     }
   };
 
-  const handleRemoveFavorite = async (collectionAddress) => {
-    if (coinbase && collectionAddress) {
-      const data = {
-        contractAddress: collectionAddress,
-      };
+  const handleLikeStates = (tokenid, nftAddr) => {
+    const stringTokenid = tokenid.toString();
 
-      await axios
-        .post(
-          `https://confluxapi.worldofdypians.com/api/users/removeNftFavorite/${coinbase}`,
-          data,
-          {
-            headers: {
-              cascadestyling:
-                "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-            },
-          }
-        )
-        .then(() => {
-          setFavorite(false);
-          onFavoriteNft();
-        })
-        .catch((e) => {
-          console.error(e);
-        });
+    if (
+      userNftFavs &&
+      userNftFavs.length > 0 &&
+      userNftFavs.find((favitem) => {
+        return (
+          favitem.contractAddress.toLowerCase() === nftAddr.toLowerCase() &&
+          favitem.tokenId.toString() === stringTokenid
+        );
+      })
+    ) {
+      handleRemoveFavoriteNft(stringTokenid, nftAddr).then(() => {
+        fetchFavoriteCounts();
+      });
+    } else {
+      handleAddFavoriteNft(stringTokenid, nftAddr).then(() => {
+        fetchFavoriteCounts();
+      });
     }
   };
+
+  useEffect(() => {
+    fetchFavoriteCounts();
+  }, [recentlyListedNfts]);
 
   return (
     <div className="container-lg mt-5">
@@ -171,15 +128,53 @@ const RecentlyListed = ({
                     onClick={(e) => {
                       e.stopPropagation();
                       e.preventDefault();
+                      handleLikeStates(item.tokenId, item.nftAddress);
                     }}
                   >
                     <div className="d-flex align-items-center position-relative gap-2">
                       <img
-                        src={favorite ? redFavorite : emptyFavorite}
+                        src={
+                          userNftFavsInitial &&
+                          userNftFavsInitial.length > 0 &&
+                          userNftFavsInitial.find((favitem) => {
+                            return (
+                              favitem.contractAddress === item.nftAddress &&
+                              favitem.tokenIds.find(
+                                (itemTokenIds) => itemTokenIds === item.tokenId
+                              )
+                            );
+                          })
+                            ? redFavorite
+                            : emptyFavorite
+                        }
                         alt=""
                         className="fav-img"
                       />
-                      <span className="fav-count">222</span>
+                      <span
+                        className={
+                          userNftFavsInitial &&
+                          userNftFavsInitial.length > 0 &&
+                          userNftFavsInitial.find((favitem) => {
+                            return (
+                              favitem.contractAddress === item.nftAddress &&
+                              favitem.tokenIds.find(
+                                (itemTokenIds) => itemTokenIds === item.tokenId
+                              )
+                            );
+                          })
+                            ? "fav-count-active"
+                            : "fav-count"
+                        }
+                      >
+                        {
+                          nftFinalArray.find((object) => {
+                            return (
+                              object.contractAddress === item.nftAddress &&
+                              Number(object.tokenId) === Number(item.tokenId)
+                            );
+                          })?.count
+                        }
+                      </span>
                     </div>
                   </div>
                   <div className="d-flex align-items-center gap-2 mt-2">
@@ -197,8 +192,18 @@ const RecentlyListed = ({
                       {getFormattedNumber((item.price / 10 ** 18) * cfxPrice)})
                     </span>
                   </div>
+
                   <div className="mt-3">
-                    <button className="buy-btn w-100">Buy</button>
+                    <button
+                      className="buy-btn w-100"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        console.log("lot");
+                      }}
+                    >
+                      Buy
+                    </button>
                   </div>
                 </NavLink>
               </div>
@@ -216,29 +221,82 @@ const RecentlyListed = ({
                   style={{ textDecoration: "none" }}
                   className={"position-relative"}
                 >
-                  <img
-                    src={
-                      item.image
-                        ? item.image
-                        : require(`./assets/nftPlaceholder${index + 1}.png`)
-                    }
-                    className="card-img"
-                    alt=""
-                  />
+                  {!item.isVideo ? (
+                    <img
+                      src={
+                        item.image
+                          ? item.image
+                          : require(`./assets/nftPlaceholder1.png`)
+                      }
+                      className="card-img"
+                      alt=""
+                    />
+                  ) : (
+                    <video
+                      preload="auto"
+                      className="card-img"
+                      src={item.image}
+                      autoPlay={true}
+                      loop={true}
+                      muted="muted"
+                      playsInline={true}
+                      // onClick={player}
+                      controlsList="nodownload"
+                    ></video>
+                  )}
+
                   <div
                     className="position-absolute favorite-container"
                     onClick={(e) => {
                       e.stopPropagation();
                       e.preventDefault();
+                      handleLikeStates(item.tokenId, item.nftAddress);
                     }}
                   >
                     <div className="d-flex align-items-center position-relative gap-2">
                       <img
-                        src={favorite ? redFavorite : emptyFavorite}
+                        src={
+                          userNftFavsInitial &&
+                          userNftFavsInitial.length > 0 &&
+                          userNftFavsInitial.find((favitem) => {
+                            return (
+                              favitem.contractAddress === item.nftAddress &&
+                              favitem.tokenIds.find(
+                                (itemTokenIds) => itemTokenIds === item.tokenId
+                              )
+                            );
+                          })
+                            ? redFavorite
+                            : emptyFavorite
+                        }
                         alt=""
                         className="fav-img"
                       />{" "}
-                      <span className="fav-count">222</span>
+                      <span
+                        className={
+                          userNftFavsInitial &&
+                          userNftFavsInitial.length > 0 &&
+                          userNftFavsInitial.find((favitem) => {
+                            return (
+                              favitem.contractAddress === item.nftAddress &&
+                              favitem.tokenIds.find(
+                                (itemTokenIds) => itemTokenIds === item.tokenId
+                              )
+                            );
+                          })
+                            ? "fav-count-active"
+                            : "fav-count"
+                        }
+                      >
+                        {
+                          nftFinalArray.find((object) => {
+                            return (
+                              object.contractAddress === item.nftAddress &&
+                              Number(object.tokenId) === Number(item.tokenId)
+                            );
+                          })?.count
+                        }
+                      </span>
                     </div>
                   </div>
                   <div className="d-flex align-items-center gap-2 mt-2">
@@ -258,7 +316,16 @@ const RecentlyListed = ({
                     </span>
                   </div>
                   <div className="mt-3">
-                    <button className="buy-btn w-100">Buy</button>
+                    <button
+                      className="buy-btn w-100"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        console.log("lot");
+                      }}
+                    >
+                      Buy
+                    </button>
                   </div>
                 </NavLink>
               </div>

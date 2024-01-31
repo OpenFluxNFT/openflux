@@ -18,59 +18,22 @@ import emptyFavorite from "../Home/RecentlyListed/assets/emptyFavorite.svg";
 import redFavorite from "../Home/RecentlyListed/assets/redFavorite.svg";
 import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
 import { NavLink } from "react-router-dom";
+import { Skeleton } from "@mui/material";
 
-const ProfileNFTList = ({ option, userCollectionFavs, allCollections }) => {
+const ProfileNFTList = ({
+  option,
+  userCollectionFavs,
+  allCollections,
+  userNftFavs,
+  handleAddFavoriteNft,
+  handleRemoveFavoriteNft,
+  userNftFavsInitial,
+  nftFinalArray,
+  fetchFavoriteCounts,
+}) => {
   const [favoritesOption, setfavoritesOption] = useState("items");
-
-  const dummyTraits = [
-    {
-      title: "Background",
-      traits: ["Peach", "Gray", "Blue", "Purple", "White", "Brown"],
-    },
-    {
-      title: "Body",
-      traits: ["Fat", "Skinny", "Short", "Tall"],
-    },
-    {
-      title: "Ears",
-      traits: ["Pointy", "Straight", "Crooked", "Dark", "Light", "Brown"],
-    },
-  ];
-
-  const dummyFavorites = [
-    {
-      title: "Cats And Watches Society",
-      image: "favoritesPlaceholder1",
-    },
-    {
-      title: "CAWS Timepiece",
-      image: "favoritesPlaceholder2",
-    },
-    {
-      title: "World of Dypians Land",
-      image: "favoritesPlaceholder3",
-    },
-    {
-      title: "Cats And Watches Society",
-      image: "favoritesPlaceholder4",
-    },
-    {
-      title: "CAWS Timepiece",
-      image: "favoritesPlaceholder1",
-    },
-    {
-      title: "World of Dypians Land",
-      image: "favoritesPlaceholder2",
-    },
-    {
-      title: "Cats And Watches Society",
-      image: "favoritesPlaceholder3",
-    },
-    {
-      title: "CAWS Timepiece",
-      image: "favoritesPlaceholder4",
-    },
-  ];
+  const [gridView, setGridView] = useState("small-grid");
+  const [loading, setLoading] = useState(false);
 
   const dummyCards = [
     {
@@ -147,9 +110,16 @@ const ProfileNFTList = ({ option, userCollectionFavs, allCollections }) => {
     },
   ];
 
-  console.log(userCollectionFavs);
-
-  const [gridView, setGridView] = useState("small-grid");
+  const handleLikeStates = (tokenid, contractAddress) => {
+    const stringTokenid = tokenid.toString();
+    setLoading(true);
+    handleRemoveFavoriteNft(stringTokenid, contractAddress).then(() => {
+      fetchFavoriteCounts();
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+    });
+  };
 
   return (
     <div className="container-lg">
@@ -411,59 +381,111 @@ const ProfileNFTList = ({ option, userCollectionFavs, allCollections }) => {
               } `}
             >
               {favoritesOption === "items" ? (
-                dummyCards.map((item, index) => (
-                  <div
-                    className="recently-listed-card p-3 d-flex flex-column"
-                    key={index}
-                  >
-                    <NavLink
-                      to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
-                      style={{ textDecoration: "none" }}
-                      className={"position-relative"}
+                loading === true ? (
+                  dummyCards.map((item, index) => (
+                    <Skeleton
+                      key={index}
+                      variant="rounded"
+                      width={"100%"}
+                      height={250}
+                    />
+                  ))
+                ) : (
+                  userNftFavs &&
+                  userNftFavs.length > 0 &&
+                  userNftFavs.map((item, index) => (
+                    <div
+                      className="recently-listed-card p-3 d-flex flex-column"
+                      key={index}
                     >
-                      <img
-                        src={require(`./assets/nftPlaceholder${index + 1}.png`)}
-                        className="card-img"
-                        alt=""
-                      />
-                      <div
-                        className="position-absolute favorite-container"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          e.preventDefault();
-                        }}
+                      <NavLink
+                        to={`/nft/${item.tokenId}/${item.contractAddress}`}
+                        style={{ textDecoration: "none" }}
+                        className={"position-relative"}
                       >
-                        <div className="d-flex align-items-center position-relative gap-2">
-                          <img src={redFavorite} alt="" className="fav-img" />
-                          <span className="fav-count-active">222</span>
+                        {!item.isVideo && item.image ? (
+                          <img
+                            src={`https://cdnflux.dypius.com/${item.image}`}
+                            className="card-img"
+                            alt=""
+                          />
+                        ) : item.isVideo && !item.image ? (
+                          <video
+                            preload="auto"
+                            className="card-img"
+                            src={`https://cdnflux.dypius.com/${item.image}`}
+                            autoPlay={true}
+                            loop={true}
+                            muted="muted"
+                            playsInline={true}
+                            // onClick={player}
+                            controlsList="nodownload"
+                          ></video>
+                        ) : (
+                          <img
+                            src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                            className="card-img"
+                            alt=""
+                          />
+                        )}
+
+                        <div
+                          className="position-absolute favorite-container"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            handleLikeStates(
+                              item.tokenId,
+                              item.contractAddress
+                            );
+                          }}
+                        >
+                          <div className="d-flex align-items-center position-relative gap-2">
+                            <img src={redFavorite} alt="" className="fav-img" />
+                            <span className="fav-count-active">
+                              {
+                                nftFinalArray.find((object) => {
+                                  return (
+                                    object.contractAddress ===
+                                      item.contractAddress &&
+                                    Number(object.tokenId) ===
+                                      Number(item.tokenId)
+                                  );
+                                })?.count
+                              }
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                      <div className="d-flex align-items-center gap-2 mt-2">
-                        <h6
-                          className="recently-listed-title mb-0"
-                          style={{ fontSize: "12px" }}
-                        >
-                          CAWS #1125
-                        </h6>
-                        <img src={checkIcon} alt="" />
-                      </div>
-                      <div className="d-flex align-items-center mt-2 gap-3">
-                        <h6
-                          className="cfx-price mb-0"
-                          style={{ fontSize: "10px" }}
-                        >
-                          1254.89 CFX
-                        </h6>
-                        <span className="usd-price" style={{ fontSize: "9px" }}>
-                          ($ 654,874.86)
-                        </span>
-                      </div>
-                      <div className="mt-3">
-                        <button className="buy-btn w-100">Buy</button>
-                      </div>
-                    </NavLink>
-                  </div>
-                ))
+                        <div className="d-flex align-items-center gap-2 mt-2">
+                          <h6
+                            className="recently-listed-title mb-0"
+                            style={{ fontSize: "12px" }}
+                          >
+                            {item.name ?? `#${item.tokenId}`}
+                          </h6>
+                          <img src={checkIcon} alt="" />
+                        </div>
+                        <div className="d-flex align-items-center mt-2 gap-3">
+                          <h6
+                            className="cfx-price mb-0"
+                            style={{ fontSize: "10px" }}
+                          >
+                            tbd WCFX
+                          </h6>
+                          <span
+                            className="usd-price"
+                            style={{ fontSize: "9px" }}
+                          >
+                            ($ tbd)
+                          </span>
+                        </div>
+                        <div className="mt-3">
+                          <button className="buy-btn w-100">Buy</button>
+                        </div>
+                      </NavLink>
+                    </div>
+                  ))
+                )
               ) : userCollectionFavs && userCollectionFavs.length > 0 ? (
                 userCollectionFavs.map((item, index) => (
                   <div
@@ -609,6 +631,7 @@ const ProfileNFTList = ({ option, userCollectionFavs, allCollections }) => {
                         onClick={(e) => {
                           e.stopPropagation();
                           e.preventDefault();
+                          handleLikeStates(item.tokenId, item.contractAddress);
                         }}
                       >
                         <div className="d-flex align-items-center position-relative gap-2">

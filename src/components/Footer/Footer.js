@@ -22,23 +22,23 @@ const Footer = () => {
                   <h6 className="footer-title mb-0">Logo</h6>
                 </div>
                 <p className="footer-desc mb-0">
-                  The leading NFT Marketplace on Conflux Network. Home to the
+                  The leading NFT Marketplace on Conflux eSpace. Home to the
                   next generation of digital creators. Discover the best NFT
                   collections.
                 </p>
                 <div className="d-flex align-items-center gap-3">
-                  <a href="#" target="_blank">
+                  <a href="https://twitter.com/OpenFluxNFT" target="_blank" rel='noreferrer'>
                     <img src={twitterLogo} alt="" />
                   </a>
-                  <a href="#" target="_blank">
+                  <a href="https://t.me/OpenFlux" target="_blank" rel='noreferrer'>
                     <img src={telegramLogo} alt="" />
                   </a>
-                  <a href="#" target="_blank">
+                  <a href="#" target="_blank" rel='noreferrer'>
                     <img src={discordLogo} alt="" />
                   </a>
-                  <a href="#" target="_blank">
+                  {/* <a href="#" target="_blank" rel='noreferrer'>
                     <img src={instagramLogo} alt="" />
-                  </a>
+                  </a> */}
                 </div>
               </div>
               <div className="d-flex flex-column align-items-start gap-4">

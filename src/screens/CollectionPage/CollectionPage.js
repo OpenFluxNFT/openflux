@@ -357,6 +357,8 @@ if there are no listings
       }
     }
   };
+
+
   const loadMore = () => {
     setnext(next + nftPerRow);
   };

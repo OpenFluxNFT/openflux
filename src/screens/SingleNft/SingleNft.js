@@ -244,13 +244,6 @@ const SingleNft = ({
     ) {
       const listednftsArray = listednfts.data.listings;
 
-      let ethNftsAscArray = listednftsArray.sort((a, b) => {
-        return a.price - b.price;
-      });
-
-      let ethNftsAscItem = ethNftsAscArray[0].price
-      setlowestPriceNftListed(ethNftsAscItem)
-
       const abi = JSON.parse(abiresult.data.result);
       const collection_contract = new web3.eth.Contract(
         abi,
@@ -304,6 +297,12 @@ const SingleNft = ({
             item.nftAddress.toLowerCase() === nftAddress.toLowerCase()
           );
         });
+        let ethNftsAscArray = listednftsArray.sort((a, b) => {
+          return a.price - b.price;
+        });
+
+        let ethNftsAscItem = ethNftsAscArray[0].price;
+        setlowestPriceNftListed(ethNftsAscItem);
 
         if (filteredResult) {
           isListed = true;

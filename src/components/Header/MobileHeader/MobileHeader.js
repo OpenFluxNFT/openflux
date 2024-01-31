@@ -1,7 +1,7 @@
 import React from "react";
 import "./_mobileheader.scss";
 import "../_header.scss";
-import dypiusLogo from "../assets/dypiusLogo.svg";
+import headerLogo from "../assets/headerLogo.svg";
 import { useState } from "react";
 import { useEffect } from "react";
 import mobileNavArrow from "./mobileNavArrow.svg";
@@ -65,7 +65,7 @@ const MobileHeader = ({
           <div className="row align-items-center justify-content-center">
             <div className="d-flex align-items-center justify-content-between">
               <NavLink to={'/'}>
-              <img src={dypiusLogo} width={35} height={35} alt="" />
+              <img src={headerLogo} width={35} height={35} alt="" />
               </NavLink>
               <>
                 <input

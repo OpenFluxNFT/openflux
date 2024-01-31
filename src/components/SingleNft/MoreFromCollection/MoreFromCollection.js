@@ -163,7 +163,7 @@ const MoreFromCollection = ({ loading, allNftArray, cfxPrice, onNftClick }) => {
                           className="recently-listed-title mb-0"
                           style={{ fontSize: "12px" }}
                         >
-                         {item.nftSymbol} {item.name}
+                          {item.nftSymbol} {item.name}
                         </h6>
                         <img src={checkIcon} alt="" />
                       </div>
@@ -191,15 +191,25 @@ const MoreFromCollection = ({ loading, allNftArray, cfxPrice, onNftClick }) => {
                           <h6
                             className="cfx-price mb-0"
                             style={{ fontSize: "10px" }}
-                          >--- WCFX</h6>
+                          >
+                            --- WCFX
+                          </h6>
                           <span
                             className="usd-price"
                             style={{ fontSize: "9px" }}
-                          >($ ---)</span>
+                          >
+                            ($ ---)
+                          </span>
                         </div>
                       )}
                       <div className="mt-3">
-                        <button className="buy-btn w-100">Buy</button>
+                        {item?.price ? (
+                          <button className="buy-btn w-100">Buy</button>
+                        ) : (
+                          <button className="buy-btn w-100">
+                            View Details
+                          </button>
+                        )}
                       </div>
                     </NavLink>
                   </div>

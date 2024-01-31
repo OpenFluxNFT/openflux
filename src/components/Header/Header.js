@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./_header.scss";
-import dypiusLogo from "./assets/dypiusLogo.svg";
+import headerLogo from "./assets/headerLogo.svg";
 import cartIcon from "./assets/cartIcon.svg";
 import walletIcon from "./assets/walletIcon.svg";
 import userIcon from "./assets/userIcon.svg";
@@ -93,7 +93,7 @@ const Header = ({
         <div className="row mx-0 align-items-center justify-content-center position-relative">
           <div className="col-1">
             <NavLink to={"/"}>
-              <img src={dypiusLogo} alt="" />
+              <img src={headerLogo} alt="" />
             </NavLink>
           </div>
           <div className="col-4">

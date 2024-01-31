@@ -9,6 +9,7 @@ import copyrightIcon from "./assets/copyrightIcon.svg";
 import { NavLink } from "react-router-dom";
 
 const Footer = () => {
+  const year = new Date().getFullYear();
   return (
     <div className="container-fluid footer-outer-wrapper px-0">
       <div className="container-fluid pb-4 pt-4 footer-wrapper">
@@ -40,7 +41,7 @@ const Footer = () => {
                   >
                     <img src={telegramLogo} alt="" />
                   </a>
-                  <a href="#" target="_blank" rel="noreferrer">
+                  <a href="https://discord.com/invite/openflux" target="_blank" rel="noreferrer">
                     <img src={discordLogo} alt="" />
                   </a>
                   {/* <a href="#" target="_blank" rel='noreferrer'>
@@ -57,7 +58,14 @@ const Footer = () => {
                   {/* <NavLink to={"/"} className="footer-link mb-0">
                   Mint
                 </NavLink> */}
-                  <a href={"https://drive.google.com/drive/folders/1SeWA1dwUQISV5rUK4m60Xs_NhJbYO3xG?usp=sharing"} target="_blank" rel='noreferrer' className="footer-link mb-0">
+                  <a
+                    href={
+                      "https://drive.google.com/drive/folders/1SeWA1dwUQISV5rUK4m60Xs_NhJbYO3xG?usp=sharing"
+                    }
+                    target="_blank"
+                    rel="noreferrer"
+                    className="footer-link mb-0"
+                  >
                     Brand
                   </a>
                   <a
@@ -70,9 +78,8 @@ const Footer = () => {
               </div>
             </div>
             <div className="d-flex align-items-center justify-content-center w-100 gap-1">
-              <img src={copyrightIcon} width={16} height={16} alt="" />
               <span className="copyright-text mb-0">
-                2024 Company. all Right Reserved.
+                Copyright © OpenFlux {year}. All rights reserved.
               </span>
             </div>
           </div>

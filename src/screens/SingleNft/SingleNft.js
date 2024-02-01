@@ -335,7 +335,9 @@ const SingleNft = ({
           .catch((err) => {
             console.log(err.message);
           });
-        if (nftdata) {
+        if (nftdata &&
+          nftdata.code !== 404 &&
+          typeof nftdata !== "string") {
           finalArray.push({
             ...nftdata,
             ...filteredResult,
@@ -363,7 +365,9 @@ const SingleNft = ({
             console.log(err.message);
           });
 
-        if (nftdata) {
+        if (nftdata &&
+          nftdata.code !== 404 &&
+          typeof nftdata !== "string") {
           finalArray.push({
             ...nftdata,
             owner: owner.toLowerCase(),
@@ -468,7 +472,9 @@ const SingleNft = ({
             .catch((err) => {
               console.log(err.message);
             });
-          if (nftdata) {
+          if (nftdata &&
+            nftdata.code !== 404 &&
+            typeof nftdata !== "string") {
             finalArray.push({
               ...nftdata,
               ...filteredResult,
@@ -577,7 +583,9 @@ const SingleNft = ({
                   console.error(e);
                 });
 
-              if (nft_data_listed) {
+              if (nft_data_listed &&
+                nft_data_listed.code !== 404 &&
+                typeof nft_data_listed !== "string") {
                 nftListedArray.push({
                   ...nft_data_listed,
                   ...listednftsArray[j],
@@ -621,7 +629,9 @@ const SingleNft = ({
                 console.log(err.message);
               });
 
-            if (nft_data) {
+            if (nft_data &&
+              nft_data.code !== 404 &&
+              typeof nft_data !== "string") {
               // console.log('nft_data', nft_data);
               nftArray.push({
                 ...nft_data,

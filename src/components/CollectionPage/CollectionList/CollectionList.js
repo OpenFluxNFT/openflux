@@ -294,7 +294,7 @@ const CollectionList = ({
   useEffect(() => {
     fetchFavoriteCounts();
   }, [allNftArray]);
-
+console.log(allNftArray)
   return (
     <>
       <div className="container-lg">

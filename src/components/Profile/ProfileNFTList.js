@@ -121,6 +121,7 @@ const ProfileNFTList = ({
     });
   };
 
+  
   return (
     <div className="container-lg">
       <div className="row collection-list-wrapper py-4 px-2">
@@ -409,7 +410,7 @@ const ProfileNFTList = ({
                             className="card-img"
                             alt=""
                           />
-                        ) : item.isVideo && !item.image ? (
+                        ) : item.isVideo && item.image ? (
                           <video
                             preload="auto"
                             className="card-img"

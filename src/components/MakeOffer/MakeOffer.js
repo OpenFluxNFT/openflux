@@ -32,6 +32,7 @@ const MakeOffer = ({
   balance,
   offerData,
   bestOffer,
+  nftAddress,
 }) => {
   const windowSize = useWindowSize();
   const [filter1, setFilter1] = useState("1 day");
@@ -98,7 +99,7 @@ const MakeOffer = ({
     return result;
   };
 
-  console.log(offerData);
+  console.log(nftData);
 
   return (
     <Modal
@@ -200,7 +201,7 @@ const MakeOffer = ({
                 <span className="itemchain">Floor price</span>
                 <span className="itemvalue">tbd WCFX</span>
               </div>
-              {offerData.amount && (
+              {offerData && offerData.amount && (
                 <div className="d-flex  w-100 align-items-center gap-3 justify-content-between">
                   <span className="itemchain">Best offer</span>
                   <span className="itemvalue">
@@ -211,7 +212,7 @@ const MakeOffer = ({
             </div>
           </div>
           <div className="summaryseparator"></div>
-          {offerData.amount && (
+          {offerData && offerData.amount && (
             <div className="d-flex flex-column gap-2">
               <div className="summaryblue p-2">
                 <div className="d-flex align-items-center gap-2 justify-content-between w-100">
@@ -246,7 +247,7 @@ const MakeOffer = ({
           <div className="row">
             <div
               className={`col-12 ${
-                !offerData.amount ? "col-lg-6" : "col-lg-9"
+                !offerData ? "col-lg-6" : "col-lg-9"
               } mb-3 mb-lg-0`}
             >
               <div className="position-relative d-flex align-items-center">
@@ -274,7 +275,7 @@ const MakeOffer = ({
                 </div>
               </div>
             </div>
-            {!offerData.amount && (
+            {!offerData && (
               <div className="col-6 col-lg-3">
                 <div className="dropdown">
                   <button
@@ -360,12 +361,7 @@ const MakeOffer = ({
                 className="makeoffer-btn"
                 onClick={() => {
                   isApprove
-                    ? handleMakeOffer(
-                        nftData.nftAddress.toLowerCase(),
-                        nftData.tokenId,
-                        price,
-                        filter2
-                      )
+                    ? handleMakeOffer(nftAddress, nftId, price, filter2)
                     : approveMakeOffer(price);
                 }}
               >
@@ -451,10 +447,12 @@ const MakeOffer = ({
                   "Failed"
                 )}
               </button>
-              <button className="deleteoffer-btn"
-               onClick={() => {
-                handleDeleteOffer(offerData.index);
-              }}>
+              <button
+                className="deleteoffer-btn"
+                onClick={() => {
+                  handleDeleteOffer(offerData.index);
+                }}
+              >
                 {deletestatus === "initial" ? (
                   "Delete offer"
                 ) : deletestatus === "loadingdelete" ? (

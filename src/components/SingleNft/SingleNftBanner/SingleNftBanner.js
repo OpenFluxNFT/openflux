@@ -359,7 +359,7 @@ const SingleNftBanner = ({
       } else setIsListed(false);
     }
   }, [nftData, nftId, coinbase, chainId]);
-
+// console.log(offerData)
   return (
     <div className="container-lg">
       <div className="nft-banner-wrapper p-3">

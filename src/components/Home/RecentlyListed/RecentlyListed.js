@@ -493,7 +493,7 @@ const RecentlyListed = ({
                           : "Buy"}
                         {buyloading && selectedNftId === item.tokenId && (
                           <div
-                            className="spinner-border spinner-border-sm text-light"
+                            className="spinner-border spinner-border-sm text-light ms-1"
                             role="status"
                           ></div>
                         )}

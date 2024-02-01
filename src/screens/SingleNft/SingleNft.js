@@ -160,21 +160,21 @@ const SingleNft = ({
           return object.offeror.toLowerCase() === coinbase.toLowerCase();
         });
 
+        let finalArrayIndex = finalResult.findIndex((object) => {
+          return object.offeror.toLowerCase() === coinbase.toLowerCase();
+        });
+
         if (finalArray && finalArray.length > 0) {
           offerArray = finalArray.map((item) => {
             return { ...item, index: finalArrayIndex };
           });
         }
 
-        let finalArrayIndex = finalResult.findIndex((object) => {
-          return object.offeror.toLowerCase() === coinbase.toLowerCase();
-        });
-
         const maxPrice = Math.max(...finalResult.map((o) => o.amount));
         const obj = finalResult.find((item) => item.amount == maxPrice);
         setbestOffer(obj);
 
-        if (offerArray && offerArray.index) {
+        if (offerArray && offerArray.length > 0) {
           setofferData(...offerArray);
         }
       }
@@ -683,6 +683,7 @@ const SingleNft = ({
         cfxPrice={cfxPrice}
         handleRefreshData={() => {
           getUpdatedNftData().then(() => {
+            fetchInitialNftsPerCollection();
             onRefreshListings();
           });
         }}

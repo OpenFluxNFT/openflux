@@ -32,6 +32,7 @@ const MakeOffer = ({
   balance,
   offerData,
   bestOffer,
+  nftAddress,
 }) => {
   const windowSize = useWindowSize();
   const [filter1, setFilter1] = useState("1 day");
@@ -98,7 +99,7 @@ const MakeOffer = ({
     return result;
   };
 
-  console.log(offerData);
+  console.log(nftData);
 
   return (
     <Modal
@@ -360,12 +361,7 @@ const MakeOffer = ({
                 className="makeoffer-btn"
                 onClick={() => {
                   isApprove
-                    ? handleMakeOffer(
-                        nftData.nftAddress.toLowerCase(),
-                        nftData.tokenId,
-                        price,
-                        filter2
-                      )
+                    ? handleMakeOffer(nftAddress, nftId, price, filter2)
                     : approveMakeOffer(price);
                 }}
               >
@@ -451,10 +447,12 @@ const MakeOffer = ({
                   "Failed"
                 )}
               </button>
-              <button className="deleteoffer-btn"
-               onClick={() => {
-                handleDeleteOffer(offerData.index);
-              }}>
+              <button
+                className="deleteoffer-btn"
+                onClick={() => {
+                  handleDeleteOffer(offerData.index);
+                }}
+              >
                 {deletestatus === "initial" ? (
                   "Delete offer"
                 ) : deletestatus === "loadingdelete" ? (

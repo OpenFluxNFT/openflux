@@ -727,6 +727,8 @@ const SingleNft = ({
           updatestatus={offerupdateStatus}
           offerData={offerData}
           bestOffer={bestOffer}
+          nftAddress={nftAddress}
+          nftId={nftId}
         />
       )}
     </div>

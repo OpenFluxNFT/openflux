@@ -17,7 +17,7 @@ const CollectionPage = ({
   userNftFavs,
   handleAddFavoriteNft,
   handleRemoveFavoriteNft,
-  cfxPrice,
+  cfxPrice,onRefreshListings
 }) => {
   const collectionInfo = [
     {
@@ -207,10 +207,24 @@ if there are no listings
                   console.log(err.message);
                 });
 
+                const listingIndex = listednftsArray.findIndex(
+                  (object) =>
+                    object.nftAddress.toLowerCase() === collectionAddress.toLowerCase() &&
+                    object.tokenId === listednftsArray[j].tokenId
+                );
+                const isApprovedresult = await window
+                .isApprovedBuy(listednftsArray[j].price)
+                .catch((e) => {
+                  console.error(e);
+                });
+                
+
               if (nft_data_listed) {
                 nftListedArray.push({
                   ...nft_data_listed,
                   ...listednftsArray[j],
+                  listingIndex: listingIndex,
+                  isApproved: isApprovedresult
                 });
               }
             })
@@ -349,8 +363,7 @@ if there are no listings
           })
         );
 
-        console.log(next, next - nftPerRow);
-
+        console.log(next, next - nftPerRow)
         const finaldata = [...allNftArray, ...nftArray];
         setAllNftArray(finaldata);
         setLoading(false);
@@ -553,6 +566,8 @@ if there are no listings
         handleRemoveFavoriteNft={handleRemoveFavoriteNft}
         userNftFavs={userNftFavs}
         cfxPrice={cfxPrice}
+        coinbase={coinbase}
+        onRefreshListings={onRefreshListings}
       />
 
       {totalSupplyPerCollection &&

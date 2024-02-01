@@ -22,7 +22,6 @@ import SignModal from "./components/SignModal/SignModal";
 import AllCollections from "./screens/AllCollections/AllCollections";
 import Web3 from "web3";
 
-
 function App() {
   const [walletModal, setWalletModal] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
@@ -208,6 +207,7 @@ function App() {
       // console.log(result.data);
       const recentlyListed = await Promise.all(
         result.data.map(async (item) => {
+          let isApproved = false;
           const abiresult = await axios.get(
             `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
           );
@@ -224,8 +224,20 @@ function App() {
                 console.error(e);
               });
 
+            const isApprovedresult = await window
+              .isApprovedBuy(item.price)
+              .catch((e) => {
+                console.error(e);
+              });
+
+            if (isApprovedresult) {
+              isApproved = isApprovedresult;
+            }
+
             const nft_data = await fetch(
-              `https://cdnflux.dypius.com/collectionsmetadatas/${item.nftAddress.toLowerCase()}/${item.tokenId}/metadata.json`
+              `https://cdnflux.dypius.com/collectionsmetadatas/${item.nftAddress.toLowerCase()}/${
+                item.tokenId
+              }/metadata.json`
             )
               .then((res) => {
                 if (res.status === 200) {
@@ -248,6 +260,7 @@ function App() {
                 ...item,
                 image: `https://cdnflux.dypius.com/${nft_data.image}`,
                 tokenName: tokenName,
+                isApproved: isApproved,
               };
             } else if (
               item.nftAddress === "0x2deecf2a05f735890eb3ea085d55cec8f1a93895"
@@ -257,6 +270,7 @@ function App() {
                 image:
                   "https://dypmeta.s3.us-east-2.amazonaws.com/Conflux+nft+400px.png",
                 tokenName: tokenName,
+                isApproved: isApproved,
               };
             } else return { ...item, image: undefined, tokenName: tokenName };
           }
@@ -1004,6 +1018,8 @@ function App() {
               handleRemoveFavoriteNft={handleRemoveFavoriteNft}
               userNftFavs={userNftFavs}
               userNftFavsInitial={userNftFavsInitial}
+              coinbase={coinbase}
+              onRefreshListings={handleGetRecentlyListedNftsCache}
             />
           }
         />
@@ -1046,6 +1062,7 @@ function App() {
               handleAddFavoriteNft={handleAddFavoriteNft}
               handleRemoveFavoriteNft={handleRemoveFavoriteNft}
               cfxPrice={cfxPrice}
+              onRefreshListings={handleGetRecentlyListedNftsCache}
             />
           }
         />

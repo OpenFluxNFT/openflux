@@ -34,9 +34,14 @@ const CollectionList = ({
   userNftFavs,
   handleRemoveFavoriteNft,
   cfxPrice,
+  coinbase,
+  onRefreshListings,
 }) => {
   const windowSize = useWindowSize();
   const [openFilters, setOpenFilters] = useState(false);
+  const [buyStatus, setbuyStatus] = useState("buy"); //buy
+  const [buyloading, setbuyLoading] = useState(false); //buy
+  const [selectedNftId, setSelectedNftId] = useState(""); //buy
 
   const dummyTraits = [
     {
@@ -169,7 +174,7 @@ const CollectionList = ({
   };
 
   const handleLikeStates = (tokenid) => {
-    const stringTokenid = (tokenid).toString()
+    const stringTokenid = tokenid.toString();
     if (
       userNftFavs &&
       userNftFavs.length > 0 &&
@@ -182,19 +187,109 @@ const CollectionList = ({
         );
       })
     ) {
-   
       handleRemoveFavoriteNft(stringTokenid, collectionAddress).then(() => {
         fetchFavoriteCounts();
       });
     } else {
-    
-
       handleAddFavoriteNft(stringTokenid, collectionAddress).then(() => {
         fetchFavoriteCounts();
       });
     }
   };
 
+  const handleRefreshData = async (nft) => {
+    const listednfts = await axios
+      .get(
+        `${baseURL}/api/collections/${nft.nftAddress.toLowerCase()}/refresh-listings`,
+        {
+          headers: {
+            cascadestyling:
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        }
+      )
+      .catch((e) => {
+        console.log(e);
+      });
+
+    if (listednfts && listednfts.status === 200) {
+      onRefreshListings();
+    }
+  };
+
+  const checkNftApprovalForBuying = async (amount) => {
+    const result = await window.isApprovedBuy(amount).catch((e) => {
+      console.error(e);
+    });
+
+    if (result === true) {
+      setbuyStatus("buy");
+      return true;
+    } else {
+      setbuyStatus("approve");
+      return false;
+    }
+  };
+
+  const handleBuyNft = async (nft) => {
+    setSelectedNftId(nft.tokenId);
+
+    if (coinbase) {
+      const isApproved = await checkNftApprovalForBuying(nft.price).then(
+        (data) => {
+          return data;
+        }
+      );
+
+      console.log(nft.listingIndex);
+
+      if (isApproved) {
+        setbuyLoading(true);
+        setbuyStatus("buy");
+
+        await window
+          .buyNFT(nft.nftAddress, nft.listingIndex, nft.price)
+          .then((result) => {
+            setbuyLoading(false);
+
+            setbuyStatus("success");
+            handleRefreshData(nft);
+            setTimeout(() => {
+              setbuyStatus("");
+            }, 2000);
+          })
+          .catch((e) => {
+            setbuyStatus("failed");
+            setbuyLoading(false);
+            setTimeout(() => {
+              setbuyStatus("buy");
+            }, 3000);
+            console.error(e);
+          });
+      } else {
+        setbuyStatus("approve");
+        setbuyLoading(true);
+
+        await window
+          .approveBuy(nft.price)
+          .then(() => {
+            setTimeout(() => {
+              setbuyStatus("buy");
+            }, 3000);
+            setbuyStatus("success");
+            setbuyLoading(false);
+          })
+          .catch((e) => {
+            console.error(e);
+            setbuyStatus("failed");
+            setTimeout(() => {
+              setbuyStatus("approve");
+            }, 3000);
+            setbuyLoading(false);
+          });
+      }
+    } else window.alertify.error("Please connect wallet first!");
+  };
 
   useEffect(() => {
     fetchFavoriteCounts();
@@ -335,80 +430,81 @@ const CollectionList = ({
                     </div>
                   </div>
                 </div>
-                {allNftArray.length > 0 && allNftArray[0]?.attributes !== "false" &&
-                   <div className="accordion-item">
-                   <h2 className="accordion-header" id="headingThree">
-                     <button
-                       className="accordion-button collection-filter py-3 d-flex align-items-center gap-2 collapsed"
-                       type="button"
-                       data-bs-toggle="collapse"
-                       data-bs-target="#collapseThree"
-                       aria-expanded="false"
-                       aria-controls="collapseThree"
-                     >
-                       <img src={traitsIcon} alt="" />
-                       Traits
-                     </button>
-                   </h2>
-                   <div
-                     id="collapseThree"
-                     className="accordion-collapse collapse"
-                     aria-labelledby="headingThree"
-                     data-bs-parent="#accordionExample"
-                   >
-                     <div className="accordion-body">
-                       <div className="" id="accordionExample2">
-                         {allNftArray[0]?.attributes.map((item, index) => (
-                           <div className="accordion-item" key={index}>
-                             <h2
-                               className="accordion-header"
-                               id={`headingOne${item.trait_type}`}
-                             >
-                               <button
-                                 className="accordion-button collection-filter px-2 py-2 d-flex align-items-center gap-2 collapsed"
-                                 type="button"
-                                 data-bs-toggle="collapse"
-                                 data-bs-target={`#collapseOne${item.trait_type}`}
-                                 aria-expanded="false"
-                                 aria-controls={`collapseOne${item.trait_type}`}
-                                 style={{ fontSize: "10px" }}
-                               >
-                                 {item.trait_type}
-                               </button>
-                             </h2>
-                             <div
-                               id={`collapseOne${item.trait_type}`}
-                               className="accordion-collapse collapse"
-                               aria-labelledby={`headingOne${item.trait_type}`}
-                               data-bs-parent="#accordionExample2"
-                             >
-                               <div className="accordion-body px-2">
-                                 <FormGroup>
-                                     <FormControlLabel
-                                       control={
-                                         <Checkbox
-                                           size="small"
-                                           sx={{
-                                             color: "white",
-                                             "&.Mui-checked": {
-                                               color: "#3DBDA7",
-                                             },
-                                           }}
-                                         />
-                                       }
-                                       key={index}
-                                       label={item.value}
-                                     />
-                                 </FormGroup>
-                               </div>
-                             </div>
-                           </div>
-                         ))}
-                       </div>
-                     </div>
-                   </div>
-                 </div>
-                }
+                {allNftArray.length > 0 &&
+                  allNftArray[0]?.attributes !== "false" && (
+                    <div className="accordion-item">
+                      <h2 className="accordion-header" id="headingThree">
+                        <button
+                          className="accordion-button collection-filter py-3 d-flex align-items-center gap-2 collapsed"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#collapseThree"
+                          aria-expanded="false"
+                          aria-controls="collapseThree"
+                        >
+                          <img src={traitsIcon} alt="" />
+                          Traits
+                        </button>
+                      </h2>
+                      <div
+                        id="collapseThree"
+                        className="accordion-collapse collapse"
+                        aria-labelledby="headingThree"
+                        data-bs-parent="#accordionExample"
+                      >
+                        <div className="accordion-body">
+                          <div className="" id="accordionExample2">
+                            {allNftArray[0]?.attributes.map((item, index) => (
+                              <div className="accordion-item" key={index}>
+                                <h2
+                                  className="accordion-header"
+                                  id={`headingOne${item.trait_type}`}
+                                >
+                                  <button
+                                    className="accordion-button collection-filter px-2 py-2 d-flex align-items-center gap-2 collapsed"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target={`#collapseOne${item.trait_type}`}
+                                    aria-expanded="false"
+                                    aria-controls={`collapseOne${item.trait_type}`}
+                                    style={{ fontSize: "10px" }}
+                                  >
+                                    {item.trait_type}
+                                  </button>
+                                </h2>
+                                <div
+                                  id={`collapseOne${item.trait_type}`}
+                                  className="accordion-collapse collapse"
+                                  aria-labelledby={`headingOne${item.trait_type}`}
+                                  data-bs-parent="#accordionExample2"
+                                >
+                                  <div className="accordion-body px-2">
+                                    <FormGroup>
+                                      <FormControlLabel
+                                        control={
+                                          <Checkbox
+                                            size="small"
+                                            sx={{
+                                              color: "white",
+                                              "&.Mui-checked": {
+                                                color: "#3DBDA7",
+                                              },
+                                            }}
+                                          />
+                                        }
+                                        key={index}
+                                        label={item.value}
+                                      />
+                                    </FormGroup>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
               </div>
             </div>
           </div>
@@ -846,8 +942,25 @@ const CollectionList = ({
                         </div>
                       )}
                       <div className="mt-3">
-                        {item.seller ? (
-                          <button className="buy-btn w-100">Buy</button>
+                        {item.seller &&
+                        item.seller.toLowerCase() !==
+                          coinbase?.toLowerCase() ? (
+                          <button
+                            className="buy-btn w-100"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              e.preventDefault();
+                              handleBuyNft(item);
+                            }}
+                          >
+                            {item.isApproved ? "Buy" : "Approve Buy"}
+                            {buyloading && selectedNftId === item.tokenId && (
+                              <div
+                                className="spinner-border spinner-border-sm text-light ms-1"
+                                role="status"
+                              ></div>
+                            )}
+                          </button>
                         ) : (
                           <NavLink
                             className="buy-btn w-100 d-flex justify-content-center "
@@ -1041,80 +1154,81 @@ const CollectionList = ({
                 </div>
               </div>
             </div>
-            {allNftArray.length > 0 && allNftArray[0]?.attributes !== "false" &&
-            <div className="accordion-item">
-            <h2 className="accordion-header" id="headingThree">
-              <button
-                className="accordion-button collection-filter py-3 d-flex align-items-center gap-2 collapsed"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseThree"
-                aria-expanded="false"
-                aria-controls="collapseThree"
-              >
-                <img src={traitsIcon} alt="" />
-                Traits
-              </button>
-            </h2>
-            <div
-              id="collapseThree"
-              className="accordion-collapse collapse"
-              aria-labelledby="headingThree"
-              data-bs-parent="#accordionExample"
-            >
-              <div className="accordion-body">
-                <div className="" id="accordionExample2">
-                {allNftArray[0]?.attributes.map((item, index) => (
-                           <div className="accordion-item" key={index}>
-                             <h2
-                               className="accordion-header"
-                               id={`headingOne${item.trait_type}`}
-                             >
-                               <button
-                                 className="accordion-button collection-filter px-2 py-2 d-flex align-items-center gap-2 collapsed"
-                                 type="button"
-                                 data-bs-toggle="collapse"
-                                 data-bs-target={`#collapseOne${item.trait_type}`}
-                                 aria-expanded="false"
-                                 aria-controls={`collapseOne${item.trait_type}`}
-                                 style={{ fontSize: "10px" }}
-                               >
-                                 {item.trait_type}
-                               </button>
-                             </h2>
-                             <div
-                               id={`collapseOne${item.trait_type}`}
-                               className="accordion-collapse collapse"
-                               aria-labelledby={`headingOne${item.trait_type}`}
-                               data-bs-parent="#accordionExample2"
-                             >
-                               <div className="accordion-body px-2">
-                                 <FormGroup>
-                                     <FormControlLabel
-                                       control={
-                                         <Checkbox
-                                           size="small"
-                                           sx={{
-                                             color: "white",
-                                             "&.Mui-checked": {
-                                               color: "#3DBDA7",
-                                             },
-                                           }}
-                                         />
-                                       }
-                                       key={index}
-                                       label={item.value}
-                                     />
-                                 </FormGroup>
-                               </div>
-                             </div>
-                           </div>
-                         ))}
+            {allNftArray.length > 0 &&
+              allNftArray[0]?.attributes !== "false" && (
+                <div className="accordion-item">
+                  <h2 className="accordion-header" id="headingThree">
+                    <button
+                      className="accordion-button collection-filter py-3 d-flex align-items-center gap-2 collapsed"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#collapseThree"
+                      aria-expanded="false"
+                      aria-controls="collapseThree"
+                    >
+                      <img src={traitsIcon} alt="" />
+                      Traits
+                    </button>
+                  </h2>
+                  <div
+                    id="collapseThree"
+                    className="accordion-collapse collapse"
+                    aria-labelledby="headingThree"
+                    data-bs-parent="#accordionExample"
+                  >
+                    <div className="accordion-body">
+                      <div className="" id="accordionExample2">
+                        {allNftArray[0]?.attributes.map((item, index) => (
+                          <div className="accordion-item" key={index}>
+                            <h2
+                              className="accordion-header"
+                              id={`headingOne${item.trait_type}`}
+                            >
+                              <button
+                                className="accordion-button collection-filter px-2 py-2 d-flex align-items-center gap-2 collapsed"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target={`#collapseOne${item.trait_type}`}
+                                aria-expanded="false"
+                                aria-controls={`collapseOne${item.trait_type}`}
+                                style={{ fontSize: "10px" }}
+                              >
+                                {item.trait_type}
+                              </button>
+                            </h2>
+                            <div
+                              id={`collapseOne${item.trait_type}`}
+                              className="accordion-collapse collapse"
+                              aria-labelledby={`headingOne${item.trait_type}`}
+                              data-bs-parent="#accordionExample2"
+                            >
+                              <div className="accordion-body px-2">
+                                <FormGroup>
+                                  <FormControlLabel
+                                    control={
+                                      <Checkbox
+                                        size="small"
+                                        sx={{
+                                          color: "white",
+                                          "&.Mui-checked": {
+                                            color: "#3DBDA7",
+                                          },
+                                        }}
+                                      />
+                                    }
+                                    key={index}
+                                    label={item.value}
+                                  />
+                                </FormGroup>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </div>
-            }
+              )}
           </div>
         </div>
       </div>

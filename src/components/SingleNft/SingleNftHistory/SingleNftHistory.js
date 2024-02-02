@@ -14,7 +14,8 @@ const SingleNftHistory = ({
   nftData,
   coinbase,
   handleAcceptOffer,
-  offeracceptStatus,lowestPriceNftListed
+  offeracceptStatus,
+  lowestPriceNftListed,
 }) => {
   return (
     <div className="container-lg my-4">
@@ -207,8 +208,7 @@ const SingleNftHistory = ({
                                 .humanize(true)}
                             </td>
                             <td className="item-history-table-td text-center">
-                              {lowestPriceNftListed / 1e18 >
-                              item.amount / 1e18
+                              {lowestPriceNftListed / 1e18 > item.amount / 1e18
                                 ? (lowestPriceNftListed / 1e18 -
                                     item.amount / 1e18) /
                                   100

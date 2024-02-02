@@ -120,9 +120,8 @@ const SingleNft = ({
     } else window.alertify.error("Please put a valid price!");
   };
 
-  const handleAcceptOffer = async (offerIndex) => {
+  const acceptOfferFunc = async (offerIndex) => {
     setOfferacceptStatus("loading");
-    console.log(nftAddress, nftId, offerIndex);
     await window
       .acceptOffer(nftAddress, nftId, offerIndex)
       .then(() => {
@@ -142,6 +141,32 @@ const SingleNft = ({
           setOfferacceptStatus("initial");
         }, 3000);
       });
+  };
+
+  const handleAcceptOffer = async (offerIndex) => {
+    setOfferacceptStatus("loading");
+    console.log(nftAddress, nftId, offerIndex);
+    const isApproved = await window
+      .isApprovedNFT(nftId, nftAddress, coinbase)
+      .then((data) => {
+        return data;
+      });
+
+    if (isApproved) {
+      acceptOfferFunc(offerIndex);
+    } else {
+      await window
+        .approveNFT(nftAddress)
+        .then((result) => {
+          setOfferacceptStatus("success");
+          setTimeout(() => {
+            acceptOfferFunc(offerIndex);
+          }, 1000);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
   };
 
   const getOffer = async (nftAddr, nftId) => {
@@ -186,11 +211,9 @@ const SingleNft = ({
 
       await Promise.all(
         window.range(0, finalResult.length - 1).map(async (i) => {
-          const balance = await window.ethereum
-            .request({
-              method: "eth_getBalance",
-              params: [finalResult[i].offeror, "latest"],
-            })
+          const balance = await contract.methods
+            .balanceOf(finalResult[i].offeror)
+            .call()
             .then((data) => {
               return window.confluxWeb3.utils.fromWei(data, "ether");
             });
@@ -206,6 +229,14 @@ const SingleNft = ({
             });
 
           const priceFormatted = finalResult[i].amount / 1e18;
+
+          console.log(
+            balance,
+            allowance,
+            priceFormatted,
+            finalResult[i].offeror
+          );
+
           return allOffersArray.push({
             ...finalResult[i],
             index: i,
@@ -335,9 +366,7 @@ const SingleNft = ({
           .catch((err) => {
             console.log(err.message);
           });
-        if (nftdata &&
-          nftdata.code !== 404 &&
-          typeof nftdata !== "string") {
+        if (nftdata && nftdata.code !== 404 && typeof nftdata !== "string") {
           finalArray.push({
             ...nftdata,
             ...filteredResult,
@@ -365,9 +394,7 @@ const SingleNft = ({
             console.log(err.message);
           });
 
-        if (nftdata &&
-          nftdata.code !== 404 &&
-          typeof nftdata !== "string") {
+        if (nftdata && nftdata.code !== 404 && typeof nftdata !== "string") {
           finalArray.push({
             ...nftdata,
             owner: owner.toLowerCase(),
@@ -388,6 +415,7 @@ const SingleNft = ({
 
   const getUpdatedNftData = async () => {
     const web3 = window.confluxWeb3;
+    setLoading(true);
     let finalArray = [];
     const abiresult = await axios.get(
       `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${nftAddress.toLowerCase()}`
@@ -440,7 +468,7 @@ const SingleNft = ({
         let isListed = false;
         let price = 0;
         let expiresAt = 0;
-        if (listednftsArray.length > 0) {
+        if (listednftsArray !== "none" && listednftsArray.length > 0) {
           const filteredResult = listednftsArray.find((item) => {
             return (
               item.tokenId === nftId &&
@@ -472,9 +500,7 @@ const SingleNft = ({
             .catch((err) => {
               console.log(err.message);
             });
-          if (nftdata &&
-            nftdata.code !== 404 &&
-            typeof nftdata !== "string") {
+          if (nftdata && nftdata.code !== 404 && typeof nftdata !== "string") {
             finalArray.push({
               ...nftdata,
               ...filteredResult,
@@ -489,9 +515,35 @@ const SingleNft = ({
 
             setNftData(...finalArray);
           }
+        } else {
+          const nftdata = await fetch(
+            `https://cdnflux.dypius.com/collectionsmetadatas/${nftAddress.toLowerCase()}/${nftId}/metadata.json`
+          )
+            .then((res) => res.json())
+            .then((data) => {
+              return data;
+            })
+            .catch((err) => {
+              console.log(err.message);
+            });
+          if (nftdata && nftdata.code !== 404 && typeof nftdata !== "string") {
+            finalArray.push({
+              ...nftdata,
+              owner: owner,
+              collectionName: collectionName,
+              isListed: isListed,
+              price: price,
+              listingIndex: undefined,
+              expiresAt: expiresAt,
+              nftSymbol: nftSymbol,
+            });
+
+            setNftData(...finalArray);
+          }
         }
       }
     }
+    setLoading(false);
   };
 
   const fetchInitialNftsPerCollection = async () => {
@@ -583,9 +635,11 @@ const SingleNft = ({
                   console.error(e);
                 });
 
-              if (nft_data_listed &&
+              if (
+                nft_data_listed &&
                 nft_data_listed.code !== 404 &&
-                typeof nft_data_listed !== "string") {
+                typeof nft_data_listed !== "string"
+              ) {
                 nftListedArray.push({
                   ...nft_data_listed,
                   ...listednftsArray[j],
@@ -629,9 +683,11 @@ const SingleNft = ({
                 console.log(err.message);
               });
 
-            if (nft_data &&
+            if (
+              nft_data &&
               nft_data.code !== 404 &&
-              typeof nft_data !== "string") {
+              typeof nft_data !== "string"
+            ) {
               // console.log('nft_data', nft_data);
               nftArray.push({
                 ...nft_data,

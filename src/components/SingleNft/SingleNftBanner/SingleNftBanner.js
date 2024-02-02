@@ -62,7 +62,7 @@ const SingleNftBanner = ({
       await window
         .isApprovedNFT(nftId, nftAddress, coinbase)
         .then((data) => {
-          setsellStatus("sell");
+          setsellStatus(data === true ? "sell" : '');
           setIsApproveList(data);
         })
         .catch((e) => {

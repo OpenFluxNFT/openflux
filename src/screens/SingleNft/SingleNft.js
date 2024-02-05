@@ -546,7 +546,7 @@ const SingleNft = ({
     setLoading(false);
   };
 
-  const fetchInitialNftsPerCollection = async () => {
+  const fetchInitialNftsPerCollection = async (nftID) => {
     setLoading(true);
     const result = await axios.get(
       `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${nftAddress.toLowerCase()}`
@@ -704,12 +704,20 @@ const SingleNft = ({
           return a.tokenId - b.tokenId;
         });
 
-        const uniqueArray = finalArray_sorted.filter(
-          ({ tokenId: id1 }) =>
-            !nftListedArray.some(({ tokenId: id2 }) => id2 === id1.toString())
+        const uniqueArray_listed = nftListedArray.filter(
+          ({ tokenId: id2 }) => nftID.toString() !== id2.toString()
         );
 
-        const finalArray = [...nftListedArray, ...uniqueArray];
+        const uniqueArray = finalArray_sorted.filter(
+          ({ tokenId: id1 }) =>
+            !nftListedArray.some(
+              ({ tokenId: id2 }) =>
+                nftID.toString() === id1.toString() ||
+                id1.toString() === id2.toString()
+            )
+        );
+
+        const finalArray = [...uniqueArray_listed, ...uniqueArray];
 
         setAllNftArray(finalArray);
         setLoading(false);
@@ -732,7 +740,7 @@ const SingleNft = ({
     if (dataFetchedRef.current) return;
     dataFetchedRef.current = true;
     getNftData(nftId);
-    fetchInitialNftsPerCollection();
+    fetchInitialNftsPerCollection(nftId);
   }, []);
 
   return (
@@ -749,7 +757,7 @@ const SingleNft = ({
         cfxPrice={cfxPrice}
         handleRefreshData={() => {
           getUpdatedNftData().then(() => {
-            fetchInitialNftsPerCollection();
+            fetchInitialNftsPerCollection(nftId);
             onRefreshListings();
           });
         }}
@@ -774,6 +782,7 @@ const SingleNft = ({
         onNftClick={(value) => {
           getNftData(value);
           getOffer(nftAddress, value);
+          fetchInitialNftsPerCollection(value);
         }}
         coinbase={coinbase}
         onRefreshListings={onRefreshListings}

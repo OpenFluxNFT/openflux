@@ -222,9 +222,11 @@ if there are no listings
                   console.error(e);
                 });
 
-              if (nft_data_listed &&
+              if (
+                nft_data_listed &&
                 nft_data_listed.code !== 404 &&
-                typeof nft_data_listed !== "string") {
+                typeof nft_data_listed !== "string"
+              ) {
                 nftListedArray.push({
                   ...nft_data_listed,
                   ...listednftsArray[j],
@@ -266,10 +268,11 @@ if there are no listings
               .catch((err) => {
                 console.log(err.message);
               });
-
-            if (nft_data &&
+            if (
+              nft_data &&
               nft_data.code !== 404 &&
-              typeof nft_data !== "string") {
+              typeof nft_data !== "string"
+            ) {
               // console.log('nft_data', nft_data);
               nftArray.push({
                 ...nft_data,
@@ -359,9 +362,11 @@ if there are no listings
                 console.log(err.message);
               });
 
-            if (nft_data &&
+            if (
+              nft_data &&
               nft_data.code !== 404 &&
-              typeof nft_data !== "string") {
+              typeof nft_data !== "string"
+            ) {
               // console.log(nft_data);
               nftArray.push({
                 ...nft_data,
@@ -579,6 +584,7 @@ if there are no listings
         cfxPrice={cfxPrice}
         coinbase={coinbase}
         onRefreshListings={onRefreshListings}
+        totalSupplyPerCollection={totalSupplyPerCollection}
       />
 
       {totalSupplyPerCollection &&

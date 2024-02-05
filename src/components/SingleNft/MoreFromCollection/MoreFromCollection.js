@@ -222,7 +222,7 @@ const MoreFromCollection = ({
       }
     } else window.alertify.error("Please connect wallet first!");
   };
-
+  
   return (
     <div className="container-lg py-3">
       <div className="row mx-0">
@@ -342,7 +342,12 @@ const MoreFromCollection = ({
                   </div>
                 ))
               : dummyCards.map((item, index) => (
-                  <Skeleton variant="rounded" height={240} width={"100%"} />
+                  <Skeleton
+                    variant="rounded"
+                    height={240}
+                    width={"100%"}
+                    key={index}
+                  />
                 ))}
           </Slider>
         </div>

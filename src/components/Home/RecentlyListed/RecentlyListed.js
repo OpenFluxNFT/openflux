@@ -240,7 +240,7 @@ const RecentlyListed = ({
                   <img
                     src={
                       item.image
-                        ? item.image
+                        ? `https://cdnflux.dypius.com/${item.image}`
                         : require(`./assets/nftPlaceholder${index + 1}.png`)
                     }
                     className="card-img"
@@ -373,7 +373,7 @@ const RecentlyListed = ({
                     <img
                       src={
                         item.image
-                          ? item.image
+                          ? `https://cdnflux.dypius.com/${item.image}`
                           : require(`./assets/nftPlaceholder1.png`)
                       }
                       className="card-img"
@@ -383,7 +383,7 @@ const RecentlyListed = ({
                     <video
                       preload="auto"
                       className="card-img"
-                      src={item.image}
+                      src={`https://cdnflux.dypius.com/${item.image}`}
                       autoPlay={true}
                       loop={true}
                       muted="muted"

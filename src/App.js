@@ -50,6 +50,7 @@ function App() {
   const [isSuccestToast, setisSuccestToast] = useState(false);
   const [userTotalNftsOwned, setUserTotalNftsOwned] = useState([]);
   const [userNftsOwned, setUserNftsOwned] = useState(0);
+  const [userNftsOwnedArray, setUserNftsOwnedArray] = useState([]);
 
   const [cfxPrice, setCfxPrice] = useState(0);
   const [favoriteNft, setFavoriteNft] = useState(false);
@@ -239,18 +240,13 @@ function App() {
                 item.tokenId
               }/metadata.json`
             )
-              .then((res) => {
-                if (res.status === 200) {
-                  res.json();
-                }
-              })
+              .then((res) => res.json())
               .then((data) => {
                 return data;
               })
               .catch((err) => {
                 console.log(err.message);
               });
-
             if (
               nft_data &&
               nft_data.code !== 404 &&
@@ -258,17 +254,7 @@ function App() {
             ) {
               return {
                 ...item,
-                image: `https://cdnflux.dypius.com/${nft_data.image}`,
-                tokenName: tokenName,
-                isApproved: isApproved,
-              };
-            } else if (
-              item.nftAddress === "0x2deecf2a05f735890eb3ea085d55cec8f1a93895"
-            ) {
-              return {
-                ...item,
-                image:
-                  "https://dypmeta.s3.us-east-2.amazonaws.com/Conflux+nft+400px.png",
+                image: `${nft_data.image}`,
                 tokenName: tokenName,
                 isApproved: isApproved,
               };
@@ -381,6 +367,7 @@ function App() {
   };
 
   const handleMapUserNftsOwned = async (wallet) => {
+    console.log(userNftsOwned);
     if (userNftsOwned && userNftsOwned.length > 0) {
       await Promise.all(
         window.range(0, userNftsOwned.length - 1).map(async (i) => {
@@ -401,21 +388,85 @@ function App() {
             );
 
             const tokens = await Promise.all(
-              window
-                .range(0, userNftsOwned[i].amount - 1)
-                .map((j) =>
-                  collection_contract.methods
-                    .tokenOfOwnerByIndex(wallet, j)
+              window.range(0, Number(userNftsOwned[i].amount) - 1).map((j) =>
+                collection_contract.methods
+                  .tokenOfOwnerByIndex(wallet, j)
+                  .call()
+                  .catch((e) => {
+                    console.error(e);
+                  })
+              )
+            );
+
+            let nftArray = [];
+            if (
+              tokens &&
+              tokens.length > 0 &&
+              tokens.find((obj) => {
+                return obj !== undefined;
+              })
+            ) {
+              await Promise.all(
+                window.range(0, tokens.length - 1).map(async (k) => {
+                  let tokenByIndex = tokens[k];
+
+                  const owner = await collection_contract.methods
+                    .ownerOf(tokenByIndex)
                     .call()
+                    .catch((e) => {
+                      console.error(e);
+                    });
+
+                  const nft_data = await fetch(
+                    `https://cdnflux.dypius.com/collectionsmetadatas/${userNftsOwned[
+                      i
+                    ].contract.toLowerCase()}/${tokenByIndex}/metadata.json`
+                  )
+                    .then((res) => res.json())
+                    .then((data) => {
+                      return data;
+                    })
+                    .catch((err) => {
+                      console.error(err.message);
+                    });
+
+                  if (
+                    nft_data &&
+                    nft_data.code !== 404 &&
+                    typeof nft_data !== "string"
+                  ) {
+                    // console.log('nft_data', nft_data);
+                    nftArray.push({
+                      ...nft_data,
+                      tokenId: tokenByIndex,
+                      owner: owner,
+                    });
+                  }
+                })
+              );
+            }
+
+            const uniqueArray_listed = recentlyListedNfts.filter(
+              ({ tokenId: id1 }) =>
+                !nftArray.some(
+                  ({ tokenId: id2 }) => id1.toString() !== id2.toString()
                 )
             );
+
+            const uniqueArray_regular = nftArray.filter(
+              ({ tokenId: id1 }) =>
+                !recentlyListedNfts.some(
+                  ({ tokenId: id2 }) => id1.toString() === id2.toString()
+                )
+            );
+
+            const finalArray = [...uniqueArray_listed, ...uniqueArray_regular];
+            setUserNftsOwnedArray(finalArray);
           }
         })
       );
-    }
+    } else setUserNftsOwnedArray([]);
   };
-
-  // console.log(userNftsOwned);
 
   const fetchuserCollection = async (walletAddr) => {
     const result = await axios
@@ -814,15 +865,6 @@ function App() {
     
     */
 
-  const handleMakeOffer = async () => {
-    await window
-      .makeOffer()
-      .then(console.log("success"))
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
   const handleAddFavoriteNft = async (tokenId, nftContract) => {
     if (coinbase) {
       console.log(nftContract, tokenId);
@@ -958,11 +1000,11 @@ function App() {
     handleGetUserFavNfts(userNftFavsInitial);
   }, [userNftFavsInitial]);
 
-  // useEffect(() => {
-  //   if (coinbase) {
-  //     handleMapUserNftsOwned(coinbase);
-  //   }
-  // }, [coinbase, userNftsOwned]);
+  useEffect(() => {
+    if (coinbase) {
+      handleMapUserNftsOwned(coinbase, recentlyListedNfts);
+    }
+  }, [userNftsOwned, recentlyListedNfts]);
 
   return (
     <div
@@ -1086,6 +1128,8 @@ function App() {
               handleAddFavoriteNft={handleAddFavoriteNft}
               handleRemoveFavoriteNft={handleRemoveFavoriteNft}
               userNftFavsInitial={userNftFavsInitial}
+              userNftsOwnedArray={userNftsOwnedArray}
+              cfxPrice={cfxPrice}
             />
           }
         />

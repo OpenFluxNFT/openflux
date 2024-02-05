@@ -36,6 +36,7 @@ const CollectionList = ({
   cfxPrice,
   coinbase,
   onRefreshListings,
+  totalSupplyPerCollection,
 }) => {
   const windowSize = useWindowSize();
   const [openFilters, setOpenFilters] = useState(false);
@@ -241,8 +242,6 @@ const CollectionList = ({
         }
       );
 
-      console.log(nft.listingIndex);
-
       if (isApproved) {
         setbuyLoading(true);
         setbuyStatus("buy");
@@ -294,7 +293,7 @@ const CollectionList = ({
   useEffect(() => {
     fetchFavoriteCounts();
   }, [allNftArray]);
-console.log(allNftArray)
+
   return (
     <>
       <div className="container-lg">
@@ -309,7 +308,9 @@ console.log(allNftArray)
                 <span className="collection-info mb-0">Live</span>
               </div>
               <div className="d-flex align-items-center gap-1">
-                <span className="collection-info mb-0">9,943</span>
+                <span className="collection-info mb-0">
+                  {getFormattedNumber(totalSupplyPerCollection, 0)}
+                </span>
                 <span className="collection-info-span mb-0">Results</span>
               </div>
             </div>
@@ -431,6 +432,7 @@ console.log(allNftArray)
                   </div>
                 </div>
                 {allNftArray.length > 0 &&
+                  allNftArray[0]?.metadatas !== false &&
                   allNftArray[0]?.attributes !== "false" && (
                     <div className="accordion-item">
                       <h2 className="accordion-header" id="headingThree">
@@ -454,52 +456,56 @@ console.log(allNftArray)
                       >
                         <div className="accordion-body">
                           <div className="" id="accordionExample2">
-                            {allNftArray[0]?.attributes.map((item, index) => (
-                              <div className="accordion-item" key={index}>
-                                <h2
-                                  className="accordion-header"
-                                  id={`headingOne${item.trait_type}`}
-                                >
-                                  <button
-                                    className="accordion-button collection-filter px-2 py-2 d-flex align-items-center gap-2 collapsed"
-                                    type="button"
-                                    data-bs-toggle="collapse"
-                                    data-bs-target={`#collapseOne${item.trait_type}`}
-                                    aria-expanded="false"
-                                    aria-controls={`collapseOne${item.trait_type}`}
-                                    style={{ fontSize: "10px" }}
+                            {allNftArray.length > 0 &&
+                              allNftArray[0]?.attributes &&
+                              allNftArray[0]?.metadatas !== false &&
+                              allNftArray[0]?.attributes !== "false" &&
+                              allNftArray[0]?.attributes.map((item, index) => (
+                                <div className="accordion-item" key={index}>
+                                  <h2
+                                    className="accordion-header"
+                                    id={`headingOne${item.trait_type}`}
                                   >
-                                    {item.trait_type}
-                                  </button>
-                                </h2>
-                                <div
-                                  id={`collapseOne${item.trait_type}`}
-                                  className="accordion-collapse collapse"
-                                  aria-labelledby={`headingOne${item.trait_type}`}
-                                  data-bs-parent="#accordionExample2"
-                                >
-                                  <div className="accordion-body px-2">
-                                    <FormGroup>
-                                      <FormControlLabel
-                                        control={
-                                          <Checkbox
-                                            size="small"
-                                            sx={{
-                                              color: "white",
-                                              "&.Mui-checked": {
-                                                color: "#3DBDA7",
-                                              },
-                                            }}
-                                          />
-                                        }
-                                        key={index}
-                                        label={item.value}
-                                      />
-                                    </FormGroup>
+                                    <button
+                                      className="accordion-button collection-filter px-2 py-2 d-flex align-items-center gap-2 collapsed"
+                                      type="button"
+                                      data-bs-toggle="collapse"
+                                      data-bs-target={`#collapseOne${item.trait_type}`}
+                                      aria-expanded="false"
+                                      aria-controls={`collapseOne${item.trait_type}`}
+                                      style={{ fontSize: "10px" }}
+                                    >
+                                      {item.trait_type}
+                                    </button>
+                                  </h2>
+                                  <div
+                                    id={`collapseOne${item.trait_type}`}
+                                    className="accordion-collapse collapse"
+                                    aria-labelledby={`headingOne${item.trait_type}`}
+                                    data-bs-parent="#accordionExample2"
+                                  >
+                                    <div className="accordion-body px-2">
+                                      <FormGroup>
+                                        <FormControlLabel
+                                          control={
+                                            <Checkbox
+                                              size="small"
+                                              sx={{
+                                                color: "white",
+                                                "&.Mui-checked": {
+                                                  color: "#3DBDA7",
+                                                },
+                                              }}
+                                            />
+                                          }
+                                          key={index}
+                                          label={item.value}
+                                        />
+                                      </FormGroup>
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            ))}
+                              ))}
                           </div>
                         </div>
                       </div>
@@ -1155,6 +1161,7 @@ console.log(allNftArray)
               </div>
             </div>
             {allNftArray.length > 0 &&
+              allNftArray[0]?.metadatas !== false &&
               allNftArray[0]?.attributes !== "false" && (
                 <div className="accordion-item">
                   <h2 className="accordion-header" id="headingThree">
@@ -1178,52 +1185,56 @@ console.log(allNftArray)
                   >
                     <div className="accordion-body">
                       <div className="" id="accordionExample2">
-                        {allNftArray[0]?.attributes.map((item, index) => (
-                          <div className="accordion-item" key={index}>
-                            <h2
-                              className="accordion-header"
-                              id={`headingOne${item.trait_type}`}
-                            >
-                              <button
-                                className="accordion-button collection-filter px-2 py-2 d-flex align-items-center gap-2 collapsed"
-                                type="button"
-                                data-bs-toggle="collapse"
-                                data-bs-target={`#collapseOne${item.trait_type}`}
-                                aria-expanded="false"
-                                aria-controls={`collapseOne${item.trait_type}`}
-                                style={{ fontSize: "10px" }}
+                        {allNftArray.length > 0 &&
+                          allNftArray[0]?.attributes &&
+                          allNftArray[0]?.attributes !== "false" &&
+                          allNftArray[0]?.attributes !== false &&
+                          allNftArray[0]?.attributes.map((item, index) => (
+                            <div className="accordion-item" key={index}>
+                              <h2
+                                className="accordion-header"
+                                id={`headingOne${item.trait_type}`}
                               >
-                                {item.trait_type}
-                              </button>
-                            </h2>
-                            <div
-                              id={`collapseOne${item.trait_type}`}
-                              className="accordion-collapse collapse"
-                              aria-labelledby={`headingOne${item.trait_type}`}
-                              data-bs-parent="#accordionExample2"
-                            >
-                              <div className="accordion-body px-2">
-                                <FormGroup>
-                                  <FormControlLabel
-                                    control={
-                                      <Checkbox
-                                        size="small"
-                                        sx={{
-                                          color: "white",
-                                          "&.Mui-checked": {
-                                            color: "#3DBDA7",
-                                          },
-                                        }}
-                                      />
-                                    }
-                                    key={index}
-                                    label={item.value}
-                                  />
-                                </FormGroup>
+                                <button
+                                  className="accordion-button collection-filter px-2 py-2 d-flex align-items-center gap-2 collapsed"
+                                  type="button"
+                                  data-bs-toggle="collapse"
+                                  data-bs-target={`#collapseOne${item.trait_type}`}
+                                  aria-expanded="false"
+                                  aria-controls={`collapseOne${item.trait_type}`}
+                                  style={{ fontSize: "10px" }}
+                                >
+                                  {item.trait_type}
+                                </button>
+                              </h2>
+                              <div
+                                id={`collapseOne${item.trait_type}`}
+                                className="accordion-collapse collapse"
+                                aria-labelledby={`headingOne${item.trait_type}`}
+                                data-bs-parent="#accordionExample2"
+                              >
+                                <div className="accordion-body px-2">
+                                  <FormGroup>
+                                    <FormControlLabel
+                                      control={
+                                        <Checkbox
+                                          size="small"
+                                          sx={{
+                                            color: "white",
+                                            "&.Mui-checked": {
+                                              color: "#3DBDA7",
+                                            },
+                                          }}
+                                        />
+                                      }
+                                      key={index}
+                                      label={item.value}
+                                    />
+                                  </FormGroup>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
                       </div>
                     </div>
                   </div>

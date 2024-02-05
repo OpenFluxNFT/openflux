@@ -588,7 +588,7 @@ const SingleNftBanner = ({
                       </button>
                     ) : (
                       <button
-                        className="btn connect-btn2 d-flex align-items-center gap-2 col-5"
+                        className="btn connect-btn2 d-flex align-items-center justify-content-center gap-2 col-5"
                         onClick={handleSignup}
                       >
                         Connect Wallet
@@ -790,7 +790,7 @@ const SingleNftBanner = ({
                       </>
                     ) : !isConnected && chainId === 1030 ? (
                       <button
-                        className="btn connect-btn2 d-flex align-items-center gap-2 col-5"
+                        className="btn connect-btn2 d-flex align-items-center gap-2 col-5 justify-content-center "
                         onClick={handleSignup}
                       >
                         Connect Wallet
@@ -836,7 +836,7 @@ const SingleNftBanner = ({
                       </button>
                     ) : (
                       <button
-                        className="btn connect-btn2 d-flex align-items-center gap-2 col-5"
+                        className="btn connect-btn2 d-flex align-items-center gap-2 col-5 justify-content-center "
                         onClick={handleSignup}
                       >
                         Connect Wallet
@@ -898,7 +898,7 @@ const SingleNftBanner = ({
                       </>
                     ) : (
                       <button
-                        className="btn connect-btn2 d-flex align-items-center gap-2 col-5"
+                        className="btn connect-btn2 d-flex align-items-center gap-2 col-5 justify-content-center "
                         onClick={handleSignup}
                       >
                         Connect Wallet

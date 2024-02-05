@@ -127,7 +127,6 @@ const ProfileNFTList = ({
       }, 1000);
     });
   };
- 
 
   return (
     <div className="container-lg">
@@ -656,6 +655,84 @@ const ProfileNFTList = ({
                           </td>
                         </tr>
                       ))}
+                    {option === "listed" &&
+                      userNftsOwnedArray &&
+                      userNftsOwnedArray.length > 0 &&
+                      userNftsOwnedArray.find((obj) => {
+                        return obj.price !== undefined;
+                      }) &&
+                      userNftsOwnedArray
+                        .filter((obj) => {
+                          return obj.price !== undefined;
+                        })
+                        .map((item, index) => (
+                          <tr
+                            className="nft-table-row p-1"
+                            key={index}
+                            style={{ cursor: "pointer" }}
+                            onClick={() =>
+                              navigate(
+                                `/nft/${item.tokenId}/${item.nftAddress}`
+                              )
+                            }
+                          >
+                            <td
+                              className="table-item col-2 d-flex align-items-center gap-1 w-100"
+                              scope="row"
+                            >
+                              {!item.isVideo ? (
+                                <img
+                                  src={`https://cdnflux.dypius.com/${item.image}`}
+                                  className="table-img"
+                                  height={36}
+                                  width={36}
+                                  alt=""
+                                />
+                              ) : (
+                                <video
+                                  src={`https://cdnflux.dypius.com/${item.image}`}
+                                  alt=""
+                                  className="table-img"
+                                  height={36}
+                                  width={36}
+                                  controlsList="nodownload"
+                                  autoPlay={true}
+                                  loop={true}
+                                  muted="muted"
+                                  playsInline={true}
+                                />
+                              )}
+                              {item.tokenName} {item.tokenId}
+                            </td>
+                            <td className="table-item col-2">
+                              {item.price
+                                ? getFormattedNumber(item.price / 1e18)
+                                : "---"}{" "}
+                              WCFX
+                            </td>
+                            <td className="table-item col-2">tbd WCFX</td>
+                            <td className="table-item col-2">tbd WCFX </td>
+                            <td className="table-item col-2">
+                              <a
+                                href={`https://evm.confluxscan.net/address/${
+                                  item.owner ?? item.seller
+                                }`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-white"
+                              >
+                                {shortAddress(item.owner ?? item.seller)}
+                              </a>
+                            </td>
+                            <td className="table-item col-2">
+                              {moment
+                                .duration(
+                                  item.blockTimestamp * 1000 - Date.now()
+                                )
+                                .humanize(true)}
+                            </td>
+                          </tr>
+                        ))}
                   </tbody>
                 </table>
               ) : option === "collected" ? (

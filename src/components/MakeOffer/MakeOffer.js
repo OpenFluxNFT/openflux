@@ -99,7 +99,6 @@ const MakeOffer = ({
     return result;
   };
 
-  console.log(nftData);
 
   return (
     <Modal
@@ -247,7 +246,7 @@ const MakeOffer = ({
           <div className="row">
             <div
               className={`col-12 ${
-                !offerData ? "col-lg-6" : "col-lg-9"
+                offerData && offerData.length === 0 ? "col-lg-6" : "col-lg-9"
               } mb-3 mb-lg-0`}
             >
               <div className="position-relative d-flex align-items-center">
@@ -275,7 +274,7 @@ const MakeOffer = ({
                 </div>
               </div>
             </div>
-            {!offerData && (
+            {offerData && offerData.length === 0 && (
               <div className="col-6 col-lg-3">
                 <div className="dropdown">
                   <button
@@ -355,7 +354,7 @@ const MakeOffer = ({
             </div>
           </div>
 
-          {!offerData.amount ? (
+          {offerData && offerData.length === 0 ? (
             <div className="d-flex align-items-center justify-content-center w-100">
               <button
                 className="makeoffer-btn"

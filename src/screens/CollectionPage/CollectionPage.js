@@ -17,7 +17,8 @@ const CollectionPage = ({
   userNftFavs,
   handleAddFavoriteNft,
   handleRemoveFavoriteNft,
-  cfxPrice,onRefreshListings
+  cfxPrice,
+  onRefreshListings,
 }) => {
   const collectionInfo = [
     {
@@ -197,7 +198,9 @@ if there are no listings
           await Promise.all(
             window.range(0, listednftsArray.length - 1).map(async (j) => {
               const nft_data_listed = await fetch(
-                `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress.toLowerCase()}/${listednftsArray[j].tokenId}/metadata.json`
+                `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress.toLowerCase()}/${
+                  listednftsArray[j].tokenId
+                }/metadata.json`
               )
                 .then((res) => res.json())
                 .then((data) => {
@@ -207,24 +210,26 @@ if there are no listings
                   console.log(err.message);
                 });
 
-                const listingIndex = listednftsArray.findIndex(
-                  (object) =>
-                    object.nftAddress.toLowerCase() === collectionAddress.toLowerCase() &&
-                    object.tokenId === listednftsArray[j].tokenId
-                );
-                const isApprovedresult = await window
+              const listingIndex = listednftsArray.findIndex(
+                (object) =>
+                  object.nftAddress.toLowerCase() ===
+                    collectionAddress.toLowerCase() &&
+                  object.tokenId === listednftsArray[j].tokenId
+              );
+              const isApprovedresult = await window
                 .isApprovedBuy(listednftsArray[j].price)
                 .catch((e) => {
                   console.error(e);
                 });
-                
 
-              if (nft_data_listed) {
+              if (nft_data_listed &&
+                nft_data_listed.code !== 404 &&
+                typeof nft_data_listed !== "string") {
                 nftListedArray.push({
                   ...nft_data_listed,
                   ...listednftsArray[j],
                   listingIndex: listingIndex,
-                  isApproved: isApprovedresult
+                  isApproved: isApprovedresult,
                 });
               }
             })
@@ -262,7 +267,9 @@ if there are no listings
                 console.log(err.message);
               });
 
-            if (nft_data) {
+            if (nft_data &&
+              nft_data.code !== 404 &&
+              typeof nft_data !== "string") {
               // console.log('nft_data', nft_data);
               nftArray.push({
                 ...nft_data,
@@ -352,7 +359,9 @@ if there are no listings
                 console.log(err.message);
               });
 
-            if (nft_data) {
+            if (nft_data &&
+              nft_data.code !== 404 &&
+              typeof nft_data !== "string") {
               // console.log(nft_data);
               nftArray.push({
                 ...nft_data,
@@ -363,14 +372,16 @@ if there are no listings
           })
         );
 
-        console.log(next, next - nftPerRow)
-        const finaldata = [...allNftArray, ...nftArray];
+        const finalArray_sorted = nftArray.sort((a, b) => {
+          return a.tokenId - b.tokenId;
+        });
+
+        const finaldata = [...allNftArray, ...finalArray_sorted];
         setAllNftArray(finaldata);
         setLoading(false);
       }
     }
   };
-
 
   const loadMore = () => {
     setnext(next + nftPerRow);

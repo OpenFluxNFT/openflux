@@ -10,7 +10,6 @@ import axios from "axios";
 import getFormattedNumber from "../../../hooks/get-formatted-number";
 
 const RecentlyListed = ({
-  coinbase,
   onFavoriteNft,
   userNftFavs,
   recentlyListedNfts,
@@ -18,6 +17,8 @@ const RecentlyListed = ({
   handleAddFavoriteNft,
   handleRemoveFavoriteNft,
   userNftFavsInitial,
+  coinbase,
+  onRefreshListings,
 }) => {
   const settings = {
     // dots: true,
@@ -35,6 +36,7 @@ const RecentlyListed = ({
   const [nftFinalArray, setnftFinalArray] = useState([]);
   const [buyStatus, setbuyStatus] = useState("buy"); //buy
   const [buyloading, setbuyLoading] = useState(false); //buy
+  const [selectedNftId, setSelectedNftId] = useState(""); //buy
 
   const windowSize = useWindowSize();
 
@@ -94,6 +96,26 @@ const RecentlyListed = ({
     }
   };
 
+  const handleRefreshData = async (nft) => {
+    const listednfts = await axios
+      .get(
+        `${baseURL}/api/collections/${nft.nftAddress.toLowerCase()}/refresh-listings`,
+        {
+          headers: {
+            cascadestyling:
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        }
+      )
+      .catch((e) => {
+        console.log(e);
+      });
+
+    if (listednfts && listednfts.status === 200) {
+      onRefreshListings();
+    }
+  };
+
   const checkNftApprovalForBuying = async (amount) => {
     const result = await window.isApprovedBuy(amount).catch((e) => {
       console.error(e);
@@ -109,58 +131,88 @@ const RecentlyListed = ({
   };
 
   const handleBuyNft = async (nft) => {
-    const isApproved = await checkNftApprovalForBuying(nft.price).then(
-      (data) => {
-        return data;
-      }
-    );
+    setSelectedNftId(nft.tokenId);
+    let listingsArray = [];
 
-    console.log(isApproved);
-    if (isApproved) {
-      setbuyLoading(true);
-      setbuyStatus("buy");
+    const listednfts = await axios
+      .get(
+        `${baseURL}/api/collections/${nft.nftAddress.toLowerCase()}/listings`,
+        {
+          headers: {
+            cascadestyling:
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        }
+      )
+      .catch((e) => {
+        console.log(e);
+      });
 
-      await window
-        .buyNFT(nft.nftAddress, nft.listingIndex, nft.price)
-        .then((result) => {
-          setbuyLoading(false);
-
-          setbuyStatus("success");
-          // handleRefreshData();
-          setTimeout(() => {
-            setbuyStatus("");
-          }, 2000);
-        })
-        .catch((e) => {
-          setbuyStatus("failed");
-          setbuyLoading(false);
-          setTimeout(() => {
-            setbuyStatus("buy");
-          }, 3000);
-          console.error(e);
-        });
-    } else {
-      setbuyStatus("approve");
-      setbuyLoading(true);
-
-      await window
-        .approveBuy(nft.price)
-        .then(() => {
-          setTimeout(() => {
-            setbuyStatus("buy");
-          }, 3000);
-          setbuyStatus("success");
-          setbuyLoading(false);
-        })
-        .catch((e) => {
-          console.error(e);
-          setbuyStatus("failed");
-          setTimeout(() => {
-            setbuyStatus("approve");
-          }, 3000);
-          setbuyLoading(false);
-        });
+    if (listednfts && listednfts.status === 200) {
+      listingsArray = listednfts.data.listings;
     }
+
+    if (coinbase) {
+      const isApproved = await checkNftApprovalForBuying(nft.price).then(
+        (data) => {
+          return data;
+        }
+      );
+
+      const listingIndex = listingsArray.findIndex(
+        (object) =>
+          object.nftAddress.toLowerCase() === nft.nftAddress.toLowerCase() &&
+          object.tokenId === nft.tokenId
+      );
+
+      console.log(listingIndex);
+
+      if (isApproved) {
+        setbuyLoading(true);
+        setbuyStatus("buy");
+
+        await window
+          .buyNFT(nft.nftAddress, listingIndex, nft.price)
+          .then((result) => {
+            setbuyLoading(false);
+
+            setbuyStatus("success");
+            handleRefreshData(nft);
+            setTimeout(() => {
+              setbuyStatus("");
+            }, 2000);
+          })
+          .catch((e) => {
+            setbuyStatus("failed");
+            setbuyLoading(false);
+            setTimeout(() => {
+              setbuyStatus("buy");
+            }, 3000);
+            console.error(e);
+          });
+      } else {
+        setbuyStatus("approve");
+        setbuyLoading(true);
+
+        await window
+          .approveBuy(nft.price)
+          .then(() => {
+            setTimeout(() => {
+              setbuyStatus("buy");
+            }, 3000);
+            setbuyStatus("success");
+            setbuyLoading(false);
+          })
+          .catch((e) => {
+            console.error(e);
+            setbuyStatus("failed");
+            setTimeout(() => {
+              setbuyStatus("approve");
+            }, 3000);
+            setbuyLoading(false);
+          });
+      }
+    } else window.alertify.error("Please connect wallet first!");
   };
 
   useEffect(() => {
@@ -188,7 +240,7 @@ const RecentlyListed = ({
                   <img
                     src={
                       item.image
-                        ? item.image
+                        ? `https://cdnflux.dypius.com/${item.image}`
                         : require(`./assets/nftPlaceholder${index + 1}.png`)
                     }
                     className="card-img"
@@ -265,16 +317,41 @@ const RecentlyListed = ({
                   </div>
 
                   <div className="mt-3">
-                    <button
-                      className="buy-btn w-100"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        console.log("lot");
-                      }}
-                    >
-                      Buy
-                    </button>
+                    {coinbase &&
+                    coinbase.toLowerCase() === item.seller.toLowerCase() ? (
+                      <NavLink
+                        className="buy-btn w-100 d-flex justify-content-center "
+                        to={`/nft/${item.tokenId}/${item.nftAddress}`}
+                        style={{ textDecoration: "none" }}
+                      >
+                        View Details
+                      </NavLink>
+                    ) : (
+                      <button
+                        className="buy-btn w-100"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          handleBuyNft(item);
+                        }}
+                      >
+                        {coinbase
+                          ? coinbase.toLowerCase() === item.seller.toLowerCase()
+                            ? "View Details"
+                            : coinbase.toLowerCase() !==
+                                item.seller.toLowerCase() &&
+                              item.isApproved === false
+                            ? "Approve Buy"
+                            : "Buy"
+                          : "Buy"}
+                        {buyloading && selectedNftId === item.tokenId && (
+                          <div
+                            className="spinner-border spinner-border-sm text-light ms-1"
+                            role="status"
+                          ></div>
+                        )}
+                      </button>
+                    )}
                   </div>
                 </NavLink>
               </div>
@@ -296,7 +373,7 @@ const RecentlyListed = ({
                     <img
                       src={
                         item.image
-                          ? item.image
+                          ? `https://cdnflux.dypius.com/${item.image}`
                           : require(`./assets/nftPlaceholder1.png`)
                       }
                       className="card-img"
@@ -306,7 +383,7 @@ const RecentlyListed = ({
                     <video
                       preload="auto"
                       className="card-img"
-                      src={item.image}
+                      src={`https://cdnflux.dypius.com/${item.image}`}
                       autoPlay={true}
                       loop={true}
                       muted="muted"
@@ -387,16 +464,41 @@ const RecentlyListed = ({
                     </span>
                   </div>
                   <div className="mt-3">
-                    <button
-                      className="buy-btn w-100"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        console.log("lot");
-                      }}
-                    >
-                      Buy
-                    </button>
+                    {coinbase &&
+                    coinbase.toLowerCase() === item.seller.toLowerCase() ? (
+                      <NavLink
+                        className="buy-btn w-100 d-flex justify-content-center "
+                        to={`/nft/${item.tokenId}/${item.nftAddress}`}
+                        style={{ textDecoration: "none" }}
+                      >
+                        View Details
+                      </NavLink>
+                    ) : (
+                      <button
+                        className="buy-btn w-100"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          handleBuyNft(item);
+                        }}
+                      >
+                        {coinbase
+                          ? coinbase.toLowerCase() === item.seller.toLowerCase()
+                            ? "View Details"
+                            : coinbase.toLowerCase() !==
+                                item.seller.toLowerCase() &&
+                              item.isApproved === false
+                            ? "Approve Buy"
+                            : "Buy"
+                          : "Buy"}
+                        {buyloading && selectedNftId === item.tokenId && (
+                          <div
+                            className="spinner-border spinner-border-sm text-light ms-1"
+                            role="status"
+                          ></div>
+                        )}
+                      </button>
+                    )}
                   </div>
                 </NavLink>
               </div>

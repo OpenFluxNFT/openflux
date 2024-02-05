@@ -14,7 +14,10 @@ const Home = ({
   cfxPrice,
   handleAddFavoriteNft,
   handleRemoveFavoriteNft,
-  userNftFavs,userNftFavsInitial
+  userNftFavs,
+  userNftFavsInitial,
+  coinbase,
+  onRefreshListings,
 }) => {
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -33,6 +36,8 @@ const Home = ({
         userNftFavsInitial={userNftFavsInitial}
         handleAddFavoriteNft={handleAddFavoriteNft}
         handleRemoveFavoriteNft={handleRemoveFavoriteNft}
+        coinbase={coinbase}
+        onRefreshListings={onRefreshListings}
       />
       <CollectionCategories allCollections={allCollections} />
     </div>

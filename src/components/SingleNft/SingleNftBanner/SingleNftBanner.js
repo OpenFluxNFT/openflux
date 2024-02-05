@@ -62,7 +62,7 @@ const SingleNftBanner = ({
       await window
         .isApprovedNFT(nftId, nftAddress, coinbase)
         .then((data) => {
-          setsellStatus("sell");
+          setsellStatus(data === true ? "sell" : '');
           setIsApproveList(data);
         })
         .catch((e) => {
@@ -359,7 +359,7 @@ const SingleNftBanner = ({
       } else setIsListed(false);
     }
   }, [nftData, nftId, coinbase, chainId]);
-
+// console.log(offerData)
   return (
     <div className="container-lg">
       <div className="nft-banner-wrapper p-3">
@@ -588,7 +588,7 @@ const SingleNftBanner = ({
                       </button>
                     ) : (
                       <button
-                        className="btn connect-btn2 d-flex align-items-center gap-2 col-5"
+                        className="btn connect-btn2 d-flex align-items-center justify-content-center gap-2 col-5"
                         onClick={handleSignup}
                       >
                         Connect Wallet
@@ -790,7 +790,7 @@ const SingleNftBanner = ({
                       </>
                     ) : !isConnected && chainId === 1030 ? (
                       <button
-                        className="btn connect-btn2 d-flex align-items-center gap-2 col-5"
+                        className="btn connect-btn2 d-flex align-items-center gap-2 col-5 justify-content-center "
                         onClick={handleSignup}
                       >
                         Connect Wallet
@@ -836,7 +836,7 @@ const SingleNftBanner = ({
                       </button>
                     ) : (
                       <button
-                        className="btn connect-btn2 d-flex align-items-center gap-2 col-5"
+                        className="btn connect-btn2 d-flex align-items-center gap-2 col-5 justify-content-center "
                         onClick={handleSignup}
                       >
                         Connect Wallet
@@ -898,7 +898,7 @@ const SingleNftBanner = ({
                       </>
                     ) : (
                       <button
-                        className="btn connect-btn2 d-flex align-items-center gap-2 col-5"
+                        className="btn connect-btn2 d-flex align-items-center gap-2 col-5 justify-content-center "
                         onClick={handleSignup}
                       >
                         Connect Wallet

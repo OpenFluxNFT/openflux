@@ -17,7 +17,7 @@ const Profile = ({
   userNftFavs,
   handleAddFavoriteNft,
   handleRemoveFavoriteNft,
-  userNftFavsInitial,
+  userNftFavsInitial,userNftsOwnedArray,cfxPrice
 }) => {
   const [option, setOption] = useState("collected");
   const profileSocials = ["website", "twitter", "instagram"];
@@ -265,6 +265,8 @@ const Profile = ({
             handleRemoveFavoriteNft={handleRemoveFavoriteNft}
             nftFinalArray={nftFinalArray}
             fetchFavoriteCounts={fetchFavoriteCounts}
+            userNftsOwnedArray={userNftsOwnedArray}
+            cfxPrice={cfxPrice}
           />
         </div>
       </div>

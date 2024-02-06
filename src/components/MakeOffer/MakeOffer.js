@@ -30,6 +30,7 @@ const MakeOffer = ({
   nftData,
   cfxPrice,
   balance,
+  wcfxBalance,
   offerData,
   bestOffer,
   nftAddress,
@@ -98,7 +99,6 @@ const MakeOffer = ({
     setisApprove(result);
     return result;
   };
-
 
   return (
     <Modal
@@ -171,7 +171,8 @@ const MakeOffer = ({
                       className="collection-name"
                       style={{ color: "white" }}
                     >
-                      Conflux <span style={{textTransform: 'initial'}}>eSpace.</span>
+                      Conflux{" "}
+                      <span style={{ textTransform: "initial" }}>eSpace.</span>
                     </span>
                   </div>
                 </div>
@@ -194,6 +195,12 @@ const MakeOffer = ({
                 <span className="itemchain">Balance</span>
                 <span className="itemvalue">
                   {getFormattedNumber(balance, 2)} CFX
+                </span>
+              </div>
+              <div className="d-flex w-100 align-items-center gap-3 justify-content-between">
+                <span className="itemchain">WCFX Balance</span>
+                <span className="itemvalue">
+                  {getFormattedNumber(wcfxBalance, 2)} WCFX
                 </span>
               </div>
               <div className="d-flex w-100 align-items-center gap-3 justify-content-between">

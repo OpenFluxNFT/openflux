@@ -17,7 +17,9 @@ const Profile = ({
   userNftFavs,
   handleAddFavoriteNft,
   handleRemoveFavoriteNft,
-  userNftFavsInitial,userNftsOwnedArray,cfxPrice
+  userNftFavsInitial,
+  userNftsOwnedArray,
+  cfxPrice,
 }) => {
   const [option, setOption] = useState("collected");
   const profileSocials = ["website", "twitter", "instagram"];
@@ -52,16 +54,8 @@ const Profile = ({
       const profilepic = userData.profilePicture;
       const bannerpic = userData.bannerPicture;
 
-      if (!profilepic) {
-        setprofilePicture();
-      } else {
-        setprofilePicture(profilepic);
-      }
-      if (!bannerpic) {
-        setbannerPicturePicture();
-      } else {
-        setbannerPicturePicture(bannerpic);
-      }
+      setprofilePicture(profilepic);
+      setbannerPicturePicture(bannerpic);
       setUserJoined(userTime2);
       setuserWallet(userAddr);
       setUserTotalNftsFavs(totalNFTFavs);
@@ -76,6 +70,9 @@ const Profile = ({
       setUserName("Unnamed");
       setUserJoined("-");
       setuserWallet("-");
+      setprofilePicture();
+      setbannerPicturePicture();
+      setUserTotalNftsFavs(0);
     }
   };
 
@@ -157,7 +154,7 @@ const Profile = ({
 
   useEffect(() => {
     assignUserData();
-  }, [userData]);
+  }, [userData, id]);
 
   const profileCredenrtials = [
     {

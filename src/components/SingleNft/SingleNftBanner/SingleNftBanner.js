@@ -521,7 +521,7 @@ const SingleNftBanner = ({
                   </div>
                   <div className="d-flex align-items-center gap-2 border-bottom-div">
                     <span className="nft-info-left">Chain</span>
-                    <span className="nft-info-right">Conflux eSpace</span>
+                    <span className="nft-info-right">Conflux <span style={{textTransform: 'initial'}}>eSpace.</span></span>
                   </div>
                 </div>
               </div>

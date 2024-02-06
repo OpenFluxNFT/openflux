@@ -64,7 +64,7 @@ const CollectionBanner = ({
                     <div className="d-flex align-items-center gap-1">
                       <span className="collection-info-span mb-0">Chain</span>
                       <span className="collection-info mb-0">
-                        Conflux eSpace
+                        Conflux <span style={{textTransform: 'initial'}}>eSpace</span>
                       </span>
                     </div>
                   </div>

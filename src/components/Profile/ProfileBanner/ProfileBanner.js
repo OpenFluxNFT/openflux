@@ -36,8 +36,7 @@ const ProfileBanner = ({
     profilePicture: "",
     bannerPicture: "",
   });
-
-  // console.log(logo, banner);
+ 
 
   const isImage = async (file) => {
     const acceptedImageTypes = ["image/png"];
@@ -150,10 +149,15 @@ const ProfileBanner = ({
   useEffect(() => {
     if (banner) {
       setBannerImage(`https://confluxapi.worldofdypians.com/${banner}`);
+    } else {
+      setBannerImage()
     }
 
     if (logo) {
       setProfileImage(`https://confluxapi.worldofdypians.com/${logo}`);
+    }
+    else {
+      setProfileImage()
     }
   }, [banner, logo]);
 

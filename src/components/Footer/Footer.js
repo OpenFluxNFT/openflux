@@ -10,6 +10,7 @@ import { NavLink } from "react-router-dom";
 
 const Footer = () => {
   const year = new Date().getFullYear();
+
   return (
     <div className="container-fluid footer-outer-wrapper px-0">
       <div className="container-fluid pb-4 pt-4 footer-wrapper">
@@ -19,12 +20,20 @@ const Footer = () => {
             <div className="d-flex flex-column flex-lg-row align-items-start justify-content-between gap-2">
               <div className="d-flex flex-column gap-3">
                 <div className="d-flex align-items-center gap-2">
-                  <img src={footerLogo} alt="" />
+                  <NavLink
+                    to={"/"}
+                    onClick={() => {
+                      window.scrollTo(0, 0);
+                    }}
+                  >
+                    <img src={footerLogo} alt="" />
+                  </NavLink>
                 </div>
                 <p className="footer-desc mb-0">
-                  The leading NFT Marketplace on Conflux eSpace. Home to the
-                  next generation of digital creators. Discover the best NFT
-                  collections.
+                  The leading NFT Marketplace on Conflux{" "}
+                  <span style={{ textTransform: "initial" }}>eSpace.</span> Home
+                  to the next generation of digital creators. Discover the best
+                  NFT collections.
                 </p>
                 <div className="d-flex align-items-center gap-3">
                   <a
@@ -41,7 +50,11 @@ const Footer = () => {
                   >
                     <img src={telegramLogo} alt="" />
                   </a>
-                  <a href="https://discord.com/invite/openflux" target="_blank" rel="noreferrer">
+                  <a
+                    href="https://discord.com/invite/openflux"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     <img src={discordLogo} alt="" />
                   </a>
                   {/* <a href="#" target="_blank" rel='noreferrer'>

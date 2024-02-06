@@ -171,7 +171,7 @@ const MakeOffer = ({
                       className="collection-name"
                       style={{ color: "white" }}
                     >
-                      Conflux eSpace
+                      Conflux <span style={{textTransform: 'initial'}}>eSpace.</span>
                     </span>
                   </div>
                 </div>

@@ -32,10 +32,14 @@ const ProfileBanner = ({
 }) => {
   const [profileImage, setProfileImage] = useState(null);
   const [bannerImage, setBannerImage] = useState(null);
+
+
   const [userInfo, setUserInfo] = useState({
     profilePicture: "",
     bannerPicture: "",
   });
+ 
+
  
 
   const isImage = async (file) => {

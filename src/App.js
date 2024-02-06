@@ -16,6 +16,7 @@ import SingleNft from "./screens/SingleNft/SingleNft";
 import Profile from "./screens/Profile/Profile";
 import SettingsPage from "./screens/SettingsPage/SettingsPage";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import Toast from "./components/Toast/Toast";
 import { ethers } from "ethers";
 import SignModal from "./components/SignModal/SignModal";
@@ -73,6 +74,7 @@ function App() {
   const { ethereum } = window;
   const baseURL = "https://confluxapi.worldofdypians.com";
   const navigate = useNavigate();
+  const location = useLocation();
   const dataFetchedRef = useRef(false);
 
   const handleShowWalletModal = () => {
@@ -152,6 +154,9 @@ function App() {
         if (data) {
           setCoinbase(data);
           setIsConnected(true);
+          if (location.pathname.includes("/profile")) {
+            navigate(`/profile/${data}`);
+          }
         } else {
           setCoinbase();
           setIsConnected(false);
@@ -367,13 +372,27 @@ function App() {
   };
 
   const handleMapUserNftsOwned = async (wallet) => {
-    console.log(userNftsOwned);
-    if (userNftsOwned && userNftsOwned.length > 0) {
+    let nftsOwned = [];
+    const userNftsOwnedresult = await axios
+      .get(`${baseURL}/api/nft-amount/${wallet}`, {
+        headers: {
+          cascadestyling:
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+
+    if (userNftsOwnedresult && userNftsOwnedresult.status === 200) {
+      nftsOwned = userNftsOwnedresult.data.nftList;
+    }
+    if (nftsOwned && nftsOwned.length > 0) {
       await Promise.all(
-        window.range(0, userNftsOwned.length - 1).map(async (i) => {
+        window.range(0, nftsOwned.length - 1).map(async (i) => {
           const result = await axios
             .get(
-              `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${userNftsOwned[i].contract}`
+              `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${nftsOwned[i].contract}`
             )
             .catch((e) => {
               console.log(e);
@@ -384,11 +403,11 @@ function App() {
             const web3 = window.confluxWeb3;
             const collection_contract = new web3.eth.Contract(
               abi,
-              userNftsOwned[i].contract
+              nftsOwned[i].contract
             );
 
             const tokens = await Promise.all(
-              window.range(0, Number(userNftsOwned[i].amount) - 1).map((j) =>
+              window.range(0, Number(nftsOwned[i].amount) - 1).map((j) =>
                 collection_contract.methods
                   .tokenOfOwnerByIndex(wallet, j)
                   .call()
@@ -418,7 +437,7 @@ function App() {
                     });
 
                   const nft_data = await fetch(
-                    `https://cdnflux.dypius.com/collectionsmetadatas/${userNftsOwned[
+                    `https://cdnflux.dypius.com/collectionsmetadatas/${nftsOwned[
                       i
                     ].contract.toLowerCase()}/${tokenByIndex}/metadata.json`
                   )
@@ -579,7 +598,7 @@ function App() {
           fetchuserCollection(walletAddr);
         }
       } else setuserData([]);
-    }
+    } else setuserData([]);
   };
 
   const updateUserData = async (userInfo) => {
@@ -620,7 +639,6 @@ function App() {
           },
         })
         .then((res) => {
-          console.log(res.data);
           setSuccessUpdateProfile({
             success: true,
             message: "Succesfully updated",
@@ -696,7 +714,7 @@ function App() {
           },
         })
         .then((res) => {
-          console.log(res.data);
+          
           setSuccessUpdateCollectionProfile({
             success: true,
             message: "Succesfully updated",
@@ -747,7 +765,7 @@ function App() {
           fetchTotalNftOwned(walletAddr);
         }
       } else setuserData([]);
-    }
+    } else setuserData([]);
   };
 
   useEffect(() => {
@@ -867,7 +885,7 @@ function App() {
 
   const handleAddFavoriteNft = async (tokenId, nftContract) => {
     if (coinbase) {
-      console.log(nftContract, tokenId);
+      
       const data = {
         contractAddress: nftContract,
         tokenId: tokenId,
@@ -1004,7 +1022,7 @@ function App() {
     if (coinbase) {
       handleMapUserNftsOwned(coinbase, recentlyListedNfts);
     }
-  }, [userNftsOwned, recentlyListedNfts]);
+  }, [recentlyListedNfts, coinbase]);
 
   return (
     <div

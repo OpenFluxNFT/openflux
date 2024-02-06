@@ -28,7 +28,8 @@ const Header = ({
   handleSwitchNetwork,
   handleSignupAndRedirectToAccount,
   handleDisconnect,
-  allCollections,balance
+  allCollections,
+  balance,
 }) => {
   const [showmenu, setShowMenu] = useState(false);
   const [tooltip, setTooltip] = useState(false);
@@ -38,8 +39,6 @@ const Header = ({
 
   const location = useLocation();
   const navigate = useNavigate();
-
-
 
   const handleConfluxPool = async () => {
     if (window.ethereum) {
@@ -82,8 +81,6 @@ const Header = ({
     }
   };
 
-
-
   return (
     <div className="container-fluid py-3 header-wrapper">
       <div
@@ -92,7 +89,12 @@ const Header = ({
       >
         <div className="row mx-0 align-items-center justify-content-center position-relative">
           <div className="col-1">
-            <NavLink to={"/"}>
+            <NavLink
+              to={"/"}
+              onClick={() => {
+                window.scrollTo(0, 0);
+              }}
+            >
               <img src={headerLogo} alt="" />
             </NavLink>
           </div>

@@ -16,7 +16,6 @@ import SingleNft from "./screens/SingleNft/SingleNft";
 import Profile from "./screens/Profile/Profile";
 import SettingsPage from "./screens/SettingsPage/SettingsPage";
 import { useNavigate } from "react-router-dom";
-import { useLocation } from "react-router-dom";
 import Toast from "./components/Toast/Toast";
 import { ethers } from "ethers";
 import SignModal from "./components/SignModal/SignModal";
@@ -74,7 +73,7 @@ function App() {
   const { ethereum } = window;
   const baseURL = "https://confluxapi.worldofdypians.com";
   const navigate = useNavigate();
-  const location = useLocation();
+
   const dataFetchedRef = useRef(false);
 
   const handleShowWalletModal = () => {
@@ -154,9 +153,6 @@ function App() {
         if (data) {
           setCoinbase(data);
           setIsConnected(true);
-          if (location.pathname.includes("/profile")) {
-            navigate(`/profile/${data}`);
-          }
         } else {
           setCoinbase();
           setIsConnected(false);
@@ -165,6 +161,23 @@ function App() {
     } else {
       setIsConnected(false);
       setCoinbase();
+    }
+  };
+
+  const handleRedirect = async () => {
+    const addr = await window
+      .getCoinbase()
+      .then((data) => {
+        return data;
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+
+    if (addr) {
+      if (window.location.pathname.includes("/profile")) {
+        navigate(`/profile/${addr}`);
+      }
     }
   };
 
@@ -435,6 +448,12 @@ function App() {
                     .catch((e) => {
                       console.error(e);
                     });
+                  const tokenName = await collection_contract.methods
+                    .symbol()
+                    .call()
+                    .catch((e) => {
+                      console.error(e);
+                    });
 
                   const nft_data = await fetch(
                     `https://cdnflux.dypius.com/collectionsmetadatas/${nftsOwned[
@@ -459,6 +478,8 @@ function App() {
                       ...nft_data,
                       tokenId: tokenByIndex,
                       owner: owner,
+                      nftAddress: nftsOwned[i].contract,
+                      tokenName: tokenName,
                     });
                   }
                 })
@@ -714,7 +735,6 @@ function App() {
           },
         })
         .then((res) => {
-          
           setSuccessUpdateCollectionProfile({
             success: true,
             message: "Succesfully updated",
@@ -885,7 +905,6 @@ function App() {
 
   const handleAddFavoriteNft = async (tokenId, nftContract) => {
     if (coinbase) {
-      
       const data = {
         contractAddress: nftContract,
         tokenId: tokenId,
@@ -962,6 +981,7 @@ function App() {
     if (ethereum) {
       ethereum.on("chainChanged", checkNetworkId);
       ethereum?.on("accountsChanged", checkConnection2);
+      ethereum?.on("accountsChanged", handleRedirect);
     }
   }, [ethereum]);
 

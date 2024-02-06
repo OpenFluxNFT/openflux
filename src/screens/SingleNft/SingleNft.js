@@ -34,6 +34,7 @@ const SingleNft = ({
   const [offerData, setofferData] = useState([]);
   const [allOffers, setallOffers] = useState([]);
   const [lowestPriceNftListed, setlowestPriceNftListed] = useState(0);
+  const [wcfxBalance, setwcfxBalance] = useState(0);
 
   const { nftId, nftAddress } = useParams();
   const dataFetchedRef = useRef(false);
@@ -144,8 +145,7 @@ const SingleNft = ({
   };
 
   const handleAcceptOffer = async (offerIndex) => {
-    setOfferacceptStatus("loading");
-    console.log(nftAddress, nftId, offerIndex);
+    setOfferacceptStatus("loading"); 
     const isApproved = await window
       .isApprovedNFT(nftId, nftAddress, coinbase)
       .then((data) => {
@@ -166,6 +166,23 @@ const SingleNft = ({
         .catch((e) => {
           console.log(e);
         });
+    }
+  };
+
+  const getWcfxBalance = async () => {
+    if (coinbase) {
+      const contract = new window.confluxWeb3.eth.Contract(
+        window.TOKEN_ABI,
+        window.config.wcfx_address
+      );
+
+      const balance = await contract.methods
+        .balanceOf(coinbase)
+        .call()
+        .then((data) => {
+          return window.confluxWeb3.utils.fromWei(data, "ether");
+        });
+      setwcfxBalance(balance);
     }
   };
 
@@ -229,13 +246,7 @@ const SingleNft = ({
             });
 
           const priceFormatted = finalResult[i].amount / 1e18;
-
-          console.log(
-            balance,
-            allowance,
-            priceFormatted,
-            finalResult[i].offeror
-          );
+ 
 
           return allOffersArray.push({
             ...finalResult[i],
@@ -743,6 +754,10 @@ const SingleNft = ({
     fetchInitialNftsPerCollection(nftId);
   }, []);
 
+  useEffect(()=>{
+    getWcfxBalance()
+  },[coinbase])
+
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
       <SingleNftBanner
@@ -794,6 +809,7 @@ const SingleNft = ({
           nftData={nftData}
           cfxPrice={cfxPrice}
           balance={balance}
+          wcfxBalance={wcfxBalance}
           handleMakeOffer={handleMakeOffer}
           handleDeleteOffer={handleDeleteOffer}
           handleUpdateOffer={handleUpdateOffer}

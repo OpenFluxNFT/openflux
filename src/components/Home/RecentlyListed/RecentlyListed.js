@@ -318,7 +318,7 @@ const RecentlyListed = ({
 
                   <div className="mt-3">
                     {coinbase &&
-                    coinbase.toLowerCase() === item.seller.toLowerCase() ? (
+                    coinbase.toLowerCase() === item.seller?.toLowerCase() ? (
                       <NavLink
                         className="buy-btn w-100 d-flex justify-content-center "
                         to={`/nft/${item.tokenId}/${item.nftAddress}`}
@@ -336,10 +336,11 @@ const RecentlyListed = ({
                         }}
                       >
                         {coinbase
-                          ? coinbase.toLowerCase() === item.seller.toLowerCase()
+                          ? coinbase.toLowerCase() ===
+                            item.seller?.toLowerCase()
                             ? "View Details"
                             : coinbase.toLowerCase() !==
-                                item.seller.toLowerCase() &&
+                                item.seller?.toLowerCase() &&
                               item.isApproved === false
                             ? "Approve Buy"
                             : "Buy"
@@ -465,7 +466,7 @@ const RecentlyListed = ({
                   </div>
                   <div className="mt-3">
                     {coinbase &&
-                    coinbase.toLowerCase() === item.seller.toLowerCase() ? (
+                    coinbase.toLowerCase() === item.seller?.toLowerCase() ? (
                       <NavLink
                         className="buy-btn w-100 d-flex justify-content-center "
                         to={`/nft/${item.tokenId}/${item.nftAddress}`}
@@ -483,10 +484,11 @@ const RecentlyListed = ({
                         }}
                       >
                         {coinbase
-                          ? coinbase.toLowerCase() === item.seller.toLowerCase()
+                          ? coinbase.toLowerCase() ===
+                            item.seller?.toLowerCase()
                             ? "View Details"
                             : coinbase.toLowerCase() !==
-                                item.seller.toLowerCase() &&
+                                item.seller?.toLowerCase() &&
                               item.isApproved === false
                             ? "Approve Buy"
                             : "Buy"

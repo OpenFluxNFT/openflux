@@ -29,13 +29,15 @@ const Header = ({
   handleSignupAndRedirectToAccount,
   handleDisconnect,
   allCollections,
-  balance,
+  balance, onNewCollectionClick
 }) => {
   const [showmenu, setShowMenu] = useState(false);
   const [tooltip, setTooltip] = useState(false);
   const [searchResult, setSearchResult] = useState("");
   const [currentCollection, setcurrentCollection] = useState();
   const [isopen, setisopen] = useState(false);
+ 
+
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -70,7 +72,7 @@ const Header = ({
           .toLowerCase()
           .includes(collectionTitle.toLowerCase());
       });
-      console.log(result);
+
       if (result) {
         setcurrentCollection(result);
         setisopen(true);
@@ -144,6 +146,7 @@ const Header = ({
                               setcurrentCollection();
                               setSearchResult("");
                               setisopen(false);
+                              onNewCollectionClick()
                             }}
                           >
                             <div

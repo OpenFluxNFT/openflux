@@ -7,6 +7,7 @@ import MoreFromCollection from "../../components/SingleNft/MoreFromCollection/Mo
 import MakeOffer from "../../components/MakeOffer/MakeOffer";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import moment from "moment";
 
 const SingleNft = ({
   isConnected,
@@ -33,6 +34,8 @@ const SingleNft = ({
   const [bestOffer, setbestOffer] = useState([]);
   const [offerData, setofferData] = useState([]);
   const [allOffers, setallOffers] = useState([]);
+  const [saleHistory, setSaleHistory] = useState([]);
+
   const [lowestPriceNftListed, setlowestPriceNftListed] = useState(0);
   const [wcfxBalance, setwcfxBalance] = useState(0);
 
@@ -145,7 +148,7 @@ const SingleNft = ({
   };
 
   const handleAcceptOffer = async (offerIndex) => {
-    setOfferacceptStatus("loading"); 
+    setOfferacceptStatus("loading");
     const isApproved = await window
       .isApprovedNFT(nftId, nftAddress, coinbase)
       .then((data) => {
@@ -246,13 +249,19 @@ const SingleNft = ({
             });
 
           const priceFormatted = finalResult[i].amount / 1e18;
- 
 
-          return allOffersArray.push({
-            ...finalResult[i],
-            index: i,
-            isAllowed: balance >= priceFormatted && allowance >= priceFormatted,
-          });
+          const hasExpired = moment
+            .duration(finalResult[i].expiresAt * 1000 - Date.now())
+            .humanize(true)
+            .includes("ago");
+          if (!hasExpired) {
+            return allOffersArray.push({
+              ...finalResult[i],
+              index: i,
+              isAllowed:
+                balance >= priceFormatted && allowance >= priceFormatted,
+            });
+          }
         })
       );
 
@@ -428,6 +437,8 @@ const SingleNft = ({
     const web3 = window.confluxWeb3;
     setLoading(true);
     let finalArray = [];
+    let favoriteCount = 0;
+
     const abiresult = await axios.get(
       `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${nftAddress.toLowerCase()}`
     );
@@ -469,6 +480,24 @@ const SingleNft = ({
           .catch((e) => {
             console.log(e);
           });
+
+        const fav_count = await axios
+          .get(
+            `${baseURL}/api/nftFavoritesCount/${nftAddress.toLowerCase()}/${nftId}`,
+            {
+              headers: {
+                cascadestyling:
+                  "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+              },
+            }
+          )
+          .catch((e) => {
+            console.log(e);
+          });
+
+        if (fav_count && fav_count.status === 200) {
+          favoriteCount = fav_count.data.count;
+        }
 
         const collectionName = await collection_contract.methods
           .name()
@@ -522,6 +551,7 @@ const SingleNft = ({
               listingIndex: listingIndex,
               expiresAt: expiresAt,
               nftSymbol: nftSymbol,
+              favoriteCount: favoriteCount,
             });
 
             setNftData(...finalArray);
@@ -739,6 +769,51 @@ const SingleNft = ({
     }
   };
 
+  const fetchNftSaleHistory = async (nftAddr, nftId) => {
+    const result = await axios
+      .get(
+        `${baseURL}/api/nft-sale-history/${nftAddr.toLowerCase()}/${nftId}`,
+        {
+          headers: {
+            cascadestyling:
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        }
+      )
+      .catch((e) => {
+        console.error(e);
+      });
+
+    if (result && result.status === 200) {
+      const historyArray = result.data;
+      const finalArray_sorted = historyArray.sort((a, b) => {
+        return b.blockTimestamp - a.blockTimestamp;
+      });
+
+      setSaleHistory(finalArray_sorted);
+    }
+  };
+
+  const fetchNftSaleHistoryCache = async (nftAddr, nftId) => {
+    const result = await axios
+      .get(
+        `${baseURL}/api/refresh-sale-history-cache/${nftAddr.toLowerCase()}/${nftId}`,
+        {
+          headers: {
+            cascadestyling:
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        }
+      )
+      .catch((e) => {
+        console.error(e);
+      });
+
+    if (result && result.status === 200) {
+      fetchNftSaleHistory(nftAddr, nftId);
+    }
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -752,11 +827,12 @@ const SingleNft = ({
     dataFetchedRef.current = true;
     getNftData(nftId);
     fetchInitialNftsPerCollection(nftId);
+    fetchNftSaleHistory(nftAddress, nftId);
   }, []);
 
-  useEffect(()=>{
-    getWcfxBalance()
-  },[coinbase])
+  useEffect(() => {
+    getWcfxBalance();
+  }, [coinbase]);
 
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
@@ -773,6 +849,7 @@ const SingleNft = ({
         handleRefreshData={() => {
           getUpdatedNftData().then(() => {
             fetchInitialNftsPerCollection(nftId);
+            fetchNftSaleHistoryCache(nftAddress, nftId);
             onRefreshListings();
           });
         }}
@@ -788,6 +865,7 @@ const SingleNft = ({
         handleAcceptOffer={handleAcceptOffer}
         offeracceptStatus={offeracceptStatus}
         lowestPriceNftListed={lowestPriceNftListed}
+        saleHistory={saleHistory}
       />
       <NftTraits nftData={nftData} />
       <MoreFromCollection
@@ -798,6 +876,7 @@ const SingleNft = ({
           getNftData(value);
           getOffer(nftAddress, value);
           fetchInitialNftsPerCollection(value);
+          fetchNftSaleHistory(nftAddress, value);
         }}
         coinbase={coinbase}
         onRefreshListings={onRefreshListings}

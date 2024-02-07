@@ -19,19 +19,16 @@ const SettingsPage = ({
   successUpdateCollectionProfile,
 }) => {
   const { type } = useParams();
-  console.log(type, "type");
 
   const [category, setCategory] = useState(type);
-  const [collectionId, setcollectionId] = useState();
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   useEffect(() => {
-   setCategory(type)
-  }, [type])
-  
+    setCategory(type);
+  }, [type]);
 
   return (
     <div className="container-fluid py-4 home-wrapper px-0">

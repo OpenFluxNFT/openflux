@@ -122,9 +122,6 @@ const Profile = ({
               }
             })
           );
-
-          console.log(allOffersArray);
-
           setallOffers(allOffersArray);
         } else {
           // setbestOffer([]);

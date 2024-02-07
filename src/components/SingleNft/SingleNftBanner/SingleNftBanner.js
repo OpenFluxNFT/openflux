@@ -28,6 +28,8 @@ const SingleNftBanner = ({
   handleSwitchNetwork,
   loading,
   offerData,
+  bestOffer,
+  lastSale,
 }) => {
   const [isOwner, setIsOwner] = useState(false);
   const [isListed, setIsListed] = useState(false);
@@ -62,7 +64,7 @@ const SingleNftBanner = ({
       await window
         .isApprovedNFT(nftId, nftAddress, coinbase)
         .then((data) => {
-          setsellStatus(data === true ? "sell" : '');
+          setsellStatus(data === true ? "sell" : "");
           setIsApproveList(data);
         })
         .catch((e) => {
@@ -359,7 +361,7 @@ const SingleNftBanner = ({
       } else setIsListed(false);
     }
   }, [nftData, nftId, coinbase, chainId]);
-// console.log(offerData)
+  // console.log(offerData)
   return (
     <div className="container-lg">
       <div className="nft-banner-wrapper p-3">
@@ -509,19 +511,29 @@ const SingleNftBanner = ({
                   </div>
                   <div className="d-flex align-items-center gap-2 border-bottom-div">
                     <span className="nft-info-left">Creator earning</span>
-                    <span className="nft-info-right">5%</span>
+                    <span className="nft-info-right">tbd%</span>
                   </div>
                   <div className="d-flex align-items-center gap-2 border-bottom-div">
                     <span className="nft-info-left">Last Sale</span>
-                    <span className="nft-info-right">tbd WCFX</span>
+                    <span className="nft-info-right">
+                      {lastSale && lastSale.length > 0
+                        ? getFormattedNumber(lastSale[0].amount / 1e18)
+                        : 0}{" "}
+                      WCFX
+                    </span>
                   </div>
                   <div className="d-flex align-items-center gap-2 border-bottom-div">
                     <span className="nft-info-left">Best offer</span>
-                    <span className="nft-info-right">tbd WCFX</span>
+                    <span className="nft-info-right">
+                      {getFormattedNumber(bestOffer.amount ?? 0 / 1e18)} WCFX
+                    </span>
                   </div>
                   <div className="d-flex align-items-center gap-2 border-bottom-div">
                     <span className="nft-info-left">Chain</span>
-                    <span className="nft-info-right">Conflux <span style={{textTransform: 'initial'}}>eSpace.</span></span>
+                    <span className="nft-info-right">
+                      Conflux{" "}
+                      <span style={{ textTransform: "initial" }}>eSpace.</span>
+                    </span>
                   </div>
                 </div>
               </div>

@@ -292,3 +292,25 @@
 .filters-container-open{
   top: 0;
 }
+
+.collection-query{
+  background: #23244e;
+  border-radius: 12px;
+  .collection-query-type{
+    color: #828fbb;
+    
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    text-transform: capitalize;
+  }
+  .collection-query-value{
+    color: #fff;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    text-transform: capitalize;
+  }
+}

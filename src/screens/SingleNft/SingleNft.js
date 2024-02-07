@@ -7,6 +7,7 @@ import MoreFromCollection from "../../components/SingleNft/MoreFromCollection/Mo
 import MakeOffer from "../../components/MakeOffer/MakeOffer";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import moment from "moment";
 
 const SingleNft = ({
   isConnected,
@@ -249,11 +250,18 @@ const SingleNft = ({
 
           const priceFormatted = finalResult[i].amount / 1e18;
 
-          return allOffersArray.push({
-            ...finalResult[i],
-            index: i,
-            isAllowed: balance >= priceFormatted && allowance >= priceFormatted,
-          });
+          const hasExpired = moment
+            .duration(finalResult[i].expiresAt * 1000 - Date.now())
+            .humanize(true)
+            .includes("ago");
+          if (!hasExpired) {
+            return allOffersArray.push({
+              ...finalResult[i],
+              index: i,
+              isAllowed:
+                balance >= priceFormatted && allowance >= priceFormatted,
+            });
+          }
         })
       );
 
@@ -473,7 +481,7 @@ const SingleNft = ({
             console.log(e);
           });
 
-          const fav_count = await axios
+        const fav_count = await axios
           .get(
             `${baseURL}/api/nftFavoritesCount/${nftAddress.toLowerCase()}/${nftId}`,
             {
@@ -486,7 +494,7 @@ const SingleNft = ({
           .catch((e) => {
             console.log(e);
           });
-  
+
         if (fav_count && fav_count.status === 200) {
           favoriteCount = fav_count.data.count;
         }
@@ -543,7 +551,7 @@ const SingleNft = ({
               listingIndex: listingIndex,
               expiresAt: expiresAt,
               nftSymbol: nftSymbol,
-              favoriteCount:favoriteCount
+              favoriteCount: favoriteCount,
             });
 
             setNftData(...finalArray);

@@ -4,6 +4,7 @@ import ProfileNFTList from "../../components/Profile/ProfileNFTList";
 import ProfileBanner from "../../components/Profile/ProfileBanner/ProfileBanner";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import moment from "moment";
 
 const Profile = ({
   coinbase,
@@ -55,7 +56,7 @@ const Profile = ({
           });
 
         const finalResult = result[1];
-        console.log(finalResult)
+        console.log(finalResult);
         if (finalResult && finalResult.length > 0) {
           if (coinbase) {
             finalArray = finalResult.filter((object) => {
@@ -106,14 +107,19 @@ const Profile = ({
                 });
 
               const priceFormatted = finalResult[i].amount / 1e18;
-
-              return allOffersArray.push({
-                ...finalResult[i],
-                index: i,
-                isAllowed:
-                  balance >= priceFormatted && allowance >= priceFormatted,
-                  nftAddress: userNftsOwnedArray[i].nftAddress
-              });
+              const hasExpired = moment
+                .duration(finalResult[i].expiresAt * 1000 - Date.now())
+                .humanize(true)
+                .includes("ago");
+              if (!hasExpired) {
+                return allOffersArray.push({
+                  ...finalResult[i],
+                  index: i,
+                  isAllowed:
+                    balance >= priceFormatted && allowance >= priceFormatted,
+                  nftAddress: userNftsOwnedArray[i].nftAddress,
+                });
+              }
             })
           );
 

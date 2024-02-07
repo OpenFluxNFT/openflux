@@ -36,7 +36,7 @@ const CollectionList = ({
   cfxPrice,
   coinbase,
   onRefreshListings,
-  totalSupplyPerCollection,
+  totalSupplyPerCollection,hasListedNfts
 }) => {
   const windowSize = useWindowSize();
   const [openFilters, setOpenFilters] = useState(false);
@@ -140,7 +140,7 @@ const CollectionList = ({
   const [nftFinalArray, setnftFinalArray] = useState([]);
 
   const baseURL = "https://confluxapi.worldofdypians.com";
-  console.log(allNftArray);
+ 
   const fetchFavoriteCounts = async () => {
     if (allNftArray && allNftArray.length > 0) {
       let favoriteCount = 0;

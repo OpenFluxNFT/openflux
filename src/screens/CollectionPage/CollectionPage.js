@@ -19,6 +19,7 @@ const CollectionPage = ({
   handleRemoveFavoriteNft,
   cfxPrice,
   onRefreshListings,
+  isNewCollection,onNewCollectionFetched
 }) => {
   const collectionInfo = [
     {
@@ -52,6 +53,7 @@ const CollectionPage = ({
 
   const [loading, setLoading] = useState(false);
   const [totalSupplyPerCollection, settotalSupplyPerCollection] = useState(0);
+  const [hasListedNfts, sethasListedNfts] = useState(false);
 
   const [next, setnext] = useState(12);
   const baseURL = "https://confluxapi.worldofdypians.com";
@@ -195,6 +197,7 @@ if there are no listings
           listednftsArray &&
           listednftsArray.length > 0
         ) {
+          sethasListedNfts(true);
           await Promise.all(
             window.range(0, listednftsArray.length - 1).map(async (j) => {
               const nft_data_listed = await fetch(
@@ -221,7 +224,7 @@ if there are no listings
                 .catch((e) => {
                   console.error(e);
                 });
-                const tokenName = await collection_contract.methods
+              const tokenName = await collection_contract.methods
                 .symbol()
                 .call()
                 .catch((e) => {
@@ -238,7 +241,7 @@ if there are no listings
                   ...listednftsArray[j],
                   listingIndex: listingIndex,
                   isApproved: isApprovedresult,
-                  tokenName: tokenName
+                  tokenName: tokenName,
                 });
               }
             })
@@ -265,7 +268,7 @@ if there are no listings
                 console.error(e);
               });
 
-              const tokenName = await collection_contract.methods
+            const tokenName = await collection_contract.methods
               .symbol()
               .call()
               .catch((e) => {
@@ -292,7 +295,7 @@ if there are no listings
                 ...nft_data,
                 tokenId: Number(tokenByIndex),
                 owner: owner,
-                tokenName:tokenName
+                tokenName: tokenName,
               });
             }
           })
@@ -366,7 +369,7 @@ if there are no listings
                 console.error(e);
               });
 
-              const tokenName = await collection_contract.methods
+            const tokenName = await collection_contract.methods
               .symbol()
               .call()
               .catch((e) => {
@@ -394,7 +397,7 @@ if there are no listings
                 ...nft_data,
                 tokenId: Number(tokenByIndex),
                 owner: owner,
-                tokenName: tokenName
+                tokenName: tokenName,
               });
             }
           })
@@ -551,6 +554,15 @@ if there are no listings
   }, []);
 
   useEffect(() => {
+    if (isNewCollection) {
+      dataFetchedRef.current = false;
+      fetchInitialNftsPerCollection().then(()=>{
+        onNewCollectionFetched()
+      })
+    }
+  }, [isNewCollection]);
+
+  useEffect(() => {
     if (next !== 12) {
       fetchSlicedNftsPerCollection();
     }
@@ -608,6 +620,7 @@ if there are no listings
         coinbase={coinbase}
         onRefreshListings={onRefreshListings}
         totalSupplyPerCollection={totalSupplyPerCollection}
+        hasListedNfts={hasListedNfts}
       />
 
       {totalSupplyPerCollection &&

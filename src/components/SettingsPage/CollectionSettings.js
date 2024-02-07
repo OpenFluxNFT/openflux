@@ -38,7 +38,11 @@ const CollectionSettings = ({
   const [featuredImage, setFeaturedImage] = useState();
   const [collectionsImage, setCollectionsImage] = useState();
   const [collectionOwner, setcollectionOwner] = useState();
+  const [collectionFeeRate, setcollectionFeeRate] = useState(0);
+  const [status, setstatus] = useState("initial");
+
   const [isEdit, setIsEdit] = useState(false);
+  const [isEditFee, setIsEditFee] = useState(false);
 
   const [collectionInfo, setcollectionInfo] = useState({
     collectionProfilePic: "",
@@ -355,8 +359,73 @@ const CollectionSettings = ({
     }));
   };
 
+  const getCollectionInfo = async () => {
+    const result = await axios
+      .get(`${baseUrl}api/collection-info/${collection.contractAddress}`, {
+        headers: {
+          cascadestyling:
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+
+    if (result && result.status === 200) {
+      setcollectionFeeRate(result.data.collectionFeeRate / 10);
+    }
+  };
+
+  const getCollectionInfoCache = async () => {
+    const result = await axios
+      .get(
+        `${baseUrl}api/refresh-collection-info/${collection.contractAddress}`,
+        {
+          headers: {
+            cascadestyling:
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        }
+      )
+      .catch((e) => {
+        console.error(e);
+      });
+
+    if (result && result.status === 200) {
+      getCollectionInfo();
+    }
+  };
+
+  const handleUpdateCollectionFee = async () => {
+    setstatus("loading");
+    await window.window
+      .updateCollectionFee(collection.contractAddress, collectionFeeRate)
+      .then(() => {
+        getCollectionInfoCache();
+        setstatus("success");
+        setTimeout(() => {
+          setIsEditFee(false);
+          setstatus("initial");
+        }, 3000);
+      })
+      .catch((e) => {
+        console.error(e);
+        setstatus("error");
+
+        setTimeout(() => {
+          setstatus("initial");
+        }, 3000);
+      });
+  };
+
   useEffect(() => {
     display();
+  }, [collection]);
+
+  useEffect(() => {
+    if (collection) {
+      getCollectionInfo();
+    }
   }, [collection]);
 
   return (
@@ -939,6 +1008,8 @@ const CollectionSettings = ({
                     <span className="social-connections-span">
                       A fee for earning on each NFT transaction happening for
                       this collection in marketplace.
+                      <br />
+                      <b>*Maximum fee is 10%.</b>
                     </span>
                   </div>
                   <div className="col-12 col-lg-3">
@@ -946,8 +1017,46 @@ const CollectionSettings = ({
                       type="text"
                       placeholder="Enter creator earning fee (e.g. 2%)"
                       className="settings-input w-100"
+                      max={10}
+                      value={collectionFeeRate}
+                      onChange={(e) => {
+                        setcollectionFeeRate(
+                          Number(e.target.value) > 10 ? 10 : e.target.value
+                        );
+                        setIsEditFee(true);
+                      }}
+                      onClickCapture={() => {
+                        setcollectionFeeRate(
+                          collectionFeeRate != 0 ? collectionFeeRate : ""
+                        );
+                      }}
                     />
                   </div>
+                  <button
+                    className={` ${
+                      !isEditFee && "disabled-save-btn"
+                    } connect-social-btn px-3 py-1`}
+                    style={{ fontSize: "16px" }}
+                    disabled={!isEditFee}
+                    onClick={() => handleUpdateCollectionFee()}
+                  >
+                    {status === "initial" ? (
+                      "Update"
+                    ) : status === "loading" ? (
+                      <>
+                        Updating{" "}
+                        <div
+                          className="spinner-border mx-1"
+                          role="status"
+                          style={{ width: 15, height: 15 }}
+                        ></div>{" "}
+                      </>
+                    ) : status === "success" ? (
+                      "Success"
+                    ) : (
+                      "Failed"
+                    )}
+                  </button>
                 </div>
                 <div className="d-flex align-items-center justify-content-center mt-4">
                   <button
@@ -1015,14 +1124,14 @@ const CollectionSettings = ({
             </div>
           )}
         </div>
-      <Toast
-        isSuccess={successUpdateCollectionProfile.success ? true : false}
-        isError={
-          successUpdateCollectionProfile.success === false ? true : false
-        }
-        message={successUpdateCollectionProfile.message}
-      />
-      <Toast isError={toastInfo.error} message={toastInfo.message} />
+        <Toast
+          isSuccess={successUpdateCollectionProfile.success ? true : false}
+          isError={
+            successUpdateCollectionProfile.success === false ? true : false
+          }
+          message={successUpdateCollectionProfile.message}
+        />
+        <Toast isError={toastInfo.error} message={toastInfo.message} />
       </div>
     </>
   );

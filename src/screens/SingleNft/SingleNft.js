@@ -38,6 +38,7 @@ const SingleNft = ({
 
   const [lowestPriceNftListed, setlowestPriceNftListed] = useState(0);
   const [wcfxBalance, setwcfxBalance] = useState(0);
+  const [floorPrice, setfloorPrice] = useState();
 
   const { nftId, nftAddress } = useParams();
   const dataFetchedRef = useRef(false);
@@ -814,6 +815,56 @@ const SingleNft = ({
     }
   };
 
+  const getCollectionFloorPrice = async () => {
+    const result = await axios
+      .get(`${baseURL}/api/floor-price/${nftAddress}`, {
+        headers: {
+          cascadestyling:
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+
+    if (result && result.status === 200) {
+      setfloorPrice(result.data.floorPrice);
+    }
+  };
+
+  const getCollectionFloorPriceCache = async () => {
+    const result = await axios
+      .get(`${baseURL}/api/refresh-floor-price/${nftAddress}`, {
+        headers: {
+          cascadestyling:
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+
+    if (result && result.status === 200) {
+      getCollectionFloorPrice();
+    }
+  };
+
+  const refreshMetadata = async (nftID) => {
+    const result = await axios
+      .get(
+        `${baseURL}/api/collections/${nftAddress}/refresh-metadata/${nftID}`,
+        {
+          headers: {
+            cascadestyling:
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        }
+      )
+      .catch((e) => {
+        console.error(e);
+      });
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -828,6 +879,8 @@ const SingleNft = ({
     getNftData(nftId);
     fetchInitialNftsPerCollection(nftId);
     fetchNftSaleHistory(nftAddress, nftId);
+    getCollectionFloorPrice();
+    refreshMetadata(nftId);
   }, []);
 
   useEffect(() => {
@@ -848,14 +901,18 @@ const SingleNft = ({
         cfxPrice={cfxPrice}
         handleRefreshData={() => {
           getUpdatedNftData().then(() => {
+            refreshMetadata(nftId);
             fetchInitialNftsPerCollection(nftId);
             fetchNftSaleHistoryCache(nftAddress, nftId);
+            getCollectionFloorPriceCache();
             onRefreshListings();
           });
         }}
         handleSwitchNetwork={handleSwitchNetwork}
         loading={loading}
         offerData={offerData}
+        bestOffer={bestOffer}
+        lastSale={saleHistory}
       />
       <SingleNftHistory
         allOffers={allOffers}
@@ -864,7 +921,7 @@ const SingleNft = ({
         coinbase={coinbase}
         handleAcceptOffer={handleAcceptOffer}
         offeracceptStatus={offeracceptStatus}
-        lowestPriceNftListed={lowestPriceNftListed}
+        lowestPriceNftListed={floorPrice}
         saleHistory={saleHistory}
       />
       <NftTraits nftData={nftData} />
@@ -877,6 +934,7 @@ const SingleNft = ({
           getOffer(nftAddress, value);
           fetchInitialNftsPerCollection(value);
           fetchNftSaleHistory(nftAddress, value);
+          refreshMetadata(value);
         }}
         coinbase={coinbase}
         onRefreshListings={onRefreshListings}
@@ -899,6 +957,7 @@ const SingleNft = ({
           bestOffer={bestOffer}
           nftAddress={nftAddress}
           nftId={nftId}
+          floorPrice={floorPrice}
         />
       )}
     </div>

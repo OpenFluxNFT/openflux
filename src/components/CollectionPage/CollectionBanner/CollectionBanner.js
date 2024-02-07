@@ -15,6 +15,7 @@ import twitterIcon from "./assets/twitterIcon.svg";
 import websiteIcon from "./assets/websiteIcon.svg";
 import telegramIcon from "./assets/telegramIcon.svg";
 import checkIcon from "../../Collections/TopCollections/assets/checkIcon.svg";
+import getFormattedNumber from "../../../hooks/get-formatted-number";
 
 const CollectionBanner = ({
   title,
@@ -28,14 +29,19 @@ const CollectionBanner = ({
   isFavorite,
   isVerified,
   currentCollection,
+  totalSupplyPerCollection,
+  collectionFeeRate,
 }) => {
-  
   return (
     <div className="container-lg py-0 py-lg-5">
       <div className="row px-0">
         <div className="collection-banner d-flex flex-column px-0">
           <div className="collection-banner-up position-relative">
-            <img src={banner} className="w-100  d-lg-flex collection-banner-img" alt="" />
+            <img
+              src={banner}
+              className="w-100  d-lg-flex collection-banner-img"
+              alt=""
+            />
             <div className="ps-0 ps-lg-5 collection-position">
               <div className="collection-banner-main-info d-flex flex-column flex-lg-row gap-3 gap-lg-0 align-items-start ps-3 ps-lg-5 pe-3 py-3 justify-content-between">
                 <div className="d-flex flex-column gap-3">
@@ -47,32 +53,42 @@ const CollectionBanner = ({
                   <div className="d-flex align-items-center gap-3 flex-wrap">
                     <div className="d-flex align-items-center gap-1">
                       <span className="collection-info-span mb-0">Items</span>
-                      <span className="collection-info mb-0">tbd</span>
+                      <span className="collection-info mb-0">
+                        {getFormattedNumber(totalSupplyPerCollection, 0)}
+                      </span>
                     </div>
                     <div className="d-flex align-items-center gap-1">
                       <span className="collection-info-span mb-0">Created</span>
-                      <span className="collection-info mb-0">
-                        tbd
-                      </span>
+                      <span className="collection-info mb-0">tbd</span>
                     </div>
                     <div className="d-flex align-items-center gap-1">
                       <span className="collection-info-span mb-0">
                         Creator Earning
                       </span>
-                      <span className="collection-info mb-0">5%</span>
+                      <span className="collection-info mb-0">
+                        {collectionFeeRate}%
+                      </span>
                     </div>
                     <div className="d-flex align-items-center gap-1">
                       <span className="collection-info-span mb-0">Chain</span>
                       <span className="collection-info mb-0">
-                        Conflux <span style={{textTransform: 'initial'}}>eSpace</span>
+                        Conflux{" "}
+                        <span style={{ textTransform: "initial" }}>eSpace</span>
                       </span>
                     </div>
                   </div>
                 </div>
                 <div className="d-flex align-items-center gap-2">
                   {socials.map((item, index) => (
-                    <a href={item.link === "" ? '#' : item.link} target="_blank" key={index}>
-                      <img src={require(`./assets/${item.title}Icon.svg`)} alt="" />
+                    <a
+                      href={item.link === "" ? "#" : item.link}
+                      target="_blank"
+                      key={index}
+                    >
+                      <img
+                        src={require(`./assets/${item.title}Icon.svg`)}
+                        alt=""
+                      />
                     </a>
                   ))}
                   <div

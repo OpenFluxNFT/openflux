@@ -7,6 +7,7 @@ import collectionIcon from "../../components/CollectionPage/CollectionBanner/ass
 import { useParams } from "react-router-dom";
 import axios, { isCancel } from "axios";
 import Web3 from "web3";
+import getFormattedNumber from "../../hooks/get-formatted-number";
 
 const CollectionPage = ({
   coinbase,
@@ -19,8 +20,32 @@ const CollectionPage = ({
   handleRemoveFavoriteNft,
   cfxPrice,
   onRefreshListings,
-  isNewCollection,onNewCollectionFetched
+  isNewCollection,
+  onNewCollectionFetched,
 }) => {
+  const [favorite, setFavorite] = useState(false);
+
+  const [isVerified, setisVerified] = useState(false);
+  const [currentCollection, setcurrentCollection] = useState([]);
+  const [collectionSocials, setcollectionSocials] = useState([]);
+  const [allNftArray, setAllNftArray] = useState([]);
+  const [floorPrice, setfloorPrice] = useState();
+
+  const [loading, setLoading] = useState(false);
+  const [totalSupplyPerCollection, settotalSupplyPerCollection] = useState(0);
+  const [hasListedNfts, sethasListedNfts] = useState(false);
+  const [totalListedNfts, settotalListedNfts] = useState(0);
+  const [collectionFeeRate, setcollectionFeeRate] = useState(0);
+
+  const [next, setnext] = useState(12);
+  const baseURL = "https://confluxapi.worldofdypians.com";
+  const dataFetchedRef = useRef(false);
+  const containerRef = useRef(false);
+
+  const nftPerRow = 12;
+
+  const { collectionAddress } = useParams();
+
   const collectionInfo = [
     {
       title: "Total Volume",
@@ -29,13 +54,16 @@ const CollectionPage = ({
     },
     {
       title: "Floor price",
-      value: "tbd",
-      valueType: "CFX",
+      value: getFormattedNumber(floorPrice ?? 0 / 1e18),
+      valueType: "WCFX",
     },
     {
       title: "Listed",
-      value: "tbd",
-      valueType: "(5%)",
+      value: getFormattedNumber(totalListedNfts, 0),
+      valueType: `${getFormattedNumber(
+        (totalListedNfts * 100) / totalSupplyPerCollection,
+        2
+      )}%`,
     },
     {
       title: "Owners (unique)",
@@ -43,72 +71,6 @@ const CollectionPage = ({
       valueType: "(34%)",
     },
   ];
-
-  const [favorite, setFavorite] = useState(false);
-
-  const [isVerified, setisVerified] = useState(false);
-  const [currentCollection, setcurrentCollection] = useState([]);
-  const [collectionSocials, setcollectionSocials] = useState([]);
-  const [allNftArray, setAllNftArray] = useState([]);
-
-  const [loading, setLoading] = useState(false);
-  const [totalSupplyPerCollection, settotalSupplyPerCollection] = useState(0);
-  const [hasListedNfts, sethasListedNfts] = useState(false);
-
-  const [next, setnext] = useState(12);
-  const baseURL = "https://confluxapi.worldofdypians.com";
-  const dataFetchedRef = useRef(false);
-  const containerRef = useRef(false);
-
-  //https://confluxapi.worldofdypians.com/api/collections/contractAddress/listings
-
-  /*
-  
-  
-when a user lists an nft or edits/cancels a listing or a listing is bought or an offer is accepted
-
-
-you call this with the respective nftaddress:
-
-
-confluxapi.worldofdypians.com/api/collections/contractAddress/refresh-listings
-
-which will refresh the listings and give you a json of the current ones
-
-{
-  "listings": [
-    {
-      "nftAddress": "0x2dEeCF2a05F735890Eb3eA085d55CEc8F1a93895",
-      "tokenId": "1049",
-      "seller": "0x65C3d0F9438644945dF5BF321c9F0fCf333302b8",
-      "price": "1000000000000000000",
-      "paymentToken": "0x14b2D3bC65e74DAE1030EAFd8ac30c533c976A9b",
-      "duration": "0",
-      "expiresAt": "1706095685"
-    },
-    {
-      "nftAddress": "0x2dEeCF2a05F735890Eb3eA085d55CEc8F1a93895",
-      "tokenId": "2086",
-      "seller": "0x65C3d0F9438644945dF5BF321c9F0fCf333302b8",
-      "price": "1000000000000000000",
-      "paymentToken": "0x14b2D3bC65e74DAE1030EAFd8ac30c533c976A9b",
-      "duration": "1",
-      "expiresAt": "1706269322"
-    }
-  ]
-}
-
-if there are no listings
-
-
-{
-  "listings": "none"
-}
-  */
-
-  const nftPerRow = 12;
-
-  const { collectionAddress } = useParams();
 
   const getCollectionTotalSupply = async () => {
     let totalSupply = 0;
@@ -169,7 +131,6 @@ if there are no listings
       let totalSupply = 0;
       const abi = JSON.parse(result.data.result);
       const listednftsArray = listednfts.data.listings;
-
       const web3 = window.confluxWeb3;
       const collection_contract = new web3.eth.Contract(abi, collectionAddress);
 
@@ -197,6 +158,8 @@ if there are no listings
           listednftsArray &&
           listednftsArray.length > 0
         ) {
+          settotalListedNfts(listednftsArray.length);
+
           sethasListedNfts(true);
           await Promise.all(
             window.range(0, listednftsArray.length - 1).map(async (j) => {
@@ -542,23 +505,61 @@ if there are no listings
     }
   };
 
+  const getCollectionFloorPrice = async () => {
+    const result = await axios
+      .get(`${baseURL}/api/floor-price/${collectionAddress}`, {
+        headers: {
+          cascadestyling:
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+
+    if (result && result.status === 200) {
+      setfloorPrice(result.data.floorPrice);
+    }
+  };
+
+  const getCollectionInfo = async () => {
+    const result = await axios
+      .get(`${baseURL}/api/collection-info/${collectionAddress}`, {
+        headers: {
+          cascadestyling:
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+
+    if (result && result.status === 200) {
+      setcollectionFeeRate(result.data.collectionFeeRate / 10);
+    }
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
-    getCollectionTotalSupply();
   }, []);
 
   useEffect(() => {
     if (dataFetchedRef.current) return;
     dataFetchedRef.current = true;
     fetchInitialNftsPerCollection();
+    getCollectionFloorPrice();
+    getCollectionTotalSupply();
+    getCollectionInfo();
   }, []);
 
   useEffect(() => {
     if (isNewCollection) {
       dataFetchedRef.current = false;
-      fetchInitialNftsPerCollection().then(()=>{
-        onNewCollectionFetched()
-      })
+      getCollectionFloorPrice();
+      getCollectionTotalSupply();
+      fetchInitialNftsPerCollection().then(() => {
+        onNewCollectionFetched();
+      });
     }
   }, [isNewCollection]);
 
@@ -607,6 +608,8 @@ if there are no listings
         }}
         isVerified={currentCollection.verified === "yes" ? true : false}
         currentCollection={currentCollection}
+        totalSupplyPerCollection={totalSupplyPerCollection}
+        collectionFeeRate={collectionFeeRate}
       />
       <CollectionList
         currentCollection={currentCollection}

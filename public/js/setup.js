@@ -300,6 +300,23 @@ window.updateListingNFT = async (nftAddress, listingIndex, newPrice) => {
     .send({ from: coinbase });
 };
 
+window.updateCollectionFee = async (collectionAddress,fee) => {
+  window.web3 = new Web3(window.ethereum);
+
+  const coinbase = await getCoinbase();
+
+  const marketplace = new window.web3.eth.Contract(
+    window.MARKETPLACE_ABI,
+    window.config.nft_marketplace_address
+  );
+
+  const newFee = Number(fee)*10
+
+  await marketplace.methods
+    .setCollectionFeeRate(collectionAddress,newFee)
+    .send({ from: coinbase });
+};
+
 window.listNFT = async (nftAddress, tokenId, price, tokenAddr, duration) => {
   const coinbase = await getCoinbase();
   window.web3 = new Web3(window.ethereum);

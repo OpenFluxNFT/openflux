@@ -1,9 +1,6 @@
 import React from "react";
 import "./_singlenfthistory.scss";
 import saleIcon from "./assets/saleIcon.svg";
-import listIcon from "./assets/listIcon.svg";
-import mintedIcon from "./assets/mintedIcon.svg";
-import transferIcon from "./assets/transferIcon.svg";
 import getFormattedNumber from "../../../hooks/get-formatted-number";
 import moment from "moment";
 import { shortAddress } from "../../../hooks/shortAddress";
@@ -16,146 +13,66 @@ const SingleNftHistory = ({
   handleAcceptOffer,
   offeracceptStatus,
   lowestPriceNftListed,
+  saleHistory,
 }) => {
   return (
     <div className="container-lg my-4">
       <div className="row mx-0 justify-content-between gap-lg-0 gap-3">
         <div className="nft-history-wrapper p-3">
           <div className="d-flex flex-column gap-2">
-            <span className="item-history-text">Item History</span>
+            <span className="item-history-text">Sales History</span>
             <div className="single-nft-table-wrapper">
-              <table className="table item-history-table">
-                <thead className="item-history-table-thead">
-                  <th className="item-history-table-th">Event</th>
-                  <th className="item-history-table-th">Price</th>
-                  <th className="item-history-table-th">From</th>
-                  <th className="item-history-table-th">To</th>
-                  <th className="item-history-table-th">Date</th>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td className="item-history-table-td left-border">
-                      <img src={saleIcon} alt="" /> Sale
-                    </td>
-                    <td className="item-history-table-td">128.50 WCFX</td>
-                    <td className="item-history-table-td greentext">0x50c4</td>
-                    <td className="item-history-table-td greentext">0x50c4</td>
-                    <td className="item-history-table-td right-border">
-                      11d ago
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="item-history-table-td left-border">
-                      <img src={saleIcon} alt="" /> Sale
-                    </td>
-                    <td className="item-history-table-td">128.50 WCFX</td>
-                    <td className="item-history-table-td greentext">0x50c4</td>
-                    <td className="item-history-table-td greentext">0x50c4</td>
-                    <td className="item-history-table-td right-border">
-                      11d ago
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="item-history-table-td left-border">
-                      <img src={listIcon} alt="" /> Listing
-                    </td>
-                    <td className="item-history-table-td">128.50 WCFX</td>
-                    <td className="item-history-table-td greentext">0x50c4</td>
-                    <td className="item-history-table-td greentext">0x50c4</td>
-                    <td className="item-history-table-td right-border">
-                      11d ago
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="item-history-table-td left-border">
-                      <img src={transferIcon} alt="" /> Transfer
-                    </td>
-                    <td className="item-history-table-td">128.50 WCFX</td>
-                    <td className="item-history-table-td greentext">0x50c4</td>
-                    <td className="item-history-table-td greentext">0x50c4</td>
-                    <td className="item-history-table-td right-border">
-                      11d ago
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="item-history-table-td left-border">
-                      <img src={mintedIcon} alt="" /> Minted
-                    </td>
-                    <td className="item-history-table-td">128.50 WCFX</td>
-                    <td className="item-history-table-td greentext">0x50c4</td>
-                    <td className="item-history-table-td greentext">0x50c4</td>
-                    <td className="item-history-table-td right-border">
-                      11d ago
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="item-history-table-td left-border">
-                      <img src={saleIcon} alt="" /> Sale
-                    </td>
-                    <td className="item-history-table-td">128.50 WCFX</td>
-                    <td className="item-history-table-td greentext">0x50c4</td>
-                    <td className="item-history-table-td greentext">0x50c4</td>
-                    <td className="item-history-table-td right-border">
-                      11d ago
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="item-history-table-td left-border">
-                      <img src={saleIcon} alt="" /> Sale
-                    </td>
-                    <td className="item-history-table-td">128.50 WCFX</td>
-                    <td className="item-history-table-td greentext">0x50c4</td>
-                    <td className="item-history-table-td greentext">0x50c4</td>
-                    <td className="item-history-table-td right-border">
-                      11d ago
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="item-history-table-td left-border">
-                      <img src={saleIcon} alt="" /> Sale
-                    </td>
-                    <td className="item-history-table-td">128.50 WCFX</td>
-                    <td className="item-history-table-td greentext">0x50c4</td>
-                    <td className="item-history-table-td greentext">0x50c4</td>
-                    <td className="item-history-table-td right-border">
-                      11d ago
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="item-history-table-td left-border">
-                      <img src={saleIcon} alt="" /> Sale
-                    </td>
-                    <td className="item-history-table-td">128.50 WCFX</td>
-                    <td className="item-history-table-td greentext">0x50c4</td>
-                    <td className="item-history-table-td greentext">0x50c4</td>
-                    <td className="item-history-table-td right-border">
-                      11d ago
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="item-history-table-td left-border">
-                      <img src={saleIcon} alt="" /> Sale
-                    </td>
-                    <td className="item-history-table-td">128.50 WCFX</td>
-                    <td className="item-history-table-td greentext">0x50c4</td>
-                    <td className="item-history-table-td greentext">0x50c4</td>
-                    <td className="item-history-table-td right-border">
-                      11d ago
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="item-history-table-td left-border">
-                      <img src={saleIcon} alt="" /> Sale
-                    </td>
-                    <td className="item-history-table-td">128.50 WCFX</td>
-                    <td className="item-history-table-td greentext">0x50c4</td>
-                    <td className="item-history-table-td greentext">0x50c4</td>
-                    <td className="item-history-table-td right-border">
-                      11d ago
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              {saleHistory && saleHistory.length > 0 && (
+                <table className="table item-history-table">
+                  <thead className="item-history-table-thead">
+                    <th className="item-history-table-th text-center">Event</th>
+                    <th className="item-history-table-th text-center">Price</th>
+                    <th className="item-history-table-th text-center">From</th>
+                    <th className="item-history-table-th text-center">To</th>
+                    <th className="item-history-table-th text-center">Date</th>
+                  </thead>
+                  <tbody>
+                    {saleHistory.map((item, index) => {
+                      return (
+                        <tr>
+                          <td className="item-history-table-td left-border text-center">
+                            <img src={saleIcon} alt="" /> Sale
+                          </td>
+                          <td className="item-history-table-td text-center">
+                            {getFormattedNumber(item.amount / 1e18)} WCFX
+                          </td>
+                          <td className="item-history-table-td greentext text-center">
+                            <a
+                              href={`https://evm.confluxscan.net/address/${item.seller}`}
+                              className="greentext"
+                            >
+                              {shortAddress(item.seller)}
+                            </a>
+                          </td>
+                          <td className="item-history-table-td greentext text-center">
+                            <a
+                              href={`https://evm.confluxscan.net/address/${item.buyer}`}
+                              className="greentext"
+                            >
+                              {shortAddress(item.buyer)}
+                            </a>
+                          </td>
+                          <td className="item-history-table-td right-border text-center">
+                            {moment
+                              .duration(item.blockTimestamp * 1000 - Date.now())
+                              .humanize(true)}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              )}
+              {saleHistory && saleHistory.length === 0 && (
+                <span className="text-secondary d-flex justify-content-center w-100 h-100 align-items-center">
+                  No sales available for this NFT
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -267,7 +184,7 @@ const SingleNftHistory = ({
                 </table>
               )}
               {allOffers && allOffers.length === 0 && (
-                <span className="text-secondary d-flex justify-content-center w-100 p-3">
+                <span className="text-secondary d-flex justify-content-center w-100 h-100 align-items-center">
                   No offers available for this NFT
                 </span>
               )}

@@ -19,7 +19,7 @@ const SingleNftHistory = ({
 }) => {
   return (
     <div className="container-lg my-4">
-      <div className="row mx-0 justify-content-between">
+      <div className="row mx-0 justify-content-between gap-lg-0 gap-3">
         <div className="nft-history-wrapper p-3">
           <div className="d-flex flex-column gap-2">
             <span className="item-history-text">Item History</span>

@@ -221,6 +221,12 @@ if there are no listings
                 .catch((e) => {
                   console.error(e);
                 });
+                const tokenName = await collection_contract.methods
+                .symbol()
+                .call()
+                .catch((e) => {
+                  console.error(e);
+                });
 
               if (
                 nft_data_listed &&
@@ -232,6 +238,7 @@ if there are no listings
                   ...listednftsArray[j],
                   listingIndex: listingIndex,
                   isApproved: isApprovedresult,
+                  tokenName: tokenName
                 });
               }
             })
@@ -258,6 +265,13 @@ if there are no listings
                 console.error(e);
               });
 
+              const tokenName = await collection_contract.methods
+              .symbol()
+              .call()
+              .catch((e) => {
+                console.error(e);
+              });
+
             const nft_data = await fetch(
               `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress.toLowerCase()}/${tokenByIndex}/metadata.json`
             )
@@ -278,6 +292,7 @@ if there are no listings
                 ...nft_data,
                 tokenId: Number(tokenByIndex),
                 owner: owner,
+                tokenName:tokenName
               });
             }
           })
@@ -351,6 +366,13 @@ if there are no listings
                 console.error(e);
               });
 
+              const tokenName = await collection_contract.methods
+              .symbol()
+              .call()
+              .catch((e) => {
+                console.error(e);
+              });
+
             const nft_data = await fetch(
               `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress.toLowerCase()}/${tokenByIndex}/metadata.json`
             )
@@ -372,6 +394,7 @@ if there are no listings
                 ...nft_data,
                 tokenId: Number(tokenByIndex),
                 owner: owner,
+                tokenName: tokenName
               });
             }
           })

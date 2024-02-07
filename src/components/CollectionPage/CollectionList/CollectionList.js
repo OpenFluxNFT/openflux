@@ -140,7 +140,7 @@ const CollectionList = ({
   const [nftFinalArray, setnftFinalArray] = useState([]);
 
   const baseURL = "https://confluxapi.worldofdypians.com";
-
+  console.log(allNftArray);
   const fetchFavoriteCounts = async () => {
     if (allNftArray && allNftArray.length > 0) {
       let favoriteCount = 0;
@@ -701,7 +701,8 @@ const CollectionList = ({
                                 controlsList="nodownload"
                               ></video>
                             )}
-                            {item.name}
+                            {item.tokenName + " " + item.name ??
+                              ` #${item.tokenId}`}
                           </td>
                           <td className="table-item col-2">
                             {item.seller &&
@@ -923,11 +924,12 @@ const CollectionList = ({
                           className="recently-listed-title mb-0"
                           style={{ fontSize: "12px" }}
                         >
-                          {item.name ?? `#${item.tokenId}`}
+                          {item.tokenName + " " + item.name ??
+                            ` #${item.tokenId}`}
                         </h6>
                         <img src={checkIcon} alt="" />
                       </div>
-                      {item.seller && (
+                      {item.seller ? (
                         <div className="d-flex align-items-center mt-2 gap-3">
                           <h6
                             className="cfx-price mb-0"
@@ -944,6 +946,21 @@ const CollectionList = ({
                               (item.price / 10 ** 18) * cfxPrice
                             )}
                             )
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="d-flex align-items-center mt-2 gap-3">
+                          <h6
+                            className="cfx-price mb-0"
+                            style={{ fontSize: "10px" }}
+                          >
+                            --- WCFX
+                          </h6>
+                          <span
+                            className="usd-price"
+                            style={{ fontSize: "9px" }}
+                          >
+                            ($--- )
                           </span>
                         </div>
                       )}

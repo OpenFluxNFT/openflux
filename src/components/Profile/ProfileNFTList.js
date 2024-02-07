@@ -609,7 +609,7 @@ const ProfileNFTList = ({
                             {!item.isVideo ? (
                               <img
                                 src={`https://cdnflux.dypius.com/${item.image}`}
-                                className="table-img"
+                                className="table-img nftimg2"
                                 height={36}
                                 width={36}
                                 alt=""
@@ -618,7 +618,7 @@ const ProfileNFTList = ({
                               <video
                                 src={`https://cdnflux.dypius.com/${item.image}`}
                                 alt=""
-                                className="table-img"
+                                className="table-img nftimg2"
                                 height={36}
                                 width={36}
                                 controlsList="nodownload"
@@ -628,7 +628,7 @@ const ProfileNFTList = ({
                                 playsInline={true}
                               />
                             )}
-                            {item.tokenName} {item.tokenId}
+                            {item.tokenName} #{item.tokenId}
                           </td>
                           <td className="table-item col-2">
                             {item.price
@@ -685,7 +685,7 @@ const ProfileNFTList = ({
                               {!item.isVideo ? (
                                 <img
                                   src={`https://cdnflux.dypius.com/${item.image}`}
-                                  className="table-img"
+                                  className="table-img nftimg2"
                                   height={36}
                                   width={36}
                                   alt=""
@@ -694,7 +694,7 @@ const ProfileNFTList = ({
                                 <video
                                   src={`https://cdnflux.dypius.com/${item.image}`}
                                   alt=""
-                                  className="table-img"
+                                  className="table-img nftimg2"
                                   height={36}
                                   width={36}
                                   controlsList="nodownload"
@@ -704,7 +704,7 @@ const ProfileNFTList = ({
                                   playsInline={true}
                                 />
                               )}
-                              {item.tokenName} {item.tokenId}
+                              {item.tokenName} #{item.tokenId}
                             </td>
                             <td className="table-item col-2">
                               {item.price
@@ -765,7 +765,7 @@ const ProfileNFTList = ({
                               {!item.isVideo ? (
                                 <img
                                   src={`https://cdnflux.dypius.com/${item.image}`}
-                                  className="table-img"
+                                  className="table-img nftimg2"
                                   height={36}
                                   width={36}
                                   alt=""
@@ -774,7 +774,7 @@ const ProfileNFTList = ({
                                 <video
                                   src={`https://cdnflux.dypius.com/${item.image}`}
                                   alt=""
-                                  className="table-img"
+                                  className="table-img nftimg2"
                                   height={36}
                                   width={36}
                                   controlsList="nodownload"
@@ -784,7 +784,7 @@ const ProfileNFTList = ({
                                   playsInline={true}
                                 />
                               )}
-                              {item.tokenName} {item.tokenId}
+                              {item.tokenName} #{item.tokenId}
                             </td>
                             <td className="table-item col-2">
                               {item.price
@@ -873,7 +873,7 @@ const ProfileNFTList = ({
                           className="recently-listed-title mb-0"
                           style={{ fontSize: "12px" }}
                         >
-                          {item.tokenName} {item.tokenId}
+                          {item.tokenName} #{item.tokenId}
                         </h6>
                         <img src={checkIcon} alt="" />
                       </div>
@@ -966,7 +966,7 @@ const ProfileNFTList = ({
                             className="recently-listed-title mb-0"
                             style={{ fontSize: "12px" }}
                           >
-                            {item.tokenName} {item.tokenId}
+                            {item.tokenName} #{item.tokenId}
                           </h6>
                           <img src={checkIcon} alt="" />
                         </div>
@@ -1065,7 +1065,7 @@ const ProfileNFTList = ({
                             className="recently-listed-title mb-0"
                             style={{ fontSize: "12px" }}
                           >
-                            {item.tokenName} {item.tokenId}
+                            {item.tokenName} #{item.tokenId}
                           </h6>
                           <img src={checkIcon} alt="" />
                         </div>

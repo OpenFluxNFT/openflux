@@ -35,6 +35,7 @@ const SingleNft = ({
   const [offerData, setofferData] = useState([]);
   const [allOffers, setallOffers] = useState([]);
   const [saleHistory, setSaleHistory] = useState([]);
+  const [collectionFeeRate, setcollectionFeeRate] = useState(0);
 
   const [lowestPriceNftListed, setlowestPriceNftListed] = useState(0);
   const [wcfxBalance, setwcfxBalance] = useState(0);
@@ -865,6 +866,23 @@ const SingleNft = ({
       });
   };
 
+  const getCollectionInfo = async () => {
+    const result = await axios
+      .get(`${baseURL}/api/collection-info/${nftAddress}`, {
+        headers: {
+          cascadestyling:
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+
+    if (result && result.status === 200) {
+      setcollectionFeeRate(result.data.collectionFeeRate / 10);
+    }
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -881,6 +899,7 @@ const SingleNft = ({
     fetchNftSaleHistory(nftAddress, nftId);
     getCollectionFloorPrice();
     refreshMetadata(nftId);
+    getCollectionInfo()
   }, []);
 
   useEffect(() => {
@@ -913,6 +932,7 @@ const SingleNft = ({
         offerData={offerData}
         bestOffer={bestOffer}
         lastSale={saleHistory}
+        collectionFeeRate={collectionFeeRate}
       />
       <SingleNftHistory
         allOffers={allOffers}

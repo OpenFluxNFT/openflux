@@ -4,11 +4,14 @@ import CollectionCard from "../../CollectionCard/CollectionCard";
 import useWindowSize from "../../../hooks/useWindowSize";
 import { NavLink } from "react-router-dom";
 import { FadeLoader } from "react-spinners";
+import { Skeleton } from "@mui/material";
 
 const AllCollectionCategories = ({ allCollections }) => {
   const [category, setCategory] = useState("all");
   const [next, setNext] = useState(24);
   const [loading, setLoading] = useState(false);
+  const [categoryLoading, setCategoryLoading] = useState(false)
+  const [collections, setCollections] = useState([]);
 
   const collectionsPerRow = 12;
 
@@ -27,6 +30,40 @@ const AllCollectionCategories = ({ allCollections }) => {
       setLoading(false);
     }, 1000);
   };
+
+
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
+  const changeCategory = (val) => {
+    let filteredCollections = [];
+    setCategoryLoading(true);
+    setCategory(val);
+    if (val === "all") {
+      setCollections(allCollections);
+    } else if (val === "virtual") {
+      filteredCollections = allCollections.filter((item) => {
+        return item.tags.includes("Virtual World");
+      });
+      setCollections(filteredCollections);
+    } else {
+      filteredCollections = allCollections.filter((item) => {
+        return item.tags.includes(capitalizeFirstLetter(val));
+      });
+      setCollections(filteredCollections);
+    }
+    setTimeout(() => {
+      setCategoryLoading(false);
+    }, 1500);
+  };
+
+  
+
+  useEffect(() => {
+    setCollections(allCollections);
+  }, [allCollections]);
+
 
   const onScroll = () => {
     const wrappedElement = document.getElementById("header");
@@ -47,6 +84,8 @@ const AllCollectionCategories = ({ allCollections }) => {
     document.addEventListener("scroll", onScroll);
   });
 
+
+
   
   return (
     <div className="container-lg py-5" id="header" ref={listInnerRef}>
@@ -59,7 +98,7 @@ const AllCollectionCategories = ({ allCollections }) => {
             className={`trending-tab ${
               category === "all" && "trending-tab-active"
             } p-2 d-flex align-items-center gap-2`}
-            onClick={() => setCategory("all")}
+            onClick={() => changeCategory("all")}
           >
             <h6 className="mb-0">All</h6>
           </div>
@@ -67,7 +106,7 @@ const AllCollectionCategories = ({ allCollections }) => {
             className={`trending-tab ${
               category === "gaming" && "trending-tab-active"
             } p-2 d-flex align-items-center gap-2`}
-            onClick={() => setCategory("gaming")}
+            onClick={() => changeCategory("gaming")}
           >
             <h6 className="mb-0">Gaming</h6>
           </div>
@@ -75,7 +114,7 @@ const AllCollectionCategories = ({ allCollections }) => {
             className={`trending-tab ${
               category === "art" && "trending-tab-active"
             } p-2 d-flex align-items-center gap-2`}
-            onClick={() => setCategory("art")}
+            onClick={() => changeCategory("art")}
           >
             <h6 className="mb-0">Art</h6>
           </div>
@@ -83,7 +122,7 @@ const AllCollectionCategories = ({ allCollections }) => {
             className={`trending-tab ${
               category === "virtualWorld" && "trending-tab-active"
             } p-2 d-flex align-items-center gap-2`}
-            onClick={() => setCategory("virtualWorld")}
+            onClick={() => changeCategory("virtualWorld")}
           >
             <h6 className="mb-0">Virtual World</h6>
           </div>
@@ -91,7 +130,7 @@ const AllCollectionCategories = ({ allCollections }) => {
             className={`trending-tab ${
               category === "music" && "trending-tab-active"
             } p-2 d-flex align-items-center gap-2`}
-            onClick={() => setCategory("music")}
+            onClick={() => changeCategory("music")}
           >
             <h6 className="mb-0">Music</h6>
           </div>
@@ -99,23 +138,46 @@ const AllCollectionCategories = ({ allCollections }) => {
             className={`trending-tab ${
               category === "sports" && "trending-tab-active"
             } p-2 d-flex align-items-center gap-2`}
-            onClick={() => setCategory("sports")}
+            onClick={() => changeCategory("sports")}
           >
             <h6 className="mb-0">Sports</h6>
           </div>
         </div>
-        <div className="collection-categories-grid">
-          {allCollections.slice(0, next).map((item, index) => (
-            <NavLink
-              to={`/collection/${item.contractAddress}/${item.symbol}`}
-              key={index}
-              className={"text-decoration-none"}
-            >
-              <CollectionCard key={index} data={item} />
-            </NavLink>
-          ))}
-        </div>
-        {next <= allCollections.length && loading === false && (
+        {categoryLoading === true ? 
+           <div className="collection-categories-grid">
+           <Skeleton variant="rounded" width={"100%"} height={353} />
+           <Skeleton variant="rounded" width={"100%"} height={353} />
+           <Skeleton variant="rounded" width={"100%"} height={353} />
+           <Skeleton variant="rounded" width={"100%"} height={353} />
+           <Skeleton variant="rounded" width={"100%"} height={353} />
+           <Skeleton variant="rounded" width={"100%"} height={353} />
+           <Skeleton variant="rounded" width={"100%"} height={353} />
+           <Skeleton variant="rounded" width={"100%"} height={353} />
+         </div>
+         : categoryLoading === false && collections.length > 0 ?
+         <div className="collection-categories-grid">
+         {collections.slice(0, next).map((item, index) => (
+           <NavLink
+             to={`/collection/${item.contractAddress}/${item.symbol}`}
+             key={index}
+             className={"text-decoration-none"}
+           >
+             <CollectionCard key={index} data={item} />
+           </NavLink>
+         ))}
+       </div>
+         :
+         <div
+         className="d-flex align-items-center justify-content-center w-100"
+         style={{ height: 353 }}
+       >
+         <h6 className="text-white">
+           There are no collections available for this category
+         </h6>
+       </div>
+      }
+       
+        {next <= collections.length && loading === false && (
           <div className="d-flex justify-content-center mt-5">
             <button className="buy-btn px-5 m-auto" onClick={loadMore}>
               Load more

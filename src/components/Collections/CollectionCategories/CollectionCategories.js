@@ -55,9 +55,7 @@ const CollectionCategories = ({ allCollections }) => {
     }, 1500);
   };
 
-  const filteredCollections = allCollections.filter((item) => {
-    return item.tags.includes(capitalizeFirstLetter("gaming"));
-  });
+  
 
   useEffect(() => {
     setCollections(allCollections);

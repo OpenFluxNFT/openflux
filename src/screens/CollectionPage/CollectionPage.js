@@ -63,16 +63,16 @@ const CollectionPage = ({
     },
     {
       title: "Listed",
-      value: getFormattedNumber(totalListedNfts, 0),
-      valueType: `${getFormattedNumber(
-        (totalListedNfts * 100) / totalSupplyPerCollection,
+      value: getFormattedNumber(totalListedNfts ?? 0, 0),
+      valueType: `${getFormattedNumber(totalSupplyPerCollection === 0 ? 0 :
+        (totalListedNfts ?? 0 * 100) / totalSupplyPerCollection,
         2
       )}%`,
     },
     {
       title: "Owners (unique)",
-      value: getFormattedNumber(uniqueOwners,0),
-      valueType: `${getFormattedNumber(uniqueOwnersPercentage,0)}%`,
+      value: getFormattedNumber(uniqueOwners ?? 0 ,0),
+      valueType: `${getFormattedNumber(uniqueOwnersPercentage ?? 0,0)}%`,
     },
   ];
 

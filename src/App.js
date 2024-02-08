@@ -34,6 +34,7 @@ function App() {
 
   const [allCollections, setAllCollections] = useState([]);
   const [recentlyListedNfts, setrecentlyListedNfts] = useState([]);
+  const [recentlySoldNfts, setrecentlySoldNfts] = useState([]);
 
   const [allCollectionsOrdered, setAllCollectionsOrdered] = useState([]);
 
@@ -319,6 +320,119 @@ function App() {
     }
   };
 
+
+  const handleGetRecentlySoldNfts = async () => {
+    const result = await axios
+      .get(`${baseURL}/api/recent-sales`, {
+        headers: {
+          cascadestyling:
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+    const web3 = window.confluxWeb3;
+    if (result && result.status === 200) {
+      console.log(result.data);
+      // const recentlySold = await Promise.all(
+      //   result.data.map(async (item) => {
+      //     let isApproved = false;
+      //     const abiresult = await axios.get(
+      //       `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
+      //     );
+      //     if (abiresult && abiresult.status === 200) {
+      //       const abi = JSON.parse(abiresult.data.result);
+      //       const collection_contract = new web3.eth.Contract(
+      //         abi,
+      //         item.nftAddress
+      //       );
+      //       const tokenName = await collection_contract.methods
+      //         .symbol()
+      //         .call()
+      //         .catch((e) => {
+      //           console.error(e);
+      //         });
+
+      //       const seller = await collection_contract.methods
+      //         .ownerOf(item.tokenId)
+      //         .call()
+      //         .catch((e) => {
+      //           console.error(e);
+      //         });
+
+      //       const isApprovedresult = await window
+      //         .isApprovedBuy(item.price)
+      //         .catch((e) => {
+      //           console.error(e);
+      //         });
+
+      //       if (isApprovedresult) {
+      //         isApproved = isApprovedresult;
+      //       }
+
+      //       const nft_data = await fetch(
+      //         `https://cdnflux.dypius.com/collectionsmetadatas/${item.nftAddress.toLowerCase()}/${
+      //           item.tokenId
+      //         }/metadata.json`
+      //       )
+      //         .then((res) => res.json())
+      //         .then((data) => {
+      //           return data;
+      //         })
+      //         .catch((err) => {
+      //           console.log(err.message);
+      //         });
+      //       if (
+      //         nft_data &&
+      //         nft_data.code !== 404 &&
+      //         typeof nft_data !== "string"
+      //       ) {
+      //         return {
+      //           ...item,
+      //           image: `${nft_data.image}`,
+      //           tokenName: tokenName,
+      //           isApproved: isApproved,
+      //           seller: seller,
+      //         };
+      //       } else
+      //         return {
+      //           ...item,
+      //           image: undefined,
+      //           tokenName: tokenName,
+      //           seller: seller,
+      //         };
+      //     }
+      //   })
+      // );
+
+      // recentlySoldNfts(recentlySold);
+    }
+  };
+
+  
+
+  const handleGetRecentlySoldNftsCache = async () => {
+    const result = await axios
+      .get(`${baseURL}/api/refresh-recent-sales`, {
+        headers: {
+          cascadestyling:
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+
+    if (result && result.status === 200) {
+      handleGetRecentlySoldNfts();
+      handleMapUserNftsOwned(coinbase);
+    }
+  };
+
+
+
+
   const handleGetUserFavNfts = async (nftData) => {
     // setuserNftFavs(result.data.nftFavorites);
     if (nftData.length > 0) {
@@ -500,28 +614,44 @@ function App() {
                         nftAddress: nftsOwned[i].contract,
                         tokenName: tokenName,
                       });
+                    } else {
+                      // console.log('nft_data', nft_data);
+                      nftArray.push({
+                        tokenId: tokenByIndex,
+                        owner: owner,
+                        nftAddress: nftsOwned[i].contract,
+                        tokenName: tokenName,
+                      });
                     }
                   }
                 })
               );
             }
+            if (nftArray.length > 0) {
+              const uniqueArray_listed = recentlyListedNfts.filter(
+                ({ tokenId: id1, nftAddress: nftAddr1 }) =>
+                  nftArray.some(
+                    ({ tokenId: id2, nftAddress: nftAddr2 }) =>
+                      id1.toString() == id2.toString() &&
+                      nftAddr1.toLowerCase() === nftAddr2.toLowerCase()
+                  )
+              );
 
-            const uniqueArray_listed = recentlyListedNfts.filter(
-              ({ tokenId: id1 }) =>
-                !nftArray.some(
-                  ({ tokenId: id2 }) => id1.toString() !== id2.toString()
-                )
-            );
+              const uniqueArray_regular = nftArray.filter(
+                ({ tokenId: id1, nftAddress: nftAddr1 }) =>
+                  !recentlyListedNfts.some(
+                    ({ tokenId: id2, nftAddress: nftAddr2 }) =>
+                      id1.toString() === id2.toString() &&
+                      nftAddr1.toLowerCase() === nftAddr2.toLowerCase()
+                  )
+              );
 
-            const uniqueArray_regular = nftArray.filter(
-              ({ tokenId: id1 }) =>
-                !recentlyListedNfts.some(
-                  ({ tokenId: id2 }) => id1.toString() === id2.toString()
-                )
-            );
-
-            const finalArray = [...uniqueArray_listed, ...uniqueArray_regular];
-            setUserNftsOwnedArray(finalArray);
+              const finalArray = [
+                ...uniqueArray_listed,
+                ...uniqueArray_regular,
+              ];
+              setUserNftsOwnedArray(finalArray);
+            }
           }
         })
       );
@@ -1052,6 +1182,7 @@ function App() {
     if (dataFetchedRef.current) return;
     dataFetchedRef.current = true;
     handleGetRecentlyListedNfts();
+    handleGetRecentlySoldNfts();
   }, []);
 
   useEffect(() => {

@@ -132,6 +132,10 @@ const SingleNft = ({
       .acceptOffer(nftAddress, nftId, offerIndex)
       .then(() => {
         getUpdatedNftData().then(() => {
+          refreshMetadata(nftId);
+          fetchInitialNftsPerCollection(nftId);
+          fetchNftSaleHistoryCache(nftAddress, nftId);
+          getCollectionFloorPriceCache();
           onRefreshListings();
         });
         getOffer(nftAddress, nftId);

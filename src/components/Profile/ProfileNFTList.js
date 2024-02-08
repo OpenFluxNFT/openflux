@@ -36,7 +36,8 @@ const ProfileNFTList = ({
   fetchFavoriteCounts,
   userNftsOwnedArray,
   cfxPrice,
-  allOffers,bestOffer
+  allOffers,
+  bestOffer,
 }) => {
   const [favoritesOption, setfavoritesOption] = useState("items");
   const [gridView, setGridView] = useState("small-grid");
@@ -606,7 +607,7 @@ const ProfileNFTList = ({
                             className="table-item col-2 d-flex align-items-center gap-1 w-100"
                             scope="row"
                           >
-                            {!item.isVideo ? (
+                            {!item.isVideo && item.image ? (
                               <img
                                 src={`https://cdnflux.dypius.com/${item.image}`}
                                 className="table-img nftimg2"
@@ -614,7 +615,7 @@ const ProfileNFTList = ({
                                 width={36}
                                 alt=""
                               />
-                            ) : (
+                            ) : item.image && item.isVideo ? (
                               <video
                                 src={`https://cdnflux.dypius.com/${item.image}`}
                                 alt=""
@@ -626,6 +627,12 @@ const ProfileNFTList = ({
                                 loop={true}
                                 muted="muted"
                                 playsInline={true}
+                              />
+                            ) : (
+                              <img
+                                src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                                className="card-img"
+                                alt=""
                               />
                             )}
                             {item.tokenName} #{item.tokenId}
@@ -682,7 +689,7 @@ const ProfileNFTList = ({
                               className="table-item col-2 d-flex align-items-center gap-1 w-100"
                               scope="row"
                             >
-                              {!item.isVideo ? (
+                              {!item.isVideo && item.image ? (
                                 <img
                                   src={`https://cdnflux.dypius.com/${item.image}`}
                                   className="table-img nftimg2"
@@ -690,7 +697,7 @@ const ProfileNFTList = ({
                                   width={36}
                                   alt=""
                                 />
-                              ) : (
+                              ) : item.isVideo && item.image ? (
                                 <video
                                   src={`https://cdnflux.dypius.com/${item.image}`}
                                   alt=""
@@ -702,6 +709,14 @@ const ProfileNFTList = ({
                                   loop={true}
                                   muted="muted"
                                   playsInline={true}
+                                />
+                              ) : (
+                                <img
+                                  src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                                  className="table-img nftimg2"
+                                  width={36}
+                                  height={36}
+                                  alt=""
                                 />
                               )}
                               {item.tokenName} #{item.tokenId}
@@ -762,7 +777,7 @@ const ProfileNFTList = ({
                               className="table-item col-2 d-flex align-items-center gap-1 w-100"
                               scope="row"
                             >
-                              {!item.isVideo ? (
+                              {!item.isVideo && item.image ? (
                                 <img
                                   src={`https://cdnflux.dypius.com/${item.image}`}
                                   className="table-img nftimg2"
@@ -770,7 +785,7 @@ const ProfileNFTList = ({
                                   width={36}
                                   alt=""
                                 />
-                              ) : (
+                              ) : item.isVideo && item.image ? (
                                 <video
                                   src={`https://cdnflux.dypius.com/${item.image}`}
                                   alt=""
@@ -783,6 +798,14 @@ const ProfileNFTList = ({
                                   muted="muted"
                                   playsInline={true}
                                 />
+                              ) : (
+                                <img
+                                  src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                                  className="table-img nftimg2"
+                                  width={36}
+                                  height={36}
+                                  alt=""
+                                />
                               )}
                               {item.tokenName} #{item.tokenId}
                             </td>
@@ -792,7 +815,9 @@ const ProfileNFTList = ({
                                 : "---"}{" "}
                               WCFX
                             </td>
-                            <td className="table-item col-2">{getFormattedNumber(bestOffer.amount / 1e18)} WCFX</td>
+                            <td className="table-item col-2">
+                              {getFormattedNumber(bestOffer.amount / 1e18)} WCFX
+                            </td>
                             <td className="table-item col-2">tbd WCFX </td>
                             <td className="table-item col-2">
                               <a
@@ -807,11 +832,13 @@ const ProfileNFTList = ({
                               </a>
                             </td>
                             <td className="table-item col-2">
-                              {item.blockTimestamp ? moment
-                                .duration(
-                                  item.blockTimestamp * 1000 - Date.now()
-                                )
-                                .humanize(true) : '--'}
+                              {item.blockTimestamp
+                                ? moment
+                                    .duration(
+                                      item.blockTimestamp * 1000 - Date.now()
+                                    )
+                                    .humanize(true)
+                                : "--"}
                             </td>
                           </tr>
                         ))}
@@ -830,13 +857,13 @@ const ProfileNFTList = ({
                       style={{ textDecoration: "none" }}
                       className={"position-relative"}
                     >
-                      {!item.isVideo ? (
+                      {!item.isVideo && item.image ? (
                         <img
                           src={`https://cdnflux.dypius.com/${item.image}`}
                           className="card-img card-img2"
                           alt=""
                         />
-                      ) : (
+                      ) : item.isVideo && item.image ? (
                         <video
                           src={`https://cdnflux.dypius.com/${item.image}`}
                           alt=""
@@ -846,6 +873,12 @@ const ProfileNFTList = ({
                           loop={true}
                           muted="muted"
                           playsInline={true}
+                        />
+                      ) : (
+                        <img
+                          src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                          className="card-img card-img2"
+                          alt=""
                         />
                       )}
                       {/* <div
@@ -923,13 +956,13 @@ const ProfileNFTList = ({
                         style={{ textDecoration: "none" }}
                         className={"position-relative"}
                       >
-                        {!item.isVideo ? (
+                        {!item.isVideo && item.image ? (
                           <img
                             src={`https://cdnflux.dypius.com/${item.image}`}
                             className="card-img card-img2"
                             alt=""
                           />
-                        ) : (
+                        ) : item.isVideo && item.image ? (
                           <video
                             src={`https://cdnflux.dypius.com/${item.image}`}
                             alt=""
@@ -939,6 +972,12 @@ const ProfileNFTList = ({
                             loop={true}
                             muted="muted"
                             playsInline={true}
+                          />
+                        ) : (
+                          <img
+                            src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                            className="card-img card-img2"
+                            alt=""
                           />
                         )}
                         {/* <div
@@ -1022,13 +1061,13 @@ const ProfileNFTList = ({
                         style={{ textDecoration: "none" }}
                         className={"position-relative"}
                       >
-                        {!item.isVideo ? (
+                        {!item.isVideo && item.image ? (
                           <img
                             src={`https://cdnflux.dypius.com/${item.image}`}
                             className="card-img card-img2"
                             alt=""
                           />
-                        ) : (
+                        ) : item.isVideo && item.image ? (
                           <video
                             src={`https://cdnflux.dypius.com/${item.image}`}
                             alt=""
@@ -1038,6 +1077,12 @@ const ProfileNFTList = ({
                             loop={true}
                             muted="muted"
                             playsInline={true}
+                          />
+                        ) : (
+                          <img
+                            src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                            className="card-img card-img2"
+                            alt=""
                           />
                         )}
                         {/* <div

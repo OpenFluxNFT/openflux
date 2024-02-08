@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./_singlenfthistory.scss";
 import saleIcon from "./assets/saleIcon.svg";
 import getFormattedNumber from "../../../hooks/get-formatted-number";
@@ -15,6 +15,8 @@ const SingleNftHistory = ({
   lowestPriceNftListed,
   saleHistory,
 }) => {
+  const [selectedNftId, setSelectedNftId] = useState(""); //buy
+
   return (
     <div className="container-lg my-4">
       <div className="row mx-0 justify-content-between gap-lg-0 gap-3">
@@ -163,23 +165,29 @@ const SingleNftHistory = ({
                                     } `}
                                     onClick={() => {
                                       handleAcceptOffer(item.index);
+                                      setSelectedNftId(item.index);
                                     }}
                                   >
                                     {offeracceptStatus === "initial" ? (
                                       "Accept"
-                                    ) : offeracceptStatus === "loading" ? (
+                                    ) : offeracceptStatus === "loading" &&
+                                      selectedNftId === item.index ? (
                                       <>
-                                        Accepting{" "}
+                                        Accepting
                                         <div
                                           className="spinner-border mx-1"
                                           role="status"
                                           style={{ width: 10, height: 10 }}
                                         ></div>
                                       </>
-                                    ) : offeracceptStatus === "success" ? (
+                                    ) : offeracceptStatus === "success" &&
+                                      selectedNftId === item.index ? (
                                       "Success"
-                                    ) : (
+                                    ) : offeracceptStatus === "fail" &&
+                                      selectedNftId === item.index ? (
                                       "Failed"
+                                    ) : (
+                                      "Accept"
                                     )}
                                   </button>
                                 </td>

@@ -49,6 +49,7 @@ const CollectionList = ({
   const [dummyMaxPrice, setDummyMaxPrice] = useState(0)
   const [dummyTraits, setDummyTraits] = useState(["White", "Black", "Yellow", "Blue"])
   const [queryItems, setQueryItems] = useState([]);
+  const [search, setSearch] = useState("")
 
   
 
@@ -132,6 +133,14 @@ const CollectionList = ({
 
   const checkIfExists = (itemToCheck) => {
     return queryItems.some(item => item.type.toLowerCase() === itemToCheck.type.toLowerCase() && item.value.toLowerCase() === itemToCheck.value.toLowerCase());
+  };
+
+  const handleKeyPress = (val) => (event) => {
+    if (event.key === 'Enter') {
+      // Call your function here
+      addOrRemove(val)
+
+    }
   };
 
 
@@ -590,6 +599,9 @@ const CollectionList = ({
                     type="text"
                     className="search-input w-100"
                     placeholder="Search anything"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    onKeyDown={handleKeyPress({type: "Search", value: search})}
                   />
                 </div>
               </div>
@@ -713,7 +725,7 @@ const CollectionList = ({
               {maxPrice > 0 && 
               <div  className="collection-query p-2 d-flex gap-4 align-items-center justify-content-center">
               <div className="d-flex align-items-center gap-1">
-                <h6 className="collection-query-type mb-0">Min Price:</h6>
+                <h6 className="collection-query-type mb-0">Max Price:</h6>
                 <h6 className="collection-query-value mb-0">{maxPrice}</h6>
               </div>
               <img

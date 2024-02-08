@@ -32,6 +32,7 @@ const CollectionBanner = ({
   totalSupplyPerCollection,
   collectionFeeRate,
 }) => {
+
   return (
     <div className="container-lg py-0 py-lg-5">
       <div className="row px-0">
@@ -59,7 +60,7 @@ const CollectionBanner = ({
                     </div>
                     <div className="d-flex align-items-center gap-1">
                       <span className="collection-info-span mb-0">Created</span>
-                      <span className="collection-info mb-0">tbd</span>
+                      <span className="collection-info mb-0">{new Date(currentCollection.createdAt).toLocaleDateString()}</span>
                     </div>
                     <div className="d-flex align-items-center gap-1">
                       <span className="collection-info-span mb-0">

@@ -352,10 +352,11 @@ const CollectionSettings = ({
     } else {
       tagArray.push(tag);
     }
-
+ const finaltagArray = tagArray.filter((obj)=>{return obj !== ''})
+ 
     setcollectionInfo((collectionInfo) => ({
       ...collectionInfo,
-      tags: tagArray,
+      tags: finaltagArray,
     }));
   };
 
@@ -657,16 +658,16 @@ const CollectionSettings = ({
                   </div>
                 </div>
               </div>
-              <div className="row">
-                <h6 className="input-label mb-0 mt-5">Collection images</h6>
-                <span className="comment-txt">
+              <div className="row mx-0">
+                <h6 className="input-label mb-0 mt-5 p-0">Collection images</h6>
+                <span className="comment-txt p-0">
                   These images will be used for featuring your collection on the
                   homepage, category pages, or other display areas of the
                   Marketplace
                 </span>
                 <div className="col-12 col-lg-6 mt-4">
                   <div className="d-flex flex-column justify-content-between mt-4 mt-lg-0 h-100">
-                    <div className="d-flex align-items-center">
+                    <div className="d-flex justify-content-between gap-2 align-items-center">
                       <div className="col-3">
                         <div className="d-flex flex-column gap-2">
                           <div className="d-flex align-items-center gap-2">
@@ -718,7 +719,7 @@ const CollectionSettings = ({
                           </div>
                         </div>
                       </div>
-                      <div className="col-9">
+                      <div className="col-8">
                         <div className="d-flex flex-column gap-2">
                           <div className="d-flex align-items-center gap-2">
                             <h6 className="input-label mb-0">Profile Banner</h6>
@@ -1002,7 +1003,7 @@ const CollectionSettings = ({
                     </div>
                   </div>
                 </div>
-                <div className="mt-4 d-flex flex-column flex-lg-row align-items-start align-items-lg-center justify-content-between">
+                <div className="mt-4 d-flex flex-column flex-lg-row align-items-start align-items-lg-center justify-content-between gap-2">
                   <div className="d-flex flex-column gap-2">
                     <h6 className="input-label mb-0">Creator Earnings</h6>
                     <span className="social-connections-span">

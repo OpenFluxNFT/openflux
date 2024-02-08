@@ -316,8 +316,9 @@ const CollectionPage = ({
       }
 
       if (totalSupply && totalSupply > 0) {
+        const limit = totalSupply >= next ? next : totalSupply
         await Promise.all(
-          window.range(next - nftPerRow, next - 1).map(async (i) => {
+          window.range(next - nftPerRow, limit - 1).map(async (i) => {
             let tokenByIndex = 0;
             if (result.data.result.includes("tokenByIndex")) {
               tokenByIndex = await collection_contract.methods

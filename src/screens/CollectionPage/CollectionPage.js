@@ -36,6 +36,10 @@ const CollectionPage = ({
   const [hasListedNfts, sethasListedNfts] = useState(false);
   const [totalListedNfts, settotalListedNfts] = useState(0);
   const [collectionFeeRate, setcollectionFeeRate] = useState(0);
+  const [uniqueOwners, setUniqueOwners] = useState(0);
+  const [uniqueOwnersPercentage, setUniqueOwnersPercentage] = useState(0);
+
+
 
   const [next, setnext] = useState(12);
   const baseURL = "https://confluxapi.worldofdypians.com";
@@ -54,7 +58,7 @@ const CollectionPage = ({
     },
     {
       title: "Floor price",
-      value: getFormattedNumber(floorPrice ?? 0 / 1e18),
+      value: getFormattedNumber(floorPrice ?? 0),
       valueType: "WCFX",
     },
     {
@@ -67,8 +71,8 @@ const CollectionPage = ({
     },
     {
       title: "Owners (unique)",
-      value: "tbd",
-      valueType: "(34%)",
+      value: getFormattedNumber(uniqueOwners,0),
+      valueType: `${getFormattedNumber(uniqueOwnersPercentage,0)}%`,
     },
   ];
 
@@ -518,7 +522,7 @@ const CollectionPage = ({
       });
 
     if (result && result.status === 200) {
-      setfloorPrice(result.data.floorPrice);
+      setfloorPrice(result.data.floorPrice/ 1e18);
     }
   };
 
@@ -539,6 +543,24 @@ const CollectionPage = ({
     }
   };
 
+  const getCollectionUniqueOwners = async () => {
+    const result = await axios
+      .get(`${baseURL}/api/unique-owners/${collectionAddress}`, {
+        headers: {
+          cascadestyling:
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+
+    if (result && result.status === 200) {
+      setUniqueOwners(result.data.uniqueOwnersCount);
+      setUniqueOwnersPercentage(result.data.uniqueOwnersPercentage);
+    }
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -550,6 +572,7 @@ const CollectionPage = ({
     getCollectionFloorPrice();
     getCollectionTotalSupply();
     getCollectionInfo();
+    getCollectionUniqueOwners()
   }, []);
 
   useEffect(() => {

@@ -30,6 +30,7 @@ const SingleNftBanner = ({
   offerData,
   bestOffer,
   lastSale,
+  collectionFeeRate,
 }) => {
   const [isOwner, setIsOwner] = useState(false);
   const [isListed, setIsListed] = useState(false);
@@ -511,7 +512,7 @@ const SingleNftBanner = ({
                   </div>
                   <div className="d-flex align-items-center gap-2 border-bottom-div">
                     <span className="nft-info-left">Creator earning</span>
-                    <span className="nft-info-right">tbd%</span>
+                    <span className="nft-info-right">{collectionFeeRate}%</span>
                   </div>
                   <div className="d-flex align-items-center gap-2 border-bottom-div">
                     <span className="nft-info-left">Last Sale</span>
@@ -525,7 +526,7 @@ const SingleNftBanner = ({
                   <div className="d-flex align-items-center gap-2 border-bottom-div">
                     <span className="nft-info-left">Best offer</span>
                     <span className="nft-info-right">
-                      {getFormattedNumber(bestOffer.amount ?? 0 / 1e18)} WCFX
+                      {getFormattedNumber(bestOffer.amount? bestOffer.amount/ 1e18 : 0 )} WCFX
                     </span>
                   </div>
                   <div className="d-flex align-items-center gap-2 border-bottom-div">

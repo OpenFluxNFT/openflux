@@ -207,7 +207,7 @@ const MakeOffer = ({
               <div className="d-flex w-100 align-items-center gap-3 justify-content-between">
                 <span className="itemchain">Floor price</span>
                 <span className="itemvalue">
-                  {getFormattedNumber(floorPrice / 1e18)} WCFX
+                  {getFormattedNumber(floorPrice ? floorPrice / 1e18 : 0)} WCFX
                 </span>
               </div>
               {offerData && offerData.amount && (

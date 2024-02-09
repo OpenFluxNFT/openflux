@@ -320,7 +320,6 @@ function App() {
     }
   };
 
-
   const handleGetRecentlySoldNfts = async () => {
     const result = await axios
       .get(`${baseURL}/api/recent-sales`, {
@@ -334,83 +333,81 @@ function App() {
       });
     const web3 = window.confluxWeb3;
     if (result && result.status === 200) {
-      console.log(result.data);
-      // const recentlySold = await Promise.all(
-      //   result.data.map(async (item) => {
-      //     let isApproved = false;
-      //     const abiresult = await axios.get(
-      //       `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
-      //     );
-      //     if (abiresult && abiresult.status === 200) {
-      //       const abi = JSON.parse(abiresult.data.result);
-      //       const collection_contract = new web3.eth.Contract(
-      //         abi,
-      //         item.nftAddress
-      //       );
-      //       const tokenName = await collection_contract.methods
-      //         .symbol()
-      //         .call()
-      //         .catch((e) => {
-      //           console.error(e);
-      //         });
+      const recentlySold = await Promise.all(
+        result.data.map(async (item) => {
+          let isApproved = false;
+          const abiresult = await axios.get(
+            `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
+          );
+          if (abiresult && abiresult.status === 200) {
+            const abi = JSON.parse(abiresult.data.result);
+            const collection_contract = new web3.eth.Contract(
+              abi,
+              item.nftAddress
+            );
+            const tokenName = await collection_contract.methods
+              .symbol()
+              .call()
+              .catch((e) => {
+                console.error(e);
+              });
 
-      //       const seller = await collection_contract.methods
-      //         .ownerOf(item.tokenId)
-      //         .call()
-      //         .catch((e) => {
-      //           console.error(e);
-      //         });
+            const seller = await collection_contract.methods
+              .ownerOf(item.tokenId)
+              .call()
+              .catch((e) => {
+                console.error(e);
+              });
 
-      //       const isApprovedresult = await window
-      //         .isApprovedBuy(item.price)
-      //         .catch((e) => {
-      //           console.error(e);
-      //         });
+            const isApprovedresult = await window
+              .isApprovedBuy(item.price)
+              .catch((e) => {
+                console.error(e);
+              });
 
-      //       if (isApprovedresult) {
-      //         isApproved = isApprovedresult;
-      //       }
+            if (isApprovedresult) {
+              isApproved = isApprovedresult;
+            }
 
-      //       const nft_data = await fetch(
-      //         `https://cdnflux.dypius.com/collectionsmetadatas/${item.nftAddress.toLowerCase()}/${
-      //           item.tokenId
-      //         }/metadata.json`
-      //       )
-      //         .then((res) => res.json())
-      //         .then((data) => {
-      //           return data;
-      //         })
-      //         .catch((err) => {
-      //           console.log(err.message);
-      //         });
-      //       if (
-      //         nft_data &&
-      //         nft_data.code !== 404 &&
-      //         typeof nft_data !== "string"
-      //       ) {
-      //         return {
-      //           ...item,
-      //           image: `${nft_data.image}`,
-      //           tokenName: tokenName,
-      //           isApproved: isApproved,
-      //           seller: seller,
-      //         };
-      //       } else
-      //         return {
-      //           ...item,
-      //           image: undefined,
-      //           tokenName: tokenName,
-      //           seller: seller,
-      //         };
-      //     }
-      //   })
-      // );
+            const nft_data = await fetch(
+              `https://cdnflux.dypius.com/collectionsmetadatas/${item.nftAddress.toLowerCase()}/${
+                item.tokenId
+              }/metadata.json`
+            )
+              .then((res) => res.json())
+              .then((data) => {
+                return data;
+              })
+              .catch((err) => {
+                console.log(err.message);
+              });
+            if (
+              nft_data &&
+              nft_data.code !== 404 &&
+              typeof nft_data !== "string"
+            ) {
+              return {
+                ...item,
+                ...nft_data,
+                image: `${nft_data.image}`,
+                tokenName: tokenName,
+                isApproved: isApproved,
+                seller: seller,
+              };
+            } else
+              return {
+                ...item,
+                image: undefined,
+                tokenName: tokenName,
+                seller: seller,
+              };
+          }
+        })
+      );
 
-      // recentlySoldNfts(recentlySold);
+      setrecentlySoldNfts(recentlySold);
     }
   };
-
-  
 
   const handleGetRecentlySoldNftsCache = async () => {
     const result = await axios
@@ -429,9 +426,6 @@ function App() {
       handleMapUserNftsOwned(coinbase);
     }
   };
-
-
-
 
   const handleGetUserFavNfts = async (nftData) => {
     // setuserNftFavs(result.data.nftFavorites);
@@ -1247,13 +1241,17 @@ function App() {
             <Home
               allCollections={allCollections}
               recentlyListedNfts={recentlyListedNfts}
+              recentlySoldNfts={recentlySoldNfts}
               cfxPrice={cfxPrice}
               handleAddFavoriteNft={handleAddFavoriteNft}
               handleRemoveFavoriteNft={handleRemoveFavoriteNft}
               userNftFavs={userNftFavs}
               userNftFavsInitial={userNftFavsInitial}
               coinbase={coinbase}
-              onRefreshListings={handleGetRecentlyListedNftsCache}
+              onRefreshListings={() => {
+                handleGetRecentlyListedNftsCache();
+                handleGetRecentlySoldNftsCache();
+              }}
             />
           }
         />
@@ -1264,6 +1262,8 @@ function App() {
             <Collections
               allCollections={allCollections}
               allCollectionsOrdered={allCollectionsOrdered}
+              recentlySoldNfts={recentlySoldNfts}
+              cfxPrice={cfxPrice}
             />
           }
         />
@@ -1296,7 +1296,10 @@ function App() {
               handleAddFavoriteNft={handleAddFavoriteNft}
               handleRemoveFavoriteNft={handleRemoveFavoriteNft}
               cfxPrice={cfxPrice}
-              onRefreshListings={handleGetRecentlyListedNftsCache}
+              onRefreshListings={() => {
+                handleGetRecentlyListedNftsCache();
+                handleGetRecentlySoldNftsCache();
+              }}
               isNewCollection={isNewCollection}
               onNewCollectionFetched={() => {
                 setisNewCollection(false);
@@ -1360,7 +1363,10 @@ function App() {
               recentlyListedNfts={recentlyListedNfts}
               handleSwitchNetwork={handleSwitchNetwork}
               cfxPrice={cfxPrice}
-              onRefreshListings={handleGetRecentlyListedNftsCache}
+              onRefreshListings={() => {
+                handleGetRecentlyListedNftsCache();
+                handleGetRecentlySoldNftsCache();
+              }}
               balance={balance}
             />
           }

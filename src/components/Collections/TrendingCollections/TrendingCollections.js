@@ -15,8 +15,13 @@ import cawsPlaceholder from "./assets/cawsPlaceholder.png";
 import wodPlaceholder from "./assets/wodPlaceholder.png";
 import timepiecePlaceholder from "./assets/timepiecePlaceholder.png";
 import { NavLink } from "react-router-dom";
+import getFormattedNumber from "../../../hooks/get-formatted-number";
 
-const TrendingCollections = ({ allCollections }) => {
+const TrendingCollections = ({
+  allCollections,
+  cfxPrice,
+  recentlySoldNfts,
+}) => {
   const windowSize = useWindowSize();
   const [option, setOption] = useState("trending");
   const [time, setTime] = useState("24h");
@@ -212,78 +217,155 @@ const TrendingCollections = ({ allCollections }) => {
         <hr className="trending-divider my-4" />
         <div className="row">
           <div className="trending-collections-grid">
-            {allCollections
-              .slice(
-                option === "trending"
-                  ? 10
-                  : option === "topSales"
-                  ? 20
-                  : option === "new"
-                  ? 30
-                  : 40,
-                option === "trending"
-                  ? 20
-                  : option === "topSales"
-                  ? 30
-                  : option === "new"
-                  ? 40
-                  : 50
-              )
-              .map((item, index) => (
-                <div className="d-flex align-items-center gap-3" key={index}>
-                  <div className="trending-tag d-none d-lg-flex position-relative">
-                    <span className="mb-0">{index + 1}</span>
-                  </div>
-                  <NavLink
-                    to={`/collection/${item.contractAddress}/${item.symbol}`}
-                    className={"w-100"}
-                    style={{ textDecoration: "none" }}
-                  >
-                    <div className="trending-collection-card d-flex align-items-center gap-2">
-                      <img
-                        src={
-                          item.collectionProfilePic
-                            ? `https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`
-                            : dummyCards[index].image
-                        }
-                        alt=""
-                      />
-                      <div className="d-flex flex-column gap-2 p-3">
-                        <div className="d-flex align-items-center gap-2">
-                          <h6 className="trending-collection-title mb-0">
-                            {item.collectionName}
-                          </h6>
-                          {item.verified === "yes" && (
-                            <img src={checkIcon} alt="" />
-                          )}
-                        </div>
-                        <div className="d-flex align-items-center gap-3">
-                          <div className="d-flex flex-column">
-                            <span className="trending-price-holder mb-1">
-                              Floor
-                            </span>
-                            <div className="trending-price-wrapper d-flex align-items-center justify-content-center p-2">
-                              <h6 className="trending-price mb-0">
-                                {item.floorPrice ?? "tbd"} CFX
-                              </h6>
-                            </div>
-                          </div>
-                          <div className="d-flex flex-column">
-                            <span className="trending-price-holder mb-1">
-                              Total Volume
-                            </span>
-                            <div className="trending-price-wrapper d-flex align-items-center justify-content-center p-2">
-                              <h6 className="trending-price mb-0">
-                                {item.totalVolume ?? "tbd"} CFX
-                              </h6>
-                            </div>
-                          </div>
-                        </div>
+            {option === "recentSales" &&
+            recentlySoldNfts &&
+            recentlySoldNfts.length > 0
+              ? recentlySoldNfts.slice(0, 10).map((item, index) => {
+                  return (
+                    <div
+                      className="d-flex align-items-center gap-3"
+                      key={index}
+                    >
+                      <div className="trending-tag d-none d-lg-flex position-relative">
+                        <span className="mb-0">{index + 1}</span>
                       </div>
+                      <NavLink
+                        to={`/nft/${item.tokenId}/${item.nftAddress}`}
+                        className={"w-100"}
+                        style={{ textDecoration: "none" }}
+                      >
+                        <div className="trending-collection-card d-flex align-items-center gap-2">
+                          {!item.isVideo ? (
+                            <img
+                              src={
+                                item.image
+                                  ? `https://cdnflux.dypius.com/${item.image170}`
+                                  : require(`./assets/cawsPlaceholder.png`)
+                              }
+                              className="trending-collections-nft-img"
+                              width={120}
+                              height={120}
+                              alt=""
+                            />
+                          ) : (
+                            <video
+                              preload="auto"
+                              className="trending-collections-nft-img"
+                              width={120}
+                              height={120}
+                              src={`https://cdnflux.dypius.com/${item.image170}`}
+                              autoPlay={true}
+                              loop={true}
+                              muted="muted"
+                              playsInline={true}
+                              // onClick={player}
+                              controlsList="nodownload"
+                            ></video>
+                          )}
+                          <div className="d-flex flex-column gap-2 p-3">
+                            <div className="d-flex align-items-center gap-2">
+                              <h6 className="trending-collection-title mb-0">
+                                {item.tokenName} {item.name}
+                              </h6>
+                              {/* {item.verified === "yes" && ( */}
+                              <img src={checkIcon} alt="" />
+                              {/* )} */}
+                            </div>
+                            <div className="d-flex align-items-center gap-3">
+                              <div className="d-flex flex-column">
+                                <h6 className="trending-card-cfx-price mb-0">
+                                  {getFormattedNumber(item.amount / 1e18)} WCFX
+                                </h6>
+                                <span className="trending-card-usd-price mb-0">
+                                  (${" "}
+                                  {getFormattedNumber(
+                                    (item.amount / 1e18) * cfxPrice
+                                  )}
+                                  )
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </NavLink>
                     </div>
-                  </NavLink>
-                </div>
-              ))}
+                  );
+                })
+              : allCollections
+                  .slice(
+                    option === "trending"
+                      ? 10
+                      : option === "topSales"
+                      ? 20
+                      : option === "new"
+                      ? 30
+                      : 40,
+                    option === "trending"
+                      ? 20
+                      : option === "topSales"
+                      ? 30
+                      : option === "new"
+                      ? 40
+                      : 50
+                  )
+                  .map((item, index) => (
+                    <div
+                      className="d-flex align-items-center gap-3"
+                      key={index}
+                    >
+                      <div className="trending-tag d-none d-lg-flex position-relative">
+                        <span className="mb-0">{index + 1}</span>
+                      </div>
+                      <NavLink
+                        to={`/collection/${item.contractAddress}/${item.symbol}`}
+                        className={"w-100"}
+                        style={{ textDecoration: "none" }}
+                      >
+                        <div className="trending-collection-card d-flex align-items-center gap-2">
+                          <img
+                            src={
+                              item.collectionProfilePic
+                                ? `https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`
+                                : dummyCards[index].image
+                            }
+                            alt=""
+                          />
+                          <div className="d-flex flex-column gap-2 p-3">
+                            <div className="d-flex align-items-center gap-2">
+                              <h6 className="trending-collection-title mb-0">
+                                {item.collectionName}
+                              </h6>
+                              {item.verified === "yes" && (
+                                <img src={checkIcon} alt="" />
+                              )}
+                            </div>
+                            <div className="d-flex align-items-center gap-3">
+                              <div className="d-flex flex-column">
+                                <span className="trending-price-holder mb-1">
+                                  Floor
+                                </span>
+                                <div className="trending-price-wrapper d-flex align-items-center justify-content-center p-2">
+                                  <h6 className="trending-price mb-0">
+                                    {item.floorPrice ?? "tbd"} CFX
+                                  </h6>
+                                </div>
+                              </div>
+                              <div className="d-flex flex-column">
+                                <span className="trending-price-holder mb-1">
+                                  Total Volume
+                                </span>
+                                <div className="trending-price-wrapper d-flex align-items-center justify-content-center p-2">
+                                  <h6 className="trending-price mb-0">
+                                    {item.totalVolume ?? "tbd"} CFX
+                                  </h6>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </NavLink>
+                    </div>
+                  ))}
           </div>
         </div>
       </div>

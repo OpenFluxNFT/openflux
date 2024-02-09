@@ -54,6 +54,7 @@ function App() {
   const [userTotalNftsOwned, setUserTotalNftsOwned] = useState([]);
   const [userNftsOwned, setUserNftsOwned] = useState(0);
   const [userNftsOwnedArray, setUserNftsOwnedArray] = useState([]);
+  const [userCollectionArray, setuserCollectionArray] = useState([]);
 
   const [cfxPrice, setCfxPrice] = useState(0);
   const [favoriteNft, setFavoriteNft] = useState(false);
@@ -511,6 +512,8 @@ function App() {
 
   const handleMapUserNftsOwned = async (wallet) => {
     let nftsOwned = [];
+    let allUserCollections = [];
+    let nftArray = [];
     const userNftsOwnedresult = await axios
       .get(`${baseURL}/api/nft-amount/${wallet}`, {
         headers: {
@@ -535,7 +538,7 @@ function App() {
             .catch((e) => {
               console.log(e);
             });
-
+          allUserCollections.push({ collectionName: nftsOwned[i].name });
           if (result && result.status === 200) {
             const abi = JSON.parse(result.data.result);
             const web3 = window.confluxWeb3;
@@ -554,8 +557,6 @@ function App() {
                   })
               )
             );
-
-            let nftArray = [];
 
             if (
               tokens &&
@@ -608,7 +609,10 @@ function App() {
                         nftAddress: nftsOwned[i].contract,
                         tokenName: tokenName,
                       });
-                    } else {
+                    } else if (
+                      nft_data.code == 404 ||
+                      typeof nft_data === "string"
+                    ) {
                       // console.log('nft_data', nft_data);
                       nftArray.push({
                         tokenId: tokenByIndex,
@@ -621,6 +625,7 @@ function App() {
                 })
               );
             }
+
             if (nftArray.length > 0) {
               const uniqueArray_listed = recentlyListedNfts.filter(
                 ({ tokenId: id1, nftAddress: nftAddr1 }) =>
@@ -649,6 +654,7 @@ function App() {
           }
         })
       );
+      setuserCollectionArray(allUserCollections);
     } else setUserNftsOwnedArray([]);
   };
 
@@ -1329,6 +1335,7 @@ function App() {
               userNftFavsInitial={userNftFavsInitial}
               userNftsOwnedArray={userNftsOwnedArray}
               cfxPrice={cfxPrice}
+              userCollectionArray={userCollectionArray}
             />
           }
         />

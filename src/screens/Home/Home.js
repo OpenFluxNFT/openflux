@@ -18,6 +18,7 @@ const Home = ({
   userNftFavsInitial,
   coinbase,
   onRefreshListings,
+  recentlySoldNfts,
 }) => {
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -28,7 +29,7 @@ const Home = ({
       <MainHero allCollections={allCollections} />
       <HomeStats />
       <HomeInfo />
-      <TrendingSales />
+      <TrendingSales recentlySoldNfts={recentlySoldNfts} cfxPrice={cfxPrice}/>
       <RecentlyListed
         recentlyListedNfts={recentlyListedNfts}
         cfxPrice={cfxPrice}

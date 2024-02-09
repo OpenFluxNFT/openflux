@@ -33,11 +33,13 @@ const ProfileSettings = ({
     username: "",
     email: "",
     twitterLink: "",
+    website: "",
   });
   const [errorMessage, setErrorMessage] = useState({
     username: "",
     email: "",
     twitterLink: "",
+    website: "",
   });
   // const [errorMessage, setErrorMessage] = useState("");
   const [toastInfo, setToastInfo] = useState({
@@ -54,6 +56,9 @@ const ProfileSettings = ({
     profilePicture: "",
     bannerPicture: "",
   });
+
+  const urlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+
 
   const display = () => {
     if (userData && userData._id) {
@@ -85,6 +90,33 @@ const ProfileSettings = ({
     }
   };
 
+
+  const checkWebsiteUrl = (website) => {
+    let test =  urlRegex.test(website)
+
+    if(!test){
+      setErrorMessage({
+        ...errorMessage,
+        website: "This is not a valid website"
+      })
+      setUserInfo((userInfo) => ({
+        ...userInfo,
+        website: "",
+      }));
+    }else{
+
+      setUserInfo((userInfo) => ({
+        ...userInfo,
+        website: website,
+      }));
+      setErrorMessage({
+        ...errorMessage,
+        website: ""
+      })
+    }
+
+  }
+
   const checkAvailability = async (e) => {
     let name = e.target.name;
     let value = e.target.value;
@@ -108,7 +140,6 @@ const ProfileSettings = ({
             ...userInfo,
             [name]: value,
           }));
-          console.log(userInfo, "infooo");
           if(name === "username"){
             setErrorMessage({
               ...errorMessage, 
@@ -349,7 +380,7 @@ const ProfileSettings = ({
                   <span className="error-msg">{errorMessage.email}</span>
                 )}
               </div>
-              <div className="d-flex flex-column gap-2">
+              <div className="d-flex flex-column position-relative gap-2">
                 <h6 className="input-label mb-0">Website</h6>
                 <input
                   type="text"
@@ -357,15 +388,20 @@ const ProfileSettings = ({
                     userData?.website ? userData?.website : "Website"
                   }
                   className="settings-input w-100"
-                  value={userInfo.website}
+                  value={availability.website}
                   onChange={(e) => {
+
                     setIsEdit(true);
-                    setUserInfo((userInfo) => ({
-                      ...userInfo,
+                    checkWebsiteUrl(e.target.value);
+                    setAvailability({
+                      ...availability,
                       website: e.target.value,
-                    }));
+                    });
                   }}
                 />
+                 {errorMessage.website !== "" && (
+                  <span className="error-msg">{errorMessage.website}</span>
+                )}
               </div>
             </div>
           </div>

@@ -296,6 +296,8 @@ const Profile = ({
     window.scrollTo(0, 0);
   }, []);
 
+  console.log(userData, "Data");
+
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
       <ProfileBanner
@@ -303,6 +305,7 @@ const Profile = ({
         logo={profilePicture}
         banner={bannerPicture}
         socials={profileSocials}
+        website={userData.website}
         credentials={profileCredenrtials}
         desc={userData.bio ?? "No bio Available"}
         info={profileInfo}

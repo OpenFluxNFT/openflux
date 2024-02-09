@@ -120,9 +120,9 @@ const AllCollectionCategories = ({ allCollections }) => {
           </div>
           <div
             className={`trending-tab ${
-              category === "virtualWorld" && "trending-tab-active"
+              category === "virtual" && "trending-tab-active"
             } p-2 d-flex align-items-center gap-2`}
-            onClick={() => changeCategory("virtualWorld")}
+            onClick={() => changeCategory("virtual")}
           >
             <h6 className="mb-0">Virtual World</h6>
           </div>

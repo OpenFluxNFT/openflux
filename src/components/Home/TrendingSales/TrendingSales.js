@@ -18,12 +18,15 @@ import Slider from "react-slick";
 import { NavLink } from "react-router-dom";
 import getFormattedNumber from "../../../hooks/get-formatted-number";
 import moment from "moment";
+import { Skeleton } from "@mui/material";
 
 const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
+  const [recents, setRecents] = useState([]);
   const [chunkedArray, setChunkedArray] = useState([]);
   const [option, setOption] = useState("trending");
   const [time, setTime] = useState("24h");
   const windowSize = useWindowSize();
+  const [loading, setLoading] = useState(true);
 
   const settings = {
     dots: true,
@@ -103,9 +106,48 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
     setChunkedArray(myArray);
   };
 
+  const categorizeItems = (val) => {
+    setLoading(true)
+    setTime(val);
+    const currentTime = Math.floor(Date.now() / 1000); // Get current timestamp in seconds
+    const oneDayInSeconds = 24 * 60 * 60;
+    const sevenDaysInSeconds = 7 * oneDayInSeconds;
+    const thirtyDaysInSeconds = 30 * oneDayInSeconds;
+
+    const items24HoursAgo = recentlySoldNfts.filter(
+      (item) =>
+        currentTime - parseInt(item.blockTimestamp, 10) <= oneDayInSeconds
+    );
+    const items7DaysAgo = recentlySoldNfts.filter(
+      (item) =>
+        currentTime - parseInt(item.blockTimestamp, 10) <= sevenDaysInSeconds
+    );
+    const items30DaysAgo = recentlySoldNfts.filter(
+      (item) =>
+        currentTime - parseInt(item.blockTimestamp, 10) <= thirtyDaysInSeconds
+    );
+
+    if (val === "24h") {
+      setRecents(items24HoursAgo);
+    } else if (val === "7d") {
+      setRecents(items7DaysAgo);
+    } else {
+      setRecents(items30DaysAgo);
+    }
+
+    setTimeout(() => {
+      setLoading(false)
+    }, 1500);
+  };
+
   useEffect(() => {
     chunkArray(dummyCards, 3);
   }, []);
+
+  useEffect(() => {
+    categorizeItems("24h");
+    setLoading(false);
+  }, [recentlySoldNfts]);
 
   return (
     <>
@@ -187,7 +229,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
                   className={`trending-tab ${
                     time === "24h" && "trending-tab-active"
                   } p-2`}
-                  onClick={() => setTime("24h")}
+                  onClick={() => categorizeItems("24h")}
                 >
                   <h6 className="mb-0">24h</h6>
                 </div>
@@ -195,7 +237,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
                   className={`trending-tab ${
                     time === "7d" && "trending-tab-active"
                   } p-2`}
-                  onClick={() => setTime("7d")}
+                  onClick={() => categorizeItems("7d")}
                 >
                   <h6 className="mb-0">7D</h6>
                 </div>
@@ -203,7 +245,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
                   className={`trending-tab ${
                     time === "30d" && "trending-tab-active"
                   } p-2`}
-                  onClick={() => setTime("30d")}
+                  onClick={() => categorizeItems("30d")}
                 >
                   <h6 className="mb-0">30D</h6>
                 </div>
@@ -214,89 +256,18 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
           <div className="row">
             {windowSize.width > 786 ? (
               <div className="trending-cards-grid">
-                {option === "recentSales" &&
+                {loading === false &&
+                option === "recentSales" &&
                 recentlySoldNfts &&
-                recentlySoldNfts.length > 0
-                  ? recentlySoldNfts.slice(0,9).map((item, index) => {
-                      return (
-                        <div
-                          className="trending-card p-3 d-flex align-items-center position-relative gap-2"
-                          key={index}
-                        >
-                          <NavLink
-                            to={`/nft/${item.tokenId}/${item.nftAddress}`}
-                            className="w-100 d-flex align-items-center position-relative gap-2"
-                            key={index}
-                            style={{ textDecoration: "none" }}
-                          >
-                            <div className="trending-tag">
-                              <span className="mb-0">{index + 1}</span>
-                            </div>
-
-                            {!item.isVideo ? (
-                              <img
-                                src={
-                                  item.image
-                                    ? `https://cdnflux.dypius.com/${item.image}`
-                                    : require(`../RecentlyListed/assets/nftPlaceholder1.png`)
-                                }
-                                className="card-img2"
-                                width={100}
-                                height={100}
-                                alt=""
-                              />
-                            ) : (
-                              <video
-                                preload="auto"
-                                className="card-img2"
-                                width={100}
-                                height={100}
-                                src={`https://cdnflux.dypius.com/${item.image}`}
-                                autoPlay={true}
-                                loop={true}
-                                muted="muted"
-                                playsInline={true}
-                                // onClick={player}
-                                controlsList="nodownload"
-                              ></video>
-                            )}
-                            <div className="d-flex flex-column">
-                              <div className="d-flex align-items-center gap-1">
-                                <h6 className="trending-card-title mb-0">
-                                  {item.tokenName} {item.name}
-                                </h6>
-                                <img src={checkIcon} alt="" />
-                              </div>
-                              <div className="d-flex flex-column">
-                                <h6 className="trending-card-cfx-price mb-0">
-                                  {getFormattedNumber(item.amount / 1e18)} WCFX
-                                </h6>
-                                <span className="trending-card-usd-price mb-0">
-                                  (${" "}
-                                  {getFormattedNumber(
-                                    (item.amount / 1e18) * cfxPrice
-                                  )}
-                                  )
-                                </span>
-                              </div>
-                            </div>
-                          </NavLink>
-                          <span className="list-date">
-                            Sold{" "}
-                            {moment
-                              .duration(item.blockTimestamp * 1000 - Date.now())
-                              .humanize(true)}
-                          </span>
-                        </div>
-                      );
-                    })
-                  : dummyCards.map((item, index) => (
+                recentlySoldNfts.length > 0 ? (
+                  recents.slice(0, 9).map((item, index) => {
+                    return (
                       <div
                         className="trending-card p-3 d-flex align-items-center position-relative gap-2"
                         key={index}
                       >
                         <NavLink
-                          to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
+                          to={`/nft/${item.tokenId}/${item.nftAddress}`}
                           className="w-100 d-flex align-items-center position-relative gap-2"
                           key={index}
                           style={{ textDecoration: "none" }}
@@ -304,36 +275,117 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
                           <div className="trending-tag">
                             <span className="mb-0">{index + 1}</span>
                           </div>
-                          <img
-                            src={item.image}
-                            width={100}
-                            height={100}
-                            alt=""
-                          />
+
+                          {!item.isVideo ? (
+                            <img
+                              src={
+                                item.image
+                                  ? `https://cdnflux.dypius.com/${item.image}`
+                                  : require(`../RecentlyListed/assets/nftPlaceholder1.png`)
+                              }
+                              className="card-img2"
+                              width={100}
+                              height={100}
+                              alt=""
+                            />
+                          ) : (
+                            <video
+                              preload="auto"
+                              className="card-img2"
+                              width={100}
+                              height={100}
+                              src={`https://cdnflux.dypius.com/${item.image}`}
+                              autoPlay={true}
+                              loop={true}
+                              muted="muted"
+                              playsInline={true}
+                              // onClick={player}
+                              controlsList="nodownload"
+                            ></video>
+                          )}
                           <div className="d-flex flex-column">
                             <div className="d-flex align-items-center gap-1">
                               <h6 className="trending-card-title mb-0">
-                                {item.title}
+                                {item.tokenName} {item.name}
                               </h6>
                               <img src={checkIcon} alt="" />
                             </div>
                             <div className="d-flex flex-column">
                               <h6 className="trending-card-cfx-price mb-0">
-                                {item.cfxPrice} CFX
+                                {getFormattedNumber(item.amount / 1e18)} WCFX
                               </h6>
                               <span className="trending-card-usd-price mb-0">
-                                ($ {item.usdPrice})
+                                (${" "}
+                                {getFormattedNumber(
+                                  (item.amount / 1e18) * cfxPrice
+                                )}
+                                )
                               </span>
                             </div>
                           </div>
-                          <div className="sale-tag d-flex align-items-center gap-1">
-                            <span className="mb-0">On Sale</span>
-                            <img src={fireIcon} alt="" />
-                          </div>
                         </NavLink>
-                        <span className="list-date">Listed 2 hours ago</span>
+                        <span className="list-date">
+                          Sold{" "}
+                          {moment
+                            .duration(item.blockTimestamp * 1000 - Date.now())
+                            .humanize(true)}
+                        </span>
                       </div>
-                    ))}
+                    );
+                  })
+                ) : loading === true ? (
+                  <>
+                  <Skeleton variant="rounded" width={"100%"} height={135} />
+                  <Skeleton variant="rounded" width={"100%"} height={135} />
+                  <Skeleton variant="rounded" width={"100%"} height={135} />
+                  <Skeleton variant="rounded" width={"100%"} height={135} />
+                  <Skeleton variant="rounded" width={"100%"} height={135} />
+                  <Skeleton variant="rounded" width={"100%"} height={135} />
+                  <Skeleton variant="rounded" width={"100%"} height={135} />
+                  <Skeleton variant="rounded" width={"100%"} height={135} />
+                  <Skeleton variant="rounded" width={"100%"} height={135} />
+                  </>
+                ) : (
+                  dummyCards.map((item, index) => (
+                    <div
+                      className="trending-card p-3 d-flex align-items-center position-relative gap-2"
+                      key={index}
+                    >
+                      <NavLink
+                        to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
+                        className="w-100 d-flex align-items-center position-relative gap-2"
+                        key={index}
+                        style={{ textDecoration: "none" }}
+                      >
+                        <div className="trending-tag">
+                          <span className="mb-0">{index + 1}</span>
+                        </div>
+                        <img src={item.image} width={100} height={100} alt="" />
+                        <div className="d-flex flex-column">
+                          <div className="d-flex align-items-center gap-1">
+                            <h6 className="trending-card-title mb-0">
+                              {item.title}
+                            </h6>
+                            <img src={checkIcon} alt="" />
+                          </div>
+                          <div className="d-flex flex-column">
+                            <h6 className="trending-card-cfx-price mb-0">
+                              {item.cfxPrice} CFX
+                            </h6>
+                            <span className="trending-card-usd-price mb-0">
+                              ($ {item.usdPrice})
+                            </span>
+                          </div>
+                        </div>
+                        <div className="sale-tag d-flex align-items-center gap-1">
+                          <span className="mb-0">On Sale</span>
+                          <img src={fireIcon} alt="" />
+                        </div>
+                      </NavLink>
+                      <span className="list-date">Listed 2 hours ago</span>
+                    </div>
+                  ))
+                )}
               </div>
             ) : (
               <Slider {...settings}>

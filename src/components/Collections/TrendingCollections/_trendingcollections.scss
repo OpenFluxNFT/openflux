@@ -37,6 +37,27 @@
     border-radius: 12px;
     background: #23244E;
     border: 1px solid transparent;
+
+    .trending-card-cfx-price {
+      color: #fff;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: normal;
+      letter-spacing: 1px;
+      text-transform: capitalize;
+    }
+
+    .trending-card-usd-price {
+      color: #3dbda7;
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 300;
+      line-height: normal;
+      letter-spacing: 0.5px;
+      text-transform: capitalize;
+    }
+
   .trending-collection-title {
     color: #fff;
     font-size: 16px;
@@ -84,4 +105,10 @@
 
 .trending-collection-card:hover {
   border: 1px solid #2f80ed;
+}
+
+
+.trending-collections-nft-img {
+  border-radius: 10px 0px 0px 10px;
+  object-fit: cover;
 }

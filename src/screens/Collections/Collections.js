@@ -5,7 +5,12 @@ import TrendingCollections from "../../components/Collections/TrendingCollection
 import CollectionCategories from "../../components/Collections/CollectionCategories/CollectionCategories";
 import { NavLink } from "react-router-dom";
 
-const Collections = ({ allCollections, allCollectionsOrdered }) => {
+const Collections = ({
+  allCollections,
+  allCollectionsOrdered,
+  recentlySoldNfts,
+  cfxPrice,
+}) => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -16,10 +21,10 @@ const Collections = ({ allCollections, allCollectionsOrdered }) => {
         allCollections={allCollections}
         allCollectionsOrdered={allCollectionsOrdered}
       />
-      <TrendingCollections allCollections={allCollections} />
+      <TrendingCollections allCollections={allCollections} recentlySoldNfts={recentlySoldNfts} cfxPrice={cfxPrice} />
       <CollectionCategories allCollections={allCollections} />
       <div className="d-flex justify-content-center">
-        <NavLink to='/all-collections'>
+        <NavLink to="/all-collections">
           <button className="buy-btn px-5 m-auto">Explore all</button>
         </NavLink>
       </div>

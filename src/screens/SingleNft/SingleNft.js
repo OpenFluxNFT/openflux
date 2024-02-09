@@ -413,6 +413,21 @@ const SingleNft = ({
           });
           setNftData(...finalArray);
           setLoading(false);
+        } else {
+          finalArray.push({
+            ...filteredResult,
+            owner: owner.toLowerCase(),
+            collectionName: collectionName,
+            isListed: isListed,
+            price: price,
+            listingIndex: listingIndex,
+            expiresAt: expiresAt,
+            favoriteCount: favoriteCount,
+            nftSymbol: nftSymbol,
+            attributes: "false",
+          });
+          setNftData(...finalArray);
+          setLoading(false);
         }
       } else {
         const nftdata = await fetch(
@@ -437,6 +452,20 @@ const SingleNft = ({
             expiresAt: expiresAt,
             favoriteCount: favoriteCount,
             nftSymbol: nftSymbol,
+          });
+          setNftData(...finalArray);
+          setLoading(false);
+        } else {
+          finalArray.push({
+            owner: owner.toLowerCase(),
+            collectionName: collectionName,
+            isListed: isListed,
+            price: price,
+            listingIndex: 0,
+            expiresAt: expiresAt,
+            favoriteCount: favoriteCount,
+            nftSymbol: nftSymbol,
+            attributes: "false",
           });
           setNftData(...finalArray);
           setLoading(false);
@@ -567,6 +596,21 @@ const SingleNft = ({
             });
 
             setNftData(...finalArray);
+          } else {
+            finalArray.push({
+              ...filteredResult,
+              owner: owner.toLowerCase(),
+              collectionName: collectionName,
+              isListed: isListed,
+              price: price,
+              listingIndex: listingIndex,
+              expiresAt: expiresAt,
+              favoriteCount: favoriteCount,
+              nftSymbol: nftSymbol,
+              attributes: "false",
+            });
+            setNftData(...finalArray);
+            setLoading(false);
           }
         } else {
           const nftdata = await fetch(
@@ -592,6 +636,21 @@ const SingleNft = ({
             });
 
             setNftData(...finalArray);
+          }else {
+            finalArray.push({
+              
+              owner: owner.toLowerCase(),
+              collectionName: collectionName,
+              isListed: isListed,
+              price: price,
+              listingIndex: 0,
+              expiresAt: expiresAt,
+              favoriteCount: favoriteCount,
+              nftSymbol: nftSymbol,
+              attributes: 'false'
+            });
+            setNftData(...finalArray);
+            setLoading(false);
           }
         }
       }
@@ -700,6 +759,14 @@ const SingleNft = ({
                   listingIndex: listingIndex,
                   isApproved: isApprovedresult,
                 });
+              } else  {
+                nftListedArray.push({
+                  ...listednftsArray[j],
+                  nftSymbol: nftSymbol,
+                  listingIndex: listingIndex,
+                  isApproved: isApprovedresult,
+                  attributes: 'false'
+                });
               }
             })
           );
@@ -748,6 +815,14 @@ const SingleNft = ({
                 owner: owner,
                 nftAddress: nftAddress,
                 nftSymbol: nftSymbol,
+              });
+            } else  {
+              nftListedArray.push({
+                tokenId: Number(tokenByIndex),
+                owner: owner,
+                nftAddress: nftAddress,
+                nftSymbol: nftSymbol,
+                attributes: 'false'
               });
             }
           })

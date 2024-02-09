@@ -39,8 +39,6 @@ const CollectionPage = ({
   const [uniqueOwners, setUniqueOwners] = useState(0);
   const [uniqueOwnersPercentage, setUniqueOwnersPercentage] = useState(0);
 
-
-
   const [next, setnext] = useState(12);
   const baseURL = "https://confluxapi.worldofdypians.com";
   const dataFetchedRef = useRef(false);
@@ -64,15 +62,17 @@ const CollectionPage = ({
     {
       title: "Listed",
       value: getFormattedNumber(totalListedNfts ?? 0, 0),
-      valueType: `${getFormattedNumber(totalSupplyPerCollection === 0 ? 0 :
-        (totalListedNfts ?? 0 * 100) / totalSupplyPerCollection,
+      valueType: `${getFormattedNumber(
+        totalSupplyPerCollection === 0
+          ? 0
+          : (totalListedNfts ?? 0 * 100) / totalSupplyPerCollection,
         2
       )}%`,
     },
     {
       title: "Owners (unique)",
-      value: getFormattedNumber(uniqueOwners ?? 0 ,0),
-      valueType: `${getFormattedNumber(uniqueOwnersPercentage ?? 0,0)}%`,
+      value: getFormattedNumber(uniqueOwners ?? 0, 0),
+      valueType: `${getFormattedNumber(uniqueOwnersPercentage ?? 0, 0)}%`,
     },
   ];
 
@@ -264,6 +264,14 @@ const CollectionPage = ({
                 owner: owner,
                 tokenName: tokenName,
               });
+            } else {
+              nftArray.push({
+                tokenId: Number(tokenByIndex),
+                name: `#${tokenByIndex}`,
+                owner: owner,
+                tokenName: tokenName,
+                metadatas: false,
+              });
             }
           })
         );
@@ -316,7 +324,7 @@ const CollectionPage = ({
       }
 
       if (totalSupply && totalSupply > 0) {
-        const limit = totalSupply >= next ? next : totalSupply
+        const limit = totalSupply >= next ? next : totalSupply;
         await Promise.all(
           window.range(next - nftPerRow, limit - 1).map(async (i) => {
             let tokenByIndex = 0;
@@ -523,7 +531,7 @@ const CollectionPage = ({
       });
 
     if (result && result.status === 200) {
-      setfloorPrice(result.data.floorPrice/ 1e18);
+      setfloorPrice(result.data.floorPrice / 1e18);
     }
   };
 
@@ -573,7 +581,7 @@ const CollectionPage = ({
     getCollectionFloorPrice();
     getCollectionTotalSupply();
     getCollectionInfo();
-    getCollectionUniqueOwners()
+    getCollectionUniqueOwners();
   }, []);
 
   useEffect(() => {

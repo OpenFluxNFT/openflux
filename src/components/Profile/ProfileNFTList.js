@@ -43,6 +43,8 @@ const ProfileNFTList = ({
   const [favoritesOption, setfavoritesOption] = useState("items");
   const [gridView, setGridView] = useState("small-grid");
   const [loading, setLoading] = useState(false);
+  const [selectedCollection, setselectedCollection] = useState([]);
+  const [userCollectionArrayFinal, setuserCollectionArrayFinal] = useState([]);
 
   const navigate = useNavigate();
 
@@ -132,6 +134,49 @@ const ProfileNFTList = ({
     });
   };
 
+  const handleAddCollections = (tag) => {
+  //   let tagArray = selectedCollection;
+
+  //   if (
+  //     tagArray.length > 0 &&
+  //     tagArray.find((obj) => {
+  //       return (
+  //         obj.collectionName === tag.collectionName &&
+  //         obj.nftAddress === tag.nftAddress
+  //       );
+  //     })
+  //   ) {
+  //     const newArray = tagArray.filter(function (obj) {
+  //       return (
+  //         obj.collectionName !== tag.collectionName &&
+  //         obj.nftAddress !== tag.nftAddress
+  //       );
+  //     });
+
+  //     tagArray = newArray;
+  //   } else {
+  //     tagArray.push(tag);
+  //   }
+
+  //   setselectedCollection(tagArray);
+  };
+
+  // useEffect(() => {
+  //   setuserCollectionArrayFinal(userCollectionArray);
+  // }, [userCollectionArray]);
+
+  // useEffect(() => {
+  //   if (selectedCollection.length === 0) {
+  //     setuserCollectionArrayFinal(userCollectionArray);
+  //   } else {
+  //     const finalobj = userCollectionArray.filter((obj) => {
+  //       return obj.nftAddress.toLowerCase() === selectedCollection.nftAddress.toLowerCase();
+  //     });
+  //     setuserCollectionArrayFinal(finalobj);
+  //   }
+  // }, [selectedCollection]);
+
+
   return (
     <div className="container-lg">
       <div className="row collection-list-wrapper py-4 px-2">
@@ -186,6 +231,9 @@ const ProfileNFTList = ({
                                     "&.Mui-checked": {
                                       color: "#3DBDA7",
                                     },
+                                  }}
+                                  onChange={() => {
+                                    handleAddCollections(item);
                                   }}
                                 />
                               }

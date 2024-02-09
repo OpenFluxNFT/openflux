@@ -226,7 +226,13 @@ const SingleNft = ({
         setbestOffer(obj);
 
         if (offerArray && offerArray.length > 0) {
-          setofferData(...offerArray);
+          const hasExpired2 = moment
+            .duration(offerArray[0].expiresAt * 1000 - Date.now())
+            .humanize(true)
+            .includes("ago");
+          if (!hasExpired2) {
+            setofferData(...offerArray);
+          }
         }
       }
 
@@ -903,7 +909,7 @@ const SingleNft = ({
     fetchNftSaleHistory(nftAddress, nftId);
     getCollectionFloorPrice();
     refreshMetadata(nftId);
-    getCollectionInfo()
+    getCollectionInfo();
   }, []);
 
   useEffect(() => {

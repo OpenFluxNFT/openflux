@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./_trendingcollections.scss";
 import Slider from "react-slick";
 import checkIcon from "../TopCollections/assets/checkIcon.svg";
@@ -16,6 +16,7 @@ import wodPlaceholder from "./assets/wodPlaceholder.png";
 import timepiecePlaceholder from "./assets/timepiecePlaceholder.png";
 import { NavLink } from "react-router-dom";
 import getFormattedNumber from "../../../hooks/get-formatted-number";
+import { Skeleton } from "@mui/material";
 
 const TrendingCollections = ({
   allCollections,
@@ -25,6 +26,8 @@ const TrendingCollections = ({
   const windowSize = useWindowSize();
   const [option, setOption] = useState("trending");
   const [time, setTime] = useState("24h");
+  const [recents, setRecents] = useState([])
+  const [loading, setLoading] = useState(true)
 
   const settings = {
     dots: true,
@@ -121,6 +124,47 @@ const TrendingCollections = ({
     },
   ];
 
+  const categorizeItems = (val) => {
+    setLoading(true)
+    setTime(val);
+    const currentTime = Math.floor(Date.now() / 1000); // Get current timestamp in seconds
+    const oneDayInSeconds = 24 * 60 * 60;
+    const sevenDaysInSeconds = 7 * oneDayInSeconds;
+    const thirtyDaysInSeconds = 30 * oneDayInSeconds;
+
+    const items24HoursAgo = recentlySoldNfts.filter(
+      (item) =>
+        currentTime - parseInt(item.blockTimestamp, 10) <= oneDayInSeconds
+    );
+    const items7DaysAgo = recentlySoldNfts.filter(
+      (item) =>
+        currentTime - parseInt(item.blockTimestamp, 10) <= sevenDaysInSeconds
+    );
+    const items30DaysAgo = recentlySoldNfts.filter(
+      (item) =>
+        currentTime - parseInt(item.blockTimestamp, 10) <= thirtyDaysInSeconds
+    );
+
+    if (val === "24h") {
+      setRecents(items24HoursAgo);
+    } else if (val === "7d") {
+      setRecents(items7DaysAgo);
+    } else {
+      setRecents(items30DaysAgo);
+    }
+
+    setTimeout(() => {
+      setLoading(false)
+    }, 1500);
+  };
+
+
+  useEffect(() => {
+    categorizeItems("24h");
+    setLoading(false);
+  }, [recentlySoldNfts]);
+
+
   return (
     <div className="container-fluid trending-sales-wrapper pt-4 pb-5 px-0">
       <div className="container-lg">
@@ -191,7 +235,7 @@ const TrendingCollections = ({
                 className={`trending-tab ${
                   time === "24h" && "trending-tab-active"
                 } p-2`}
-                onClick={() => setTime("24h")}
+                onClick={() => categorizeItems("24h")}
               >
                 <h6 className="mb-0">24h</h6>
               </div>
@@ -199,7 +243,7 @@ const TrendingCollections = ({
                 className={`trending-tab ${
                   time === "7d" && "trending-tab-active"
                 } p-2`}
-                onClick={() => setTime("7d")}
+                onClick={() => categorizeItems("7d")}
               >
                 <h6 className="mb-0">7D</h6>
               </div>
@@ -207,7 +251,7 @@ const TrendingCollections = ({
                 className={`trending-tab ${
                   time === "30d" && "trending-tab-active"
                 } p-2`}
-                onClick={() => setTime("30d")}
+                onClick={() => categorizeItems("30d")}
               >
                 <h6 className="mb-0">30D</h6>
               </div>
@@ -217,10 +261,10 @@ const TrendingCollections = ({
         <hr className="trending-divider my-4" />
         <div className="row">
           <div className="trending-collections-grid">
-            {option === "recentSales" &&
+            {loading === false && option === "recentSales" && 
             recentlySoldNfts &&
             recentlySoldNfts.length > 0
-              ? recentlySoldNfts.slice(0, 10).map((item, index) => {
+              ? recents.slice(0, 10).map((item, index) => {
                   return (
                     <div
                       className="d-flex align-items-center gap-3"
@@ -291,6 +335,19 @@ const TrendingCollections = ({
                     </div>
                   );
                 })
+                : loading === true ?
+                <>
+                <Skeleton variant="rounded" width={"100%"} height={122} />
+                  <Skeleton variant="rounded" width={"100%"} height={122} />
+                  <Skeleton variant="rounded" width={"100%"} height={122} />
+                  <Skeleton variant="rounded" width={"100%"} height={122} />
+                  <Skeleton variant="rounded" width={"100%"} height={122} />
+                  <Skeleton variant="rounded" width={"100%"} height={122} />
+                  <Skeleton variant="rounded" width={"100%"} height={122} />
+                  <Skeleton variant="rounded" width={"100%"} height={122} />
+                  <Skeleton variant="rounded" width={"100%"} height={122} />
+                  <Skeleton variant="rounded" width={"100%"} height={122} />
+                </>
               : allCollections
                   .slice(
                     option === "trending"

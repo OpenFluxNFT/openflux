@@ -38,6 +38,7 @@ const ProfileNFTList = ({
   cfxPrice,
   allOffers,
   bestOffer,
+  userCollectionArray,
 }) => {
   const [favoritesOption, setfavoritesOption] = useState("items");
   const [gridView, setGridView] = useState("small-grid");
@@ -164,66 +165,37 @@ const ProfileNFTList = ({
                     Collections
                   </button>
                 </h2>
-                <div
-                  id="collapseOne"
-                  className="accordion-collapse collapse"
-                  aria-labelledby="headingOne"
-                  data-bs-parent="#accordionExample"
-                >
-                  <div className="accordion-body">
-                    <FormGroup>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            size="small"
-                            sx={{
-                              color: "white",
-                              "&.Mui-checked": {
-                                color: "#3DBDA7",
-                              },
-                            }}
-                          />
-                        }
-                        label="Cats And Watches Society"
-                      />
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            size="small"
-                            sx={{
-                              color: "white",
-                              "&.Mui-checked": {
-                                color: "#3DBDA7",
-                              },
-                            }}
-                          />
-                        }
-                        label="CAWS Timepiece"
-                        sx={{
-                          color: "#FFF",
-                          fontSize: "10px",
-                          fontStyle: "normal",
-                          fontWeight: "500",
-                          lineHeight: "normal",
-                        }}
-                      />
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            size="small"
-                            sx={{
-                              color: "white",
-                              "&.Mui-checked": {
-                                color: "#3DBDA7",
-                              },
-                            }}
-                          />
-                        }
-                        label="Disabled"
-                      />
-                    </FormGroup>
-                  </div>
-                </div>
+                {userCollectionArray &&
+                  userCollectionArray.length &&
+                  userCollectionArray.map((item, index) => {
+                    return (
+                      <div
+                        id="collapseOne"
+                        className="accordion-collapse collapse"
+                        aria-labelledby="headingOne"
+                        data-bs-parent="#accordionExample"
+                      >
+                        <div className="accordion-body">
+                          <FormGroup>
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  size="small"
+                                  sx={{
+                                    color: "white",
+                                    "&.Mui-checked": {
+                                      color: "#3DBDA7",
+                                    },
+                                  }}
+                                />
+                              }
+                              label={item.collectionName}
+                            />
+                          </FormGroup>
+                        </div>
+                      </div>
+                    );
+                  })}
               </div>
               <div className="accordion-item">
                 <h2 className="accordion-header" id="headingTwo">
@@ -631,8 +603,10 @@ const ProfileNFTList = ({
                             ) : (
                               <img
                                 src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
-                                className="card-img"
+                                className="table-img nftimg2"
                                 alt=""
+                                height={36}
+                                width={36}
                               />
                             )}
                             {item.tokenName} #{item.tokenId}

@@ -538,7 +538,10 @@ function App() {
             .catch((e) => {
               console.log(e);
             });
-          allUserCollections.push({ collectionName: nftsOwned[i].name });
+          allUserCollections.push({
+            collectionName: nftsOwned[i].name,
+            nftAddress: nftsOwned[i].contract,
+          });
           if (result && result.status === 200) {
             const abi = JSON.parse(result.data.result);
             const web3 = window.confluxWeb3;

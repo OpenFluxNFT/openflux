@@ -36,22 +36,26 @@ const CollectionList = ({
   cfxPrice,
   coinbase,
   onRefreshListings,
-  totalSupplyPerCollection,hasListedNfts
+  totalSupplyPerCollection,
+  hasListedNfts,
 }) => {
   const windowSize = useWindowSize();
   const [openFilters, setOpenFilters] = useState(false);
   const [buyStatus, setbuyStatus] = useState("buy"); //buy
   const [buyloading, setbuyLoading] = useState(false); //buy
   const [selectedNftId, setSelectedNftId] = useState(""); //buy
-  const [minPrice, setMinPrice] = useState(0)
-  const [maxPrice, setMaxPrice] = useState(0)
-  const [dummyMinPrice, setDummyMinPrice] = useState(0)
-  const [dummyMaxPrice, setDummyMaxPrice] = useState(0)
-  const [dummyTraits, setDummyTraits] = useState(["White", "Black", "Yellow", "Blue"])
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(0);
+  const [dummyMinPrice, setDummyMinPrice] = useState(0);
+  const [dummyMaxPrice, setDummyMaxPrice] = useState(0);
+  const [dummyTraits, setDummyTraits] = useState([
+    "White",
+    "Black",
+    "Yellow",
+    "Blue",
+  ]);
   const [queryItems, setQueryItems] = useState([]);
-  const [search, setSearch] = useState("")
-
-  
+  const [search, setSearch] = useState("");
 
   const navigate = useNavigate();
 
@@ -130,31 +134,32 @@ const CollectionList = ({
     },
   ];
 
-
   const checkIfExists = (itemToCheck) => {
-    return queryItems.some(item => item.type.toLowerCase() === itemToCheck.type.toLowerCase() && item.value.toLowerCase() === itemToCheck.value.toLowerCase());
+    return queryItems.some(
+      (item) =>
+        item.type.toLowerCase() === itemToCheck.type.toLowerCase() &&
+        item.value.toLowerCase() === itemToCheck.value.toLowerCase()
+    );
   };
 
   const handleKeyPress = (val) => (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       // Call your function here
-      addOrRemove(val)
-
+      addOrRemove(val);
     }
   };
-
 
   const addOrRemove = (itemToAddOrRemove) => {
     setQueryItems((prevItems) => {
       const targetType = String(itemToAddOrRemove.type).toLowerCase();
       const targetValue = String(itemToAddOrRemove.value).toLowerCase();
-  
+
       const itemExists = prevItems.some(
         (item) =>
           String(item.type).toLowerCase() === targetType &&
           String(item.value).toLowerCase() === targetValue
       );
-  
+
       if (itemExists) {
         // Remove the item if it exists
         return prevItems.filter(
@@ -193,12 +198,11 @@ const CollectionList = ({
   //   console.log(queryItems.indexOf(val) > -1)
   // }
 
-
   const [gridView, setGridView] = useState("small-grid");
   const [nftFinalArray, setnftFinalArray] = useState([]);
 
   const baseURL = "https://confluxapi.worldofdypians.com";
- 
+
   const fetchFavoriteCounts = async () => {
     if (allNftArray && allNftArray.length > 0) {
       let favoriteCount = 0;
@@ -486,10 +490,17 @@ const CollectionList = ({
                             className="price-input"
                             onChange={(e) => setDummyMaxPrice(e.target.value)}
                             min={dummyMinPrice}
-
                           />
                         </div>
-                        <button className="buy-btn" onClick={() => {setMinPrice(dummyMinPrice); setMaxPrice(dummyMaxPrice);}}>Apply</button>
+                        <button
+                          className="buy-btn"
+                          onClick={() => {
+                            setMinPrice(dummyMinPrice);
+                            setMaxPrice(dummyMaxPrice);
+                          }}
+                        >
+                          Apply
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -548,27 +559,35 @@ const CollectionList = ({
                                     data-bs-parent="#accordionExample2"
                                   >
                                     <div className="accordion-body px-2">
-                                     {dummyTraits.map((trait, index) => (
-                                       <FormGroup>
-                                       <FormControlLabel
-                                        onChange={() => addOrRemove({type: item.trait_type, value: trait})}
-                                         control={
-                                           <Checkbox
-                                           checked={checkIfExists({type: item.trait_type, value: trait})}
-                                             size="small"
-                                             sx={{
-                                               color: "white",
-                                               "&.Mui-checked": {
-                                                 color: "#3DBDA7",
-                                               },
-                                             }}
-                                           />
-                                         }
-                                         key={index}
-                                         label={trait}
-                                       />
-                                     </FormGroup>
-                                     ))}
+                                      {dummyTraits.map((trait, index) => (
+                                        <FormGroup>
+                                          <FormControlLabel
+                                            onChange={() =>
+                                              addOrRemove({
+                                                type: item.trait_type,
+                                                value: trait,
+                                              })
+                                            }
+                                            control={
+                                              <Checkbox
+                                                checked={checkIfExists({
+                                                  type: item.trait_type,
+                                                  value: trait,
+                                                })}
+                                                size="small"
+                                                sx={{
+                                                  color: "white",
+                                                  "&.Mui-checked": {
+                                                    color: "#3DBDA7",
+                                                  },
+                                                }}
+                                              />
+                                            }
+                                            key={index}
+                                            label={trait}
+                                          />
+                                        </FormGroup>
+                                      ))}
                                     </div>
                                   </div>
                                 </div>
@@ -601,7 +620,10 @@ const CollectionList = ({
                     placeholder="Search anything"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    onKeyDown={handleKeyPress({type: "Search", value: search})}
+                    onKeyDown={handleKeyPress({
+                      type: "Search",
+                      value: search,
+                    })}
                   />
                 </div>
               </div>
@@ -688,60 +710,77 @@ const CollectionList = ({
                 </div>
               </div>
             </div>
-            {queryItems.length > 0 &&
+            {queryItems.length > 0 && (
               <div className="d-flex mt-3 align-items-center gap-2 flex-wrap">
-              {queryItems.map((item, index) => (
-                <div key={index} className="collection-query p-2 d-flex gap-4 align-items-center justify-content-center">
-                <div className="d-flex align-items-center gap-1">
-                  <h6 className="collection-query-type mb-0">{item.type}:</h6>
-                  <h6 className="collection-query-value mb-0">{item.value}</h6>
-                </div>
-                <img
-                  src={xMark}
-                  width={10}
-                  height={10}
-                  style={{ cursor: "pointer" }}
-                  alt=""
-                  onClick={() => addOrRemove(item)}
-                />
+                {queryItems.map((item, index) => (
+                  <div
+                    key={index}
+                    className="collection-query p-2 d-flex gap-4 align-items-center justify-content-center"
+                  >
+                    <div className="d-flex align-items-center gap-1">
+                      <h6 className="collection-query-type mb-0">
+                        {item.type}:
+                      </h6>
+                      <h6 className="collection-query-value mb-0">
+                        {item.value}
+                      </h6>
+                    </div>
+                    <img
+                      src={xMark}
+                      width={10}
+                      height={10}
+                      style={{ cursor: "pointer" }}
+                      alt=""
+                      onClick={() => addOrRemove(item)}
+                    />
+                  </div>
+                ))}
+                {minPrice > 0 && (
+                  <div className="collection-query p-2 d-flex gap-4 align-items-center justify-content-center">
+                    <div className="d-flex align-items-center gap-1">
+                      <h6 className="collection-query-type mb-0">Min Price:</h6>
+                      <h6 className="collection-query-value mb-0">
+                        {minPrice}
+                      </h6>
+                    </div>
+                    <img
+                      src={xMark}
+                      width={10}
+                      height={10}
+                      style={{ cursor: "pointer" }}
+                      alt=""
+                      onClick={() => setMinPrice(0)}
+                    />
+                  </div>
+                )}
+                {maxPrice > 0 && (
+                  <div className="collection-query p-2 d-flex gap-4 align-items-center justify-content-center">
+                    <div className="d-flex align-items-center gap-1">
+                      <h6 className="collection-query-type mb-0">Max Price:</h6>
+                      <h6 className="collection-query-value mb-0">
+                        {maxPrice}
+                      </h6>
+                    </div>
+                    <img
+                      src={xMark}
+                      width={10}
+                      height={10}
+                      style={{ cursor: "pointer" }}
+                      alt=""
+                      onClick={() => setMaxPrice(0)}
+                    />
+                  </div>
+                )}
+                <button
+                  className="buy-btn py-1 px-2"
+                  onClick={() => setQueryItems([])}
+                  style={{ borderRadius: "8px" }}
+                >
+                  Clear All
+                </button>
               </div>
-              ))}
-              {minPrice > 0 && 
-              <div  className="collection-query p-2 d-flex gap-4 align-items-center justify-content-center">
-              <div className="d-flex align-items-center gap-1">
-                <h6 className="collection-query-type mb-0">Min Price:</h6>
-                <h6 className="collection-query-value mb-0">{minPrice}</h6>
-              </div>
-              <img
-                src={xMark}
-                width={10}
-                height={10}
-                style={{ cursor: "pointer" }}
-                alt=""
-                onClick={() => setMinPrice(0)}
-              />
-            </div>
-              }
-              {maxPrice > 0 && 
-              <div  className="collection-query p-2 d-flex gap-4 align-items-center justify-content-center">
-              <div className="d-flex align-items-center gap-1">
-                <h6 className="collection-query-type mb-0">Max Price:</h6>
-                <h6 className="collection-query-value mb-0">{maxPrice}</h6>
-              </div>
-              <img
-                src={xMark}
-                width={10}
-                height={10}
-                style={{ cursor: "pointer" }}
-                alt=""
-                onClick={() => setMaxPrice(0)}
-              />
-            </div>
-              }
-              <button className="buy-btn py-1 px-2" onClick={() => setQueryItems([])} style={{borderRadius: "8px"}}>Clear All</button>
-            </div>
-            }
-          
+            )}
+
             {allNftArray && allNftArray.length === 0 && loading === false && (
               <span className="text-white d-flex w-100 justify-content-center mt-5">
                 This collection doesn't have any NFTs.

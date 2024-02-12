@@ -20,7 +20,8 @@ const Profile = ({
   handleRemoveFavoriteNft,
   userNftFavsInitial,
   userNftsOwnedArray,
-  cfxPrice,userCollectionArray
+  cfxPrice,
+  userCollectionArray,
 }) => {
   const [option, setOption] = useState("collected");
   const profileSocials = ["website", "twitter", "instagram"];
@@ -295,8 +296,6 @@ const Profile = ({
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  console.log(userData, "Data");
 
   return (
     <div className="container-fluid py-4 home-wrapper px-0">

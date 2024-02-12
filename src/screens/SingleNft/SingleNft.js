@@ -374,9 +374,19 @@ const SingleNft = ({
         // setlowestPriceNftListed(ethNftsAscItem);
 
         if (filteredResult) {
-          isListed = true;
-          price = filteredResult.price;
-          expiresAt = filteredResult.expiresAt;
+          const hasExpired = moment
+            .duration(filteredResult.expiresAt * 1000 - Date.now())
+            .humanize(true)
+            .includes("ago");
+          if (hasExpired) {
+            isListed = false;
+            price = filteredResult.price;
+            expiresAt = filteredResult.expiresAt;
+          } else {
+            isListed = true;
+            price = filteredResult.price;
+            expiresAt = filteredResult.expiresAt;
+          }
         } else {
           isListed = false;
           price = 0;
@@ -558,9 +568,19 @@ const SingleNft = ({
           });
 
           if (filteredResult) {
-            isListed = true;
-            price = filteredResult.price;
-            expiresAt = filteredResult.expiresAt;
+            const hasExpired = moment
+              .duration(filteredResult.expiresAt * 1000 - Date.now())
+              .humanize(true)
+              .includes("ago");
+            if (hasExpired) {
+              isListed = false;
+              price = filteredResult.price;
+              expiresAt = filteredResult.expiresAt;
+            } else {
+              isListed = true;
+              price = filteredResult.price;
+              expiresAt = filteredResult.expiresAt;
+            }
           } else {
             isListed = false;
             price = 0;
@@ -636,9 +656,8 @@ const SingleNft = ({
             });
 
             setNftData(...finalArray);
-          }else {
+          } else {
             finalArray.push({
-              
               owner: owner.toLowerCase(),
               collectionName: collectionName,
               isListed: isListed,
@@ -647,7 +666,7 @@ const SingleNft = ({
               expiresAt: expiresAt,
               favoriteCount: favoriteCount,
               nftSymbol: nftSymbol,
-              attributes: 'false'
+              attributes: "false",
             });
             setNftData(...finalArray);
             setLoading(false);
@@ -747,26 +766,32 @@ const SingleNft = ({
                   console.error(e);
                 });
 
-              if (
-                nft_data_listed &&
-                nft_data_listed.code !== 404 &&
-                typeof nft_data_listed !== "string"
-              ) {
-                nftListedArray.push({
-                  ...nft_data_listed,
-                  ...listednftsArray[j],
-                  nftSymbol: nftSymbol,
-                  listingIndex: listingIndex,
-                  isApproved: isApprovedresult,
-                });
-              } else  {
-                nftListedArray.push({
-                  ...listednftsArray[j],
-                  nftSymbol: nftSymbol,
-                  listingIndex: listingIndex,
-                  isApproved: isApprovedresult,
-                  attributes: 'false'
-                });
+              const hasExpired = moment
+                .duration(listednftsArray[j].expiresAt * 1000 - Date.now())
+                .humanize(true)
+                .includes("ago");
+              if (!hasExpired) {
+                if (
+                  nft_data_listed &&
+                  nft_data_listed.code !== 404 &&
+                  typeof nft_data_listed !== "string"
+                ) {
+                  nftListedArray.push({
+                    ...nft_data_listed,
+                    ...listednftsArray[j],
+                    nftSymbol: nftSymbol,
+                    listingIndex: listingIndex,
+                    isApproved: isApprovedresult,
+                  });
+                } else {
+                  nftListedArray.push({
+                    ...listednftsArray[j],
+                    nftSymbol: nftSymbol,
+                    listingIndex: listingIndex,
+                    isApproved: isApprovedresult,
+                    attributes: "false",
+                  });
+                }
               }
             })
           );
@@ -816,13 +841,13 @@ const SingleNft = ({
                 nftAddress: nftAddress,
                 nftSymbol: nftSymbol,
               });
-            } else  {
-              nftListedArray.push({
+            } else {
+              nftArray.push({
                 tokenId: Number(tokenByIndex),
                 owner: owner,
                 nftAddress: nftAddress,
                 nftSymbol: nftSymbol,
-                attributes: 'false'
+                attributes: "false",
               });
             }
           })

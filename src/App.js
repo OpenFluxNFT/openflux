@@ -276,6 +276,7 @@ function App() {
               .catch((err) => {
                 console.log(err.message);
               });
+
             if (
               nft_data &&
               nft_data.code !== 404 &&
@@ -446,16 +447,34 @@ function App() {
               .catch((err) => {
                 console.log(err.message);
               });
-            if (
-              nft_data &&
-              nft_data.code !== 404 &&
-              typeof nft_data !== "string"
-            ) {
-              nftArray.push({
-                ...nft_data,
-                tokenId: Number(i),
-                contractAddress: item1.contractAddress,
-              });
+
+            const abiresult = await axios.get(
+              `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item1.contractAddress}`
+            );
+            if (abiresult && abiresult.status === 200) {
+              const web3 = window.confluxWeb3;
+
+              const abi = JSON.parse(abiresult.data.result);
+              const collection_contract = new web3.eth.Contract(
+                abi,
+                item1.contractAddress
+              );
+
+              const collectionName = await collection_contract.methods
+                .name()
+                .call().catch;
+
+              if (
+                nft_data &&
+                nft_data.code !== 404 &&
+                typeof nft_data !== "string"
+              ) {
+                nftArray.push({
+                  ...nft_data,
+                  tokenId: Number(i),
+                  contractAddress: item1.contractAddress,
+                });
+              }
             }
           });
         })

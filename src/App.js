@@ -254,6 +254,13 @@ function App() {
                 console.error(e);
               });
 
+            const collectionName = await collection_contract.methods
+              .name()
+              .call()
+              .catch((e) => {
+                console.error(e);
+              });
+
             const isApprovedresult = await window
               .isApprovedBuy(item.price)
               .catch((e) => {
@@ -288,6 +295,7 @@ function App() {
                 tokenName: tokenName,
                 isApproved: isApproved,
                 seller: seller,
+                collectionName: collectionName,
               };
             } else
               return {
@@ -295,6 +303,7 @@ function App() {
                 image: undefined,
                 tokenName: tokenName,
                 seller: seller,
+                collectionName: collectionName,
               };
           }
         })
@@ -361,6 +370,13 @@ function App() {
                 console.error(e);
               });
 
+            const collectionName = await collection_contract.methods
+              .name()
+              .call()
+              .catch((e) => {
+                console.error(e);
+              });
+
             const isApprovedresult = await window
               .isApprovedBuy(item.price)
               .catch((e) => {
@@ -395,6 +411,7 @@ function App() {
                 tokenName: tokenName,
                 isApproved: isApproved,
                 seller: seller,
+                collectionName: collectionName,
               };
             } else
               return {
@@ -402,6 +419,7 @@ function App() {
                 image: undefined,
                 tokenName: tokenName,
                 seller: seller,
+                collectionName: collectionName,
               };
           }
         })
@@ -462,7 +480,10 @@ function App() {
 
               const collectionName = await collection_contract.methods
                 .name()
-                .call().catch;
+                .call()
+                .catch((e) => {
+                  console.error(e);
+                });
 
               if (
                 nft_data &&
@@ -473,6 +494,7 @@ function App() {
                   ...nft_data,
                   tokenId: Number(i),
                   contractAddress: item1.contractAddress,
+                  collectionName: collectionName,
                 });
               }
             }
@@ -605,6 +627,13 @@ function App() {
                         console.error(e);
                       });
 
+                    const collectionName = await collection_contract.methods
+                      .name()
+                      .call()
+                      .catch((e) => {
+                        console.error(e);
+                      });
+
                     const nft_data = await fetch(
                       `https://cdnflux.dypius.com/collectionsmetadatas/${nftsOwned[
                         i
@@ -630,8 +659,9 @@ function App() {
                         owner: owner,
                         nftAddress: nftsOwned[i].contract,
                         tokenName: tokenName,
+                        collectionName: collectionName,
                       });
-                    } else if (
+                    } else if ( nft_data &&
                       nft_data.code == 404 ||
                       typeof nft_data === "string"
                     ) {
@@ -641,6 +671,7 @@ function App() {
                         owner: owner,
                         nftAddress: nftsOwned[i].contract,
                         tokenName: tokenName,
+                        collectionName: collectionName,
                       });
                     }
                   }

@@ -198,12 +198,23 @@ const CollectionPage = ({
                 .catch((e) => {
                   console.error(e);
                 });
+
+              const owner = await collection_contract.methods
+                .ownerOf(listednftsArray[j].tokenId)
+                .call()
+                .catch((e) => {
+                  console.log(e);
+                });
+
               const hasExpired = moment
                 .duration(listednftsArray[j].expiresAt * 1000 - Date.now())
                 .humanize(true)
                 .includes("ago");
 
-              if (!hasExpired) {
+              if (
+                !hasExpired &&
+                owner?.toLowerCase() === listednftsArray[j].seller.toLowerCase()
+              ) {
                 if (
                   nft_data_listed &&
                   nft_data_listed.code !== 404 &&
@@ -619,6 +630,8 @@ const CollectionPage = ({
   useEffect(() => {
     window.addEventListener("scroll", onScroll);
   });
+
+
 
   return (
     <div

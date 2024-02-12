@@ -313,6 +313,8 @@ const SingleNft = ({
     ) {
       const listednftsArray = listednfts.data.listings;
 
+      console.log("listednftsArray", listednftsArray);
+
       const abi = JSON.parse(abiresult.data.result);
       const collection_contract = new web3.eth.Contract(
         abi,
@@ -366,19 +368,16 @@ const SingleNft = ({
             item.nftAddress.toLowerCase() === nftAddress.toLowerCase()
           );
         });
-        // let ethNftsAscArray = listednftsArray.sort((a, b) => {
-        //   return a.price - b.price;
-        // });
-
-        // let ethNftsAscItem = ethNftsAscArray[0].price;
-        // setlowestPriceNftListed(ethNftsAscItem);
 
         if (filteredResult) {
           const hasExpired = moment
             .duration(filteredResult.expiresAt * 1000 - Date.now())
             .humanize(true)
             .includes("ago");
-          if (hasExpired) {
+          if (
+            hasExpired ||
+            filteredResult.seller.toLowerCase() !== owner.toLowerCase()
+          ) {
             isListed = false;
             price = filteredResult.price;
             expiresAt = filteredResult.expiresAt;
@@ -572,7 +571,10 @@ const SingleNft = ({
               .duration(filteredResult.expiresAt * 1000 - Date.now())
               .humanize(true)
               .includes("ago");
-            if (hasExpired) {
+            if (
+              hasExpired ||
+              filteredResult.seller.toLowerCase() !== owner.toLowerCase()
+            ) {
               isListed = false;
               price = filteredResult.price;
               expiresAt = filteredResult.expiresAt;
@@ -766,11 +768,21 @@ const SingleNft = ({
                   console.error(e);
                 });
 
+              const owner = await collection_contract.methods
+                .ownerOf(listednftsArray[j].tokenId)
+                .call()
+                .catch((e) => {
+                  console.log(e);
+                });
+
               const hasExpired = moment
                 .duration(listednftsArray[j].expiresAt * 1000 - Date.now())
                 .humanize(true)
                 .includes("ago");
-              if (!hasExpired) {
+              if (
+                !hasExpired &&
+                owner?.toLowerCase() === listednftsArray[j].seller.toLowerCase()
+              ) {
                 if (
                   nft_data_listed &&
                   nft_data_listed.code !== 404 &&

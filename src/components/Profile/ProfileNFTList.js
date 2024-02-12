@@ -134,31 +134,15 @@ const ProfileNFTList = ({
     });
   };
 
-  const handleAddCollections = (tag) => {
-  //   let tagArray = selectedCollection;
+  let collectionArray = [];
 
-  //   if (
-  //     tagArray.length > 0 &&
-  //     tagArray.find((obj) => {
-  //       return (
-  //         obj.collectionName === tag.collectionName &&
-  //         obj.nftAddress === tag.nftAddress
-  //       );
-  //     })
-  //   ) {
-  //     const newArray = tagArray.filter(function (obj) {
-  //       return (
-  //         obj.collectionName !== tag.collectionName &&
-  //         obj.nftAddress !== tag.nftAddress
-  //       );
-  //     });
-
-  //     tagArray = newArray;
-  //   } else {
-  //     tagArray.push(tag);
-  //   }
-
-  //   setselectedCollection(tagArray);
+  const handleAddCollections = (collection) => {
+    if (collectionArray.includes(collection)) {
+      const index = collectionArray.indexOf(collection);
+      collectionArray.splice(index, 1);
+    } else {
+      collectionArray.push(collection);
+    }
   };
 
   // useEffect(() => {
@@ -175,7 +159,6 @@ const ProfileNFTList = ({
   //     setuserCollectionArrayFinal(finalobj);
   //   }
   // }, [selectedCollection]);
-
 
   return (
     <div className="container-lg">
@@ -233,7 +216,7 @@ const ProfileNFTList = ({
                                     },
                                   }}
                                   onChange={() => {
-                                    handleAddCollections(item);
+                                    handleAddCollections(item.nftAddress);
                                   }}
                                 />
                               }

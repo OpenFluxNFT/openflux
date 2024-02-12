@@ -333,7 +333,16 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
                       </div>
                     );
                   })
-                ) : loading === true ? (
+                ) : recents.length === 0 ?
+               <>
+                <div></div>
+                  <div className="d-flex w-100 align-items-center justify-content-center" style={{minHeight: "450px"}}>
+                     <h6 className="text-white">There are no recently listed NFT's</h6>
+                  </div>
+                <div></div>
+               </>
+
+                : loading === true ? (
                   <>
                   <Skeleton variant="rounded" width={"100%"} height={135} />
                   <Skeleton variant="rounded" width={"100%"} height={135} />

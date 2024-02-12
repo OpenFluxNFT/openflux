@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom";
 import axios, { isCancel } from "axios";
 import Web3 from "web3";
 import getFormattedNumber from "../../hooks/get-formatted-number";
+import moment from "moment";
 
 const CollectionPage = ({
   coinbase,
@@ -162,7 +163,7 @@ const CollectionPage = ({
           listednftsArray &&
           listednftsArray.length > 0
         ) {
-          settotalListedNfts(listednftsArray.length);
+          // settotalListedNfts(listednftsArray.length);
 
           sethasListedNfts(true);
           await Promise.all(
@@ -198,18 +199,35 @@ const CollectionPage = ({
                   console.error(e);
                 });
 
-              if (
-                nft_data_listed &&
-                nft_data_listed.code !== 404 &&
-                typeof nft_data_listed !== "string"
-              ) {
-                nftListedArray.push({
-                  ...nft_data_listed,
-                  ...listednftsArray[j],
-                  listingIndex: listingIndex,
-                  isApproved: isApprovedresult,
-                  tokenName: tokenName,
+              const owner = await collection_contract.methods
+                .ownerOf(listednftsArray[j].tokenId)
+                .call()
+                .catch((e) => {
+                  console.log(e);
                 });
+
+              const hasExpired = moment
+                .duration(listednftsArray[j].expiresAt * 1000 - Date.now())
+                .humanize(true)
+                .includes("ago");
+
+              if (
+                !hasExpired &&
+                owner?.toLowerCase() === listednftsArray[j].seller.toLowerCase()
+              ) {
+                if (
+                  nft_data_listed &&
+                  nft_data_listed.code !== 404 &&
+                  typeof nft_data_listed !== "string"
+                ) {
+                  nftListedArray.push({
+                    ...nft_data_listed,
+                    ...listednftsArray[j],
+                    listingIndex: listingIndex,
+                    isApproved: isApprovedresult,
+                    tokenName: tokenName,
+                  });
+                }
               }
             })
           );
@@ -612,6 +630,8 @@ const CollectionPage = ({
   useEffect(() => {
     window.addEventListener("scroll", onScroll);
   });
+
+
 
   return (
     <div

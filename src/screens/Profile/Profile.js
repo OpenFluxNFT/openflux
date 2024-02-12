@@ -20,7 +20,8 @@ const Profile = ({
   handleRemoveFavoriteNft,
   userNftFavsInitial,
   userNftsOwnedArray,
-  cfxPrice,userCollectionArray
+  cfxPrice,
+  userCollectionArray,
 }) => {
   const [option, setOption] = useState("collected");
   const profileSocials = ["website", "twitter", "instagram"];
@@ -41,7 +42,6 @@ const Profile = ({
 
   const getOffer = async () => {
     let finalArray = [];
-    let offerArray = [];
     let allOffersArray = [];
 
     await Promise.all(
@@ -54,14 +54,18 @@ const Profile = ({
           .catch((e) => {
             console.log(e);
           });
-
+        const abiresult = await axios.get(
+          `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${userNftsOwnedArray[i].nftAddress}`
+        );
+        if (abiresult && abiresult.status === 200) {
+        }
         const finalResult = result[1];
         if (finalResult && finalResult.length > 0) {
           if (coinbase) {
             finalArray = finalResult.filter((object) => {
               return object.offeror.toLowerCase() === coinbase.toLowerCase();
             });
-
+            // console.log(finalResult);
             let finalArrayIndex = finalResult.findIndex((object) => {
               return object.offeror.toLowerCase() === coinbase.toLowerCase();
             });
@@ -87,9 +91,9 @@ const Profile = ({
           );
 
           await Promise.all(
-            window.range(0, finalResult.length - 1).map(async (i) => {
+            window.range(0, finalResult.length - 1).map(async (k) => {
               const balance = await contract.methods
-                .balanceOf(finalResult[i].offeror)
+                .balanceOf(finalResult[k].offeror)
                 .call()
                 .then((data) => {
                   return window.confluxWeb3.utils.fromWei(data, "ether");
@@ -97,7 +101,7 @@ const Profile = ({
 
               const allowance = await contract.methods
                 .allowance(
-                  finalResult[i].offeror,
+                  finalResult[k].offeror,
                   window.config.nft_marketplace_address
                 )
                 .call()
@@ -105,22 +109,26 @@ const Profile = ({
                   return window.confluxWeb3.utils.fromWei(data, "ether");
                 });
 
-              const priceFormatted = finalResult[i].amount / 1e18;
+              const priceFormatted = finalResult[k].amount / 1e18;
               const hasExpired = moment
-                .duration(finalResult[i].expiresAt * 1000 - Date.now())
+                .duration(finalResult[k].expiresAt * 1000 - Date.now())
                 .humanize(true)
                 .includes("ago");
-              if (!hasExpired) {
-                return allOffersArray.push({
-                  ...finalResult[i],
-                  index: i,
-                  isAllowed:
-                    balance >= priceFormatted && allowance >= priceFormatted,
-                  nftAddress: userNftsOwnedArray[i].nftAddress,
-                });
+
+              if (hasExpired === false) {
+                if (userNftsOwnedArray[i] && userNftsOwnedArray[i].nftAddress) {
+                  return allOffersArray.push({
+                    ...finalResult[k],
+                    index: k,
+                    isAllowed:
+                      balance >= priceFormatted && allowance >= priceFormatted,
+                    nftAddress: userNftsOwnedArray[i]?.nftAddress,
+                  });
+                }
               }
             })
           );
+
           setallOffers(allOffersArray);
         } else {
           // setbestOffer([]);
@@ -295,8 +303,6 @@ const Profile = ({
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  console.log(userData, "Data");
 
   return (
     <div className="container-fluid py-4 home-wrapper px-0">

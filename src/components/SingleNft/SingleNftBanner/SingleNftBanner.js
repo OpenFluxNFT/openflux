@@ -732,7 +732,7 @@ const SingleNftBanner = ({
                       There is a listing fee of 0.1% for the selected duration
                     </span> */}
                   </>
-                ) : isOwner &&
+                ) :
                   nftData.collectionName &&
                   isListed &&
                   loading === false ? (

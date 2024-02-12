@@ -48,6 +48,8 @@ const CollectionList = ({
   const [maxPrice, setMaxPrice] = useState(0);
   const [dummyMinPrice, setDummyMinPrice] = useState(0);
   const [dummyMaxPrice, setDummyMaxPrice] = useState(0);
+  const [collectionLoading, setCollectionLoading] = useState(false)
+  const [listType, setListType] = useState("")
   const [dummyTraits, setDummyTraits] = useState([
     "White",
     "Black",
@@ -56,6 +58,8 @@ const CollectionList = ({
   ]);
   const [queryItems, setQueryItems] = useState([]);
   const [search, setSearch] = useState("");
+
+  const [nftList, setNftList] = useState([]);
 
   const navigate = useNavigate();
 
@@ -260,6 +264,55 @@ const CollectionList = ({
     }
   };
 
+
+  const setListed = (type) => {
+    setCollectionLoading(true)
+    setListType(type)
+if(type === "listed"){
+  const filteredList = nftList.filter((item) => {
+    return item.price > 0
+  })
+
+  setNftList(filteredList)
+}else{
+  setNftList(allNftArray)
+}
+
+setTimeout(() => {
+  setCollectionLoading(false)
+}, 1500);
+  }
+
+  const setPrices = (min, max) => {
+    setCollectionLoading(true);
+    setMinPrice(min);
+    setMaxPrice(max);
+
+    if (min === 0 && max === 0) {
+      
+      setNftList(allNftArray);
+      return;
+    } else if (max !== 0) {
+      const filterPrices = nftList.filter((item) => {
+        if (item.price) {
+          return item.price / 10 ** 18 >= min || item.price / 10 ** 18 <= max;
+        }
+      });
+      setNftList(filterPrices);
+    } else {
+      const filterPrices = nftList.filter((item) => {
+        if (item.price) {
+          return item.price / 10 ** 18 >= min;
+        }
+      });
+      setNftList(filterPrices);
+    }
+
+    setTimeout(() => {
+    setCollectionLoading(false)
+    }, 1500);
+  };
+
   const handleRefreshData = async (nft) => {
     const listednfts = await axios
       .get(
@@ -354,7 +407,14 @@ const CollectionList = ({
 
   useEffect(() => {
     fetchFavoriteCounts();
+    setNftList(allNftArray);
   }, [allNftArray]);
+
+
+  useEffect(() => {
+    setCollectionLoading(loading)
+  }, [loading])
+  
 
   return (
     <>
@@ -401,9 +461,13 @@ const CollectionList = ({
                     <div className="accordion-body">
                       <FormGroup>
                         <FormControlLabel
+                          onChange={() => {setListed("listed")}}
+
+
                           control={
                             <Checkbox
                               size="small"
+                              checked={listType === "listed" ? true : false}
                               sx={{
                                 color: "white",
                                 "&.Mui-checked": {
@@ -415,9 +479,13 @@ const CollectionList = ({
                           label="Recently Listed"
                         />
                         <FormControlLabel
+                          onChange={() => { setListed("sold")}}
+
                           control={
                             <Checkbox
                               size="small"
+                              checked={listType === "sold" ? true : false}
+
                               sx={{
                                 color: "white",
                                 "&.Mui-checked": {
@@ -436,8 +504,12 @@ const CollectionList = ({
                           }}
                         />
                         <FormControlLabel
+                          onChange={() => {setListed("offers")}}
+
                           control={
                             <Checkbox
+                            checked={listType === "offers" ? true : false}
+
                               size="small"
                               sx={{
                                 color: "white",
@@ -495,8 +567,8 @@ const CollectionList = ({
                         <button
                           className="buy-btn"
                           onClick={() => {
-                            setMinPrice(dummyMinPrice);
-                            setMaxPrice(dummyMaxPrice);
+                            setPrices(dummyMinPrice, dummyMaxPrice);
+                            console.log(dummyMinPrice, dummyMaxPrice, "why");
                           }}
                         >
                           Apply
@@ -710,9 +782,9 @@ const CollectionList = ({
                 </div>
               </div>
             </div>
-            {queryItems.length > 0 && (
-              <div className="d-flex mt-3 align-items-center gap-2 flex-wrap">
-                {queryItems.map((item, index) => (
+            <div className="d-flex mt-3 align-items-center gap-2 flex-wrap">
+              {queryItems.length > 0 &&
+                queryItems.map((item, index) => (
                   <div
                     key={index}
                     className="collection-query p-2 d-flex gap-4 align-items-center justify-content-center"
@@ -735,53 +807,62 @@ const CollectionList = ({
                     />
                   </div>
                 ))}
-                {minPrice > 0 && (
-                  <div className="collection-query p-2 d-flex gap-4 align-items-center justify-content-center">
-                    <div className="d-flex align-items-center gap-1">
-                      <h6 className="collection-query-type mb-0">Min Price:</h6>
-                      <h6 className="collection-query-value mb-0">
-                        {minPrice}
-                      </h6>
-                    </div>
-                    <img
-                      src={xMark}
-                      width={10}
-                      height={10}
-                      style={{ cursor: "pointer" }}
-                      alt=""
-                      onClick={() => setMinPrice(0)}
-                    />
-                  </div>
-                )}
-                {maxPrice > 0 && (
-                  <div className="collection-query p-2 d-flex gap-4 align-items-center justify-content-center">
-                    <div className="d-flex align-items-center gap-1">
-                      <h6 className="collection-query-type mb-0">Max Price:</h6>
-                      <h6 className="collection-query-value mb-0">
-                        {maxPrice}
-                      </h6>
-                    </div>
-                    <img
-                      src={xMark}
-                      width={10}
-                      height={10}
-                      style={{ cursor: "pointer" }}
-                      alt=""
-                      onClick={() => setMaxPrice(0)}
-                    />
-                  </div>
-                )}
-                <button
-                  className="buy-btn py-1 px-2"
-                  onClick={() => setQueryItems([])}
-                  style={{ borderRadius: "8px" }}
-                >
-                  Clear All
-                </button>
-              </div>
-            )}
 
-            {allNftArray && allNftArray.length === 0 && loading === false && (
+              {minPrice > 0 && (
+                <div className="collection-query p-2 d-flex gap-4 align-items-center justify-content-center">
+                  <div className="d-flex align-items-center gap-1">
+                    <h6 className="collection-query-type mb-0">Min Price:</h6>
+                    <h6 className="collection-query-value mb-0">
+                      {getFormattedNumber(minPrice)}
+                    </h6>
+                  </div>
+                  <img
+                    src={xMark}
+                    width={10}
+                    height={10}
+                    style={{ cursor: "pointer" }}
+                    alt=""
+                    onClick={() => setPrices(0, dummyMaxPrice)}
+                  />
+                </div>
+              )}
+              {maxPrice > 0 && (
+                <div className="collection-query p-2 d-flex gap-4 align-items-center justify-content-center">
+                  <div className="d-flex align-items-center gap-1">
+                    <h6 className="collection-query-type mb-0">Max Price:</h6>
+                    <h6 className="collection-query-value mb-0">
+                      {getFormattedNumber(maxPrice)}
+                    </h6>
+                  </div>
+                  <img
+                    src={xMark}
+                    width={10}
+                    height={10}
+                    style={{ cursor: "pointer" }}
+                    alt=""
+                    onClick={() => setPrices(dummyMinPrice, 0)}
+                  />
+                </div>
+              )}
+              {queryItems.length > 0 ||
+                minPrice > 0 ||
+                maxPrice > 0 ? (
+                  <button
+                    className="buy-btn py-1 px-2"
+                    onClick={() => {
+                      setQueryItems([]);
+                      setPrices(0, 0);
+                    }}
+                    style={{ borderRadius: "8px" }}
+                  >
+                    Clear All
+                  </button>
+                ) 
+              : <></>
+              }
+            </div>
+
+            {nftList && nftList.length === 0 && collectionLoading === false && (
               <span className="text-white d-flex w-100 justify-content-center mt-5">
                 This collection doesn't have any NFTs.
               </span>
@@ -826,7 +907,7 @@ const CollectionList = ({
                   </thead>
                   {allNftArray && allNftArray.length > 0 ? (
                     <tbody>
-                      {allNftArray.map((item, index) => (
+                      {nftList.map((item, index) => (
                         <tr
                           className="nft-table-row p-1"
                           key={index}
@@ -953,7 +1034,8 @@ const CollectionList = ({
               ) : (
                 allNftArray &&
                 allNftArray.length > 0 &&
-                allNftArray.map((item, index) => (
+                collectionLoading === false ?
+                nftList.map((item, index) => (
                   <div
                     className="recently-listed-card p-3 d-flex flex-column"
                     key={index}
@@ -1160,9 +1242,19 @@ const CollectionList = ({
                     </NavLink>
                   </div>
                 ))
+
+                : 
+                dummyCards.map((item, index) => (
+                  <Skeleton
+                    key={index}
+                    variant="rounded"
+                    width={"100%"}
+                    height={250}
+                  />
+                ))
               )}
             </div>
-            {loading === true &&
+            {collectionLoading === true &&
             (gridView === "small-grid" || gridView === "big-grid") ? (
               <div
                 className={`${
@@ -1182,7 +1274,7 @@ const CollectionList = ({
                   />
                 ))}
               </div>
-            ) : loading === true && gridView === "list" ? (
+            ) : collectionLoading === true && gridView === "list" ? (
               <div
                 className={`${
                   gridView === "list"

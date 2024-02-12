@@ -160,6 +160,8 @@ const ProfileNFTList = ({
   //   }
   // }, [selectedCollection]);
 
+  console.log(userNftFavs);
+
   return (
     <div className="container-lg">
       <div className="row collection-list-wrapper py-4 px-2">
@@ -193,9 +195,46 @@ const ProfileNFTList = ({
                     Collections
                   </button>
                 </h2>
-                {userCollectionArray &&
+                {option === "collected" &&
+                  userCollectionArray &&
                   userCollectionArray.length &&
                   userCollectionArray.map((item, index) => {
+                    return (
+                      <div
+                        id="collapseOne"
+                        className="accordion-collapse collapse"
+                        aria-labelledby="headingOne"
+                        data-bs-parent="#accordionExample"
+                      >
+                        <div className="accordion-body">
+                          <FormGroup>
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  size="small"
+                                  sx={{
+                                    color: "white",
+                                    "&.Mui-checked": {
+                                      color: "#3DBDA7",
+                                    },
+                                  }}
+                                  onChange={() => {
+                                    handleAddCollections(item.nftAddress);
+                                  }}
+                                />
+                              }
+                              label={item.collectionName}
+                            />
+                          </FormGroup>
+                        </div>
+                      </div>
+                    );
+                  })}
+
+{option === "favorites" && favoritesOption === 'favorites' &&
+                  userNftFavs &&
+                  userNftFavs.length &&
+                  userNftFavs.map((item, index) => {
                     return (
                       <div
                         id="collapseOne"

@@ -29,6 +29,7 @@ const ProfileBanner = ({
   info,
   updateUserData,
   successUpdateProfile,
+  website
 }) => {
   const [profileImage, setProfileImage] = useState(null);
   const [bannerImage, setBannerImage] = useState(null);
@@ -270,11 +271,11 @@ const ProfileBanner = ({
                   </div>
                 </div>
                 <div className="d-flex align-items-center gap-2">
-                  {socials.map((item, index) => (
-                    <a href="#" target="_blank" key={index}>
-                      <img src={require(`./assets/${item}Icon.svg`)} alt="" />
-                    </a>
-                  ))}
+                    {website?.length > 0 &&
+                    <a href={website} target="_blank" >
+                    <img src={require(`./assets/websiteIcon.svg`).default} alt="" />
+                  </a>
+                    }
                   <div
                     className="info-divider"
                     style={{ height: "25px" }}

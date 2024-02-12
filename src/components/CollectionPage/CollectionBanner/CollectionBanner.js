@@ -32,6 +32,8 @@ const CollectionBanner = ({
   totalSupplyPerCollection,
   collectionFeeRate,
 }) => {
+ 
+
 
   return (
     <div className="container-lg py-0 py-lg-5">
@@ -81,6 +83,7 @@ const CollectionBanner = ({
                 </div>
                 <div className="d-flex align-items-center gap-2">
                   {socials.map((item, index) => (
+                    item?.link?.length > 0 &&
                     <a
                       href={item.link === "" ? "#" : item.link}
                       target="_blank"
@@ -92,6 +95,7 @@ const CollectionBanner = ({
                       />
                     </a>
                   ))}
+               
                   <div
                     className="info-divider"
                     style={{ height: "25px" }}

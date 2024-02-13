@@ -48,6 +48,19 @@ const SingleNft = ({
 
   // console.log(nftId, nftAddress);
 
+  const handleRefreshMakeOffers = async (offeror) => {
+    const result = await axios
+      .get(`${baseURL}/api/refresh-offers-made/${offeror.toLowerCase()}`, {
+        headers: {
+          cascadestyling:
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
   const handleMakeOffer = async (nftAddress, tokenId, price, duration) => {
     if (price !== "" && price !== 0) {
       setOfferStatus("loading");
@@ -55,6 +68,7 @@ const SingleNft = ({
       await window
         .makeOffer(nftAddress, tokenId, newPrice, duration)
         .then(() => {
+          handleRefreshMakeOffers(coinbase);
           getUpdatedNftData().then(() => {
             onRefreshListings();
           });
@@ -79,6 +93,7 @@ const SingleNft = ({
     await window
       .cancelOffer(nftAddress, nftId, offerIndex)
       .then(() => {
+        handleRefreshMakeOffers(coinbase);
         getOffer(nftAddress, nftId);
         getUpdatedNftData().then(() => {
           onRefreshListings();
@@ -106,6 +121,8 @@ const SingleNft = ({
       await window
         .updateOffer(nftAddress, nftId, offerIndex, newPrice)
         .then(() => {
+          handleRefreshMakeOffers(coinbase);
+
           getUpdatedNftData().then(() => {
             onRefreshListings();
           });
@@ -126,11 +143,12 @@ const SingleNft = ({
     } else window.alertify.error("Please put a valid price!");
   };
 
-  const acceptOfferFunc = async (offerIndex) => {
+  const acceptOfferFunc = async (offerIndex, offeror) => {
     setOfferacceptStatus("loading");
     await window
       .acceptOffer(nftAddress, nftId, offerIndex)
       .then(() => {
+        handleRefreshMakeOffers(offeror);
         getUpdatedNftData().then(() => {
           refreshMetadata(nftId);
           fetchInitialNftsPerCollection(nftId);
@@ -153,7 +171,7 @@ const SingleNft = ({
       });
   };
 
-  const handleAcceptOffer = async (offerIndex) => {
+  const handleAcceptOffer = async (offerIndex, offeror) => {
     setOfferacceptStatus("loading");
     const isApproved = await window
       .isApprovedNFT(nftId, nftAddress, coinbase)
@@ -162,14 +180,14 @@ const SingleNft = ({
       });
 
     if (isApproved) {
-      acceptOfferFunc(offerIndex);
+      acceptOfferFunc(offerIndex, offeror);
     } else {
       await window
         .approveNFT(nftAddress)
         .then((result) => {
           setOfferacceptStatus("success");
           setTimeout(() => {
-            acceptOfferFunc(offerIndex);
+            acceptOfferFunc(offerIndex, offeror);
           }, 1000);
         })
         .catch((e) => {
@@ -232,8 +250,8 @@ const SingleNft = ({
             .includes("ago");
           if (!hasExpired2) {
             setofferData(...offerArray);
-          }
-        }
+          } else setofferData([]);
+        } else setofferData([]);
       }
 
       const contract = new window.confluxWeb3.eth.Contract(
@@ -276,7 +294,7 @@ const SingleNft = ({
           }
         })
       );
-
+      console.log(allOffersArray);
       setallOffers(allOffersArray);
     } else {
       setbestOffer([]);
@@ -312,8 +330,6 @@ const SingleNft = ({
       listednfts.status === 200
     ) {
       const listednftsArray = listednfts.data.listings;
-
-      console.log("listednftsArray", listednftsArray);
 
       const abi = JSON.parse(abiresult.data.result);
       const collection_contract = new web3.eth.Contract(

@@ -37,6 +37,8 @@ const Profile = ({
   const [bestOffer, setbestOffer] = useState([]);
   // const [offerData, setofferData] = useState([]);
   const [allOffers, setallOffers] = useState([]);
+  const [allOffersMade, setallOffersMade] = useState([]);
+
 
   const { id } = useParams();
 
@@ -240,6 +242,107 @@ const Profile = ({
     }
   };
 
+  const fetchUserOffers = async () => {
+    if (coinbase) {
+      const result = await axios
+        .get(`${baseURL}/api/offers-made/${coinbase.toLowerCase()}`, {
+          headers: {
+            cascadestyling:
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+      const web3 = window.confluxWeb3;
+
+      if (result && result.status === 200) {
+        const alloffers = await Promise.all(
+          result.data.map(async (item) => {
+            let isApproved = false;
+            const abiresult = await axios.get(
+              `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
+            );
+            if (abiresult && abiresult.status === 200) {
+              const abi = JSON.parse(abiresult.data.result);
+              const collection_contract = new web3.eth.Contract(
+                abi,
+                item.nftAddress
+              );
+              const tokenName = await collection_contract.methods
+                .symbol()
+                .call()
+                .catch((e) => {
+                  console.error(e);
+                });
+
+              const seller = await collection_contract.methods
+                .ownerOf(item.tokenId)
+                .call()
+                .catch((e) => {
+                  console.error(e);
+                });
+
+              const collectionName = await collection_contract.methods
+                .name()
+                .call()
+                .catch((e) => {
+                  console.error(e);
+                });
+
+              const isApprovedresult = await window
+                .isApprovedBuy(item.price)
+                .catch((e) => {
+                  console.error(e);
+                });
+
+              if (isApprovedresult) {
+                isApproved = isApprovedresult;
+              }
+
+              const nft_data = await fetch(
+                `https://cdnflux.dypius.com/collectionsmetadatas/${item.nftAddress.toLowerCase()}/${
+                  item.tokenId
+                }/metadata.json`
+              )
+                .then((res) => res.json())
+                .then((data) => {
+                  return data;
+                })
+                .catch((err) => {
+                  console.log(err.message);
+                });
+              if (
+                nft_data &&
+                nft_data.code !== 404 &&
+                typeof nft_data !== "string"
+              ) {
+                return {
+                  ...item,
+                  ...nft_data,
+                  image: `${nft_data.image}`,
+                  tokenName: tokenName,
+                  isApproved: isApproved,
+                  seller: seller,
+                  collectionName: collectionName,
+                };
+              } else
+                return {
+                  ...item,
+                  image: undefined,
+                  tokenName: tokenName,
+                  seller: seller,
+                  collectionName: collectionName,
+                };
+            }
+          })
+        );
+        setallOffersMade(alloffers)
+        
+      }
+    }
+  };
+
   useEffect(() => {
     fetchFavoriteCounts();
   }, [userNftFavsInitial]);
@@ -304,6 +407,10 @@ const Profile = ({
     window.scrollTo(0, 0);
   }, []);
 
+  useEffect(() => {
+    fetchUserOffers();
+  }, [coinbase]);
+console.log(allOffersMade)
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
       <ProfileBanner
@@ -378,6 +485,7 @@ const Profile = ({
             cfxPrice={cfxPrice}
             allOffers={allOffers}
             bestOffer={bestOffer}
+            allOffersMade={allOffersMade}
           />
         </div>
       </div>

@@ -40,6 +40,7 @@ const ProfileNFTList = ({
   bestOffer,
   userCollectionArray,
   allOffersMade,
+  allNFTSOffer,
 }) => {
   const [favoritesOption, setfavoritesOption] = useState("items");
   const [gridView, setGridView] = useState("small-grid");
@@ -164,6 +165,8 @@ const ProfileNFTList = ({
   useEffect(() => {
     setuserCollectionArrayFinal([]);
   }, [option, favoritesOption]);
+
+  console.log(userNftFavs);
 
   return (
     <div className="container-lg">
@@ -1023,7 +1026,24 @@ const ProfileNFTList = ({
                               : "---"}{" "}
                             WCFX
                           </td>
-                          <td className="table-item col-2">tbd WCFX</td>
+                          <td className="table-item col-2">
+                            {getFormattedNumber(
+                              allNFTSOffer.find((obj) => {
+                                return (
+                                  obj.nftAddress === item.nftAddress &&
+                                  item.tokenId === obj.tokenId
+                                );
+                              })
+                                ? allNFTSOffer.find((obj) => {
+                                    return (
+                                      obj.nftAddress === item.nftAddress &&
+                                      item.tokenId === obj.tokenId
+                                    );
+                                  }).bestOffer / 1e18
+                                : 0
+                            )}{" "}
+                            WCFX
+                          </td>
                           <td className="table-item col-2">tbd WCFX </td>
                           <td className="table-item col-2">
                             <a
@@ -1038,9 +1058,13 @@ const ProfileNFTList = ({
                             </a>
                           </td>
                           <td className="table-item col-2">
-                            {moment
-                              .duration(item.blockTimestamp * 1000 - Date.now())
-                              .humanize(true)}
+                            {item.blockTimestamp
+                              ? moment
+                                  .duration(
+                                    item.blockTimestamp * 1000 - Date.now()
+                                  )
+                                  .humanize(true)
+                              : "N/A"}
                           </td>
                         </tr>
                       ))}
@@ -1109,7 +1133,24 @@ const ProfileNFTList = ({
                                 : "---"}{" "}
                               WCFX
                             </td>
-                            <td className="table-item col-2">tbd WCFX</td>
+                            <td className="table-item col-2">
+                              {" "}
+                              {getFormattedNumber(
+                                allNFTSOffer.find((obj) => {
+                                  return (
+                                    obj.nftAddress === item.nftAddress &&
+                                    item.tokenId === obj.tokenId
+                                  );
+                                })
+                                  ? allNFTSOffer.find((obj) => {
+                                      return (
+                                        obj.nftAddress === item.nftAddress &&
+                                        item.tokenId === obj.tokenId
+                                      );
+                                    }).bestOffer / 1e18
+                                  : 0
+                              )}
+                            </td>
                             <td className="table-item col-2">tbd WCFX </td>
                             <td className="table-item col-2">
                               <a
@@ -1124,11 +1165,13 @@ const ProfileNFTList = ({
                               </a>
                             </td>
                             <td className="table-item col-2">
-                              {moment
-                                .duration(
-                                  item.blockTimestamp * 1000 - Date.now()
-                                )
-                                .humanize(true)}
+                              {item.blockTimestamp
+                                ? moment
+                                    .duration(
+                                      item.blockTimestamp * 1000 - Date.now()
+                                    )
+                                    .humanize(true)
+                                : "N/A"}
                             </td>
                           </tr>
                         ))}

@@ -38,12 +38,14 @@ const Profile = ({
   // const [offerData, setofferData] = useState([]);
   const [allOffers, setallOffers] = useState([]);
   const [allOffersMade, setallOffersMade] = useState([]);
+  const [allNFTSOffer, setallNFTSOffer] = useState([]);
 
   const { id } = useParams();
 
   const getOffer = async () => {
     let finalArray = [];
     let allOffersArray = [];
+    let bestoffer = 0;
 
     await Promise.all(
       window.range(0, userNftsOwnedArray.length - 1).map(async (i) => {
@@ -79,6 +81,7 @@ const Profile = ({
 
             const maxPrice = Math.max(...finalResult.map((o) => o.amount));
             const obj = finalResult.find((item) => item.amount == maxPrice);
+            bestoffer = obj;
             setbestOffer(obj);
 
             // if (offerArray && offerArray.length > 0) {
@@ -118,6 +121,10 @@ const Profile = ({
 
               if (hasExpired === false) {
                 if (userNftsOwnedArray[i] && userNftsOwnedArray[i].nftAddress) {
+                  finalArray.push({
+                    ...userNftsOwnedArray[i],
+                    bestOffer: bestoffer.amount,
+                  });
                   return allOffersArray.push({
                     ...finalResult[k],
                     index: k,
@@ -129,7 +136,7 @@ const Profile = ({
               }
             })
           );
-
+          setallNFTSOffer(finalArray);
           setallOffers(allOffersArray);
         } else {
           // setbestOffer([]);
@@ -493,6 +500,7 @@ const Profile = ({
             allOffers={allOffers}
             bestOffer={bestOffer}
             allOffersMade={allOffersMade}
+            allNFTSOffer={allNFTSOffer}
           />
         </div>
       </div>

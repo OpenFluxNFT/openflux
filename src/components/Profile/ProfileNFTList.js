@@ -47,6 +47,7 @@ const ProfileNFTList = ({
   const [loading, setLoading] = useState(false);
   const [selectedCollection, setselectedCollection] = useState([]);
   const [userCollectionArrayFinal, setuserCollectionArrayFinal] = useState([]);
+  const [favoriteOptions, setFavoriteOptions] = useState([]);
 
   const navigate = useNavigate();
 
@@ -166,6 +167,24 @@ const ProfileNFTList = ({
     setuserCollectionArrayFinal([]);
   }, [option, favoritesOption]);
 
+  const testFunc = () => {
+    let uniqueObjects = [];
+    let seenNames = new Set();
+
+    userNftFavs.forEach((obj) => {
+      let lowercaseName = obj.collectionName.toLowerCase();
+      if (!seenNames.has(lowercaseName)) {
+        seenNames.add(lowercaseName);
+        uniqueObjects.push(obj);
+      }
+    });
+
+    setFavoriteOptions(uniqueObjects);
+  };
+
+  useEffect(() => {
+    testFunc();
+  }, [userNftFavs]);
 
   return (
     <div className="container-lg">
@@ -237,21 +256,20 @@ const ProfileNFTList = ({
                     );
                   })}
 
-                {option === "favorites" &&
-                  favoritesOption === "items" &&
-                  userNftFavs &&
-                  userNftFavs.length > 0 &&
-                  userNftFavs.map((item, index) => {
-                    return (
-                      <div
-                        id="collapseOne"
-                        className="accordion-collapse collapse"
-                        aria-labelledby="headingOne"
-                        data-bs-parent="#accordionExample"
-                        key={index}
-                      >
-                        <div className="accordion-body">
-                          <FormGroup>
+                <div
+                  id="collapseOne"
+                  className="accordion-collapse collapse"
+                  aria-labelledby="headingOne"
+                  data-bs-parent="#accordionExample"
+                >
+                  <div className="accordion-body">
+                    {option === "favorites" &&
+                      favoritesOption === "items" &&
+                      userNftFavs &&
+                      userNftFavs.length > 0 &&
+                      favoriteOptions.map((item, index) => {
+                        return (
+                          <FormGroup sx={{ display: "block !important" }}>
                             <FormControlLabel
                               control={
                                 <Checkbox
@@ -270,10 +288,10 @@ const ProfileNFTList = ({
                               label={item.collectionName}
                             />
                           </FormGroup>
-                        </div>
-                      </div>
-                    );
-                  })}
+                        );
+                      })}
+                  </div>
+                </div>
 
                 {option === "favorites" &&
                   favoritesOption === "collections" &&

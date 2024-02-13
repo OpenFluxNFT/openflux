@@ -523,6 +523,8 @@ function App() {
           });
         })
       );
+        
+      
       setuserNftFavs(nftArray);
     } else setuserNftFavs([]);
   };

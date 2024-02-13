@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./_morefromcollection.scss";
 import Slider from "react-slick";
 import checkIcon from "../../Collections/TopCollections/assets/checkIcon.svg";
@@ -6,6 +6,9 @@ import { NavLink } from "react-router-dom";
 import { Skeleton } from "@mui/material";
 import getFormattedNumber from "../../../hooks/get-formatted-number";
 import axios from "axios";
+import emptyFavorite from "../../Home/RecentlyListed/assets/emptyFavorite.svg";
+import redFavorite from "../../Home/RecentlyListed/assets/redFavorite.svg";
+
 const MoreFromCollection = ({
   loading,
   allNftArray,
@@ -13,6 +16,10 @@ const MoreFromCollection = ({
   onNftClick,
   coinbase,
   onRefreshListings,
+  handleRemoveFavoriteNft,
+  handleAddFavoriteNft,
+  userNftFavs,
+  nftAddress,
 }) => {
   const settings = {
     // dots: true,
@@ -127,7 +134,65 @@ const MoreFromCollection = ({
   const [buyStatus, setbuyStatus] = useState("buy"); //buy
   const [buyloading, setbuyLoading] = useState(false); //buy
   const [selectedNftId, setSelectedNftId] = useState(""); //buy
+  const [nftFinalArray, setnftFinalArray] = useState([]);
   const baseURL = "https://confluxapi.worldofdypians.com";
+
+  const fetchFavoriteCounts = async () => {
+    if (allNftArray && allNftArray.length > 0) {
+      let favoriteCount = 0;
+      let nftArray = [];
+      await Promise.all(
+        window.range(0, allNftArray.length - 1).map(async (i) => {
+          const fav_count_listed = await axios
+            .get(
+              `${baseURL}/api/nftFavoritesCount/${nftAddress}/${allNftArray[i].tokenId}`,
+              {
+                headers: {
+                  cascadestyling:
+                    "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+                },
+              }
+            )
+            .catch((e) => {
+              console.error(e);
+            });
+
+          if (fav_count_listed && fav_count_listed.status === 200) {
+            favoriteCount = fav_count_listed.data;
+            // console.log(favoriteCount);
+            nftArray.push({
+              ...favoriteCount,
+            });
+          }
+        })
+      );
+      setnftFinalArray(nftArray);
+    }
+  };
+
+  const handleLikeStates = (tokenid) => {
+    const stringTokenid = tokenid.toString();
+    if (
+      userNftFavs &&
+      userNftFavs.length > 0 &&
+      userNftFavs.find((favitem) => {
+        return (
+          favitem.contractAddress === nftAddress &&
+          favitem.tokenIds.find(
+            (itemTokenIds) => itemTokenIds === stringTokenid
+          )
+        );
+      })
+    ) {
+      handleRemoveFavoriteNft(stringTokenid, nftAddress).then(() => {
+        fetchFavoriteCounts();
+      });
+    } else {
+      handleAddFavoriteNft(stringTokenid, nftAddress).then(() => {
+        fetchFavoriteCounts();
+      });
+    }
+  };
 
   const handleRefreshData = async (nft) => {
     const listednfts = await axios
@@ -222,7 +287,10 @@ const MoreFromCollection = ({
       }
     } else window.alertify.error("Please connect wallet first!");
   };
-  
+
+  useEffect(() => {
+    fetchFavoriteCounts();
+  }, [allNftArray]);
   return (
     <div className="container-lg py-3">
       <div className="row mx-0">
@@ -245,6 +313,7 @@ const MoreFromCollection = ({
                         window.scrollTo(0, 0);
                         onNftClick(item.tokenId);
                       }}
+                      className={"position-relative"}
                     >
                       {!item.isVideo ? (
                         <img
@@ -264,6 +333,65 @@ const MoreFromCollection = ({
                           playsInline={true}
                         />
                       )}
+                      <div
+                        className="position-absolute favorite-container"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          handleLikeStates(item.tokenId, item.nftAddress);
+                        }}
+                      >
+                        <div className="d-flex align-items-center position-relative gap-2">
+                          <img
+                            src={
+                              userNftFavs &&
+                              userNftFavs.length > 0 &&
+                              userNftFavs.find((favitem) => {
+                                return (
+                                  favitem.contractAddress === item.nftAddress &&
+                                  favitem.tokenIds.find(
+                                    (itemTokenIds) =>
+                                      Number(itemTokenIds) ===
+                                      Number(item.tokenId)
+                                  )
+                                );
+                              })
+                                ? redFavorite
+                                : emptyFavorite
+                            }
+                            alt=""
+                            className="fav-img"
+                          />
+                          <span
+                            className={
+                              userNftFavs &&
+                              userNftFavs.length > 0 &&
+                              userNftFavs.find((favitem) => {
+                                return (
+                                  favitem.contractAddress === item.nftAddress &&
+                                  favitem.tokenIds.find(
+                                    (itemTokenIds) =>
+                                      Number(itemTokenIds) ===
+                                      Number(item.tokenId)
+                                  )
+                                );
+                              })
+                                ? "fav-count-active"
+                                : "fav-count"
+                            }
+                          >
+                            {
+                              nftFinalArray.find((object) => {
+                                return (
+                                  object.contractAddress === item.nftAddress &&
+                                  Number(object.tokenId) ===
+                                    Number(item.tokenId)
+                                );
+                              })?.count
+                            }
+                          </span>
+                        </div>
+                      </div>
                       <div className="d-flex align-items-center gap-2 mt-2">
                         <h6
                           className="recently-listed-title mb-0"

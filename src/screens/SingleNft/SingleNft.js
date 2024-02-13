@@ -20,6 +20,8 @@ const SingleNft = ({
   cfxPrice,
   onRefreshListings,
   balance,
+  handleAddFavoriteNft,
+  handleRemoveFavoriteNft,userNftFavs
 }) => {
   const [showOfferPopup, setShowOfferPopup] = useState(false);
   const [nftData, setNftData] = useState([]);
@@ -1096,6 +1098,10 @@ const SingleNft = ({
         }}
         coinbase={coinbase}
         onRefreshListings={onRefreshListings}
+        nftAddress={nftAddress}
+        handleAddFavoriteNft={handleAddFavoriteNft}
+        handleRemoveFavoriteNft={handleRemoveFavoriteNft}
+        userNftFavs={userNftFavs}
       />
       {showOfferPopup && (
         <MakeOffer

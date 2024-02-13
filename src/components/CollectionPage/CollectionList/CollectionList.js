@@ -972,10 +972,10 @@ const CollectionList = ({
                               getFormattedNumber(item.price / 10 ** 18)}
                           </td>
                           <td className="table-item col-2">
-                            {item.seller && " TBD CFX"}
+                            {item.seller && " TBD WCFX"}
                           </td>
                           <td className="table-item col-2">
-                            {item.seller && " TBD CFX"}{" "}
+                            {item.seller && " TBD WCFX"}{" "}
                           </td>
                           <td className="table-item col-2">
                             {shortAddress(item.owner ?? item.seller)}

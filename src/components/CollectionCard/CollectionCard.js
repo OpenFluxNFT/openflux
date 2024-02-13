@@ -3,6 +3,7 @@ import "./_collectioncard.scss";
 import confluxLogo from "./confluxLogo.svg";
 import checkIcon from "../Collections/TopCollections/assets/checkIcon.svg";
 import collectionCardPlaceholder1 from "../../components/Collections/CollectionCategories/assets/collectionCardPlaceholder1.png";
+import getFormattedNumber from "../../hooks/get-formatted-number";
 
 const CollectionCard = ({ data }) => {
   return (
@@ -28,7 +29,7 @@ const CollectionCard = ({ data }) => {
             <div className="collection-price-wrapper d-flex align-items-center gap-2 justify-content-center p-2">
               {/* <img src={confluxLogo} alt="" /> */}
               <h6 className="collection-price mb-0">
-                {data.floorPrice ?? "tbd"} CFX
+                { getFormattedNumber(data.floorPrice)  ?? 0} WCFX
               </h6>
             </div>
           </div>
@@ -37,7 +38,7 @@ const CollectionCard = ({ data }) => {
             <div className="collection-price-wrapper gap-2 d-flex align-items-center justify-content-center p-2">
               {/* <img src={confluxLogo} alt="" /> */}
               <h6 className="collection-price mb-0">
-                {data.totalVolume ?? "tbd"} CFX
+                {data.totalVolume ?? "tbd"} WCFX
               </h6>
             </div>
           </div>

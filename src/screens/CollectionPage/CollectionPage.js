@@ -39,7 +39,8 @@ const CollectionPage = ({
   const [collectionFeeRate, setcollectionFeeRate] = useState(0);
   const [uniqueOwners, setUniqueOwners] = useState(0);
   const [uniqueOwnersPercentage, setUniqueOwnersPercentage] = useState(0);
-
+  const [recentlySoldNfts, setRecentlySoldNfts] = useState([]);
+  const [filter, setFilter] = useState(null);
   const [next, setnext] = useState(12);
   const baseURL = "https://confluxapi.worldofdypians.com";
   const dataFetchedRef = useRef(false);
@@ -76,6 +77,116 @@ const CollectionPage = ({
       valueType: `${getFormattedNumber(uniqueOwnersPercentage ?? 0, 0)}%`,
     },
   ];
+
+  const getFilter = (val) => {
+    setFilter(val);
+  };
+
+  const handleGetRecentlySoldNfts = async () => {
+    const result = await axios
+      .get(`${baseURL}/api/recent-sales`, {
+        headers: {
+          cascadestyling:
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+    const web3 = window.confluxWeb3;
+    if (result && result.status === 200) {
+      const recentlySold = await Promise.all(
+        result.data
+          .filter((item) => {
+            return item.nftAddress.toLowerCase() == collectionAddress;
+          })
+          .map(async (item) => {
+            let isApproved = false;
+            const abiresult = await axios.get(
+              `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
+            );
+            if (abiresult && abiresult.status === 200) {
+              const abi = JSON.parse(abiresult.data.result);
+              const collection_contract = new web3.eth.Contract(
+                abi,
+                item.nftAddress
+              );
+              const tokenName = await collection_contract.methods
+                .symbol()
+                .call()
+                .catch((e) => {
+                  console.error(e);
+                });
+
+              const seller = await collection_contract.methods
+                .ownerOf(item.tokenId)
+                .call()
+                .catch((e) => {
+                  console.error(e);
+                });
+
+              const collectionName = await collection_contract.methods
+                .name()
+                .call()
+                .catch((e) => {
+                  console.error(e);
+                });
+
+              const isApprovedresult = await window
+                .isApprovedBuy(item.price)
+                .catch((e) => {
+                  console.error(e);
+                });
+
+              if (isApprovedresult) {
+                isApproved = isApprovedresult;
+              }
+
+              const nft_data = await fetch(
+                `https://cdnflux.dypius.com/collectionsmetadatas/${item.nftAddress.toLowerCase()}/${
+                  item.tokenId
+                }/metadata.json`
+              )
+                .then((res) => res.json())
+                .then((data) => {
+                  return data;
+                })
+                .catch((err) => {
+                  console.log(err.message);
+                });
+              if (
+                nft_data &&
+                nft_data.code !== 404 &&
+                typeof nft_data !== "string"
+              ) {
+                return {
+                  ...item,
+                  ...nft_data,
+                  image: `${nft_data.image}`,
+                  tokenName: tokenName,
+                  isApproved: isApproved,
+                  seller: seller,
+                  collectionName: collectionName,
+                  price: item.amount,
+                };
+              } else
+                return {
+                  ...item,
+                  image: undefined,
+                  tokenName: tokenName,
+                  seller: seller,
+                  collectionName: collectionName,
+                  price: item.amount,
+                };
+            }
+          })
+      );
+
+      console.log(recentlySold, "res");
+
+      return recentlySold;
+    }
+  };
 
   const getCollectionTotalSupply = async () => {
     let totalSupply = 0;
@@ -628,10 +739,10 @@ const CollectionPage = ({
   }, [collectionAddress, allCollections]);
 
   useEffect(() => {
-    window.addEventListener("scroll", onScroll);
-  });
-
-
+    if (filter === null) {
+      window.addEventListener("scroll", onScroll);
+    }
+  }, [filter]);
 
   return (
     <div
@@ -665,6 +776,7 @@ const CollectionPage = ({
       />
       <CollectionList
         currentCollection={currentCollection}
+        getRecentlySold={handleGetRecentlySoldNfts}
         allNftArray={allNftArray}
         collectionAddress={collectionAddress}
         loading={loading}
@@ -676,6 +788,7 @@ const CollectionPage = ({
         onRefreshListings={onRefreshListings}
         totalSupplyPerCollection={totalSupplyPerCollection}
         hasListedNfts={hasListedNfts}
+        getFilter={getFilter}
       />
 
       {totalSupplyPerCollection &&

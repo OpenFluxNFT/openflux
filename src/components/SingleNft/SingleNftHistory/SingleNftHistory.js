@@ -164,7 +164,7 @@ const SingleNftHistory = ({
                                         : "disabled-accept-btn"
                                     } `}
                                     onClick={() => {
-                                      handleAcceptOffer(item.index);
+                                      handleAcceptOffer(item.index, item.offeror);
                                       setSelectedNftId(item.index);
                                     }}
                                   >

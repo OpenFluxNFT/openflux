@@ -1471,6 +1471,9 @@ function App() {
                 handleGetRecentlySoldNftsCache();
               }}
               balance={balance}
+              handleAddFavoriteNft={handleAddFavoriteNft}
+              handleRemoveFavoriteNft={handleRemoveFavoriteNft}
+              userNftFavs={userNftFavsInitial}
             />
           }
         />

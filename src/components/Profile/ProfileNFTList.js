@@ -166,7 +166,6 @@ const ProfileNFTList = ({
     setuserCollectionArrayFinal([]);
   }, [option, favoritesOption]);
 
-  console.log(userNftFavs);
 
   return (
     <div className="container-lg">
@@ -486,17 +485,17 @@ const ProfileNFTList = ({
         </div>
         <div className="col-12 col-lg-10">
           <div className="row">
-            <div className="col-7">
+            <div className="col-10">
               <div className="position-relative">
                 <img src={searchIcon} alt="" className="search-icon" />
                 <input
                   type="text"
                   className="search-input w-100"
-                  placeholder="Search anything"
+                  placeholder="Search by name"
                 />
               </div>
             </div>
-            <div className="col-3">
+            {/* <div className="col-3">
               <div className="dropdown">
                 <button
                   className="btn btn-secondary categories-dropdown p-3 dropdown-toggle w-100 d-flex align-items-center justify-content-between"
@@ -532,8 +531,8 @@ const ProfileNFTList = ({
                     </a>
                   </li>
                 </ul>
-              </div>
-            </div>
+              </div> 
+            </div>*/}
             <div className="col-2">
               {option === "favorites" ? (
                 <div className="grid-types-wrapper d-flex align-items-center justify-content-between">

@@ -37,7 +37,9 @@ const CollectionList = ({
   coinbase,
   onRefreshListings,
   totalSupplyPerCollection,
+  getRecentlySold,
   hasListedNfts,
+  getFilter
 }) => {
   const windowSize = useWindowSize();
   const [openFilters, setOpenFilters] = useState(false);
@@ -48,8 +50,9 @@ const CollectionList = ({
   const [maxPrice, setMaxPrice] = useState(0);
   const [dummyMinPrice, setDummyMinPrice] = useState(0);
   const [dummyMaxPrice, setDummyMaxPrice] = useState(0);
-  const [collectionLoading, setCollectionLoading] = useState(false)
-  const [listType, setListType] = useState("")
+  const [collectionLoading, setCollectionLoading] = useState(false);
+  const [generalFilter, setGeneralFilter] = useState(null)
+  const [listType, setListType] = useState("");
   const [dummyTraits, setDummyTraits] = useState([
     "White",
     "Black",
@@ -264,33 +267,47 @@ const CollectionList = ({
     }
   };
 
-
   const setListed = (type) => {
-    setCollectionLoading(true)
-    setListType(type)
-if(type === "listed"){
-  const filteredList = nftList.filter((item) => {
-    return item.price > 0
-  })
+    setCollectionLoading(true);
+    setListType(type);
+    if (type === "listed") {
+      setGeneralFilter(type)
+      const filteredList = nftList.filter((item) => {
+        return item.price > 0;
+      });
 
-  setNftList(filteredList)
-}else{
-  setNftList(allNftArray)
-}
+      setNftList(filteredList);
+      setTimeout(() => {
+        setCollectionLoading(false);
+      }, 1500);
+    } else if (type === "sold") {
+      setGeneralFilter(type)
 
-setTimeout(() => {
-  setCollectionLoading(false)
-}, 1500);
-  }
+      setNftList(allNftArray);
+      getRecentlySold().then((result) => {
+        setNftList(result);
+        setCollectionLoading(false);
+      });
+    } else {
+      setGeneralFilter(null)
+
+      setNftList(allNftArray);
+      setTimeout(() => {
+        setCollectionLoading(false);
+      }, 1500);
+    }
+  };
 
   const setPrices = (min, max) => {
+
+    setGeneralFilter(min, max)
     setCollectionLoading(true);
     setMinPrice(min);
     setMaxPrice(max);
 
     if (min === 0 && max === 0) {
-      
       setNftList(allNftArray);
+      setGeneralFilter(null)
       return;
     } else if (max !== 0) {
       const filterPrices = nftList.filter((item) => {
@@ -309,7 +326,7 @@ setTimeout(() => {
     }
 
     setTimeout(() => {
-    setCollectionLoading(false)
+      setCollectionLoading(false);
     }, 1500);
   };
 
@@ -410,11 +427,14 @@ setTimeout(() => {
     setNftList(allNftArray);
   }, [allNftArray]);
 
+  useEffect(() => {
+    setCollectionLoading(loading);
+  }, [loading]);
+
 
   useEffect(() => {
-    setCollectionLoading(loading)
-  }, [loading])
-  
+    getFilter(generalFilter)
+  }, [generalFilter]);
 
   return (
     <>
@@ -461,9 +481,9 @@ setTimeout(() => {
                     <div className="accordion-body">
                       <FormGroup>
                         <FormControlLabel
-                          onChange={() => {setListed("listed")}}
-
-
+                          onChange={() => {
+                            setListed("listed");
+                          }}
                           control={
                             <Checkbox
                               size="small"
@@ -479,13 +499,13 @@ setTimeout(() => {
                           label="Recently Listed"
                         />
                         <FormControlLabel
-                          onChange={() => { setListed("sold")}}
-
+                          onChange={() => {
+                            setListed("sold");
+                          }}
                           control={
                             <Checkbox
                               size="small"
                               checked={listType === "sold" ? true : false}
-
                               sx={{
                                 color: "white",
                                 "&.Mui-checked": {
@@ -504,12 +524,12 @@ setTimeout(() => {
                           }}
                         />
                         <FormControlLabel
-                          onChange={() => {setListed("offers")}}
-
+                          onChange={() => {
+                            setListed("offers");
+                          }}
                           control={
                             <Checkbox
-                            checked={listType === "offers" ? true : false}
-
+                              checked={listType === "offers" ? true : false}
                               size="small"
                               sx={{
                                 color: "white",
@@ -844,22 +864,21 @@ setTimeout(() => {
                   />
                 </div>
               )}
-              {queryItems.length > 0 ||
-                minPrice > 0 ||
-                maxPrice > 0 ? (
-                  <button
-                    className="buy-btn py-1 px-2"
-                    onClick={() => {
-                      setQueryItems([]);
-                      setPrices(0, 0);
-                    }}
-                    style={{ borderRadius: "8px" }}
-                  >
-                    Clear All
-                  </button>
-                ) 
-              : <></>
-              }
+              {queryItems.length > 0 || minPrice > 0 || maxPrice > 0 ? (
+                <button
+                  className="buy-btn py-1 px-2"
+                  onClick={() => {
+                    setQueryItems([]);
+                    setPrices(0, 0);
+                    setGeneralFilter(null)
+                  }}
+                  style={{ borderRadius: "8px" }}
+                >
+                  Clear All
+                </button>
+              ) : (
+                <></>
+              )}
             </div>
 
             {nftList && nftList.length === 0 && collectionLoading === false && (
@@ -953,10 +972,10 @@ setTimeout(() => {
                               getFormattedNumber(item.price / 10 ** 18)}
                           </td>
                           <td className="table-item col-2">
-                            {item.seller && " TBD CFX"}
+                            {item.seller && " TBD WCFX"}
                           </td>
                           <td className="table-item col-2">
-                            {item.seller && " TBD CFX"}{" "}
+                            {item.seller && " TBD WCFX"}{" "}
                           </td>
                           <td className="table-item col-2">
                             {shortAddress(item.owner ?? item.seller)}
@@ -1031,10 +1050,9 @@ setTimeout(() => {
                     ))
                   )}
                 </table>
-              ) : (
-                allNftArray &&
+              ) : allNftArray &&
                 allNftArray.length > 0 &&
-                collectionLoading === false ?
+                collectionLoading === false ? (
                 nftList.map((item, index) => (
                   <div
                     className="recently-listed-card p-3 d-flex flex-column"
@@ -1242,8 +1260,7 @@ setTimeout(() => {
                     </NavLink>
                   </div>
                 ))
-
-                : 
+              ) : (
                 dummyCards.map((item, index) => (
                   <Skeleton
                     key={index}

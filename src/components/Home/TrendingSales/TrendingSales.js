@@ -333,7 +333,16 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
                       </div>
                     );
                   })
-                ) : loading === true ? (
+                ) : recents.length === 0 ?
+               <>
+                <div></div>
+                  <div className="d-flex w-100 align-items-center justify-content-center" style={{minHeight: "450px"}}>
+                     <h6 className="text-white">There are no recently listed NFT's</h6>
+                  </div>
+                <div></div>
+               </>
+
+                : loading === true ? (
                   <>
                   <Skeleton variant="rounded" width={"100%"} height={135} />
                   <Skeleton variant="rounded" width={"100%"} height={135} />
@@ -370,7 +379,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
                           </div>
                           <div className="d-flex flex-column">
                             <h6 className="trending-card-cfx-price mb-0">
-                              {item.cfxPrice} CFX
+                              {item.cfxPrice} WCFX
                             </h6>
                             <span className="trending-card-usd-price mb-0">
                               ($ {item.usdPrice})
@@ -498,7 +507,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
                               </div>
                               <div className="d-flex flex-column">
                                 <h6 className="trending-card-cfx-price mb-0">
-                                  {item.cfxPrice} CFX
+                                  {item.cfxPrice} WCFX
                                 </h6>
                                 <span className="trending-card-usd-price mb-0">
                                   ($ {item.usdPrice})
@@ -624,7 +633,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
                               </div>
                               <div className="d-flex flex-column">
                                 <h6 className="trending-card-cfx-price mb-0">
-                                  {item.cfxPrice} CFX
+                                  {item.cfxPrice} WCFX
                                 </h6>
                                 <span className="trending-card-usd-price mb-0">
                                   ($ {item.usdPrice})
@@ -750,7 +759,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
                               </div>
                               <div className="d-flex flex-column">
                                 <h6 className="trending-card-cfx-price mb-0">
-                                  {item.cfxPrice} CFX
+                                  {item.cfxPrice} WCFX
                                 </h6>
                                 <span className="trending-card-usd-price mb-0">
                                   ($ {item.usdPrice})

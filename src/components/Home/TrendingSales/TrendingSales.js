@@ -370,7 +370,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
                           </div>
                           <div className="d-flex flex-column">
                             <h6 className="trending-card-cfx-price mb-0">
-                              {item.cfxPrice} CFX
+                              {item.cfxPrice} WCFX
                             </h6>
                             <span className="trending-card-usd-price mb-0">
                               ($ {item.usdPrice})
@@ -498,7 +498,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
                               </div>
                               <div className="d-flex flex-column">
                                 <h6 className="trending-card-cfx-price mb-0">
-                                  {item.cfxPrice} CFX
+                                  {item.cfxPrice} WCFX
                                 </h6>
                                 <span className="trending-card-usd-price mb-0">
                                   ($ {item.usdPrice})
@@ -624,7 +624,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
                               </div>
                               <div className="d-flex flex-column">
                                 <h6 className="trending-card-cfx-price mb-0">
-                                  {item.cfxPrice} CFX
+                                  {item.cfxPrice} WCFX
                                 </h6>
                                 <span className="trending-card-usd-price mb-0">
                                   ($ {item.usdPrice})
@@ -750,7 +750,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
                               </div>
                               <div className="d-flex flex-column">
                                 <h6 className="trending-card-cfx-price mb-0">
-                                  {item.cfxPrice} CFX
+                                  {item.cfxPrice} WCFX
                                 </h6>
                                 <span className="trending-card-usd-price mb-0">
                                   ($ {item.usdPrice})

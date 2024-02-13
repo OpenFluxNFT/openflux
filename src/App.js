@@ -209,8 +209,30 @@ function App() {
         const dateB = new Date(b.createdAt);
         return dateB - dateA;
       });
+      const finalResult = await Promise.all(
+        window.range(0, newestCollections.length - 1).map(async (i) => {
+          let floorprice = 0;
+          const result = await axios
+            .get(
+              `${baseURL}/api/floor-price/${newestCollections[i].contractAddress}`,
+              {
+                headers: {
+                  cascadestyling:
+                    "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+                },
+              }
+            )
+            .catch((e) => {
+              console.error(e);
+            });
+          if (result && result.status === 200) {
+            floorprice = result.data.floorPrice / 1e18;
+          }
 
-      setAllCollectionsOrdered(newestCollections);
+          return { ...newestCollections[i], floorPrice: floorprice };
+        })
+      );
+      setAllCollectionsOrdered(finalResult);
     }
   };
 
@@ -529,7 +551,31 @@ function App() {
 
     if (result && result.status === 200) {
       const regularCollection = result.data;
-      setAllCollections(regularCollection);
+      const finalResult = await Promise.all(
+        window.range(0, regularCollection.length - 1).map(async (i) => {
+          let floorprice = 0;
+          const result = await axios
+            .get(
+              `${baseURL}/api/floor-price/${regularCollection[i].contractAddress}`,
+              {
+                headers: {
+                  cascadestyling:
+                    "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+                },
+              }
+            )
+            .catch((e) => {
+              console.error(e);
+            });
+          if (result && result.status === 200) {
+            floorprice = result.data.floorPrice / 1e18;
+          }
+
+          return { ...regularCollection[i], floorPrice: floorprice };
+        })
+      );
+
+      setAllCollections(finalResult);
     }
   };
 
@@ -661,8 +707,8 @@ function App() {
                         tokenName: tokenName,
                         collectionName: collectionName,
                       });
-                    } else if ( nft_data &&
-                      nft_data.code == 404 ||
+                    } else if (
+                      (nft_data && nft_data.code == 404) ||
                       typeof nft_data === "string"
                     ) {
                       // console.log('nft_data', nft_data);
@@ -1226,16 +1272,13 @@ function App() {
   }, [isConnected, coinbase, count]);
 
   useEffect(() => {
-    getAllCollections();
-    handleSetOrderedCollection();
-    fetchCFXPrice();
-  }, []);
-
-  useEffect(() => {
     if (dataFetchedRef.current) return;
     dataFetchedRef.current = true;
     handleGetRecentlyListedNfts();
     handleGetRecentlySoldNfts();
+    getAllCollections();
+    handleSetOrderedCollection();
+    fetchCFXPrice();
   }, []);
 
   useEffect(() => {

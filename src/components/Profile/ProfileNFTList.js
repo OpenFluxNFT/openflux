@@ -200,7 +200,7 @@ const ProfileNFTList = ({
                 </h2>
                 {option === "collected" &&
                   userCollectionArray &&
-                  userCollectionArray.length &&
+                  userCollectionArray.length > 0 &&
                   userCollectionArray.map((item, index) => {
                     return (
                       <div
@@ -317,7 +317,7 @@ const ProfileNFTList = ({
 
                 {option === "listed" &&
                   userNftsOwnedArray &&
-                  userNftsOwnedArray.length &&
+                  userNftsOwnedArray.length > 0 &&
                   userNftsOwnedArray
                     .filter((obj) => {
                       return obj.price !== undefined;

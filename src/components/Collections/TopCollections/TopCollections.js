@@ -8,6 +8,7 @@ import checkIcon from "./assets/checkIcon.svg";
 import useWindowSize from "../../../hooks/useWindowSize";
 import Slider from "react-slick";
 import { NavLink } from "react-router-dom";
+import getFormattedNumber from "../../../hooks/get-formatted-number";
 
 const TopCollections = ({ allCollections, allCollectionsOrdered }) => {
   const windowSize = useWindowSize();
@@ -23,14 +24,13 @@ const TopCollections = ({ allCollections, allCollectionsOrdered }) => {
     dotsClass: "button__bar",
   };
 
-
   return (
     <div className="container-lg pt-0 pb-5 pt-lg-5">
       <div className="row">
         <h6 className="main-hero-title mb-3">New Collections</h6>
         {windowSize.width > 786 ? (
           <div className="top-collections-grid pe-0">
-            {allCollectionsOrdered.slice(0,4).map((item, index) => (
+            {allCollectionsOrdered.slice(0, 4).map((item, index) => (
               <div
                 className="position-relative top-collection-wrapper"
                 key={index}
@@ -60,7 +60,7 @@ const TopCollections = ({ allCollections, allCollectionsOrdered }) => {
                     <div className="d-flex align-items-center gap-1">
                       <span className="mb-0 floor-placeholder">Floor:</span>
                       <span className="floor-price mb-0">
-                        {item.floorPrice ?? "tbd"} CFX
+                        { getFormattedNumber(item.floorPrice)  ?? 0} WCFX
                       </span>
                     </div>
                   </div>
@@ -100,7 +100,7 @@ const TopCollections = ({ allCollections, allCollectionsOrdered }) => {
                     <div className="d-flex align-items-center gap-1">
                       <span className="mb-0 floor-placeholder">Floor:</span>
                       <span className="floor-price mb-0">
-                        {item.floorPrice ?? "tbd"} CFX
+                        { getFormattedNumber(item.floorPrice)  ?? 0} WCFX
                       </span>
                     </div>
                   </div>

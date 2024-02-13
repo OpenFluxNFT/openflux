@@ -53,7 +53,7 @@ const CollectionPage = ({
     {
       title: "Total Volume",
       value: "tbd",
-      valueType: "CFX",
+      valueType: "WCFX",
     },
     {
       title: "Floor price",

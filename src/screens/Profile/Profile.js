@@ -39,7 +39,6 @@ const Profile = ({
   const [allOffers, setallOffers] = useState([]);
   const [allOffersMade, setallOffersMade] = useState([]);
 
-
   const { id } = useParams();
 
   const getOffer = async () => {
@@ -337,8 +336,7 @@ const Profile = ({
             }
           })
         );
-        setallOffersMade(alloffers)
-        
+        setallOffersMade(alloffers);
       }
     }
   };
@@ -379,7 +377,6 @@ const Profile = ({
       value: userJoined,
     },
   ];
-
   const profileInfo = [
     {
       title: "Total Owned",
@@ -388,8 +385,19 @@ const Profile = ({
     },
     {
       title: "Total Listed",
-      value: "tbd",
-      valueType: "(45%)",
+      value:
+        userNftsOwnedArray && userNftsOwnedArray.length > 0
+          ? userNftsOwnedArray.filter((obj) => {
+              return obj.price !== undefined;
+            }).length
+          : 0,
+      valueType: `${
+        (userNftsOwnedArray.filter((obj) => {
+          return obj.price !== undefined;
+        }).length *
+          100) /
+          userTotalNftsOwned ?? 0
+      }%`,
     },
     {
       title: "Total Sold",
@@ -410,7 +418,6 @@ const Profile = ({
   useEffect(() => {
     fetchUserOffers();
   }, [coinbase]);
-console.log(allOffersMade)
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
       <ProfileBanner

@@ -105,39 +105,41 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
 
     setChunkedArray(myArray);
   };
+  // console.log(recentlySoldNfts)
 
   const categorizeItems = (val) => {
-    setLoading(true)
+    setLoading(true);
     setTime(val);
     const currentTime = Math.floor(Date.now() / 1000); // Get current timestamp in seconds
     const oneDayInSeconds = 24 * 60 * 60;
     const sevenDaysInSeconds = 7 * oneDayInSeconds;
     const thirtyDaysInSeconds = 30 * oneDayInSeconds;
+    if (recentlySoldNfts && recentlySoldNfts.length > 0) {
+      const items24HoursAgo = recentlySoldNfts.filter(
+        (item) =>
+          currentTime - parseInt(item.blockTimestamp, 10) <= oneDayInSeconds
+      );
+      const items7DaysAgo = recentlySoldNfts.filter(
+        (item) =>
+          currentTime - parseInt(item.blockTimestamp, 10) <= sevenDaysInSeconds
+      );
+      const items30DaysAgo = recentlySoldNfts.filter(
+        (item) =>
+          currentTime - parseInt(item.blockTimestamp, 10) <= thirtyDaysInSeconds
+      );
 
-    const items24HoursAgo = recentlySoldNfts.filter(
-      (item) =>
-        currentTime - parseInt(item.blockTimestamp, 10) <= oneDayInSeconds
-    );
-    const items7DaysAgo = recentlySoldNfts.filter(
-      (item) =>
-        currentTime - parseInt(item.blockTimestamp, 10) <= sevenDaysInSeconds
-    );
-    const items30DaysAgo = recentlySoldNfts.filter(
-      (item) =>
-        currentTime - parseInt(item.blockTimestamp, 10) <= thirtyDaysInSeconds
-    );
+      if (val === "24h") {
+        setRecents(items24HoursAgo);
+      } else if (val === "7d") {
+        setRecents(items7DaysAgo);
+      } else {
+        setRecents(items30DaysAgo);
+      }
 
-    if (val === "24h") {
-      setRecents(items24HoursAgo);
-    } else if (val === "7d") {
-      setRecents(items7DaysAgo);
-    } else {
-      setRecents(items30DaysAgo);
+      setTimeout(() => {
+        setLoading(false);
+      }, 1500);
     }
-
-    setTimeout(() => {
-      setLoading(false)
-    }, 1500);
   };
 
   useEffect(() => {
@@ -333,26 +335,30 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
                       </div>
                     );
                   })
-                ) : recents.length === 0 ?
-               <>
-                <div></div>
-                  <div className="d-flex w-100 align-items-center justify-content-center" style={{minHeight: "450px"}}>
-                     <h6 className="text-white">There are no recently listed NFT's</h6>
-                  </div>
-                <div></div>
-               </>
-
-                : loading === true ? (
+                ) : recents.length === 0 ? (
                   <>
-                  <Skeleton variant="rounded" width={"100%"} height={135} />
-                  <Skeleton variant="rounded" width={"100%"} height={135} />
-                  <Skeleton variant="rounded" width={"100%"} height={135} />
-                  <Skeleton variant="rounded" width={"100%"} height={135} />
-                  <Skeleton variant="rounded" width={"100%"} height={135} />
-                  <Skeleton variant="rounded" width={"100%"} height={135} />
-                  <Skeleton variant="rounded" width={"100%"} height={135} />
-                  <Skeleton variant="rounded" width={"100%"} height={135} />
-                  <Skeleton variant="rounded" width={"100%"} height={135} />
+                    <div></div>
+                    <div
+                      className="d-flex w-100 align-items-center justify-content-center"
+                      style={{ minHeight: "450px" }}
+                    >
+                      <h6 className="text-white">
+                        There are no recently listed NFT's
+                      </h6>
+                    </div>
+                    <div></div>
+                  </>
+                ) : loading === true ? (
+                  <>
+                    <Skeleton variant="rounded" width={"100%"} height={135} />
+                    <Skeleton variant="rounded" width={"100%"} height={135} />
+                    <Skeleton variant="rounded" width={"100%"} height={135} />
+                    <Skeleton variant="rounded" width={"100%"} height={135} />
+                    <Skeleton variant="rounded" width={"100%"} height={135} />
+                    <Skeleton variant="rounded" width={"100%"} height={135} />
+                    <Skeleton variant="rounded" width={"100%"} height={135} />
+                    <Skeleton variant="rounded" width={"100%"} height={135} />
+                    <Skeleton variant="rounded" width={"100%"} height={135} />
                   </>
                 ) : (
                   dummyCards.map((item, index) => (

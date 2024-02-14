@@ -133,7 +133,7 @@ const ProfileNFTList = ({
       fetchFavoriteCounts();
       setTimeout(() => {
         setLoading(false);
-      }, 1000);
+      }, 2000);
     });
   };
 
@@ -184,7 +184,7 @@ const ProfileNFTList = ({
 
   useEffect(() => {
     testFunc();
-  }, [userNftFavs]);
+  }, [userNftFavs, option, loading]);
 
   return (
     <div className="container-lg">
@@ -219,140 +219,190 @@ const ProfileNFTList = ({
                     Collections
                   </button>
                 </h2>
-                {option === "collected" &&
-                  userCollectionArray &&
-                  userCollectionArray.length > 0 &&
-                  userCollectionArray.map((item, index) => {
-                    return (
-                      <div
-                        id="collapseOne"
-                        className="accordion-collapse collapse"
-                        aria-labelledby="headingOne"
-                        data-bs-parent="#accordionExample"
-                        key={index}
-                      >
-                        <div className="accordion-body">
-                          <FormGroup>
-                            <FormControlLabel
-                              control={
-                                <Checkbox
-                                  size="small"
-                                  sx={{
-                                    color: "white",
-                                    "&.Mui-checked": {
-                                      color: "#3DBDA7",
-                                    },
-                                  }}
-                                  onChange={() => {
-                                    handleAddCollections(item.nftAddress);
-                                  }}
+                {option === "listed" && (
+                  <div
+                    id="collapseOne"
+                    className="accordion-collapse collapse"
+                    aria-labelledby="headingOne"
+                    data-bs-parent="#accordionExample"
+                  >
+                    <div className="accordion-body">
+                      {userNftsOwnedArray &&
+                        userNftsOwnedArray.length > 0 &&
+                        userNftsOwnedArray
+                          .filter((obj) => {
+                            return obj.price !== undefined;
+                          })
+                          .map((item, index) => {
+                            return (
+                              <FormGroup
+                                key={index}
+                                sx={{ display: "block !important" }}
+                              >
+                                <FormControlLabel
+                                  control={
+                                    <Checkbox
+                                      size="small"
+                                      sx={{
+                                        color: "white",
+                                        "&.Mui-checked": {
+                                          color: "#3DBDA7",
+                                        },
+                                      }}
+                                      onChange={() => {
+                                        handleAddCollections(item.nftAddress);
+                                      }}
+                                    />
+                                  }
+                                  label={item.collectionName}
                                 />
-                              }
-                              label={item.collectionName}
-                            />
-                          </FormGroup>
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                <div
-                  id="collapseOne"
-                  className="accordion-collapse collapse"
-                  aria-labelledby="headingOne"
-                  data-bs-parent="#accordionExample"
-                >
-                  <div className="accordion-body">
-                    {option === "favorites" &&
-                      favoritesOption === "items" &&
-                      userNftFavs &&
-                      userNftFavs.length > 0 &&
-                      favoriteOptions.map((item, index) => {
-                        return (
-                          <FormGroup sx={{ display: "block !important" }}>
-                            <FormControlLabel
-                              control={
-                                <Checkbox
-                                  size="small"
-                                  sx={{
-                                    color: "white",
-                                    "&.Mui-checked": {
-                                      color: "#3DBDA7",
-                                    },
-                                  }}
-                                  onChange={() => {
-                                    handleAddCollections(item.contractAddress);
-                                  }}
-                                />
-                              }
-                              label={item.collectionName}
-                            />
-                          </FormGroup>
-                        );
-                      })}
+                              </FormGroup>
+                            );
+                          })}
+                    </div>
                   </div>
-                </div>
-
+                )}
+                {option === "collected" && (
+                  <div
+                    id="collapseOne"
+                    className="accordion-collapse collapse"
+                    aria-labelledby="headingOne"
+                    data-bs-parent="#accordionExample"
+                  >
+                    <div className="accordion-body">
+                      {userCollectionArray &&
+                        userCollectionArray.length > 0 &&
+                        userCollectionArray.map((item, index) => {
+                          return (
+                            <FormGroup key={index}>
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    size="small"
+                                    sx={{
+                                      color: "white",
+                                      "&.Mui-checked": {
+                                        color: "#3DBDA7",
+                                      },
+                                    }}
+                                    onChange={() => {
+                                      handleAddCollections(item.nftAddress);
+                                    }}
+                                  />
+                                }
+                                label={item.collectionName}
+                              />
+                            </FormGroup>
+                          );
+                        })}
+                    </div>
+                  </div>
+                )}
+                {option === "favorites" && favoritesOption === "items" && (
+                  <div
+                    id="collapseOne"
+                    className="accordion-collapse collapse"
+                    aria-labelledby="headingOne"
+                    data-bs-parent="#accordionExample"
+                  >
+                    <div className="accordion-body">
+                      {userNftFavs &&
+                        userNftFavs.length > 0 &&
+                        favoriteOptions.map((item, index) => {
+                          return (
+                            <FormGroup
+                              sx={{ display: "block !important" }}
+                              key={index}
+                            >
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    size="small"
+                                    sx={{
+                                      color: "white",
+                                      "&.Mui-checked": {
+                                        color: "#3DBDA7",
+                                      },
+                                    }}
+                                    onChange={() => {
+                                      handleAddCollections(
+                                        item.contractAddress
+                                      );
+                                    }}
+                                  />
+                                }
+                                label={item.collectionName}
+                              />
+                            </FormGroup>
+                          );
+                        })}
+                    </div>
+                  </div>
+                )}
                 {option === "favorites" &&
-                  favoritesOption === "collections" &&
-                  userCollectionFavs &&
-                  userCollectionFavs.length > 0 &&
-                  userCollectionFavs.map((item, index) => {
-                    return (
-                      <div
-                        id="collapseOne"
-                        className="accordion-collapse collapse"
-                        aria-labelledby="headingOne"
-                        data-bs-parent="#accordionExample"
-                        key={index}
-                      >
-                        <div className="accordion-body">
-                          <FormGroup>
-                            <FormControlLabel
-                              control={
-                                <Checkbox
-                                  size="small"
-                                  sx={{
-                                    color: "white",
-                                    "&.Mui-checked": {
-                                      color: "#3DBDA7",
-                                    },
-                                  }}
-                                  onChange={() => {
-                                    handleAddCollections(item);
-                                  }}
+                  favoritesOption === "collections" && (
+                    <div
+                      id="collapseOne"
+                      className="accordion-collapse collapse"
+                      aria-labelledby="headingOne"
+                      data-bs-parent="#accordionExample"
+                    >
+                      <div className="accordion-body">
+                        {userCollectionFavs &&
+                          userCollectionFavs.length > 0 &&
+                          userCollectionFavs.map((item, index) => {
+                            return (
+                              <FormGroup
+                                sx={{ display: "block !important" }}
+                                key={index}
+                              >
+                                <FormControlLabel
+                                  control={
+                                    <Checkbox
+                                      size="small"
+                                      sx={{
+                                        color: "white",
+                                        "&.Mui-checked": {
+                                          color: "#3DBDA7",
+                                        },
+                                      }}
+                                      onChange={() => {
+                                        handleAddCollections(item);
+                                      }}
+                                    />
+                                  }
+                                  label={
+                                    allCollections.find((collection) => {
+                                      return (
+                                        collection.contractAddress.toLowerCase() ===
+                                        item.toLowerCase()
+                                      );
+                                    })?.collectionName
+                                  }
                                 />
-                              }
-                              label={
-                                allCollections.find((collection) => {
-                                  return collection.contractAddress === item;
-                                })?.collectionName
-                              }
-                            />
-                          </FormGroup>
-                        </div>
+                              </FormGroup>
+                            );
+                          })}
                       </div>
-                    );
-                  })}
+                    </div>
+                  )}
 
-                {option === "listed" &&
-                  userNftsOwnedArray &&
-                  userNftsOwnedArray.length > 0 &&
-                  userNftsOwnedArray
-                    .filter((obj) => {
-                      return obj.price !== undefined;
-                    })
-                    .map((item, index) => {
-                      return (
-                        <div
-                          id="collapseOne"
-                          className="accordion-collapse collapse"
-                          aria-labelledby="headingOne"
-                          data-bs-parent="#accordionExample"
-                          key={index}
-                        >
-                          <div className="accordion-body">
-                            <FormGroup>
+                {option === "offersMade" && (
+                  <div
+                    id="collapseOne"
+                    className="accordion-collapse collapse"
+                    aria-labelledby="headingOne"
+                    data-bs-parent="#accordionExample"
+                  >
+                    <div className="accordion-body">
+                      {allOffersMade &&
+                        allOffersMade.length > 0 &&
+                        allOffersMade.map((item, index) => {
+                          return (
+                            <FormGroup
+                              key={index}
+                              sx={{ display: "block !important" }}
+                            >
                               <FormControlLabel
                                 control={
                                   <Checkbox
@@ -371,92 +421,62 @@ const ProfileNFTList = ({
                                 label={item.collectionName}
                               />
                             </FormGroup>
-                          </div>
-                        </div>
-                      );
-                    })}
-
-                {option === "offersMade" &&
-                  allOffersMade &&
-                  allOffersMade.length &&
-                  allOffersMade.map((item, index) => {
-                    return (
-                      <div
-                        id="collapseOne"
-                        className="accordion-collapse collapse"
-                        aria-labelledby="headingOne"
-                        data-bs-parent="#accordionExample"
-                        key={index}
-                      >
-                        <div className="accordion-body">
-                          <FormGroup>
-                            <FormControlLabel
-                              control={
-                                <Checkbox
-                                  size="small"
-                                  sx={{
-                                    color: "white",
-                                    "&.Mui-checked": {
-                                      color: "#3DBDA7",
-                                    },
-                                  }}
-                                  onChange={() => {
-                                    handleAddCollections(item.nftAddress);
-                                  }}
+                          );
+                        })}
+                    </div>
+                  </div>
+                )}
+                {option === "hasOffers" && (
+                  <div
+                    id="collapseOne"
+                    className="accordion-collapse collapse"
+                    aria-labelledby="headingOne"
+                    data-bs-parent="#accordionExample"
+                  >
+                    <div className="accordion-body">
+                      {allOffers &&
+                        allOffers.length > 0 &&
+                        userNftsOwnedArray &&
+                        userNftsOwnedArray.length > 0 &&
+                        userNftsOwnedArray
+                          .filter(({ tokenId: id1, nftAddress: nftAddr1 }) =>
+                            allOffers.some(
+                              ({ tokenId: id2, nftAddress: nftAddr2 }) =>
+                                id1.toString() === id2.toString() &&
+                                nftAddr1.toLowerCase() ===
+                                  nftAddr2.toLowerCase()
+                            )
+                          )
+                          .map((item, index) => {
+                            return (
+                              <FormGroup
+                                key={index}
+                                sx={{ display: "block !important" }}
+                              >
+                                <FormControlLabel
+                                  control={
+                                    <Checkbox
+                                      size="small"
+                                      sx={{
+                                        color: "white",
+                                        "&.Mui-checked": {
+                                          color: "#3DBDA7",
+                                        },
+                                      }}
+                                      onChange={() => {
+                                        handleAddCollections(item.nftAddress);
+                                      }}
+                                    />
+                                  }
+                                  label={item.collectionName}
                                 />
-                              }
-                              label={item.collectionName}
-                            />
-                          </FormGroup>
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                {option === "hasOffers" &&
-                  allOffers &&
-                  allOffers.length > 0 &&
-                  userNftsOwnedArray
-                    .filter(({ tokenId: id1, nftAddress: nftAddr1 }) =>
-                      allOffers.some(
-                        ({ tokenId: id2, nftAddress: nftAddr2 }) =>
-                          id1.toString() === id2.toString() &&
-                          nftAddr1.toLowerCase() === nftAddr2.toLowerCase()
-                      )
-                    )
-                    .map((item, index) => {
-                      return (
-                        <div
-                          id="collapseOne"
-                          className="accordion-collapse collapse"
-                          aria-labelledby="headingOne"
-                          data-bs-parent="#accordionExample"
-                          key={index}
-                        >
-                          <div className="accordion-body">
-                            <FormGroup>
-                              <FormControlLabel
-                                control={
-                                  <Checkbox
-                                    size="small"
-                                    sx={{
-                                      color: "white",
-                                      "&.Mui-checked": {
-                                        color: "#3DBDA7",
-                                      },
-                                    }}
-                                    onChange={() => {
-                                      handleAddCollections(item.nftAddress);
-                                    }}
-                                  />
-                                }
-                                label={item.collectionName}
-                              />
-                            </FormGroup>
-                          </div>
-                        </div>
-                      );
-                    })}
+                              </FormGroup>
+                            );
+                          })}
+                      {/* <button>test</button> */}
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="accordion-item">
                 <h2 className="accordion-header" id="headingTwo">
@@ -620,7 +640,9 @@ const ProfileNFTList = ({
               className={`small-cards-grid mt-3 ${
                 ((favoritesOption === "collections" &&
                   userCollectionFavs.length === 0) ||
-                  (favoritesOption === "items" && userNftFavs.length === 0)) &&
+                  (favoritesOption === "items" &&
+                    userNftFavs.length === 0 &&
+                    loading === false)) &&
                 "d-flex align-items-center justify-content-center h-100"
               } `}
             >
@@ -634,7 +656,9 @@ const ProfileNFTList = ({
                       height={250}
                     />
                   ))
-                ) : userNftFavs &&
+                ) : favoritesOption === "items" &&
+                  loading === false &&
+                  userNftFavs &&
                   userNftFavs.length > 0 &&
                   userCollectionArrayFinal.length === 0 ? (
                   userNftFavs.map((item, index) => (
@@ -729,7 +753,9 @@ const ProfileNFTList = ({
                       </NavLink>
                     </div>
                   ))
-                ) : userNftFavs &&
+                ) : favoritesOption === "items" &&
+                  loading === false &&
+                  userNftFavs &&
                   userNftFavs.length > 0 &&
                   userCollectionArrayFinal.length > 0 ? (
                   userNftFavs
@@ -1003,7 +1029,7 @@ const ProfileNFTList = ({
                         >
                           <td
                             className="table-item col-2 d-flex align-items-center gap-1 w-100"
-                            scope="row"
+                            // scope="row"
                           >
                             {!item.isVideo && item.image ? (
                               <img
@@ -1110,7 +1136,7 @@ const ProfileNFTList = ({
                           >
                             <td
                               className="table-item col-2 d-flex align-items-center gap-1 w-100"
-                              scope="row"
+                              // scope="row"
                             >
                               {!item.isVideo && item.image ? (
                                 <img
@@ -1223,7 +1249,7 @@ const ProfileNFTList = ({
                           >
                             <td
                               className="table-item col-2 d-flex align-items-center gap-1 w-100"
-                              scope="row"
+                              // scope="row"
                             >
                               {!item.isVideo && item.image ? (
                                 <img
@@ -1311,7 +1337,7 @@ const ProfileNFTList = ({
                           >
                             <td
                               className="table-item col-2 d-flex align-items-center gap-1 w-100"
-                              scope="row"
+                              // scope="row"
                             >
                               {!item.isVideo && item.image ? (
                                 <img
@@ -1401,7 +1427,7 @@ const ProfileNFTList = ({
                           >
                             <td
                               className="table-item col-2 d-flex align-items-center gap-1 w-100"
-                              scope="row"
+                              // scope="row"
                             >
                               {!item.isVideo && item.image ? (
                                 <img
@@ -1500,7 +1526,7 @@ const ProfileNFTList = ({
                           >
                             <td
                               className="table-item col-2 d-flex align-items-center gap-1 w-100"
-                              scope="row"
+                              // scope="row"
                             >
                               {!item.isVideo && item.image ? (
                                 <img
@@ -1583,7 +1609,7 @@ const ProfileNFTList = ({
                         >
                           <td
                             className="table-item col-2 d-flex align-items-center gap-1 w-100"
-                            scope="row"
+                            // scope="row"
                           >
                             {!item.isVideo && item.image ? (
                               <img
@@ -1676,7 +1702,7 @@ const ProfileNFTList = ({
                           >
                             <td
                               className="table-item col-2 d-flex align-items-center gap-1 w-100"
-                              scope="row"
+                              // scope="row"
                             >
                               {!item.isVideo && item.image ? (
                                 <img

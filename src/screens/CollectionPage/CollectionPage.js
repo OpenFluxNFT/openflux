@@ -721,6 +721,8 @@ const CollectionPage = ({
       fetchInitialNftsPerCollection().then(() => {
         onNewCollectionFetched();
       });
+      getCollectionInfo();
+      getCollectionUniqueOwners();
     }
   }, [isNewCollection]);
 

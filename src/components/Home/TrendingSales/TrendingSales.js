@@ -24,7 +24,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
   const [recents, setRecents] = useState([]);
   const [chunkedArray, setChunkedArray] = useState([]);
   const [option, setOption] = useState("trending");
-  const [time, setTime] = useState("24h");
+  const [time, setTime] = useState("30d");
   const windowSize = useWindowSize();
   const [loading, setLoading] = useState(true);
 
@@ -147,7 +147,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
   }, []);
 
   useEffect(() => {
-    categorizeItems("24h");
+    categorizeItems("30d");
     setLoading(false);
   }, [recentlySoldNfts]);
 

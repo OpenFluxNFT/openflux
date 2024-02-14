@@ -25,7 +25,7 @@ const TrendingCollections = ({
 }) => {
   const windowSize = useWindowSize();
   const [option, setOption] = useState("trending");
-  const [time, setTime] = useState("24h");
+  const [time, setTime] = useState("30d");
   const [recents, setRecents] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -159,7 +159,7 @@ const TrendingCollections = ({
   };
 
   useEffect(() => {
-    categorizeItems("24h");
+    categorizeItems("30d");
     setLoading(false);
   }, [recentlySoldNfts]);
 

@@ -22,7 +22,7 @@ const Sidebar = ({  category }) => {
           <img src={profileIcon} alt="" />
           <h6 className="mb-0">Profile</h6>
         </NavLink>
-        <NavLink
+        {/* <NavLink
           to={"/settings/notifications"}
           className={`sidebar-item ${
             category === "notifications" && "sidebar-item-active"
@@ -30,7 +30,7 @@ const Sidebar = ({  category }) => {
         >
           <img src={notificationsIcon} alt="" />
           <h6 className="mb-0">Notifications</h6>
-        </NavLink>
+        </NavLink> */}
         <NavLink
           to={"/settings/support"}
           className={`sidebar-item ${

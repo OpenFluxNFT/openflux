@@ -4,6 +4,7 @@ import TopCollections from "../../components/Collections/TopCollections/TopColle
 import TrendingCollections from "../../components/Collections/TrendingCollections/TrendingCollections";
 import CollectionCategories from "../../components/Collections/CollectionCategories/CollectionCategories";
 import { NavLink } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 const Collections = ({
   allCollections,
@@ -11,8 +12,17 @@ const Collections = ({
   recentlySoldNfts,
   cfxPrice,
 }) => {
+  const location = useLocation();
+
+  const scrollToElement = () => {
+    const element = document.getElementById("recentSales");
+    if (element && location.hash === `#recent-sales`) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else window.scrollTo(0, 0);
+  };
+
   useEffect(() => {
-    window.scrollTo(0, 0);
+    scrollToElement();
   }, []);
 
   return (
@@ -21,7 +31,11 @@ const Collections = ({
         allCollections={allCollections}
         allCollectionsOrdered={allCollectionsOrdered}
       />
-      <TrendingCollections allCollections={allCollections} recentlySoldNfts={recentlySoldNfts} cfxPrice={cfxPrice} />
+      <TrendingCollections
+        allCollections={allCollections}
+        recentlySoldNfts={recentlySoldNfts}
+        cfxPrice={cfxPrice}
+      />
       <CollectionCategories allCollections={allCollections} />
       <div className="d-flex justify-content-center">
         <NavLink to="/all-collections">

@@ -41,13 +41,19 @@ const ProfileNFTList = ({
   userCollectionArray,
   allOffersMade,
   allNFTSOffer,
+  recentlyListedNfts,
 }) => {
   const [favoritesOption, setfavoritesOption] = useState("items");
   const [gridView, setGridView] = useState("small-grid");
   const [loading, setLoading] = useState(false);
-  const [selectedCollection, setselectedCollection] = useState([]);
   const [userCollectionArrayFinal, setuserCollectionArrayFinal] = useState([]);
   const [favoriteOptions, setFavoriteOptions] = useState([]);
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(0);
+  const [dummyMinPrice, setDummyMinPrice] = useState(0);
+  const [dummyMaxPrice, setDummyMaxPrice] = useState(0);
+  const [nftList, setNftList] = useState([]);
+  const [generalFilter, setGeneralFilter] = useState(null);
 
   const navigate = useNavigate();
 
@@ -126,6 +132,55 @@ const ProfileNFTList = ({
     },
   ];
 
+  const setPrices = (min, max) => {
+    setGeneralFilter(min, max);
+    setLoading(true);
+    setMinPrice(min);
+    setMaxPrice(max);
+
+    if (min === 0 && max === 0) {
+      setNftList(userNftsOwnedArray);
+      setGeneralFilter(null);
+      return;
+    } else if (min === "" && max === "") {
+      setNftList(userNftsOwnedArray);
+      setGeneralFilter(null);
+      return;
+    } else if (min === "0" && max === "0") {
+      setNftList(userNftsOwnedArray);
+      setGeneralFilter(null);
+      return;
+    } else if (
+      (Number(min) === 0 || min === "") &&
+      Number(max) !== 0 &&
+      max !== ""
+    ) {
+      const filterPrices = userNftsOwnedArray.filter((item) => {
+        if (item.price) {
+       
+          return (
+            (item.price / 10 ** 18) * cfxPrice >= Number(min) ||
+            (item.price / 10 ** 18) * cfxPrice <= Number(max)
+          );
+        }
+      });
+
+      setNftList(filterPrices);
+    } else {
+      const filterPrices = userNftsOwnedArray.filter((item) => {
+        if (item.price) {
+          return (item.price / 10 ** 18) * cfxPrice >= Number(max);
+        }
+      });
+
+      setNftList(filterPrices);
+    }
+
+    setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+  };
+
   const handleLikeStates = (tokenid, contractAddress) => {
     const stringTokenid = tokenid.toString();
     setLoading(true);
@@ -147,21 +202,6 @@ const ProfileNFTList = ({
 
     setuserCollectionArrayFinal([...userCollectionArrayFinal]);
   };
-
-  // useEffect(() => {
-  //   setuserCollectionArrayFinal(userCollectionArray);
-  // }, [userCollectionArray]);
-
-  // useEffect(() => {
-  //   if (selectedCollection.length === 0) {
-  //     setuserCollectionArrayFinal(userCollectionArray);
-  //   } else {
-  //     const finalobj = userCollectionArray.filter((obj) => {
-  //       return obj.nftAddress.toLowerCase() === selectedCollection.nftAddress.toLowerCase();
-  //     });
-  //     setuserCollectionArrayFinal(finalobj);
-  //   }
-  // }, [selectedCollection]);
 
   useEffect(() => {
     setuserCollectionArrayFinal([]);
@@ -185,6 +225,12 @@ const ProfileNFTList = ({
   useEffect(() => {
     testFunc();
   }, [userNftFavs, option, loading]);
+
+  useEffect(() => {
+    if (option !== "favorites") {
+      setNftList(userNftsOwnedArray);
+    }
+  }, [option, userNftsOwnedArray]);
 
   return (
     <div className="container-lg">
@@ -478,46 +524,59 @@ const ProfileNFTList = ({
                   </div>
                 )}
               </div>
-              <div className="accordion-item">
-                <h2 className="accordion-header" id="headingTwo">
-                  <button
-                    className="accordion-button collection-filter py-3  d-flex align-items-center gap-2 collapsed"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#collapseTwo"
-                    aria-expanded="false"
-                    aria-controls="collapseTwo"
+              {option !== "favorites" && (
+                <div className="accordion-item">
+                  <h2 className="accordion-header" id="headingTwo">
+                    <button
+                      className="accordion-button collection-filter py-3  d-flex align-items-center gap-2 collapsed"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#collapseTwo"
+                      aria-expanded="false"
+                      aria-controls="collapseTwo"
+                    >
+                      <img src={priceIcon} alt="" />
+                      Price
+                    </button>
+                  </h2>
+                  <div
+                    id="collapseTwo"
+                    className="accordion-collapse collapse"
+                    aria-labelledby="headingTwo"
+                    data-bs-parent="#accordionExample"
                   >
-                    <img src={priceIcon} alt="" />
-                    Price
-                  </button>
-                </h2>
-                <div
-                  id="collapseTwo"
-                  className="accordion-collapse collapse"
-                  aria-labelledby="headingTwo"
-                  data-bs-parent="#accordionExample"
-                >
-                  <div className="accordion-body">
-                    <div className="d-flex flex-column gap-2">
-                      <div className="d-flex align-items-center gap-2">
-                        <input
-                          type="text"
-                          placeholder="$ Min"
-                          className="price-input"
-                        />
-                        <span className="MuiTypography-root mb-0">to</span>
-                        <input
-                          type="text"
-                          placeholder="$ Max"
-                          className="price-input"
-                        />
+                    <div className="accordion-body">
+                      <div className="d-flex flex-column gap-2">
+                        <div className="d-flex align-items-center gap-2">
+                          <input
+                            type="text"
+                            placeholder="$ Min"
+                            className="price-input"
+                            onChange={(e) => setDummyMinPrice(e.target.value)}
+                            min={0}
+                          />
+                          <span className="MuiTypography-root mb-0">to</span>
+                          <input
+                            type="text"
+                            placeholder="$ Max"
+                            className="price-input"
+                            onChange={(e) => setDummyMaxPrice(e.target.value)}
+                            min={dummyMinPrice}
+                          />
+                        </div>
+                        <button
+                          className="buy-btn"
+                          onClick={() => {
+                            setPrices(dummyMinPrice, dummyMaxPrice);
+                          }}
+                        >
+                          Apply
+                        </button>
                       </div>
-                      <button className="buy-btn">Apply</button>
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
@@ -738,17 +797,54 @@ const ProfileNFTList = ({
                             className="cfx-price mb-0"
                             style={{ fontSize: "10px" }}
                           >
-                            tbd WCFX
+                            {recentlyListedNfts.find(
+                              ({ tokenId: id1, nftAddress: nftAddr1 }) =>
+                                id1.toString() === item.tokenId.toString() &&
+                                nftAddr1.toLowerCase() ===
+                                  item.contractAddress.toLowerCase()
+                            )
+                              ? getFormattedNumber(
+                                  recentlyListedNfts.find(
+                                    ({ tokenId: id1, nftAddress: nftAddr1 }) =>
+                                      id1.toString() ===
+                                        item.tokenId.toString() &&
+                                      nftAddr1.toLowerCase() ===
+                                        item.contractAddress.toLowerCase()
+                                  ).price / 1e18
+                                )
+                              : "---"}{" "}
+                            WCFX
                           </h6>
                           <span
                             className="usd-price"
                             style={{ fontSize: "9px" }}
                           >
-                            ($ tbd)
+                            (${" "}
+                            {recentlyListedNfts.find(
+                              ({ tokenId: id1, nftAddress: nftAddr1 }) =>
+                                id1.toString() === item.tokenId.toString() &&
+                                nftAddr1.toLowerCase() ===
+                                  item.contractAddress.toLowerCase()
+                            )
+                              ? getFormattedNumber(
+                                  (recentlyListedNfts.find(
+                                    ({ tokenId: id1, nftAddress: nftAddr1 }) =>
+                                      id1.toString() ===
+                                        item.tokenId.toString() &&
+                                      nftAddr1.toLowerCase() ===
+                                        item.contractAddress.toLowerCase()
+                                  ).price /
+                                    1e18) *
+                                    cfxPrice
+                                )
+                              : "---"}
+                            )
                           </span>
                         </div>
                         <div className="mt-3">
-                          <button className="buy-btn w-100">Buy</button>
+                          <button className="buy-btn w-100">
+                            View Details
+                          </button>
                         </div>
                       </NavLink>
                     </div>
@@ -845,17 +941,60 @@ const ProfileNFTList = ({
                               className="cfx-price mb-0"
                               style={{ fontSize: "10px" }}
                             >
-                              tbd WCFX
+                              {recentlyListedNfts.find(
+                                ({ tokenId: id1, nftAddress: nftAddr1 }) =>
+                                  id1.toString() === item.tokenId.toString() &&
+                                  nftAddr1.toLowerCase() ===
+                                    item.contractAddress.toLowerCase()
+                              )
+                                ? getFormattedNumber(
+                                    recentlyListedNfts.find(
+                                      ({
+                                        tokenId: id1,
+                                        nftAddress: nftAddr1,
+                                      }) =>
+                                        id1.toString() ===
+                                          item.tokenId.toString() &&
+                                        nftAddr1.toLowerCase() ===
+                                          item.contractAddress.toLowerCase()
+                                    ).price / 1e18
+                                  )
+                                : "---"}{" "}
+                              WCFX
                             </h6>
                             <span
                               className="usd-price"
                               style={{ fontSize: "9px" }}
                             >
-                              ($ tbd)
+                              (${" "}
+                              {recentlyListedNfts.find(
+                                ({ tokenId: id1, nftAddress: nftAddr1 }) =>
+                                  id1.toString() === item.tokenId.toString() &&
+                                  nftAddr1.toLowerCase() ===
+                                    item.contractAddress.toLowerCase()
+                              )
+                                ? getFormattedNumber(
+                                    (recentlyListedNfts.find(
+                                      ({
+                                        tokenId: id1,
+                                        nftAddress: nftAddr1,
+                                      }) =>
+                                        id1.toString() ===
+                                          item.tokenId.toString() &&
+                                        nftAddr1.toLowerCase() ===
+                                          item.contractAddress.toLowerCase()
+                                    ).price /
+                                      1e18) *
+                                      cfxPrice
+                                  )
+                                : "---"}
+                              )
                             </span>
                           </div>
                           <div className="mt-3">
-                            <button className="buy-btn w-100">Buy</button>
+                            <button className="buy-btn w-100">
+                              View Details
+                            </button>
                           </div>
                         </NavLink>
                       </div>
@@ -1018,7 +1157,7 @@ const ProfileNFTList = ({
                       userNftsOwnedArray &&
                       userCollectionArrayFinal.length === 0 &&
                       userNftsOwnedArray.length > 0 &&
-                      userNftsOwnedArray.map((item, index) => (
+                      nftList.map((item, index) => (
                         <tr
                           className="nft-table-row p-1"
                           key={index}
@@ -1087,7 +1226,14 @@ const ProfileNFTList = ({
                             )}{" "}
                             WCFX
                           </td>
-                          <td className="table-item col-2">tbd WCFX </td>
+                          <td className="table-item col-2">
+                            {item.lastSale === 0
+                              ? getFormattedNumber(0)
+                              : getFormattedNumber(
+                                  item.lastSale.amount / 1e18
+                                )}{" "}
+                            WCFX{" "}
+                          </td>
                           <td className="table-item col-2">
                             <a
                               href={`https://evm.confluxscan.net/address/${
@@ -1116,7 +1262,7 @@ const ProfileNFTList = ({
                       userNftsOwnedArray &&
                       userCollectionArrayFinal.length > 0 &&
                       userNftsOwnedArray.length > 0 &&
-                      userNftsOwnedArray
+                      nftList
                         .filter(({ nftAddress: nftAddr1 }) =>
                           userCollectionArrayFinal.some(
                             (obj) =>
@@ -1193,8 +1339,16 @@ const ProfileNFTList = ({
                                     }).bestOffer / 1e18
                                   : 0
                               )}
+                              WCFX
                             </td>
-                            <td className="table-item col-2">tbd WCFX </td>
+                            <td className="table-item col-2">
+                              {item.lastSale === 0
+                                ? getFormattedNumber(0)
+                                : getFormattedNumber(
+                                    item.lastSale.amount / 1e18
+                                  )}{" "}
+                              WCFX{" "}
+                            </td>
                             <td className="table-item col-2">
                               <a
                                 href={`https://evm.confluxscan.net/address/${
@@ -1226,7 +1380,7 @@ const ProfileNFTList = ({
                       userNftsOwnedArray.find((obj) => {
                         return obj.price !== undefined;
                       }) &&
-                      userNftsOwnedArray
+                      nftList
                         .filter(({ nftAddress: nftAddr1 }) =>
                           userCollectionArrayFinal.some(
                             (obj) =>
@@ -1289,8 +1443,32 @@ const ProfileNFTList = ({
                                 : "---"}{" "}
                               WCFX
                             </td>
-                            <td className="table-item col-2">tbd WCFX</td>
-                            <td className="table-item col-2">tbd WCFX </td>
+                            <td className="table-item col-2">
+                              {getFormattedNumber(
+                                allNFTSOffer.find((obj) => {
+                                  return (
+                                    obj.nftAddress === item.nftAddress &&
+                                    item.tokenId === obj.tokenId
+                                  );
+                                })
+                                  ? allNFTSOffer.find((obj) => {
+                                      return (
+                                        obj.nftAddress === item.nftAddress &&
+                                        item.tokenId === obj.tokenId
+                                      );
+                                    }).bestOffer / 1e18
+                                  : 0
+                              )}{" "}
+                              WCFX
+                            </td>
+                            <td className="table-item col-2">
+                              {item.lastSale === 0
+                                ? getFormattedNumber(0)
+                                : getFormattedNumber(
+                                    item.lastSale.amount / 1e18
+                                  )}{" "}
+                              WCFX{" "}
+                            </td>
                             <td className="table-item col-2">
                               <a
                                 href={`https://evm.confluxscan.net/address/${
@@ -1304,11 +1482,13 @@ const ProfileNFTList = ({
                               </a>
                             </td>
                             <td className="table-item col-2">
-                              {moment
-                                .duration(
-                                  item.blockTimestamp * 1000 - Date.now()
-                                )
-                                .humanize(true)}
+                              {item.blockTimestamp
+                                ? moment
+                                    .duration(
+                                      item.blockTimestamp * 1000 - Date.now()
+                                    )
+                                    .humanize(true)
+                                : "N/A"}
                             </td>
                           </tr>
                         ))}
@@ -1317,10 +1497,10 @@ const ProfileNFTList = ({
                       userCollectionArrayFinal.length === 0 &&
                       userNftsOwnedArray &&
                       userNftsOwnedArray.length > 0 &&
-                      userNftsOwnedArray.find((obj) => {
+                      nftList.find((obj) => {
                         return obj.price !== undefined;
                       }) &&
-                      userNftsOwnedArray
+                      nftList
                         .filter((obj) => {
                           return obj.price !== undefined;
                         })
@@ -1377,8 +1557,32 @@ const ProfileNFTList = ({
                                 : "---"}{" "}
                               WCFX
                             </td>
-                            <td className="table-item col-2">tbd WCFX</td>
-                            <td className="table-item col-2">tbd WCFX </td>
+                            <td className="table-item col-2">
+                              {getFormattedNumber(
+                                allNFTSOffer.find((obj) => {
+                                  return (
+                                    obj.nftAddress === item.nftAddress &&
+                                    item.tokenId === obj.tokenId
+                                  );
+                                })
+                                  ? allNFTSOffer.find((obj) => {
+                                      return (
+                                        obj.nftAddress === item.nftAddress &&
+                                        item.tokenId === obj.tokenId
+                                      );
+                                    }).bestOffer / 1e18
+                                  : 0
+                              )}{" "}
+                              WCFX
+                            </td>
+                            <td className="table-item col-2">
+                              {item.lastSale === 0
+                                ? getFormattedNumber(0)
+                                : getFormattedNumber(
+                                    item.lastSale.amount / 1e18
+                                  )}{" "}
+                              WCFX{" "}
+                            </td>
                             <td className="table-item col-2">
                               <a
                                 href={`https://evm.confluxscan.net/address/${
@@ -1392,11 +1596,13 @@ const ProfileNFTList = ({
                               </a>
                             </td>
                             <td className="table-item col-2">
-                              {moment
-                                .duration(
-                                  item.blockTimestamp * 1000 - Date.now()
-                                )
-                                .humanize(true)}
+                              {item.blockTimestamp
+                                ? moment
+                                    .duration(
+                                      item.blockTimestamp * 1000 - Date.now()
+                                    )
+                                    .humanize(true)
+                                : "N/A"}
                             </td>
                           </tr>
                         ))}
@@ -1405,7 +1611,7 @@ const ProfileNFTList = ({
                       allOffers &&
                       userCollectionArrayFinal.length === 0 &&
                       allOffers.length > 0 &&
-                      userNftsOwnedArray
+                      nftList
                         .filter(({ tokenId: id1, nftAddress: nftAddr1 }) =>
                           allOffers.some(
                             ({ tokenId: id2, nftAddress: nftAddr2 }) =>
@@ -1470,7 +1676,14 @@ const ProfileNFTList = ({
                             <td className="table-item col-2">
                               {getFormattedNumber(bestOffer.amount / 1e18)} WCFX
                             </td>
-                            <td className="table-item col-2">tbd WCFX </td>
+                            <td className="table-item col-2">
+                              {item.lastSale === 0
+                                ? getFormattedNumber(0)
+                                : getFormattedNumber(
+                                    item.lastSale.amount / 1e18
+                                  )}{" "}
+                              WCFX{" "}
+                            </td>
                             <td className="table-item col-2">
                               <a
                                 href={`https://evm.confluxscan.net/address/${
@@ -1499,7 +1712,7 @@ const ProfileNFTList = ({
                       allOffers &&
                       userCollectionArrayFinal.length > 0 &&
                       allOffers.length > 0 &&
-                      userNftsOwnedArray
+                      nftList
                         .filter(({ tokenId: id1, nftAddress: nftAddr1 }) =>
                           allOffers.some(
                             ({ tokenId: id2, nftAddress: nftAddr2 }) =>
@@ -1569,7 +1782,14 @@ const ProfileNFTList = ({
                             <td className="table-item col-2">
                               {getFormattedNumber(bestOffer.amount / 1e18)} WCFX
                             </td>
-                            <td className="table-item col-2">tbd WCFX </td>
+                            <td className="table-item col-2">
+                              {item.lastSale === 0
+                                ? getFormattedNumber(0)
+                                : getFormattedNumber(
+                                    item.lastSale.amount / 1e18
+                                  )}{" "}
+                              WCFX{" "}
+                            </td>
                             <td className="table-item col-2">
                               <a
                                 href={`https://evm.confluxscan.net/address/${
@@ -1776,7 +1996,7 @@ const ProfileNFTList = ({
                 userNftsOwnedArray &&
                 userCollectionArrayFinal.length === 0 &&
                 userNftsOwnedArray.length > 0 ? (
-                userNftsOwnedArray.map((item, index) => (
+                nftList.map((item, index) => (
                   <div
                     className="recently-listed-card p-3 d-flex flex-column test"
                     key={index}
@@ -1868,7 +2088,7 @@ const ProfileNFTList = ({
                 userNftsOwnedArray &&
                 userCollectionArrayFinal.length > 0 &&
                 userNftsOwnedArray.length > 0 ? (
-                userNftsOwnedArray
+                nftList
                   .filter(({ nftAddress: nftAddr1 }) =>
                     userCollectionArrayFinal.some(
                       (obj) => nftAddr1.toLowerCase() === obj.toLowerCase()
@@ -1973,7 +2193,7 @@ const ProfileNFTList = ({
                 allOffers &&
                 allOffers.length > 0 &&
                 userCollectionArrayFinal.length === 0 ? (
-                userNftsOwnedArray
+                nftList
                   .filter(({ tokenId: id1, nftAddress: nftAddr1 }) =>
                     allOffers.some(
                       ({ tokenId: id2, nftAddress: nftAddr2 }) =>
@@ -2080,7 +2300,7 @@ const ProfileNFTList = ({
                 allOffers &&
                 allOffers.length > 0 &&
                 userCollectionArrayFinal.length > 0 ? (
-                userNftsOwnedArray
+                nftList
                   .filter(({ tokenId: id1, nftAddress: nftAddr1 }) =>
                     allOffers.some(
                       ({ tokenId: id2, nftAddress: nftAddr2 }) =>
@@ -2192,10 +2412,10 @@ const ProfileNFTList = ({
                 userNftsOwnedArray &&
                 userCollectionArrayFinal.length === 0 &&
                 userNftsOwnedArray.length > 0 &&
-                userNftsOwnedArray.find((obj) => {
+                nftList.find((obj) => {
                   return obj.price !== undefined;
                 }) ? (
-                userNftsOwnedArray
+                nftList
                   .filter((obj) => {
                     return obj.price !== undefined;
                   })
@@ -2298,10 +2518,10 @@ const ProfileNFTList = ({
                 userNftsOwnedArray &&
                 userCollectionArrayFinal.length > 0 &&
                 userNftsOwnedArray.length > 0 &&
-                userNftsOwnedArray.find((obj) => {
+                nftList.find((obj) => {
                   return obj.price !== undefined;
                 }) ? (
-                userNftsOwnedArray
+                nftList
                   .filter(({ nftAddress: nftAddr1 }) =>
                     userCollectionArrayFinal.some(
                       (obj) => nftAddr1.toLowerCase() === obj.toLowerCase()
@@ -2672,6 +2892,11 @@ const ProfileNFTList = ({
                 You currently do not have any NFTs in your wallet
               </span>
             )}
+          {option === "collected" && nftList && nftList.length === 0 && (
+            <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
+              There are no items avaliable with this filter
+            </span>
+          )}
           {option === "listed" &&
             userNftsOwnedArray &&
             !userNftsOwnedArray.find((obj) => {
@@ -2681,6 +2906,11 @@ const ProfileNFTList = ({
                 You currently do not have any NFTs listed
               </span>
             )}
+          {option === "listed" && nftList && nftList.length === 0 && (
+            <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
+              There are no items avaliable with this filter
+            </span>
+          )}
           {option === "hasOffers" &&
             ((allOffers &&
               allOffers.length > 0 &&
@@ -2697,6 +2927,11 @@ const ProfileNFTList = ({
                 You do not have any offers for your NFTs at the moment
               </span>
             )}
+          {option === "hasOffers" && nftList && nftList.length === 0 && (
+            <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
+              There are no items avaliable with this filter
+            </span>
+          )}
           {option === "offersMade" &&
             allOffersMade &&
             allOffersMade.length === 0 && (
@@ -2704,6 +2939,11 @@ const ProfileNFTList = ({
                 You have not made any offers for any NFTs
               </span>
             )}
+          {option === "offersMade" && nftList && nftList.length === 0 && (
+            <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
+              There are no items avaliable with this filter
+            </span>
+          )}
         </div>
       </div>
     </div>

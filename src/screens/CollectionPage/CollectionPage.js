@@ -424,6 +424,8 @@ const CollectionPage = ({
     }
   };
 
+  console.log(allNftArray, ":arr");
+
   const fetchSlicedNftsPerCollection = async () => {
     let nftArray = [];
     let totalSupply = 0;

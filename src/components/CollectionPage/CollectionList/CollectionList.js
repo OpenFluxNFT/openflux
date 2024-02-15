@@ -39,7 +39,7 @@ const CollectionList = ({
   totalSupplyPerCollection,
   getRecentlySold,
   hasListedNfts,
-  getFilter
+  getFilter,
 }) => {
   const windowSize = useWindowSize();
   const [openFilters, setOpenFilters] = useState(false);
@@ -51,7 +51,7 @@ const CollectionList = ({
   const [dummyMinPrice, setDummyMinPrice] = useState(0);
   const [dummyMaxPrice, setDummyMaxPrice] = useState(0);
   const [collectionLoading, setCollectionLoading] = useState(false);
-  const [generalFilter, setGeneralFilter] = useState(null)
+  const [generalFilter, setGeneralFilter] = useState(null);
   const [listType, setListType] = useState("");
   const [dummyTraits, setDummyTraits] = useState([
     "White",
@@ -151,8 +151,26 @@ const CollectionList = ({
 
   const handleKeyPress = (val) => (event) => {
     if (event.key === "Enter") {
-      // Call your function here
-      addOrRemove(val);
+      const index = queryItems.indexOf(val);
+      setQueryItems(queryItems.splice(index, 1));
+
+      if (val.value.length > 0) {
+        setQueryItems([...queryItems, val]);
+      } else if (val.value.length === 0) {
+        setQueryItems(queryItems.splice(index, 1));
+      }
+
+      if (val.value.length > 0) {
+        setCollectionLoading(true);
+        const searchItems = allNftArray.filter((item) => {
+          return item?.name.includes(val.value);
+        });
+
+        setNftList(searchItems);
+        setTimeout(() => {
+          setCollectionLoading(false);
+        }, 1500);
+      }
     }
   };
 
@@ -180,30 +198,6 @@ const CollectionList = ({
       }
     });
   };
-
-  // const removeItem = (val) => {
-  //   const removedItemArray = queryItems.filter((item) => {
-  //     return item.value !== val
-  //   })
-
-  //   setQueryItems(removedItemArray)
-  // }
-
-  // const addItem = (val) => {
-  //   // if(queryItems.indexOf(val) > -1){
-  //   //   removeItem(val)
-  //   // }else{
-  //   //   const updatedQueries = queryItems.push(val)
-  //   //   setQueryItems(updatedQueries)
-  //   // }
-  //   console.log(queryItems);
-  //   console.log(queryItems.indexOf(val) > -1)
-
-  // }
-
-  // const checkItemExists = (val) => {
-  //   console.log(queryItems.indexOf(val) > -1)
-  // }
 
   const [gridView, setGridView] = useState("small-grid");
   const [nftFinalArray, setnftFinalArray] = useState([]);
@@ -269,9 +263,17 @@ const CollectionList = ({
 
   const setListed = (type) => {
     setCollectionLoading(true);
+    if (listType === type) {
+      setListType("");
+      setNftList(allNftArray);
+      setTimeout(() => {
+        setCollectionLoading(false);
+      }, 1500);
+      return;
+    }
     setListType(type);
     if (type === "listed") {
-      setGeneralFilter(type)
+      setGeneralFilter(type);
       const filteredList = nftList.filter((item) => {
         return item.price > 0;
       });
@@ -281,7 +283,7 @@ const CollectionList = ({
         setCollectionLoading(false);
       }, 1500);
     } else if (type === "sold") {
-      setGeneralFilter(type)
+      setGeneralFilter(type);
 
       setNftList(allNftArray);
       getRecentlySold().then((result) => {
@@ -289,7 +291,7 @@ const CollectionList = ({
         setCollectionLoading(false);
       });
     } else {
-      setGeneralFilter(null)
+      setGeneralFilter(null);
 
       setNftList(allNftArray);
       setTimeout(() => {
@@ -299,15 +301,14 @@ const CollectionList = ({
   };
 
   const setPrices = (min, max) => {
-
-    setGeneralFilter(min, max)
+    setGeneralFilter(min, max);
     setCollectionLoading(true);
     setMinPrice(min);
     setMaxPrice(max);
 
     if (min === 0 && max === 0) {
       setNftList(allNftArray);
-      setGeneralFilter(null)
+      setGeneralFilter(null);
       return;
     } else if (max !== 0) {
       const filterPrices = nftList.filter((item) => {
@@ -431,10 +432,19 @@ const CollectionList = ({
     setCollectionLoading(loading);
   }, [loading]);
 
+  useEffect(() => {
+    getFilter(generalFilter);
+  }, [generalFilter]);
 
   useEffect(() => {
-    getFilter(generalFilter)
-  }, [generalFilter]);
+    if (queryItems.length === 0) {
+      setCollectionLoading(true);
+      setNftList(allNftArray);
+      setTimeout(() => {
+        setCollectionLoading(false);
+      }, 1500);
+    }
+  }, [queryItems]);
 
   return (
     <>
@@ -868,9 +878,13 @@ const CollectionList = ({
                 <button
                   className="buy-btn py-1 px-2"
                   onClick={() => {
+                    setCollectionLoading(true);
                     setQueryItems([]);
                     setPrices(0, 0);
-                    setGeneralFilter(null)
+                    setGeneralFilter(null);
+                    setTimeout(() => {
+                      setCollectionLoading(false);
+                    }, 1500);
                   }}
                   style={{ borderRadius: "8px" }}
                 >
@@ -941,20 +955,20 @@ const CollectionList = ({
                             className="table-item col-2 d-flex align-items-center gap-1 w-100"
                             scope="row"
                           >
-                            {!item.isVideo ? (
+                            {!item.isVideo && item.image ? (
                               <img
                                 src={`https://cdnflux.dypius.com/${item.image50}`}
-                                className="table-img"
+                                className="table-img nftimg2"
                                 height={36}
                                 width={36}
                                 alt=""
                               />
-                            ) : (
+                            ) : item.isVideo && item.image ? (
                               <video
                                 preload="auto"
                                 height={36}
                                 width={36}
-                                className="card-img"
+                                className="card-img nftimg2"
                                 src={`https://cdnflux.dypius.com/${item.image}`}
                                 autoPlay={true}
                                 loop={true}
@@ -963,7 +977,13 @@ const CollectionList = ({
                                 // onClick={player}
                                 controlsList="nodownload"
                               ></video>
-                            )}
+                            ) :<img
+                            src={require(`./assets/collectionCardPlaceholder2.png`)}
+                            className="table-img nftimg2"
+                            alt=""
+                            height={36}
+                            width={36}
+                          />}
                             {item.tokenName + " " + item.name ??
                               ` #${item.tokenId}`}
                           </td>
@@ -982,9 +1002,9 @@ const CollectionList = ({
                           </td>
                           <td className="table-item col-2">
                             {" "}
-                            {moment
+                            {item.blockTimestamp ? moment
                               .duration(item.blockTimestamp * 1000 - Date.now())
-                              .humanize(true)}
+                              .humanize(true) : 'N/A'}
                           </td>
                         </tr>
                       ))}

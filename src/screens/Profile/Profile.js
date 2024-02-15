@@ -22,6 +22,7 @@ const Profile = ({
   userNftsOwnedArray,
   cfxPrice,
   userCollectionArray,
+  recentlyListedNfts,
 }) => {
   const [option, setOption] = useState("collected");
   const profileSocials = ["website", "twitter", "instagram"];
@@ -162,7 +163,7 @@ const Profile = ({
       const userTime = new Date(userData.joinedAt).toLocaleDateString();
       const userTime2 = userTime;
       const userAddr = userData.walletAddress;
-      const totalNFTFavs = userData.nftFavorites.length;
+      const totalNFTFavs = userNftFavs.length;
       const profilepic = userData.profilePicture;
       const bannerpic = userData.bannerPicture;
 
@@ -482,6 +483,14 @@ const Profile = ({
             >
               <h6 className="mb-0">Has Offers</h6>
             </div>
+            <div
+              className={`profile-option-item ${
+                option === "activity" && "active"
+              } px-3 py-2`}
+              onClick={() => setOption("activity")}
+            >
+              <h6 className="mb-0">Activity</h6>
+            </div>
           </div>
           <hr className="profile-divider mt-2" />
           <ProfileNFTList
@@ -501,6 +510,7 @@ const Profile = ({
             bestOffer={bestOffer}
             allOffersMade={allOffersMade}
             allNFTSOffer={allNFTSOffer}
+            recentlyListedNfts={recentlyListedNfts}
           />
         </div>
       </div>

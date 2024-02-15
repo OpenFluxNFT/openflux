@@ -257,6 +257,7 @@ function App() {
             `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
           );
           if (abiresult && abiresult.status === 200) {
+            let lastSale=0;
             const abi = JSON.parse(abiresult.data.result);
             const collection_contract = new web3.eth.Contract(
               abi,
@@ -293,6 +294,30 @@ function App() {
               isApproved = isApprovedresult;
             }
 
+            const lastSaleResult = await axios
+            .get(
+              `${baseURL}/api/nft-sale-history/${item.nftAddress.toLowerCase()}/${item.tokenId}`,
+              {
+                headers: {
+                  cascadestyling:
+                    "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+                },
+              }
+            )
+            .catch((e) => {
+              console.error(e);
+            });
+
+          if (lastSaleResult && lastSaleResult.status === 200) {
+            const historyArray = lastSaleResult.data;
+            if (historyArray && historyArray.length > 0) {
+              const finalArray_sorted = historyArray.sort((a, b) => {
+                return b.blockTimestamp - a.blockTimestamp;
+              });
+              lastSale = finalArray_sorted[0];
+            }
+          }
+
             const nft_data = await fetch(
               `https://cdnflux.dypius.com/collectionsmetadatas/${item.nftAddress.toLowerCase()}/${
                 item.tokenId
@@ -318,6 +343,7 @@ function App() {
                 isApproved: isApproved,
                 seller: seller,
                 collectionName: collectionName,
+                lastSale:lastSale
               };
             } else
               return {
@@ -326,6 +352,7 @@ function App() {
                 tokenName: tokenName,
                 seller: seller,
                 collectionName: collectionName,
+                lastSale:lastSale
               };
           }
         })
@@ -585,6 +612,7 @@ function App() {
               abi,
               nftsOwned[i].contract
             );
+            let lastSale = 0;
 
             const tokens = await Promise.all(
               window.range(0, Number(nftsOwned[i].amount) - 1).map((j) =>
@@ -629,6 +657,32 @@ function App() {
                         console.error(e);
                       });
 
+                    const lastSaleResult = await axios
+                      .get(
+                        `${baseURL}/api/nft-sale-history/${nftsOwned[
+                          i
+                        ].contract.toLowerCase()}/${tokenByIndex}`,
+                        {
+                          headers: {
+                            cascadestyling:
+                              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+                          },
+                        }
+                      )
+                      .catch((e) => {
+                        console.error(e);
+                      });
+
+                    if (lastSaleResult && lastSaleResult.status === 200) {
+                      const historyArray = lastSaleResult.data;
+                      if (historyArray && historyArray.length > 0) {
+                        const finalArray_sorted = historyArray.sort((a, b) => {
+                          return b.blockTimestamp - a.blockTimestamp;
+                        });
+                        lastSale = finalArray_sorted[0];
+                      }
+                    }
+
                     const nft_data = await fetch(
                       `https://cdnflux.dypius.com/collectionsmetadatas/${nftsOwned[
                         i
@@ -655,6 +709,7 @@ function App() {
                         nftAddress: nftsOwned[i].contract,
                         tokenName: tokenName,
                         collectionName: collectionName,
+                        lastSale: lastSale,
                       });
                     } else if (
                       (nft_data && nft_data.code == 404) ||
@@ -667,6 +722,7 @@ function App() {
                         nftAddress: nftsOwned[i].contract,
                         tokenName: tokenName,
                         collectionName: collectionName,
+                        lastSale: lastSale,
                       });
                     }
                   }
@@ -1491,6 +1547,7 @@ function App() {
               userNftsOwnedArray={userNftsOwnedArray}
               cfxPrice={cfxPrice}
               userCollectionArray={userCollectionArray}
+              recentlyListedNfts={recentlyListedNfts}
             />
           }
         />

@@ -941,20 +941,20 @@ const CollectionList = ({
                             className="table-item col-2 d-flex align-items-center gap-1 w-100"
                             scope="row"
                           >
-                            {!item.isVideo ? (
+                            {!item.isVideo && item.image ? (
                               <img
                                 src={`https://cdnflux.dypius.com/${item.image50}`}
-                                className="table-img"
+                                className="table-img nftimg2"
                                 height={36}
                                 width={36}
                                 alt=""
                               />
-                            ) : (
+                            ) : item.isVideo && item.image ? (
                               <video
                                 preload="auto"
                                 height={36}
                                 width={36}
-                                className="card-img"
+                                className="card-img nftimg2"
                                 src={`https://cdnflux.dypius.com/${item.image}`}
                                 autoPlay={true}
                                 loop={true}
@@ -963,7 +963,13 @@ const CollectionList = ({
                                 // onClick={player}
                                 controlsList="nodownload"
                               ></video>
-                            )}
+                            ) :<img
+                            src={require(`./assets/collectionCardPlaceholder2.png`)}
+                            className="table-img nftimg2"
+                            alt=""
+                            height={36}
+                            width={36}
+                          />}
                             {item.tokenName + " " + item.name ??
                               ` #${item.tokenId}`}
                           </td>
@@ -982,9 +988,9 @@ const CollectionList = ({
                           </td>
                           <td className="table-item col-2">
                             {" "}
-                            {moment
+                            {item.blockTimestamp ? moment
                               .duration(item.blockTimestamp * 1000 - Date.now())
-                              .humanize(true)}
+                              .humanize(true) : 'N/A'}
                           </td>
                         </tr>
                       ))}

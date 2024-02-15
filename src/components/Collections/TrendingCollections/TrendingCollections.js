@@ -163,8 +163,17 @@ const TrendingCollections = ({
     setLoading(false);
   }, [recentlySoldNfts]);
 
+  useEffect(() => {
+    if (window.location.hash === `#recent-sales`) {
+      setOption("recentSales");
+    }
+  }, []);
+
   return (
-    <div className="container-fluid trending-sales-wrapper pt-4 pb-5 px-0">
+    <div
+      className="container-fluid trending-sales-wrapper pt-4 pb-5 px-0"
+      id="recentSales"
+    >
       <div className="container-lg">
         <div className="row">
           <div className="d-flex flex-column flex-lg-row gap-4 gap-lg-0 align-items-center justify-content-between">

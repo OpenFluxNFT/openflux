@@ -657,7 +657,7 @@ const SingleNftBanner = ({
                         )}
 
                         <span className="nft-price-usd">
-                          ($ {getFormattedNumber(nftPrice * cfxPrice)})
+                          ($ {getFormattedNumber((nftData?.price / 10 ** 18) * cfxPrice)})
                         </span>
                       </div>
                     </div>

@@ -212,7 +212,7 @@ const ProfileNFTList = ({
     let seenNames = new Set();
 
     userNftFavs.forEach((obj) => {
-      let lowercaseName = obj.collectionName.toLowerCase();
+      let lowercaseName = obj.collectionName?.toLowerCase();
       if (!seenNames.has(lowercaseName)) {
         seenNames.add(lowercaseName);
         uniqueObjects.push(obj);
@@ -799,17 +799,17 @@ const ProfileNFTList = ({
                           >
                             {recentlyListedNfts.find(
                               ({ tokenId: id1, nftAddress: nftAddr1 }) =>
-                                id1.toString() === item.tokenId.toString() &&
-                                nftAddr1.toLowerCase() ===
-                                  item.contractAddress.toLowerCase()
+                                id1?.toString() === item.tokenId?.toString() &&
+                                nftAddr1?.toLowerCase() ===
+                                  item.contractAddress?.toLowerCase()
                             )
                               ? getFormattedNumber(
                                   recentlyListedNfts.find(
                                     ({ tokenId: id1, nftAddress: nftAddr1 }) =>
-                                      id1.toString() ===
-                                        item.tokenId.toString() &&
-                                      nftAddr1.toLowerCase() ===
-                                        item.contractAddress.toLowerCase()
+                                      id1?.toString() ===
+                                        item.tokenId?.toString() &&
+                                      nftAddr1?.toLowerCase() ===
+                                        item.contractAddress?.toLowerCase()
                                   ).price / 1e18
                                 )
                               : "---"}{" "}
@@ -822,17 +822,17 @@ const ProfileNFTList = ({
                             (${" "}
                             {recentlyListedNfts.find(
                               ({ tokenId: id1, nftAddress: nftAddr1 }) =>
-                                id1.toString() === item.tokenId.toString() &&
-                                nftAddr1.toLowerCase() ===
-                                  item.contractAddress.toLowerCase()
+                                id1?.toString() === item.tokenId?.toString() &&
+                                nftAddr1?.toLowerCase() ===
+                                  item.contractAddress?.toLowerCase()
                             )
                               ? getFormattedNumber(
                                   (recentlyListedNfts.find(
                                     ({ tokenId: id1, nftAddress: nftAddr1 }) =>
-                                      id1.toString() ===
-                                        item.tokenId.toString() &&
-                                      nftAddr1.toLowerCase() ===
-                                        item.contractAddress.toLowerCase()
+                                      id1?.toString() ===
+                                        item.tokenId?.toString() &&
+                                      nftAddr1?.toLowerCase() ===
+                                        item.contractAddress?.toLowerCase()
                                   ).price /
                                     1e18) *
                                     cfxPrice

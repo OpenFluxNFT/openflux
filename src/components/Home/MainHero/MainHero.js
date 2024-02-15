@@ -51,7 +51,10 @@ const MainHero = ({ allCollections }) => {
               <div className="d-flex flex-column gap-4">
                 <h6 className="main-hero-title mb-0">{item.title}</h6>
                 <p className="main-hero-desc mb-0">{item.desc}</p>
-                <NavLink to="/collections" className="explore-btn px-3 py-1">
+                <NavLink
+                  to={item.image ? "/collections#recent-sales" : "/collections"}
+                  className="explore-btn px-3 py-1"
+                >
                   Explore
                 </NavLink>
               </div>

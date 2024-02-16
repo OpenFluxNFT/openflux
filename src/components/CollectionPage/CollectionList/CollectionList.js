@@ -307,22 +307,40 @@ const CollectionList = ({
     setMaxPrice(max);
 
     if (min === 0 && max === 0) {
-      setNftList(allNftArray);
+      setNftList(nftList);
       setGeneralFilter(null);
       return;
-    } else if (max !== 0) {
+    } else if (min === "" && max === "") {
+      setNftList(nftList);
+      setGeneralFilter(null);
+      return;
+    } else if (min === "0" && max === "0") {
+      setNftList(nftList);
+      setGeneralFilter(null);
+      return;
+    } else if (
+      (Number(min) === 0 || min === "") &&
+      Number(max) !== 0 &&
+      max !== ""
+    ) {
       const filterPrices = nftList.filter((item) => {
         if (item.price) {
-          return item.price / 10 ** 18 >= min || item.price / 10 ** 18 <= max;
+       
+          return (
+            (item.price / 10 ** 18) * cfxPrice >= Number(min) ||
+            (item.price / 10 ** 18) * cfxPrice <= Number(max)
+          );
         }
       });
+
       setNftList(filterPrices);
     } else {
       const filterPrices = nftList.filter((item) => {
         if (item.price) {
-          return item.price / 10 ** 18 >= min;
+          return (item.price / 10 ** 18) * cfxPrice >= Number(max);
         }
       });
+
       setNftList(filterPrices);
     }
 
@@ -330,7 +348,6 @@ const CollectionList = ({
       setCollectionLoading(false);
     }, 1500);
   };
-
   const handleRefreshData = async (nft) => {
     const listednfts = await axios
       .get(

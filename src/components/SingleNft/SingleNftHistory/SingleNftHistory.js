@@ -36,7 +36,7 @@ const SingleNftHistory = ({
                   <tbody>
                     {saleHistory.map((item, index) => {
                       return (
-                        <tr>
+                        <tr key={index}>
                           <td className="item-history-table-td left-border text-center">
                             <img src={saleIcon} alt="" /> Sale
                           </td>

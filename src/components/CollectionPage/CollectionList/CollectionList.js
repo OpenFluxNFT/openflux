@@ -40,6 +40,7 @@ const CollectionList = ({
   getRecentlySold,
   hasListedNfts,
   getFilter,
+  fetchSearchNftsPerCollection,
 }) => {
   const windowSize = useWindowSize();
   const [openFilters, setOpenFilters] = useState(false);
@@ -151,6 +152,7 @@ const CollectionList = ({
 
   const handleKeyPress = (val) => (event) => {
     if (event.key === "Enter") {
+      fetchSearchNftsPerCollection(val.value);
       const index = queryItems.indexOf(val);
       setQueryItems(queryItems.splice(index, 1));
 
@@ -912,11 +914,14 @@ const CollectionList = ({
               )}
             </div>
 
-            {nftList && nftList.length === 0 && collectionLoading === false && (
-              <span className="text-white d-flex w-100 justify-content-center mt-5">
-                This collection doesn't have any NFTs.
-              </span>
-            )}
+            {nftList &&
+              nftList.length === 0 &&
+              collectionLoading === false &&
+              loading === false && (
+                <span className="text-white d-flex w-100 justify-content-center mt-5">
+                  This collection doesn't have any NFTs.
+                </span>
+              )}
 
             <div
               className={`${
@@ -994,13 +999,15 @@ const CollectionList = ({
                                 // onClick={player}
                                 controlsList="nodownload"
                               ></video>
-                            ) :<img
-                            src={require(`./assets/collectionCardPlaceholder2.png`)}
-                            className="table-img nftimg2"
-                            alt=""
-                            height={36}
-                            width={36}
-                          />}
+                            ) : (
+                              <img
+                                src={require(`./assets/collectionCardPlaceholder2.png`)}
+                                className="table-img nftimg2"
+                                alt=""
+                                height={36}
+                                width={36}
+                              />
+                            )}
                             {item.tokenName + " " + item.name ??
                               ` #${item.tokenId}`}
                           </td>
@@ -1019,9 +1026,13 @@ const CollectionList = ({
                           </td>
                           <td className="table-item col-2">
                             {" "}
-                            {item.blockTimestamp ? moment
-                              .duration(item.blockTimestamp * 1000 - Date.now())
-                              .humanize(true) : 'N/A'}
+                            {item.blockTimestamp
+                              ? moment
+                                  .duration(
+                                    item.blockTimestamp * 1000 - Date.now()
+                                  )
+                                  .humanize(true)
+                              : "N/A"}
                           </td>
                         </tr>
                       ))}

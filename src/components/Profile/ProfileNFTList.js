@@ -23,6 +23,8 @@ import getFormattedNumber from "../../hooks/get-formatted-number";
 import { shortAddress } from "../../hooks/shortAddress";
 import moment from "moment/moment";
 import { useNavigate } from "react-router-dom";
+import saleIcon from "../SingleNft/SingleNftHistory/assets/saleIcon.svg";
+import listIcon from "../SingleNft/SingleNftHistory/assets/listIcon.svg";
 
 const ProfileNFTList = ({
   option,
@@ -42,12 +44,18 @@ const ProfileNFTList = ({
   allOffersMade,
   allNFTSOffer,
   recentlyListedNfts,
+  saleHistory,
 }) => {
   const [favoritesOption, setfavoritesOption] = useState("items");
   const [gridView, setGridView] = useState("small-grid");
   const [loading, setLoading] = useState(false);
   const [userCollectionArrayFinal, setuserCollectionArrayFinal] = useState([]);
   const [favoriteOptions, setFavoriteOptions] = useState([]);
+  const [collectedOptions, setcollectedOptions] = useState([]);
+  const [listedOptions, setlistedOptions] = useState([]);
+  const [saleHistoryOptions, setsaleHistoryOptions] = useState([]);
+
+
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
   const [dummyMinPrice, setDummyMinPrice] = useState(0);
@@ -263,15 +271,76 @@ const ProfileNFTList = ({
     setFavoriteOptions(uniqueObjects);
   };
 
+  const testFuncCollected = () => {
+    let uniqueObjects = [];
+    let seenNames = new Set();
+
+    userNftsOwnedArray.forEach((obj) => {
+      let lowercaseName = obj.collectionName?.toLowerCase();
+      if (!seenNames.has(lowercaseName)) {
+        seenNames.add(lowercaseName);
+        uniqueObjects.push(obj);
+      }
+    });
+
+    setcollectedOptions(uniqueObjects);
+  };
+
+  const testFuncListed = () => {
+    let uniqueObjects = [];
+    let seenNames = new Set();
+
+    userNftsOwnedArray
+      .filter((item) => {
+        return item.price !== undefined;
+      })
+      .forEach((obj) => {
+        let lowercaseName = obj.collectionName?.toLowerCase();
+        if (!seenNames.has(lowercaseName)) {
+          seenNames.add(lowercaseName);
+          uniqueObjects.push(obj);
+        }
+      });
+
+    setlistedOptions(uniqueObjects);
+  };
+
+  const testFuncSaleHistory = () => {
+    let uniqueObjects = [];
+    let seenNames = new Set();
+
+    saleHistory.forEach((obj) => {
+        let lowercaseName = obj.collectionName?.toLowerCase();
+        if (!seenNames.has(lowercaseName)) {
+          seenNames.add(lowercaseName);
+          uniqueObjects.push(obj);
+        }
+      });
+
+    setsaleHistoryOptions(uniqueObjects);
+  };
+
+
   useEffect(() => {
     testFunc();
   }, [userNftFavs, option, loading]);
+
+  useEffect(() => {
+    testFuncCollected();
+    testFuncListed();
+  }, [userNftsOwnedArray, option, loading]);
+
+  useEffect(()=>{
+    testFuncSaleHistory()
+  },[saleHistory, option,loading])
 
   useEffect(() => {
     if (option !== "favorites") {
       setNftList(userNftsOwnedArray);
     }
   }, [option, userNftsOwnedArray]);
+
+  
 
   return (
     <div className="container-lg">
@@ -316,39 +385,76 @@ const ProfileNFTList = ({
                     <div className="accordion-body">
                       {userNftsOwnedArray &&
                         userNftsOwnedArray.length > 0 &&
-                        userNftsOwnedArray
-                          .filter((obj) => {
-                            return obj.price !== undefined;
-                          })
-                          .map((item, index) => {
-                            return (
-                              <FormGroup
-                                key={index}
-                                sx={{ display: "block !important" }}
-                              >
-                                <FormControlLabel
-                                  control={
-                                    <Checkbox
-                                      size="small"
-                                      sx={{
-                                        color: "white",
-                                        "&.Mui-checked": {
-                                          color: "#3DBDA7",
-                                        },
-                                      }}
-                                      onChange={() => {
-                                        handleAddCollections(item.nftAddress);
-                                      }}
-                                    />
-                                  }
-                                  label={item.collectionName}
-                                />
-                              </FormGroup>
-                            );
-                          })}
+                        listedOptions.map((item, index) => {
+                          return (
+                            <FormGroup
+                              key={index}
+                              sx={{ display: "block !important" }}
+                            >
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    size="small"
+                                    sx={{
+                                      color: "white",
+                                      "&.Mui-checked": {
+                                        color: "#3DBDA7",
+                                      },
+                                    }}
+                                    onChange={() => {
+                                      handleAddCollections(item.nftAddress);
+                                    }}
+                                  />
+                                }
+                                label={item.collectionName}
+                              />
+                            </FormGroup>
+                          );
+                        })}
                     </div>
                   </div>
                 )}
+
+{option === "activity" && (
+                  <div
+                    id="collapseOne"
+                    className="accordion-collapse collapse"
+                    aria-labelledby="headingOne"
+                    data-bs-parent="#accordionExample"
+                  >
+                    <div className="accordion-body">
+                      {saleHistory &&
+                        saleHistory.length > 0 &&
+                        saleHistoryOptions.map((item, index) => {
+                          return (
+                            <FormGroup
+                              key={index}
+                              sx={{ display: "block !important" }}
+                            >
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    size="small"
+                                    sx={{
+                                      color: "white",
+                                      "&.Mui-checked": {
+                                        color: "#3DBDA7",
+                                      },
+                                    }}
+                                    onChange={() => {
+                                      handleAddCollections(item.nftAddress);
+                                    }}
+                                  />
+                                }
+                                label={item.collectionName}
+                              />
+                            </FormGroup>
+                          );
+                        })}
+                    </div>
+                  </div>
+                )}
+
                 {option === "collected" && (
                   <div
                     id="collapseOne"
@@ -359,7 +465,7 @@ const ProfileNFTList = ({
                     <div className="accordion-body">
                       {userCollectionArray &&
                         userCollectionArray.length > 0 &&
-                        userCollectionArray.map((item, index) => {
+                        collectedOptions.map((item, index) => {
                           return (
                             <FormGroup key={index}>
                               <FormControlLabel
@@ -746,7 +852,7 @@ const ProfileNFTList = ({
           </div>
           {option === "favorites" ? (
             <div
-              className={`small-cards-grid mt-3 ${
+              className={`small-cards-grid  mt-3 ${
                 ((favoritesOption === "collections" &&
                   userCollectionFavs.length === 0) ||
                   (favoritesOption === "items" &&
@@ -1163,6 +1269,264 @@ const ProfileNFTList = ({
                   You haven't marked any NFT collection as a favorite
                 </span>
               )}
+            </div>
+          ) : option === "activity" && userCollectionArrayFinal.length === 0 ? (
+            <div className="nft-history-wrapper w-100 bg-transparent p-3">
+              <div className="d-flex flex-column gap-2">
+                {/* <span className="item-history-text"></span> */}
+                <div className="single-nft-table-wrapper h-100">
+                  {saleHistory && saleHistory.length > 0 && (
+                    <table className="table item-history-table">
+                      <thead className="item-history-table-thead">
+                        <th className="item-history-table-th text-center">
+                          Item
+                        </th>
+                        <th className="item-history-table-th text-center">
+                          Event
+                        </th>
+                        <th className="item-history-table-th text-center">
+                          Price
+                        </th>
+                        <th className="item-history-table-th text-center">
+                          Seller
+                        </th>
+                        <th className="item-history-table-th text-center">
+                          Buyer
+                        </th>
+                        <th className="item-history-table-th text-center">
+                          Date
+                        </th>
+                      </thead>
+                      <tbody>
+                        {saleHistory.map((item, index) => {
+                          return (
+                            <tr
+                              key={index}
+                              onClick={() =>
+                                navigate(
+                                  `/nft/${item.tokenId}/${item.nftAddress}`
+                                )
+                              }
+                              style={{ cursor: "pointer" }}
+                            >
+                              <td className="item-history-table-td left-border text-center">
+                                {!item.isVideo && item.image ? (
+                                  <img
+                                    src={`https://cdnflux.dypius.com/${item.image}`}
+                                    className="table-img nftimg2"
+                                    height={36}
+                                    width={36}
+                                    alt=""
+                                  />
+                                ) : item.image && item.isVideo ? (
+                                  <video
+                                    src={`https://cdnflux.dypius.com/${item.image}`}
+                                    alt=""
+                                    className="table-img nftimg2"
+                                    height={36}
+                                    width={36}
+                                    controlsList="nodownload"
+                                    autoPlay={true}
+                                    loop={true}
+                                    muted="muted"
+                                    playsInline={true}
+                                  />
+                                ) : (
+                                  <img
+                                    src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                                    className="table-img nftimg2"
+                                    alt=""
+                                    height={36}
+                                    width={36}
+                                  />
+                                )}{" "}
+                                {item.tokenName} #{item.tokenId}
+                              </td>
+                              <td className="item-history-table-td text-center">
+                                <img
+                                  src={
+                                    item.type === "sale" ? saleIcon : listIcon
+                                  }
+                                  alt=""
+                                />{" "}
+                                {item.type}
+                              </td>
+                              <td className="item-history-table-td text-center">
+                                {getFormattedNumber(item.amount / 1e18)} WCFX
+                              </td>
+                              <td className="item-history-table-td greentext text-center">
+                                <a
+                                  href={`https://evm.confluxscan.net/address/${
+                                    item.seller ?? item.owner
+                                  }`}
+                                  className="greentext"
+                                >
+                                  {shortAddress(item.seller ?? item.owner)}
+                                </a>
+                              </td>
+                              <td className="item-history-table-td greentext text-center">
+                                {item.buyer ? (
+                                  <a
+                                    href={`https://evm.confluxscan.net/address/${item.buyer}`}
+                                    className="greentext"
+                                  >
+                                    {shortAddress(item.buyer)}
+                                  </a>
+                                ) : (
+                                  "N/A"
+                                )}
+                              </td>
+                              <td className="item-history-table-td right-border text-center">
+                                {moment
+                                  .duration(
+                                    item.blockTimestamp * 1000 - Date.now()
+                                  )
+                                  .humanize(true)}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  )}
+                  {saleHistory && saleHistory.length === 0 && (
+                    <span className="text-secondary d-flex justify-content-center w-100 h-100 align-items-center">
+                      No activity yet
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          ) : option === "activity" && userCollectionArrayFinal.length > 0 ? (
+            <div className="nft-history-wrapper w-100 bg-transparent p-3">
+              <div className="d-flex flex-column gap-2">
+                {/* <span className="item-history-text"></span> */}
+                <div className="single-nft-table-wrapper h-100">
+                  {saleHistory && saleHistory.length > 0 && (
+                    <table className="table item-history-table">
+                      <thead className="item-history-table-thead">
+                        <th className="item-history-table-th text-center">
+                          Item
+                        </th>
+                        <th className="item-history-table-th text-center">
+                          Event
+                        </th>
+                        <th className="item-history-table-th text-center">
+                          Price
+                        </th>
+                        <th className="item-history-table-th text-center">
+                          Seller
+                        </th>
+                        <th className="item-history-table-th text-center">
+                          Buyer
+                        </th>
+                        <th className="item-history-table-th text-center">
+                          Date
+                        </th>
+                      </thead>
+                      <tbody>
+                        {saleHistory.filter(({ nftAddress: nftAddr1 }) =>
+                      userCollectionArrayFinal.some(
+                        (obj) => nftAddr1.toLowerCase() === obj.toLowerCase()
+                      )
+                    ).map((item, index) => {
+                          return (
+                            <tr
+                              key={index}
+                              onClick={() =>
+                                navigate(
+                                  `/nft/${item.tokenId}/${item.nftAddress}`
+                                )
+                              }
+                              style={{ cursor: "pointer" }}
+                            >
+                              <td className="item-history-table-td left-border text-center">
+                                {!item.isVideo && item.image ? (
+                                  <img
+                                    src={`https://cdnflux.dypius.com/${item.image}`}
+                                    className="table-img nftimg2"
+                                    height={36}
+                                    width={36}
+                                    alt=""
+                                  />
+                                ) : item.image && item.isVideo ? (
+                                  <video
+                                    src={`https://cdnflux.dypius.com/${item.image}`}
+                                    alt=""
+                                    className="table-img nftimg2"
+                                    height={36}
+                                    width={36}
+                                    controlsList="nodownload"
+                                    autoPlay={true}
+                                    loop={true}
+                                    muted="muted"
+                                    playsInline={true}
+                                  />
+                                ) : (
+                                  <img
+                                    src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                                    className="table-img nftimg2"
+                                    alt=""
+                                    height={36}
+                                    width={36}
+                                  />
+                                )}{" "}
+                                {item.tokenName} #{item.tokenId}
+                              </td>
+                              <td className="item-history-table-td text-center">
+                                <img
+                                  src={
+                                    item.type === "sale" ? saleIcon : listIcon
+                                  }
+                                  alt=""
+                                />{" "}
+                                {item.type}
+                              </td>
+                              <td className="item-history-table-td text-center">
+                                {getFormattedNumber(item.amount / 1e18)} WCFX
+                              </td>
+                              <td className="item-history-table-td greentext text-center">
+                                <a
+                                  href={`https://evm.confluxscan.net/address/${
+                                    item.seller ?? item.owner
+                                  }`}
+                                  className="greentext"
+                                >
+                                  {shortAddress(item.seller ?? item.owner)}
+                                </a>
+                              </td>
+                              <td className="item-history-table-td greentext text-center">
+                                {item.buyer ? (
+                                  <a
+                                    href={`https://evm.confluxscan.net/address/${item.buyer}`}
+                                    className="greentext"
+                                  >
+                                    {shortAddress(item.buyer)}
+                                  </a>
+                                ) : (
+                                  "N/A"
+                                )}
+                              </td>
+                              <td className="item-history-table-td right-border text-center">
+                                {moment
+                                  .duration(
+                                    item.blockTimestamp * 1000 - Date.now()
+                                  )
+                                  .humanize(true)}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  )}
+                  {saleHistory && saleHistory.length === 0 && (
+                    <span className="text-secondary d-flex justify-content-center w-100 h-100 align-items-center">
+                      No activity yet
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
           ) : (
             <div

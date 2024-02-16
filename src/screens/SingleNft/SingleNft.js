@@ -151,6 +151,7 @@ const SingleNft = ({
       .acceptOffer(nftAddress, nftId, offerIndex)
       .then(() => {
         handleRefreshMakeOffers(offeror);
+        refreshUserHistory(offeror)
         getUpdatedNftData().then(() => {
           refreshMetadata(nftId);
           fetchInitialNftsPerCollection(nftId);
@@ -214,6 +215,26 @@ const SingleNft = ({
       setwcfxBalance(balance);
     }
   };
+
+  const refreshUserHistory = async(wallet)=>{
+    const result = await axios
+    .get(
+      `${baseURL}/api/refresh-user-history/${wallet.toLowerCase()}/${nftId}`,
+      {
+        headers: {
+          cascadestyling:
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      }
+    )
+    .catch((e) => {
+      console.error(e);
+    });
+
+  if (result && result.status === 200) {
+     console.log(result.data)
+  }
+  }
 
   const getOffer = async (nftAddr, nftId) => {
     let finalArray = [];
@@ -1063,6 +1084,7 @@ const SingleNft = ({
             refreshMetadata(nftId);
             fetchInitialNftsPerCollection(nftId);
             fetchNftSaleHistoryCache(nftAddress, nftId);
+            refreshUserHistory(coinbase)
             getCollectionFloorPriceCache();
             onRefreshListings();
           });

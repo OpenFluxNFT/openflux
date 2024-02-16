@@ -54,7 +54,49 @@ const ProfileNFTList = ({
   const [dummyMaxPrice, setDummyMaxPrice] = useState(0);
   const [nftList, setNftList] = useState([]);
   const [generalFilter, setGeneralFilter] = useState(null);
+  const [search, setSearch] = useState("");
+  const [queryItems, setQueryItems] = useState([]);
 
+  const handleKeyPress = (val) => (event) => {
+    if (option !== "favorites") {
+      if (event.key === "Enter") {
+        const index = queryItems.indexOf(val);
+        setQueryItems(queryItems.splice(index, 1));
+
+        if (val.value.length > 0) {
+          setQueryItems([...queryItems, val]);
+        } else if (val.value.length === 0) {
+          setQueryItems(queryItems.splice(index, 1));
+        }
+
+        if (val.value.length > 0) {
+          setLoading(true);
+          const searchItems = userNftsOwnedArray.filter((item) => {
+            return (
+              item?.tokenId.includes(val.value) ||
+              item?.tokenName.toLowerCase().includes(val.value.toLowerCase()) ||
+              item?.collectionName
+                .toLowerCase()
+                .includes(val.value.toLowerCase())
+            );
+          });
+
+          setNftList(searchItems);
+          setTimeout(() => {
+            setLoading(false);
+          }, 1500);
+        }
+      }
+    }
+  };
+
+  const handleSetNftList = (value) => {
+    if (value === "" && option !== "favorites") {
+      setNftList(userNftsOwnedArray);
+    }
+  };
+
+  // console.log(userNftsOwnedArray)
   const navigate = useNavigate();
 
   const dummyCards = [
@@ -157,7 +199,6 @@ const ProfileNFTList = ({
     ) {
       const filterPrices = userNftsOwnedArray.filter((item) => {
         if (item.price) {
-       
           return (
             (item.price / 10 ** 18) * cfxPrice >= Number(min) ||
             (item.price / 10 ** 18) * cfxPrice <= Number(max)
@@ -589,6 +630,15 @@ const ProfileNFTList = ({
                   type="text"
                   className="search-input w-100"
                   placeholder="Search by name"
+                  value={search}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                    handleSetNftList(e.target.value);
+                  }}
+                  onKeyDown={handleKeyPress({
+                    type: "Search",
+                    value: search,
+                  })}
                 />
               </div>
             </div>

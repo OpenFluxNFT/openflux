@@ -5,6 +5,7 @@ import ProfileBanner from "../../components/Profile/ProfileBanner/ProfileBanner"
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import moment from "moment";
+import getFormattedNumber from "../../hooks/get-formatted-number";
 
 const Profile = ({
   coinbase,
@@ -40,6 +41,8 @@ const Profile = ({
   const [allOffers, setallOffers] = useState([]);
   const [allOffersMade, setallOffersMade] = useState([]);
   const [allNFTSOffer, setallNFTSOffer] = useState([]);
+  const [saleHistory, setsaleHistory] = useState([]);
+  const [totalSoldNfts, settotalSoldNfts] = useState([]);
 
   const { id } = useParams();
 
@@ -349,6 +352,106 @@ const Profile = ({
     }
   };
 
+  const fetchUserSaleHistory = async () => {
+    if (coinbase) {
+      const result = await axios
+        .get(`${baseURL}/api/user-history/${coinbase.toLowerCase()}`, {
+          headers: {
+            cascadestyling:
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+      const web3 = window.confluxWeb3;
+      if (result && result.status === 200) {
+        const saleHistory = await Promise.all(
+          result.data.map(async (item) => {
+            const abiresult = await axios.get(
+              `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
+            );
+            if (abiresult && abiresult.status === 200) {
+              const abi = JSON.parse(abiresult.data.result);
+              const collection_contract = new web3.eth.Contract(
+                abi,
+                item.nftAddress
+              );
+              const tokenName = await collection_contract.methods
+                .symbol()
+                .call()
+                .catch((e) => {
+                  console.error(e);
+                });
+
+              const collectionName = await collection_contract.methods
+                .name()
+                .call()
+                .catch((e) => {
+                  console.error(e);
+                });
+
+              const owner = await collection_contract.methods
+                .ownerOf(item.tokenId)
+                .call()
+                .catch((e) => {
+                  console.error(e);
+                });
+
+              const nft_data = await fetch(
+                `https://cdnflux.dypius.com/collectionsmetadatas/${item.nftAddress.toLowerCase()}/${
+                  item.tokenId
+                }/metadata.json`
+              )
+                .then((res) => res.json())
+                .then((data) => {
+                  return data;
+                })
+                .catch((err) => {
+                  console.log(err.message);
+                });
+
+              if (
+                nft_data &&
+                nft_data.code !== 404 &&
+                typeof nft_data !== "string"
+              ) {
+                return {
+                  ...item,
+                  image: `${nft_data.image}`,
+                  tokenName: tokenName,
+                  collectionName: collectionName,
+                  owner: owner,
+                };
+              } else
+                return {
+                  ...item,
+                  image: undefined,
+                  tokenName: tokenName,
+                  collectionName: collectionName,
+                  owner: owner,
+                };
+            }
+          })
+        );
+
+        let uniqueObjects = [];
+
+        saleHistory.forEach((obj) => {
+          let type = obj.type?.toLowerCase();
+
+          if (type === "sale") {
+            uniqueObjects.push(obj);
+          }
+        });
+
+        settotalSoldNfts(uniqueObjects.length);
+        setsaleHistory(saleHistory);
+        // console.log("saleHistory", saleHistory);
+      }
+    }
+  };
+
   useEffect(() => {
     fetchFavoriteCounts();
   }, [userNftFavsInitial]);
@@ -367,7 +470,7 @@ const Profile = ({
 
   useEffect(() => {
     assignUserData();
-  }, [userData, id]);
+  }, [userData, id, userNftFavs]);
 
   useEffect(() => {
     if (userNftsOwnedArray && userNftsOwnedArray.length > 0 && coinbase) {
@@ -385,6 +488,7 @@ const Profile = ({
       value: userJoined,
     },
   ];
+
   const profileInfo = [
     {
       title: "Total Owned",
@@ -400,16 +504,20 @@ const Profile = ({
             }).length
           : 0,
       valueType: `${
-        (userNftsOwnedArray.filter((obj) => {
-          return obj.price !== undefined;
-        }).length *
-          100) /
-          userTotalNftsOwned ?? 0
+        userTotalNftsOwned > 0
+          ? getFormattedNumber(
+              (userNftsOwnedArray.filter((obj) => {
+                return obj.price !== undefined;
+              }).length *
+                100) /
+                userTotalNftsOwned ?? 0
+            )
+          : 0
       }%`,
     },
     {
       title: "Total Sold",
-      value: "tbd",
+      value: totalSoldNfts,
       valueType: "NFTs",
     },
     {
@@ -425,7 +533,9 @@ const Profile = ({
 
   useEffect(() => {
     fetchUserOffers();
+    fetchUserSaleHistory();
   }, [coinbase]);
+
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
       <ProfileBanner
@@ -511,6 +621,7 @@ const Profile = ({
             allOffersMade={allOffersMade}
             allNFTSOffer={allNFTSOffer}
             recentlyListedNfts={recentlyListedNfts}
+            saleHistory={saleHistory}
           />
         </div>
       </div>

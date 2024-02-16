@@ -296,7 +296,7 @@ const SingleNft = ({
           }
         })
       );
-      console.log(allOffersArray);
+      
       setallOffers(allOffersArray);
     } else {
       setbestOffer([]);

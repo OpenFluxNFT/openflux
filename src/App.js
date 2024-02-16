@@ -225,14 +225,64 @@ function App() {
             .catch((e) => {
               console.error(e);
             });
+
           if (result && result.status === 200) {
             floorprice = result.data.floorPrice / 1e18;
           }
 
-          return { ...newestCollections[i], floorPrice: floorprice };
+          return {
+            ...newestCollections[i],
+            floorPrice: floorprice,
+          };
         })
       );
       setAllCollectionsOrdered(finalResult);
+    }
+  };
+
+  const getAllCollections = async () => {
+    const result = await axios
+      .get(`${baseURL}/api/collections`, {
+        headers: {
+          cascadestyling:
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+
+    if (result && result.status === 200) {
+      const regularCollection = result.data;
+      const finalResult = await Promise.all(
+        window.range(0, regularCollection.length - 1).map(async (i) => {
+          let floorprice = 0;
+          const result = await axios
+            .get(
+              `${baseURL}/api/floor-price/${regularCollection[i].contractAddress}`,
+              {
+                headers: {
+                  cascadestyling:
+                    "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+                },
+              }
+            )
+            .catch((e) => {
+              console.error(e);
+            });
+
+          if (result && result.status === 200) {
+            floorprice = result.data.floorPrice / 1e18;
+          }
+
+          return {
+            ...regularCollection[i],
+            floorPrice: floorprice,
+          };
+        })
+      );
+
+      setAllCollections(finalResult);
     }
   };
 
@@ -257,7 +307,7 @@ function App() {
             `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
           );
           if (abiresult && abiresult.status === 200) {
-            let lastSale=0;
+            let lastSale = 0;
             const abi = JSON.parse(abiresult.data.result);
             const collection_contract = new web3.eth.Contract(
               abi,
@@ -295,28 +345,30 @@ function App() {
             }
 
             const lastSaleResult = await axios
-            .get(
-              `${baseURL}/api/nft-sale-history/${item.nftAddress.toLowerCase()}/${item.tokenId}`,
-              {
-                headers: {
-                  cascadestyling:
-                    "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-                },
-              }
-            )
-            .catch((e) => {
-              console.error(e);
-            });
-
-          if (lastSaleResult && lastSaleResult.status === 200) {
-            const historyArray = lastSaleResult.data;
-            if (historyArray && historyArray.length > 0) {
-              const finalArray_sorted = historyArray.sort((a, b) => {
-                return b.blockTimestamp - a.blockTimestamp;
+              .get(
+                `${baseURL}/api/nft-sale-history/${item.nftAddress.toLowerCase()}/${
+                  item.tokenId
+                }`,
+                {
+                  headers: {
+                    cascadestyling:
+                      "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+                  },
+                }
+              )
+              .catch((e) => {
+                console.error(e);
               });
-              lastSale = finalArray_sorted[0];
+
+            if (lastSaleResult && lastSaleResult.status === 200) {
+              const historyArray = lastSaleResult.data;
+              if (historyArray && historyArray.length > 0) {
+                const finalArray_sorted = historyArray.sort((a, b) => {
+                  return b.blockTimestamp - a.blockTimestamp;
+                });
+                lastSale = finalArray_sorted[0];
+              }
             }
-          }
 
             const nft_data = await fetch(
               `https://cdnflux.dypius.com/collectionsmetadatas/${item.nftAddress.toLowerCase()}/${
@@ -343,7 +395,7 @@ function App() {
                 isApproved: isApproved,
                 seller: seller,
                 collectionName: collectionName,
-                lastSale:lastSale
+                lastSale: lastSale,
               };
             } else
               return {
@@ -352,7 +404,7 @@ function App() {
                 tokenName: tokenName,
                 seller: seller,
                 collectionName: collectionName,
-                lastSale:lastSale
+                lastSale: lastSale,
               };
           }
         })
@@ -508,48 +560,6 @@ function App() {
       setSuccess(false);
       setCoinbase();
       setIsConnected(false);
-    }
-  };
-
-  const getAllCollections = async () => {
-    const result = await axios
-      .get(`${baseURL}/api/collections`, {
-        headers: {
-          cascadestyling:
-            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-        },
-      })
-      .catch((e) => {
-        console.error(e);
-      });
-
-    if (result && result.status === 200) {
-      const regularCollection = result.data;
-      const finalResult = await Promise.all(
-        window.range(0, regularCollection.length - 1).map(async (i) => {
-          let floorprice = 0;
-          const result = await axios
-            .get(
-              `${baseURL}/api/floor-price/${regularCollection[i].contractAddress}`,
-              {
-                headers: {
-                  cascadestyling:
-                    "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-                },
-              }
-            )
-            .catch((e) => {
-              console.error(e);
-            });
-          if (result && result.status === 200) {
-            floorprice = result.data.floorPrice / 1e18;
-          }
-
-          return { ...regularCollection[i], floorPrice: floorprice };
-        })
-      );
-
-      setAllCollections(finalResult);
     }
   };
 

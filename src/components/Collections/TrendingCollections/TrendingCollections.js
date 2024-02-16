@@ -417,7 +417,7 @@ const TrendingCollections = ({
                               </span>
                               <div className="trending-price-wrapper d-flex align-items-center justify-content-center p-2">
                                 <h6 className="trending-price mb-0">
-                                  {item.totalVolume ?? "tbd"} WCFX
+                                  { getFormattedNumber(item.lifetimeVolume/1e18)  ?? "0.00"} WCFX
                                 </h6>
                               </div>
                             </div>

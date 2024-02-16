@@ -8,6 +8,7 @@ import conflux from "./assets/conflux.svg";
 import copy from "./assets/copy.svg";
 import check from "./assets/check.svg";
 import logout from "./assets/logout.svg";
+import swappiIcon from "./assets/swappiIcon.svg";
 
 import searchIcon from "./assets/searchIcon.svg";
 import { shortAddress } from "../../hooks/shortAddress";
@@ -29,15 +30,14 @@ const Header = ({
   handleSignupAndRedirectToAccount,
   handleDisconnect,
   allCollections,
-  balance, onNewCollectionClick
+  balance,
+  onNewCollectionClick,
 }) => {
   const [showmenu, setShowMenu] = useState(false);
   const [tooltip, setTooltip] = useState(false);
   const [searchResult, setSearchResult] = useState("");
   const [currentCollection, setcurrentCollection] = useState();
   const [isopen, setisopen] = useState(false);
- 
-
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -146,7 +146,7 @@ const Header = ({
                               setcurrentCollection();
                               setSearchResult("");
                               setisopen(false);
-                              onNewCollectionClick()
+                              onNewCollectionClick();
                             }}
                           >
                             <div
@@ -204,6 +204,12 @@ const Header = ({
               </div>
 
               <div className="d-flex align-items-center gap-3">
+                <a href="https://swappi.io/" style={{textDecoration: "none"}} target="_blank">
+                  <button className="swappi-btn px-3 d-flex align-items-center gap-2">
+                    <img src={swappiIcon} alt="" />
+                    Swappi
+                  </button>
+                </a>
                 {coinbase && isConnected && chainId === 1030 && (
                   <button className="btn account-btn d-flex align-items-center gap-2">
                     <img src={conflux} alt="" /> Conflux eSpace

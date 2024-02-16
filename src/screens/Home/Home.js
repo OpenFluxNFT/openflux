@@ -27,7 +27,9 @@ const Home = ({
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
       <MainHero allCollections={allCollections} />
-      <HomeStats />
+      <HomeStats 
+      cfxPrice={cfxPrice}
+      />
       <HomeInfo />
       <TrendingSales recentlySoldNfts={recentlySoldNfts} cfxPrice={cfxPrice}/>
       <RecentlyListed

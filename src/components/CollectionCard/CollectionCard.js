@@ -38,7 +38,7 @@ const CollectionCard = ({ data }) => {
             <div className="collection-price-wrapper gap-2 d-flex align-items-center justify-content-center p-2">
               {/* <img src={confluxLogo} alt="" /> */}
               <h6 className="collection-price mb-0">
-                {data.totalVolume ?? "tbd"} WCFX
+                { getFormattedNumber(data.lifetimeVolume/1e18)  ?? "0.0"} WCFX
               </h6>
             </div>
           </div>

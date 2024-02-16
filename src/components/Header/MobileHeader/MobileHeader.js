@@ -2,6 +2,7 @@ import React from "react";
 import "./_mobileheader.scss";
 import "../_header.scss";
 import headerLogo from "../assets/headerLogo.svg";
+import swappiIcon from "../assets/swappiIcon.svg";
 import { useState } from "react";
 import { useEffect } from "react";
 import mobileNavArrow from "./mobileNavArrow.svg";
@@ -18,7 +19,8 @@ const MobileHeader = ({
   isConnected,
   chainId,
   handleSwitchNetwork,
-  handleSignupAndRedirectToAccount,balance
+  handleSignupAndRedirectToAccount,
+  balance,
 }) => {
   const [menu, setMenu] = useState(false);
 
@@ -50,27 +52,25 @@ const MobileHeader = ({
   }, [menu]);
 
   useEffect(() => {
-    setMenu(false)
-  }, [])
-  
+    setMenu(false);
+  }, []);
 
   return (
     <>
       <div
         className="container-fluid py-4 mobile-header-wrapper header-wrapper "
         style={{ height: "85px", pointerEvents: "auto", zIndex: 5 }}
-        
       >
         <div className="container-lg">
           <div className="row align-items-center justify-content-center">
             <div className="d-flex align-items-center justify-content-between">
-              <NavLink to={'/'}>
-              <img src={headerLogo} width={35} height={35} alt="" />
+              <NavLink to={"/"}>
+                <img src={headerLogo} width={35} height={35} alt="" />
               </NavLink>
               <>
                 <input
                   id="menu-toggle"
-                  className={`${menu && 'menu-toggle-open'}`}
+                  className={`${menu && "menu-toggle-open"}`}
                   type="checkbox"
                   onChange={() => {
                     setMenu(!menu);
@@ -89,8 +89,7 @@ const MobileHeader = ({
           menu && "mobile-active"
         } d-flex flex-column align-items-center justify-content-center gap-3 p-3`}
         to={"/collections"}
-        style={{textDecoration: "none"}}
-
+        style={{ textDecoration: "none" }}
       >
         <div
           className={
@@ -117,6 +116,16 @@ const MobileHeader = ({
           <img src={mobileNavArrow} alt="" />
         </div> */}
         <div className="d-flex align-items-center gap-3">
+          <a
+            href="https://swappi.io/"
+            style={{ textDecoration: "none" }}
+            target="_blank"
+          >
+            <button className="swappi-btn px-3 d-flex align-items-center gap-2">
+              <img src={swappiIcon} alt="" />
+              Swappi
+            </button>
+          </a>
           {coinbase && isConnected && chainId === 1030 && (
             <button className="btn account-btn d-flex align-items-center gap-2">
               <img src={conflux} alt="" />
@@ -142,7 +151,11 @@ const MobileHeader = ({
             </button>
           )}
           {coinbase && isConnected ? (
-            <NavLink className="btn blue-btn" to={`/profile/${coinbase}`} onClick={() => setMenu(false)}>
+            <NavLink
+              className="btn blue-btn"
+              to={`/profile/${coinbase}`}
+              onClick={() => setMenu(false)}
+            >
               <img src={userIcon} alt="" />
             </NavLink>
           ) : (

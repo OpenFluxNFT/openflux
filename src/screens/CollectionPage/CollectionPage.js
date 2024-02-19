@@ -514,7 +514,7 @@ const CollectionPage = ({
           listednftsArray &&
           listednftsArray.length > 0
         ) {
-          settotalListedNfts(listednftsArray.length);
+          settotalListedNfts(listednftsArray.length); 
           sethasListedNfts(true);
           await Promise.all(
             window.range(0, listednftsArray.length - 1).map(async (j) => {
@@ -969,19 +969,17 @@ const CollectionPage = ({
   };
 
   const onScroll = () => {
-    if (filter === null) {
-      const wrappedElement = document.getElementById("header2");
-      if (wrappedElement) {
-        const isBottom =
-          parseInt(wrappedElement.getBoundingClientRect()?.bottom) <=
-          window.innerHeight;
-        if (isBottom) {
-          if (next <= totalSupplyPerCollection) {
-            loadMore();
-          }
+    const wrappedElement = document.getElementById("header2");
+    if (wrappedElement) {
+      const isBottom =
+        parseInt(wrappedElement.getBoundingClientRect()?.bottom) <=
+        window.innerHeight;
+      if (isBottom) {
+        if (next <= totalSupplyPerCollection) {
+          loadMore();
         }
-        document.removeEventListener("scroll", onScroll);
       }
+      document.removeEventListener("scroll", onScroll);
     }
 
     // const { clientHeight, scrollHeight, scrollTop } =
@@ -1208,17 +1206,11 @@ const CollectionPage = ({
     fetchCurrentCollection(collectionAddress);
   }, [collectionAddress, allCollections]);
 
-  // useEffect(() => {
-  //   if (filter === null) {
-  //     window.addEventListener("scroll", onScroll);
-  //   }
-  // }, [filter]);
-
   useEffect(() => {
-    // if (filter === null) {
-    window.addEventListener("scroll", onScroll);
-    // }
-  });
+    if (filter === null) {
+      window.addEventListener("scroll", onScroll);
+    }
+  }, [filter]);
 
   return (
     <div

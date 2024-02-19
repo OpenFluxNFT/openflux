@@ -472,7 +472,6 @@ const CollectionList = ({
     }
   }, [queryItems]);
 
-  console.log(allNftArray);
 
   return (
     <>

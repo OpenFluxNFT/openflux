@@ -1334,6 +1334,9 @@ function App() {
     }
   };
 
+  
+  
+
   const getUserBalance = async () => {
     if (isConnected && coinbase && chainId === 1030) {
       const balance = await window.ethereum.request({
@@ -1351,6 +1354,22 @@ function App() {
   };
 
   const logout = localStorage.getItem("logout");
+
+
+  const initializeLocalStorage = () => {
+    const viewedNfts = JSON.parse(localStorage.getItem('viewedNfts'));
+  
+    if (!viewedNfts || !Array.isArray(viewedNfts)) {
+      localStorage.setItem('viewedNfts', JSON.stringify([]));
+    }
+  };
+
+  useEffect(() => {
+    initializeLocalStorage();
+  }, [])
+  
+
+
   useEffect(() => {
     if (ethereum) {
       ethereum.on("chainChanged", checkNetworkId);

@@ -163,6 +163,12 @@
   font-weight: 700;
   line-height: normal;
   text-decoration: none !important;
+  transition: all .25s;
+}
+
+.swappi-btn:hover{
+  background: linear-gradient(120deg, #8967c8 0%, #2f80ed 100%);
+
 }
 
 .search-result-wrapper {

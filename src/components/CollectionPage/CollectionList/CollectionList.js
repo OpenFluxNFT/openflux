@@ -292,6 +292,14 @@ const CollectionList = ({
         setNftList(result);
         setCollectionLoading(false);
       });
+    } else if(type === "offers"){
+      const filteredList = nftList.filter((item) => {
+        return Number(item.bestOffer) > 0
+      })
+      setNftList(filteredList)
+      setTimeout(() => {
+        setCollectionLoading(false);
+      }, 1500);
     } else {
       setGeneralFilter(null);
 
@@ -464,7 +472,7 @@ const CollectionList = ({
     }
   }, [queryItems]);
 
-
+console.log(allNftArray);
 
   return (
     <>
@@ -1408,6 +1416,9 @@ const CollectionList = ({
                 <div className="accordion-body">
                   <FormGroup>
                     <FormControlLabel
+                    onChange={() => {
+                      setListed("listed");
+                    }}
                       control={
                         <Checkbox
                           size="small"
@@ -1422,6 +1433,9 @@ const CollectionList = ({
                       label="Recently Listed"
                     />
                     <FormControlLabel
+                    onChange={() => {
+                      setListed("sold");
+                    }}
                       control={
                         <Checkbox
                           size="small"
@@ -1443,6 +1457,9 @@ const CollectionList = ({
                       }}
                     />
                     <FormControlLabel
+                    onChange={() => {
+                      setListed("offers");
+                    }}
                       control={
                         <Checkbox
                           size="small"

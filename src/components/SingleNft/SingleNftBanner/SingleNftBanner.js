@@ -30,6 +30,7 @@ const SingleNftBanner = ({
   offerData,
   bestOffer,
   lastSale,
+  views,
   collectionFeeRate,
 }) => {
   const [isOwner, setIsOwner] = useState(false);
@@ -502,7 +503,7 @@ const SingleNftBanner = ({
                   </div>
                   <div className="d-flex align-items-center gap-2 border-bottom-div">
                     <span className="nft-info-left">Views</span>
-                    <span className="nft-info-right">tbd</span>
+                    <span className="nft-info-right">{views}</span>
                   </div>
                   <div className="d-flex align-items-center gap-2 border-bottom-div">
                     <span className="nft-info-left">Favorites</span>

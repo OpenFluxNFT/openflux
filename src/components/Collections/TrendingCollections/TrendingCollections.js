@@ -47,89 +47,6 @@ const TrendingCollections = ({
     dotsClass: "button__bar",
   };
 
-  const dummyCards = [
-    {
-      title: "Cats And Watches Society",
-      image: cawsPlaceholder,
-      floorPrice: 125254.89,
-      totalVolume: "23.8M",
-      collectionName: "catsandwatchessocietycaws",
-      collectionAddress: window.config.nft_caws_address,
-    },
-    {
-      title: "CAWS Timepiece",
-      image: timepiecePlaceholder,
-      floorPrice: 125254.89,
-      totalVolume: "23.8M",
-      collectionName: "cawstimepiece",
-      collectionAddress: window.config.nft_timepiece_address,
-    },
-    {
-      title: "World of Dypians Land",
-      image: wodPlaceholder,
-      floorPrice: 125254.89,
-      totalVolume: "23.8M",
-      collectionName: "worldofdypians",
-      collectionAddress: window.config.nft_land_address,
-    },
-    {
-      title: "Cats And Watches Society",
-      image: cawsPlaceholder,
-      floorPrice: 125254.89,
-      totalVolume: "23.8M",
-      collectionName: "catsandwatchessocietycaws",
-      collectionAddress: window.config.nft_caws_address,
-    },
-    {
-      title: "CAWS Timepiece",
-      image: timepiecePlaceholder,
-      floorPrice: 125254.89,
-      totalVolume: "23.8M",
-      collectionName: "cawstimepiece",
-      collectionAddress: window.config.nft_timepiece_address,
-    },
-    {
-      title: "World of Dypians Land",
-      image: wodPlaceholder,
-      floorPrice: 125254.89,
-      totalVolume: "23.8M",
-      collectionName: "worldofdypians",
-      collectionAddress: window.config.nft_land_address,
-    },
-    {
-      title: "Cats And Watches Society",
-      image: cawsPlaceholder,
-      floorPrice: 125254.89,
-      totalVolume: "23.8M",
-      collectionName: "catsandwatchessocietycaws",
-      collectionAddress: window.config.nft_caws_address,
-    },
-    {
-      title: "CAWS Timepiece",
-      image: timepiecePlaceholder,
-      floorPrice: 125254.89,
-      totalVolume: "23.8M",
-      collectionName: "cawstimepiece",
-      collectionAddress: window.config.nft_timepiece_address,
-    },
-    {
-      title: "World of Dypians Land",
-      image: wodPlaceholder,
-      floorPrice: 125254.89,
-      totalVolume: "23.8M",
-      collectionName: "worldofdypians",
-      collectionAddress: window.config.nft_land_address,
-    },
-    {
-      title: "World of Dypians Land",
-      image: wodPlaceholder,
-      floorPrice: 125254.89,
-      totalVolume: "23.8M",
-      collectionName: "worldofdypians",
-      collectionAddress: window.config.nft_land_address,
-    },
-  ];
-
   const fetchNewestCollections = async () => {
     setLoading(true);
 
@@ -137,7 +54,7 @@ const TrendingCollections = ({
     const response = await axios.get(
       "https://confluxapi.worldofdypians.com/api/newest-collections"
     );
-    console.log(response.data, "data");
+
     if (time === "24h") {
       initialArr = response.data.sort((a, b) => {
         return b.volume24h > a.volume24h;
@@ -165,7 +82,7 @@ const TrendingCollections = ({
     const response = await axios.get(
       "https://confluxapi.worldofdypians.com/api/top-collections/lifetime-volume"
     );
-    console.log(response.data, "data");
+
     if (time === "24h") {
       initialArr = response.data.sort((a, b) => {
         return b.volume24h > a.volume24h;
@@ -495,7 +412,22 @@ const TrendingCollections = ({
                             </span>
                             <div className="trending-price-wrapper d-flex align-items-center justify-content-center p-2">
                               <h6 className="trending-price mb-0">
-                                {getFormattedNumber(item.floorPrice) ?? 0} WCFX
+                                {allCollections.find((obj) => {
+                                  return (
+                                    obj.contractAddress.toLowerCase() ===
+                                    item.contractAddress.toLowerCase()
+                                  );
+                                })
+                                  ? getFormattedNumber(
+                                      allCollections.find((obj) => {
+                                        return (
+                                          obj.contractAddress.toLowerCase() ===
+                                          item.contractAddress.toLowerCase()
+                                        );
+                                      }).floorPrice
+                                    )
+                                  : 0}{" "}
+                                WCFX
                               </h6>
                             </div>
                           </div>
@@ -505,7 +437,13 @@ const TrendingCollections = ({
                             </span>
                             <div className="trending-price-wrapper d-flex align-items-center justify-content-center p-2">
                               <h6 className="trending-price mb-0">
-                                {item.totalVolume ?? "tbd"} WCFX
+                                {item.lifetimeVolume
+                                  ? getFormattedNumber(
+                                      item.lifetimeVolume / 1e18,
+                                      0
+                                    )
+                                  : "0"}{" "}
+                                WCFX
                               </h6>
                             </div>
                           </div>
@@ -558,7 +496,22 @@ const TrendingCollections = ({
                             </span>
                             <div className="trending-price-wrapper d-flex align-items-center justify-content-center p-2">
                               <h6 className="trending-price mb-0">
-                                {getFormattedNumber(item.floorPrice) ?? 0} WCFX
+                                {allCollections.find((obj) => {
+                                  return (
+                                    obj.contractAddress.toLowerCase() ===
+                                    item.contractAddress.toLowerCase()
+                                  );
+                                })
+                                  ? getFormattedNumber(
+                                      allCollections.find((obj) => {
+                                        return (
+                                          obj.contractAddress.toLowerCase() ===
+                                          item.contractAddress.toLowerCase()
+                                        );
+                                      }).floorPrice
+                                    )
+                                  : 0}{" "}
+                                WCFX
                               </h6>
                             </div>
                           </div>
@@ -568,7 +521,13 @@ const TrendingCollections = ({
                             </span>
                             <div className="trending-price-wrapper d-flex align-items-center justify-content-center p-2">
                               <h6 className="trending-price mb-0">
-                                {item.totalVolume ?? "tbd"} WCFX
+                                {item.lifetimeVolume
+                                  ? getFormattedNumber(
+                                      item.lifetimeVolume / 1e18,
+                                      0
+                                    )
+                                  : "0"}{" "}
+                                WCFX
                               </h6>
                             </div>
                           </div>
@@ -621,7 +580,22 @@ const TrendingCollections = ({
                             </span>
                             <div className="trending-price-wrapper d-flex align-items-center justify-content-center p-2">
                               <h6 className="trending-price mb-0">
-                                {getFormattedNumber(item.floorPrice) ?? 0} WCFX
+                                {allCollections.find((obj) => {
+                                  return (
+                                    obj.contractAddress.toLowerCase() ===
+                                    item.contractAddress.toLowerCase()
+                                  );
+                                })
+                                  ? getFormattedNumber(
+                                      allCollections.find((obj) => {
+                                        return (
+                                          obj.contractAddress.toLowerCase() ===
+                                          item.contractAddress.toLowerCase()
+                                        );
+                                      }).floorPrice
+                                    )
+                                  : 0}{" "}
+                                WCFX
                               </h6>
                             </div>
                           </div>
@@ -631,7 +605,10 @@ const TrendingCollections = ({
                             </span>
                             <div className="trending-price-wrapper d-flex align-items-center justify-content-center p-2">
                               <h6 className="trending-price mb-0">
-                              { getFormattedNumber(item.lifetimeVolume/1e18)  ?? "0.00"} WCFX
+                                {getFormattedNumber(
+                                  item.lifetimeVolume / 1e18
+                                ) ?? "0.00"}{" "}
+                                WCFX
                               </h6>
                             </div>
                           </div>

@@ -55,7 +55,7 @@ const CollectionPage = ({
   const collectionInfo = [
     {
       title: "Total Volume",
-      value: getFormattedNumber(currentCollection.lifetimeVolume/1e18 ?? 0),
+      value: getFormattedNumber(currentCollection.lifetimeVolume / 1e18 ?? 0),
       valueType: "WCFX",
     },
     {
@@ -69,7 +69,8 @@ const CollectionPage = ({
       valueType: `${getFormattedNumber(
         totalSupplyPerCollection === 0
           ? 0
-          : (totalListedNfts ?? 0 * 100) / totalSupplyPerCollection,
+          : ((totalListedNfts ? totalListedNfts : 0) * 100) /
+              totalSupplyPerCollection,
         2
       )}%`,
     },
@@ -270,28 +271,33 @@ const CollectionPage = ({
       }
 
       if (totalSupply && totalSupply > 0) {
-        const limit = Number(tokenIdBySearch) > nextSearch ? Number(tokenIdBySearch)*2 : nextSearch
+        const limit =
+          Number(tokenIdBySearch) > nextSearch
+            ? Number(tokenIdBySearch) * 2
+            : nextSearch;
         await Promise.all(
-          window.range(Number(tokenIdBySearch)-1, limit - 1).map(async (j) => {
-            let tokenByIndex = 0;
-            if (result.data.result.includes("tokenByIndex")) {
-              tokenByIndex = await collection_contract.methods
-                .tokenByIndex(j)
-                .call()
-                .catch((e) => {
-                  console.error(e);
-                });
-            } else if (!result.data.result.includes("tokenByIndex")) {
-              tokenByIndex = j;
-            }
-            if (tokenByIndex) {
-              if (
-                tokenByIndex.toString().includes(tokenIdBySearch.toString())
-              ) {
-                return tokensArray.push(tokenByIndex);
+          window
+            .range(Number(tokenIdBySearch) - 1, limit - 1)
+            .map(async (j) => {
+              let tokenByIndex = 0;
+              if (result.data.result.includes("tokenByIndex")) {
+                tokenByIndex = await collection_contract.methods
+                  .tokenByIndex(j)
+                  .call()
+                  .catch((e) => {
+                    console.error(e);
+                  });
+              } else if (!result.data.result.includes("tokenByIndex")) {
+                tokenByIndex = j;
               }
-            }
-          })
+              if (tokenByIndex) {
+                if (
+                  tokenByIndex.toString().includes(tokenIdBySearch.toString())
+                ) {
+                  return tokensArray.push(tokenByIndex);
+                }
+              }
+            })
         );
         console.log(tokensArray);
       }
@@ -507,7 +513,7 @@ const CollectionPage = ({
           listednftsArray &&
           listednftsArray.length > 0
         ) {
-          // settotalListedNfts(listednftsArray.length);
+          settotalListedNfts(listednftsArray.length);
 
           sethasListedNfts(true);
           await Promise.all(
@@ -910,7 +916,7 @@ const CollectionPage = ({
       });
 
     if (result && result.status === 200) {
-      console.log(result.data)
+      console.log(result.data);
       // setfloorPrice(result.data.floorPrice / 1e18);
     }
   };
@@ -962,7 +968,7 @@ const CollectionPage = ({
     getCollectionTotalSupply();
     getCollectionInfo();
     getCollectionUniqueOwners();
-    getCollectionTotalVolume()
+    getCollectionTotalVolume();
   }, []);
 
   useEffect(() => {
@@ -974,7 +980,7 @@ const CollectionPage = ({
         onNewCollectionFetched();
       });
       getCollectionInfo();
-    getCollectionTotalVolume()
+      getCollectionTotalVolume();
 
       getCollectionUniqueOwners();
     }

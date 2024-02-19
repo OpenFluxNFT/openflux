@@ -49,7 +49,7 @@ const SingleNft = ({
   const baseURL = "https://confluxapi.worldofdypians.com";
   const { BigNumber } = window;
 
-  console.log(nftId, nftAddress);
+  
 
   const updateViewNft = () => {
     let viewedNfts = JSON.parse(localStorage.getItem("viewedNfts")) || [];

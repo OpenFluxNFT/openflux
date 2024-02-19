@@ -484,6 +484,7 @@ const CollectionPage = ({
       let nftArray = [];
       let nftListedArray = [];
       let totalSupply = 0;
+
       const abi = JSON.parse(result.data.result);
       const listednftsArray = listednfts.data.listings;
       const web3 = window.confluxWeb3;
@@ -518,6 +519,9 @@ const CollectionPage = ({
           sethasListedNfts(true);
           await Promise.all(
             window.range(0, listednftsArray.length - 1).map(async (j) => {
+              let bestOfferListed = 0;
+              let lastSaleListed = 0;
+
               const nft_data_listed = await fetch(
                 `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress.toLowerCase()}/${
                   listednftsArray[j].tokenId
@@ -549,6 +553,59 @@ const CollectionPage = ({
                   console.error(e);
                 });
 
+              const offersresultListed = await window
+                .getAllOffers(
+                  collectionAddress.toLowerCase(),
+                  listednftsArray[j].tokenId
+                )
+                .catch((e) => {
+                  console.log(e);
+                });
+              const finalOfferResultListed = offersresultListed[1];
+
+              if (finalOfferResultListed && finalOfferResultListed.length > 0) {
+                const maxPrice = Math.max(
+                  ...finalOfferResultListed.map((o) => o.amount)
+                );
+                const obj = finalOfferResultListed.find(
+                  (item) => item.amount == maxPrice
+                );
+                if (obj) {
+                  bestOfferListed = obj.amount;
+                }
+              } else {
+                bestOfferListed = 0;
+              }
+
+              const resultSale = await axios
+                .get(
+                  `${baseURL}/api/nft-sale-history/${collectionAddress.toLowerCase()}/${
+                    listednftsArray[j].tokenId
+                  }`,
+                  {
+                    headers: {
+                      cascadestyling:
+                        "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+                    },
+                  }
+                )
+                .catch((e) => {
+                  console.error(e);
+                });
+
+              if (resultSale && resultSale.status === 200) {
+                const historyArray = resultSale.data;
+                const finalArray_sorted = historyArray.sort((a, b) => {
+                  return b.blockTimestamp - a.blockTimestamp;
+                });
+
+                if (finalArray_sorted && finalArray_sorted.length > 0) {
+                  lastSaleListed = finalArray_sorted[0].amount / 1e18;
+                } else {
+                  lastSaleListed = 0;
+                }
+              }
+
               const owner = await collection_contract.methods
                 .ownerOf(listednftsArray[j].tokenId)
                 .call()
@@ -576,6 +633,8 @@ const CollectionPage = ({
                     listingIndex: listingIndex,
                     isApproved: isApprovedresult,
                     tokenName: tokenName,
+                    bestOffer: bestOfferListed,
+                    lastSale: lastSaleListed,
                   });
                 }
               }
@@ -586,6 +645,8 @@ const CollectionPage = ({
         await Promise.all(
           window.range(0, limit - 1).map(async (i) => {
             let tokenByIndex = 0;
+            let bestOffer = 0;
+            let lastSale = 0;
             if (result.data.result.includes("tokenByIndex")) {
               tokenByIndex = await collection_contract.methods
                 .tokenByIndex(i)
@@ -596,6 +657,74 @@ const CollectionPage = ({
             } else if (!result.data.result.includes("tokenByIndex")) {
               tokenByIndex = i;
             }
+            let finalOfferResult = [];
+            const offersresult = await window
+              .getAllOffers(collectionAddress.toLowerCase(), tokenByIndex)
+              .catch((e) => {
+                console.log(e);
+              });
+            finalOfferResult = offersresult[1];
+
+            if (finalOfferResult && finalOfferResult.length > 0) {
+              // finalArray = finalOfferResult.filter((object) => {
+              //   return (
+              //     object.offeror.toLowerCase() === coinbase.toLowerCase()
+              //   );
+              // });
+
+              // let finalArrayIndex = finalOfferResult.findIndex((object) => {
+              //   return object.offeror.toLowerCase() === coinbase.toLowerCase();
+              // });
+
+              // if (finalArray && finalArray.length > 0) {
+              //   offerArray = finalArray.map((item) => {
+              //     return { ...item, index: finalArrayIndex };
+              //   });
+              // }
+
+              const maxPrice = Math.max(
+                ...finalOfferResult.map((o) => o.amount)
+              );
+
+              const obj = finalOfferResult.find(
+                (item) => item.amount == maxPrice
+              );
+              if (obj) {
+                bestOffer = obj.amount;
+              } else {
+                bestOffer = 0;
+              }
+            } else {
+              bestOffer = 0;
+            }
+
+            const resultSale = await axios
+              .get(
+                `${baseURL}/api/nft-sale-history/${collectionAddress.toLowerCase()}/${tokenByIndex}`,
+                {
+                  headers: {
+                    cascadestyling:
+                      "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+                  },
+                }
+              )
+              .catch((e) => {
+                console.error(e);
+              });
+
+            if (resultSale && resultSale.status === 200) {
+              const historyArray = resultSale.data;
+              const finalArray_sorted = historyArray.sort((a, b) => {
+                return b.blockTimestamp - a.blockTimestamp;
+              });
+
+              if (finalArray_sorted && finalArray_sorted.length > 0) {
+                lastSale = finalArray_sorted[0].amount / 1e18;
+              } else {
+                lastSale = 0;
+              }
+            }
+
             const owner = await collection_contract.methods
               .ownerOf(tokenByIndex)
               .call()
@@ -631,6 +760,8 @@ const CollectionPage = ({
                 tokenId: Number(tokenByIndex),
                 owner: owner,
                 tokenName: tokenName,
+                bestOffer: bestOffer,
+                lastSale: lastSale,
               });
             } else {
               nftArray.push({
@@ -639,6 +770,8 @@ const CollectionPage = ({
                 owner: owner,
                 tokenName: tokenName,
                 metadatas: false,
+                bestOffer: bestOffer,
+                lastSale: lastSale,
               });
             }
           })
@@ -696,6 +829,8 @@ const CollectionPage = ({
         await Promise.all(
           window.range(next - nftPerRow, limit - 1).map(async (i) => {
             let tokenByIndex = 0;
+            let bestOffer = 0;
+            let lastSale = 0;
             if (result.data.result.includes("tokenByIndex")) {
               tokenByIndex = await collection_contract.methods
                 .tokenByIndex(i)
@@ -706,6 +841,76 @@ const CollectionPage = ({
             } else if (!result.data.result.includes("tokenByIndex")) {
               tokenByIndex = i;
             }
+
+            let finalOfferResult = [];
+
+            const offersresult = await window
+              .getAllOffers(collectionAddress.toLowerCase(), tokenByIndex)
+              .catch((e) => {
+                console.log(e);
+              });
+            finalOfferResult = offersresult[1];
+
+            if (finalOfferResult && finalOfferResult.length > 0) {
+              // finalArray = finalOfferResult.filter((object) => {
+              //   return (
+              //     object.offeror.toLowerCase() === coinbase.toLowerCase()
+              //   );
+              // });
+
+              // let finalArrayIndex = finalOfferResult.findIndex((object) => {
+              //   return object.offeror.toLowerCase() === coinbase.toLowerCase();
+              // });
+
+              // if (finalArray && finalArray.length > 0) {
+              //   offerArray = finalArray.map((item) => {
+              //     return { ...item, index: finalArrayIndex };
+              //   });
+              // }
+
+              const maxPrice = Math.max(
+                ...finalOfferResult.map((o) => o.amount)
+              );
+
+              const obj = finalOfferResult.find(
+                (item) => item.amount == maxPrice
+              );
+              if (obj) {
+                bestOffer = obj.amount;
+              } else {
+                bestOffer = 0;
+              }
+            } else {
+              bestOffer = 0;
+            }
+
+            const resultSale = await axios
+              .get(
+                `${baseURL}/api/nft-sale-history/${collectionAddress.toLowerCase()}/${tokenByIndex}`,
+                {
+                  headers: {
+                    cascadestyling:
+                      "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+                  },
+                }
+              )
+              .catch((e) => {
+                console.error(e);
+              });
+
+            if (resultSale && resultSale.status === 200) {
+              const historyArray = resultSale.data;
+              const finalArray_sorted = historyArray.sort((a, b) => {
+                return b.blockTimestamp - a.blockTimestamp;
+              });
+
+              if (finalArray_sorted && finalArray_sorted.length > 0) {
+                lastSale = finalArray_sorted[0].amount / 1e18;
+              } else {
+                lastSale = 0;
+              }
+            }
+
             const owner = await collection_contract.methods
               .ownerOf(tokenByIndex)
               .call()
@@ -742,6 +947,8 @@ const CollectionPage = ({
                 tokenId: Number(tokenByIndex),
                 owner: owner,
                 tokenName: tokenName,
+                bestOffer: bestOffer,
+                lastSale: lastSale,
               });
             }
           })

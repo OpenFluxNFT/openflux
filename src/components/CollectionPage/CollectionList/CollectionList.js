@@ -465,6 +465,8 @@ const CollectionList = ({
     }
   }, [queryItems]);
 
+   
+
   return (
     <>
       <div className="container-lg">
@@ -1012,14 +1014,15 @@ const CollectionList = ({
                               ` #${item.tokenId}`}
                           </td>
                           <td className="table-item col-2">
-                            {item.seller &&
-                              getFormattedNumber(item.price / 10 ** 18)}
+                            {item.seller ?
+                              getFormattedNumber(item.price / 10 ** 18)
+                            : '---'} WCFX
                           </td>
                           <td className="table-item col-2">
-                            {item.seller && " TBD WCFX"}
+                            {getFormattedNumber(item.bestOffer/1e18)} WCFX
                           </td>
                           <td className="table-item col-2">
-                            {item.seller && " TBD WCFX"}{" "}
+                          {getFormattedNumber(item.lastSale)} WCFX
                           </td>
                           <td className="table-item col-2">
                             {shortAddress(item.owner ?? item.seller)}

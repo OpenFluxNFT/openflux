@@ -472,7 +472,6 @@ const CollectionList = ({
     }
   }, [queryItems]);
 
-
   return (
     <>
       <div className="container-lg">
@@ -1503,15 +1502,25 @@ const CollectionList = ({
                         type="text"
                         placeholder="$ Min"
                         className="price-input"
+                        onChange={(e) => setDummyMinPrice(e.target.value)}
                       />
                       <span className="MuiTypography-root mb-0">to</span>
                       <input
                         type="text"
                         placeholder="$ Max"
                         className="price-input"
+                        onChange={(e) => setDummyMaxPrice(e.target.value)}
                       />
                     </div>
-                    <button className="buy-btn">Apply</button>
+                    <button
+                      className="buy-btn"
+                      onClick={() => {
+                        setPrices(dummyMinPrice, dummyMaxPrice);
+                        console.log(dummyMinPrice, dummyMaxPrice, "why");
+                      }}
+                    >
+                      Apply
+                    </button>
                   </div>
                 </div>
               </div>

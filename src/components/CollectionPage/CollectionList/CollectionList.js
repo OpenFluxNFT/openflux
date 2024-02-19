@@ -62,10 +62,12 @@ const CollectionList = ({
   ]);
   const [queryItems, setQueryItems] = useState([]);
   const [search, setSearch] = useState("");
-
   const [nftList, setNftList] = useState([]);
-
   const navigate = useNavigate();
+  const [gridView, setGridView] = useState("small-grid");
+  const [nftFinalArray, setnftFinalArray] = useState([]);
+
+  const baseURL = "https://confluxapi.worldofdypians.com";
 
   const dummyCards = [
     {
@@ -201,11 +203,6 @@ const CollectionList = ({
     });
   };
 
-  const [gridView, setGridView] = useState("small-grid");
-  const [nftFinalArray, setnftFinalArray] = useState([]);
-
-  const baseURL = "https://confluxapi.worldofdypians.com";
-
   const fetchFavoriteCounts = async () => {
     if (allNftArray && allNftArray.length > 0) {
       let favoriteCount = 0;
@@ -286,8 +283,7 @@ const CollectionList = ({
       }, 1500);
     } else if (type === "sold") {
       setGeneralFilter(type);
-
-      setNftList(allNftArray);
+      // setNftList(allNftArray);
       getRecentlySold().then((result) => {
         setNftList(result);
         setCollectionLoading(false);
@@ -472,8 +468,6 @@ const CollectionList = ({
     }
   }, [queryItems]);
 
-  console.log(allNftArray);
-
   return (
     <>
       <div className="container-lg">
@@ -626,7 +620,6 @@ const CollectionList = ({
                           className="buy-btn"
                           onClick={() => {
                             setPrices(dummyMinPrice, dummyMaxPrice);
-                            console.log(dummyMinPrice, dummyMaxPrice, "why");
                           }}
                         >
                           Apply
@@ -971,81 +964,159 @@ const CollectionList = ({
                   </thead>
                   {allNftArray && allNftArray.length > 0 ? (
                     <tbody>
-                      {nftList.map((item, index) => (
-                        <tr
-                          className="nft-table-row p-1"
-                          key={index}
-                          onClick={() =>
-                            navigate(
-                              `/nft/${item.tokenId}/${collectionAddress}`
-                            )
-                          }
-                          style={{ cursor: "pointer" }}
-                        >
-                          <td
-                            className="table-item col-2 d-flex align-items-center gap-1 w-100"
-                            scope="row"
-                          >
-                            {!item.isVideo && item.image ? (
-                              <img
-                                src={`https://cdnflux.dypius.com/${item.image50}`}
-                                className="table-img nftimg2"
-                                height={36}
-                                width={36}
-                                alt=""
-                              />
-                            ) : item.isVideo && item.image ? (
-                              <video
-                                preload="auto"
-                                height={36}
-                                width={36}
-                                className="card-img nftimg2"
-                                src={`https://cdnflux.dypius.com/${item.image}`}
-                                autoPlay={true}
-                                loop={true}
-                                muted="muted"
-                                playsInline={true}
-                                // onClick={player}
-                                controlsList="nodownload"
-                              ></video>
-                            ) : (
-                              <img
-                                src={require(`./assets/collectionCardPlaceholder2.png`)}
-                                className="table-img nftimg2"
-                                alt=""
-                                height={36}
-                                width={36}
-                              />
-                            )}
-                            {item.tokenName +
-                              " " +
-                              (item.name ? item.name : ` #${item.tokenId}`)}
-                          </td>
-                          <td className="table-item col-2">
-                            {item.seller
-                              ? getFormattedNumber(item.price / 10 ** 18)
-                              : "---"}{" "}
-                            WCFX
-                          </td>
-                          <td className="table-item col-2">
-                            {getFormattedNumber(item.bestOffer / 1e18)} WCFX
-                          </td>
-                          <td className="table-item col-2">
-                            {getFormattedNumber(item.lastSale)} WCFX
-                          </td>
-                          <td className="table-item col-2">
-                            {shortAddress(item.owner ?? item.seller)}
-                          </td>
-                          <td className="table-item col-2">
-                            {" "}
-                            {item.expiresAt
-                              ? moment
-                                  .duration(item.expiresAt * 1000 - Date.now())
-                                  .humanize(true)
-                              : "N/A"}
-                          </td>
-                        </tr>
-                      ))}
+                      {listType === ""
+                        ? allNftArray.map((item, index) => (
+                            <tr
+                              className="nft-table-row p-1"
+                              key={index}
+                              onClick={() =>
+                                navigate(
+                                  `/nft/${item.tokenId}/${collectionAddress}`
+                                )
+                              }
+                              style={{ cursor: "pointer" }}
+                            >
+                              <td
+                                className="table-item col-2 d-flex align-items-center gap-1 w-100"
+                                scope="row"
+                              >
+                                {!item.isVideo && item.image ? (
+                                  <img
+                                    src={`https://cdnflux.dypius.com/${item.image50}`}
+                                    className="table-img nftimg2"
+                                    height={36}
+                                    width={36}
+                                    alt=""
+                                  />
+                                ) : item.isVideo && item.image ? (
+                                  <video
+                                    preload="auto"
+                                    height={36}
+                                    width={36}
+                                    className="card-img nftimg2"
+                                    src={`https://cdnflux.dypius.com/${item.image}`}
+                                    autoPlay={true}
+                                    loop={true}
+                                    muted="muted"
+                                    playsInline={true}
+                                    // onClick={player}
+                                    controlsList="nodownload"
+                                  ></video>
+                                ) : (
+                                  <img
+                                    src={require(`./assets/collectionCardPlaceholder2.png`)}
+                                    className="table-img nftimg2"
+                                    alt=""
+                                    height={36}
+                                    width={36}
+                                  />
+                                )}
+                                {item.tokenName +
+                                  " " +
+                                  (item.name ? item.name : ` #${item.tokenId}`)}
+                              </td>
+                              <td className="table-item col-2">
+                                {item.seller
+                                  ? getFormattedNumber(item.price / 10 ** 18)
+                                  : "---"}{" "}
+                                WCFX
+                              </td>
+                              <td className="table-item col-2">
+                                {getFormattedNumber(item.bestOffer / 1e18)} WCFX
+                              </td>
+                              <td className="table-item col-2">
+                                {getFormattedNumber(item.lastSale)} WCFX
+                              </td>
+                              <td className="table-item col-2">
+                                {shortAddress(item.owner ?? item.seller)}
+                              </td>
+                              <td className="table-item col-2">
+                                {item.expiresAt
+                                  ? moment
+                                      .duration(
+                                        item.expiresAt * 1000 - Date.now()
+                                      )
+                                      .humanize(true)
+                                  : "N/A"}
+                              </td>
+                            </tr>
+                          ))
+                        : nftList.map((item, index) => (
+                            <tr
+                              className="nft-table-row p-1"
+                              key={index}
+                              onClick={() =>
+                                navigate(
+                                  `/nft/${item.tokenId}/${collectionAddress}`
+                                )
+                              }
+                              style={{ cursor: "pointer" }}
+                            >
+                              <td
+                                className="table-item col-2 d-flex align-items-center gap-1 w-100"
+                                scope="row"
+                              >
+                                {!item.isVideo && item.image ? (
+                                  <img
+                                    src={`https://cdnflux.dypius.com/${item.image50}`}
+                                    className="table-img nftimg2"
+                                    height={36}
+                                    width={36}
+                                    alt=""
+                                  />
+                                ) : item.isVideo && item.image ? (
+                                  <video
+                                    preload="auto"
+                                    height={36}
+                                    width={36}
+                                    className="card-img nftimg2"
+                                    src={`https://cdnflux.dypius.com/${item.image}`}
+                                    autoPlay={true}
+                                    loop={true}
+                                    muted="muted"
+                                    playsInline={true}
+                                    // onClick={player}
+                                    controlsList="nodownload"
+                                  ></video>
+                                ) : (
+                                  <img
+                                    src={require(`./assets/collectionCardPlaceholder2.png`)}
+                                    className="table-img nftimg2"
+                                    alt=""
+                                    height={36}
+                                    width={36}
+                                  />
+                                )}
+                                {item.tokenName +
+                                  " " +
+                                  (item.name ? item.name : ` #${item.tokenId}`)}
+                              </td>
+                              <td className="table-item col-2">
+                                {item.seller
+                                  ? getFormattedNumber(item.price / 10 ** 18)
+                                  : "---"}{" "}
+                                WCFX
+                              </td>
+                              <td className="table-item col-2">
+                                {getFormattedNumber(item.bestOffer / 1e18)} WCFX
+                              </td>
+                              <td className="table-item col-2">
+                                {getFormattedNumber(item.lastSale)} WCFX
+                              </td>
+                              <td className="table-item col-2">
+                                {shortAddress(item.owner ?? item.seller)}
+                              </td>
+                              <td className="table-item col-2">
+                                {item.expiresAt
+                                  ? moment
+                                      .duration(
+                                        item.expiresAt * 1000 - Date.now()
+                                      )
+                                      .humanize(true)
+                                  : "N/A"}
+                              </td>
+                            </tr>
+                          ))}
                     </tbody>
                   ) : (
                     dummyCards.map((item, index) => (
@@ -1066,6 +1137,7 @@ const CollectionList = ({
                             variant="rounded"
                             width={"100%"}
                             height={40}
+                            sx={{ bgcolor: "rgba(47, 128, 237, 0.05)" }}
                           />
                         </td>
                         <td>
@@ -1108,9 +1180,224 @@ const CollectionList = ({
                     ))
                   )}
                 </table>
-              ) : allNftArray &&
+              ) : (listType === "" &&
+                (Number(minPrice) === 0 && Number(maxPrice) === 0)) ? (
+                allNftArray &&
                 allNftArray.length > 0 &&
-                collectionLoading === false ? (
+                allNftArray.map((item, index) => (
+                  <div
+                    className="recently-listed-card p-3 d-flex flex-column"
+                    key={index}
+                  >
+                    <NavLink
+                      to={`/nft/${item.tokenId}/${collectionAddress}`}
+                      style={{ textDecoration: "none" }}
+                      className={"position-relative"}
+                    >
+                      {item.image &&
+                      !item.isVideo &&
+                      gridView === "small-grid" ? (
+                        <img
+                          src={`https://cdnflux.dypius.com/${item.image}`}
+                          className="card-img"
+                          alt=""
+                        />
+                      ) : item.image &&
+                        item.isVideo &&
+                        gridView === "small-grid" ? (
+                        <video
+                          preload="auto"
+                          className="card-img"
+                          src={`https://cdnflux.dypius.com/${item.image}`}
+                          autoPlay={true}
+                          loop={true}
+                          muted="muted"
+                          playsInline={true}
+                          // onClick={player}
+                          controlsList="nodownload"
+                        ></video>
+                      ) : (
+                        <></>
+                      )}
+                      {item.image &&
+                      !item.isVideo &&
+                      gridView === "big-grid" ? (
+                        <img
+                          src={`https://cdnflux.dypius.com/${item.image170}`}
+                          className="card-img"
+                          alt=""
+                        />
+                      ) : item.image &&
+                        item.isVideo &&
+                        gridView === "big-grid" ? (
+                        <video
+                          preload="auto"
+                          className="card-img"
+                          src={`https://cdnflux.dypius.com/${item.image}`}
+                          autoPlay={true}
+                          loop={true}
+                          muted="muted"
+                          playsInline={true}
+                          // onClick={player}
+                          controlsList="nodownload"
+                        ></video>
+                      ) : (
+                        <></>
+                      )}
+                      {!item.image && (
+                        <img
+                          src={require(`./assets/collectionCardPlaceholder2.png`)}
+                          className="card-img"
+                          alt=""
+                        />
+                      )}
+                      <div
+                        className="position-absolute favorite-container"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          handleLikeStates(item.tokenId);
+                        }}
+                      >
+                        <div className="d-flex align-items-center position-relative gap-2">
+                          <img
+                            src={
+                              userNftFavs &&
+                              userNftFavs.length > 0 &&
+                              userNftFavs.find((favitem) => {
+                                return (
+                                  favitem.contractAddress ===
+                                    collectionAddress &&
+                                  favitem.tokenIds.find(
+                                    (itemTokenIds) =>
+                                      Number(itemTokenIds) ===
+                                      Number(item.tokenId)
+                                  )
+                                );
+                              })
+                                ? redFavorite
+                                : emptyFavorite
+                            }
+                            alt=""
+                            className="fav-img"
+                          />
+                          <span
+                            className={
+                              userNftFavs &&
+                              userNftFavs.length > 0 &&
+                              userNftFavs.find((favitem) => {
+                                return (
+                                  favitem.contractAddress ===
+                                    collectionAddress &&
+                                  favitem.tokenIds.find(
+                                    (itemTokenIds) =>
+                                      Number(itemTokenIds) ===
+                                      Number(item.tokenId)
+                                  )
+                                );
+                              })
+                                ? "fav-count-active"
+                                : "fav-count"
+                            }
+                          >
+                            {
+                              nftFinalArray.find((object) => {
+                                return (
+                                  object.contractAddress ===
+                                    collectionAddress &&
+                                  Number(object.tokenId) ===
+                                    Number(item.tokenId)
+                                );
+                              })?.count
+                            }
+                          </span>
+                        </div>
+                      </div>
+                      <div className="d-flex align-items-center gap-2 mt-2">
+                        <h6
+                          className="recently-listed-title mb-0"
+                          style={{ fontSize: "12px" }}
+                        >
+                          {item.tokenName +
+                            " " +
+                            (item.name ? item.name : ` #${item.tokenId}`)}
+                        </h6>
+                        <img src={checkIcon} alt="" />
+                      </div>
+                      {item.seller ? (
+                        <div className="d-flex align-items-center mt-2 gap-3">
+                          <h6
+                            className="cfx-price mb-0"
+                            style={{ fontSize: "10px" }}
+                          >
+                            {getFormattedNumber(item.price / 10 ** 18)} WCFX
+                          </h6>
+                          <span
+                            className="usd-price"
+                            style={{ fontSize: "9px" }}
+                          >
+                            (${" "}
+                            {getFormattedNumber(
+                              (item.price / 10 ** 18) * cfxPrice
+                            )}
+                            )
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="d-flex align-items-center mt-2 gap-3">
+                          <h6
+                            className="cfx-price mb-0"
+                            style={{ fontSize: "10px" }}
+                          >
+                            --- WCFX
+                          </h6>
+                          <span
+                            className="usd-price"
+                            style={{ fontSize: "9px" }}
+                          >
+                            ($--- )
+                          </span>
+                        </div>
+                      )}
+                      <div className="mt-3">
+                        {item.seller &&
+                        item.seller.toLowerCase() !==
+                          coinbase?.toLowerCase() ? (
+                          <button
+                            className="buy-btn w-100"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              e.preventDefault();
+                              handleBuyNft(item);
+                            }}
+                          >
+                            {item.isApproved ? "Buy" : "Approve Buy"}
+                            {buyloading && selectedNftId === item.tokenId && (
+                              <div
+                                className="spinner-border spinner-border-sm text-light ms-1"
+                                role="status"
+                              ></div>
+                            )}
+                          </button>
+                        ) : (
+                          <NavLink
+                            className="buy-btn w-100 d-flex justify-content-center "
+                            to={`/nft/${item.tokenId}/${collectionAddress}`}
+                            style={{ textDecoration: "none" }}
+                          >
+                            View Details
+                          </NavLink>
+                        )}
+                      </div>
+                    </NavLink>
+                  </div>
+                ))
+              ) : collectionLoading === false &&
+                (listType !== "" ||
+                  (Number(minPrice) > 0 && Number(maxPrice) > 0)) ? (
+                allNftArray &&
+                nftList.length > 0 &&
+                allNftArray.length > 0 &&
                 nftList.map((item, index) => (
                   <div
                     className="recently-listed-card p-3 d-flex flex-column"
@@ -1330,7 +1617,7 @@ const CollectionList = ({
                 ))
               )}
             </div>
-            {collectionLoading === true &&
+            {(collectionLoading === true || loading === true) &&
             (gridView === "small-grid" || gridView === "big-grid") ? (
               <div
                 className={`${

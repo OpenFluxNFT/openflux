@@ -19,6 +19,7 @@ import { NavLink } from "react-router-dom";
 import getFormattedNumber from "../../../hooks/get-formatted-number";
 import moment from "moment";
 import { Skeleton } from "@mui/material";
+import axios from "axios";
 
 const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
   const [recents, setRecents] = useState([]);
@@ -27,6 +28,9 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
   const [time, setTime] = useState("30d");
   const windowSize = useWindowSize();
   const [loading, setLoading] = useState(true);
+  const [topSales, setTopSales] = useState([])
+  const baseURL = "https://confluxapi.worldofdypians.com";
+
 
   const settings = {
     dots: true,
@@ -142,8 +146,142 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
     }
   };
 
+
+  const getTopSales = async () => {
+    setLoading(true)
+    const result = await axios
+      .get(`${baseURL}/api/top-purchased-nfts`, {
+        headers: {
+          cascadestyling:
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+    const web3 = window.confluxWeb3;
+    if (result && result.status === 200) {
+      // console.log(result.data);
+      const topSold = await Promise.all(
+        result.data.map(async (item) => {
+          let isApproved = false;
+          const abiresult = await axios.get(
+            `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
+          );
+          if (abiresult && abiresult.status === 200) {
+            let lastSale = 0;
+            const abi = JSON.parse(abiresult.data.result);
+            const collection_contract = new web3.eth.Contract(
+              abi,
+              item.nftAddress
+            );
+            const tokenName = await collection_contract.methods
+              .symbol()
+              .call()
+              .catch((e) => {
+                console.error(e);
+              });
+
+            const seller = await collection_contract.methods
+              .ownerOf(item.tokenId)
+              .call()
+              .catch((e) => {
+                console.error(e);
+              });
+
+            const collectionName = await collection_contract.methods
+              .name()
+              .call()
+              .catch((e) => {
+                console.error(e);
+              });
+
+            const isApprovedresult = await window
+              .isApprovedBuy(item.price)
+              .catch((e) => {
+                console.error(e);
+              });
+
+            if (isApprovedresult) {
+              isApproved = isApprovedresult;
+            }
+
+            const lastSaleResult = await axios
+              .get(
+                `${baseURL}/api/nft-sale-history/${item.nftAddress.toLowerCase()}/${
+                  item.tokenId
+                }`,
+                {
+                  headers: {
+                    cascadestyling:
+                      "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+                  },
+                }
+              )
+              .catch((e) => {
+                console.error(e);
+              });
+
+            if (lastSaleResult && lastSaleResult.status === 200) {
+              const historyArray = lastSaleResult.data;
+              if (historyArray && historyArray.length > 0) {
+                const finalArray_sorted = historyArray.sort((a, b) => {
+                  return b.blockTimestamp - a.blockTimestamp;
+                });
+                lastSale = finalArray_sorted[0];
+              }
+            }
+
+            const nft_data = await fetch(
+              `https://cdnflux.dypius.com/collectionsmetadatas/${item.nftAddress.toLowerCase()}/${
+                item.tokenId
+              }/metadata.json`
+            )
+              .then((res) => res.json())
+              .then((data) => {
+                return data;
+              })
+              .catch((err) => {
+                console.log(err.message);
+              });
+
+            if (
+              nft_data &&
+              nft_data.code !== 404 &&
+              typeof nft_data !== "string"
+            ) {
+              return {
+                ...item,
+                image: `${nft_data.image}`,
+                tokenName: tokenName,
+                isApproved: isApproved,
+                seller: seller,
+                collectionName: collectionName,
+                lastSale: lastSale,
+              };
+            } else
+              return {
+                ...item,
+                image: undefined,
+                tokenName: tokenName,
+                seller: seller,
+                collectionName: collectionName,
+                lastSale: lastSale,
+              };
+          }
+        })
+      );
+
+      setTopSales(topSold);
+    }
+    setTimeout(() => {
+      setLoading(false)
+    }, 1500);
+  };
+
   useEffect(() => {
     chunkArray(dummyCards, 3);
+    getTopSales();
   }, []);
 
   useEffect(() => {
@@ -335,7 +473,81 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
                       </div>
                     );
                   })
-                ) : recents.length === 0 ? (
+                ) : loading === false && option === "topSales" && topSales && topSales.length > 0 ?
+                topSales.slice(0, 9).map((item, index) => {
+                  return (
+                    <div
+                      className="trending-card p-3 d-flex align-items-center position-relative gap-2"
+                      key={index}
+                    >
+                      <NavLink
+                        to={`/nft/${item.tokenId}/${item.nftAddress}`}
+                        className="w-100 d-flex align-items-center position-relative gap-2"
+                        key={index}
+                        style={{ textDecoration: "none" }}
+                      >
+                        <div className="trending-tag">
+                          <span className="mb-0">{index + 1}</span>
+                        </div>
+
+                        {!item.isVideo ? (
+                          <img
+                            src={
+                              item.image
+                                ? `https://cdnflux.dypius.com/${item.image}`
+                                : require(`../RecentlyListed/assets/nftPlaceholder1.png`)
+                            }
+                            className="card-img2"
+                            width={100}
+                            height={100}
+                            alt=""
+                          />
+                        ) : (
+                          <video
+                            preload="auto"
+                            className="card-img2"
+                            width={100}
+                            height={100}
+                            src={`https://cdnflux.dypius.com/${item.image}`}
+                            autoPlay={true}
+                            loop={true}
+                            muted="muted"
+                            playsInline={true}
+                            // onClick={player}
+                            controlsList="nodownload"
+                          ></video>
+                        )}
+                        <div className="d-flex flex-column">
+                          <div className="d-flex align-items-center gap-1">
+                            <h6 className="trending-card-title mb-0">
+                              {item.tokenName} {item.name}
+                            </h6>
+                            <img src={checkIcon} alt="" />
+                          </div>
+                          <div className="d-flex flex-column">
+                            <h6 className="trending-card-cfx-price mb-0">
+                              {getFormattedNumber(item.amount / 1e18)} WCFX
+                            </h6>
+                            <span className="trending-card-usd-price mb-0">
+                              (${" "}
+                              {getFormattedNumber(
+                                (item.amount / 1e18) * cfxPrice
+                              )}
+                              )
+                            </span>
+                          </div>
+                        </div>
+                      </NavLink>
+                      <span className="list-date">
+                        Sold{" "}
+                        {moment
+                          .duration(item.lastSale.blockTimestamp * 1000 - Date.now())
+                          .humanize(true)}
+                      </span>
+                    </div>
+                  );
+                }) :
+                recents.length === 0 ? (
                   <>
                     <div></div>
                     <div

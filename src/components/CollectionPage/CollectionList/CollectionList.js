@@ -292,11 +292,11 @@ const CollectionList = ({
         setNftList(result);
         setCollectionLoading(false);
       });
-    } else if(type === "offers"){
+    } else if (type === "offers") {
       const filteredList = nftList.filter((item) => {
-        return Number(item.bestOffer) > 0
-      })
-      setNftList(filteredList)
+        return Number(item.bestOffer) > 0;
+      });
+      setNftList(filteredList);
       setTimeout(() => {
         setCollectionLoading(false);
       }, 1500);
@@ -472,7 +472,7 @@ const CollectionList = ({
     }
   }, [queryItems]);
 
-console.log(allNftArray);
+  console.log(allNftArray);
 
   return (
     <>
@@ -1017,8 +1017,9 @@ console.log(allNftArray);
                                 width={36}
                               />
                             )}
-                            {item.tokenName + " " + item.name ??
-                              ` #${item.tokenId}`}
+                            {item.tokenName +
+                              " " +
+                              (item.name ? item.name : ` #${item.tokenId}`)}
                           </td>
                           <td className="table-item col-2">
                             {item.seller
@@ -1039,9 +1040,7 @@ console.log(allNftArray);
                             {" "}
                             {item.expiresAt
                               ? moment
-                                  .duration(
-                                    item.expiresAt * 1000 - Date.now()
-                                  )
+                                  .duration(item.expiresAt * 1000 - Date.now())
                                   .humanize(true)
                               : "N/A"}
                           </td>
@@ -1246,8 +1245,9 @@ console.log(allNftArray);
                           className="recently-listed-title mb-0"
                           style={{ fontSize: "12px" }}
                         >
-                          {item.tokenName + " " + item.name ??
-                            ` #${item.tokenId}`}
+                          {item.tokenName +
+                            " " +
+                            (item.name ? item.name : ` #${item.tokenId}`)}
                         </h6>
                         <img src={checkIcon} alt="" />
                       </div>
@@ -1416,9 +1416,9 @@ console.log(allNftArray);
                 <div className="accordion-body">
                   <FormGroup>
                     <FormControlLabel
-                    onChange={() => {
-                      setListed("listed");
-                    }}
+                      onChange={() => {
+                        setListed("listed");
+                      }}
                       control={
                         <Checkbox
                           size="small"
@@ -1433,9 +1433,9 @@ console.log(allNftArray);
                       label="Recently Listed"
                     />
                     <FormControlLabel
-                    onChange={() => {
-                      setListed("sold");
-                    }}
+                      onChange={() => {
+                        setListed("sold");
+                      }}
                       control={
                         <Checkbox
                           size="small"
@@ -1457,9 +1457,9 @@ console.log(allNftArray);
                       }}
                     />
                     <FormControlLabel
-                    onChange={() => {
-                      setListed("offers");
-                    }}
+                      onChange={() => {
+                        setListed("offers");
+                      }}
                       control={
                         <Checkbox
                           size="small"

@@ -327,7 +327,6 @@ const CollectionList = ({
     ) {
       const filterPrices = nftList.filter((item) => {
         if (item.price) {
-       
           return (
             (item.price / 10 ** 18) * cfxPrice >= Number(min) ||
             (item.price / 10 ** 18) * cfxPrice <= Number(max)
@@ -465,7 +464,7 @@ const CollectionList = ({
     }
   }, [queryItems]);
 
-   
+
 
   return (
     <>
@@ -782,14 +781,14 @@ const CollectionList = ({
                         High to Low
                       </a>
                     </li>
-                    <li>
+                    {/* <li>
                       <a
                         className="dropdown-item categories-dropdown-item"
                         href="#"
                       >
                         Recently Listed
                       </a>
-                    </li>
+                    </li> */}
                   </ul>
                 </div>
               </div>
@@ -958,7 +957,7 @@ const CollectionList = ({
                         Owner
                       </th>
                       <th className="table-header" scope="col">
-                        Time Listed
+                        Expires
                       </th>
                     </tr>
                   </thead>
@@ -1014,25 +1013,26 @@ const CollectionList = ({
                               ` #${item.tokenId}`}
                           </td>
                           <td className="table-item col-2">
-                            {item.seller ?
-                              getFormattedNumber(item.price / 10 ** 18)
-                            : '---'} WCFX
+                            {item.seller
+                              ? getFormattedNumber(item.price / 10 ** 18)
+                              : "---"}{" "}
+                            WCFX
                           </td>
                           <td className="table-item col-2">
-                            {getFormattedNumber(item.bestOffer/1e18)} WCFX
+                            {getFormattedNumber(item.bestOffer / 1e18)} WCFX
                           </td>
                           <td className="table-item col-2">
-                          {getFormattedNumber(item.lastSale)} WCFX
+                            {getFormattedNumber(item.lastSale)} WCFX
                           </td>
                           <td className="table-item col-2">
                             {shortAddress(item.owner ?? item.seller)}
                           </td>
                           <td className="table-item col-2">
                             {" "}
-                            {item.blockTimestamp
+                            {item.expiresAt
                               ? moment
                                   .duration(
-                                    item.blockTimestamp * 1000 - Date.now()
+                                    item.expiresAt * 1000 - Date.now()
                                   )
                                   .humanize(true)
                               : "N/A"}

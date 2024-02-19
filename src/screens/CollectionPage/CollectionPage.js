@@ -514,8 +514,7 @@ const CollectionPage = ({
           listednftsArray &&
           listednftsArray.length > 0
         ) {
-          settotalListedNfts(listednftsArray.length);
-
+          settotalListedNfts(listednftsArray.length); 
           sethasListedNfts(true);
           await Promise.all(
             window.range(0, listednftsArray.length - 1).map(async (j) => {

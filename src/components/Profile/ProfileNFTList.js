@@ -251,7 +251,7 @@ const ProfileNFTList = ({
 
     setuserCollectionArrayFinal([...userCollectionArrayFinal]);
   };
-
+  
   useEffect(() => {
     setuserCollectionArrayFinal([]);
   }, [option, favoritesOption]);

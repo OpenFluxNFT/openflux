@@ -47,6 +47,8 @@ const SingleNftHistory = ({
                             <a
                               href={`https://evm.confluxscan.net/address/${item.seller}`}
                               className="greentext"
+                              target="_blank"
+                              rel="noreferrer"
                             >
                               {shortAddress(item.seller)}
                             </a>
@@ -55,6 +57,8 @@ const SingleNftHistory = ({
                             <a
                               href={`https://evm.confluxscan.net/address/${item.buyer}`}
                               className="greentext"
+                              target="_blank"
+                              rel="noreferrer"
                             >
                               {shortAddress(item.buyer)}
                             </a>
@@ -146,6 +150,8 @@ const SingleNftHistory = ({
                               <a
                                 href={`https://evm.confluxscan.net/address/${item.offeror}`}
                                 className="greentext"
+                                target="_blank"
+                              rel="noreferrer"
                               >
                                 {shortAddress(item.offeror)}
                               </a>

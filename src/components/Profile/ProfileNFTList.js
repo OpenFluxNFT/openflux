@@ -1360,6 +1360,8 @@ const ProfileNFTList = ({
                                     item.seller ?? item.owner
                                   }`}
                                   className="greentext"
+                                  target="_blank"
+                              rel="noreferrer"
                                 >
                                   {shortAddress(item.seller ?? item.owner)}
                                 </a>
@@ -1369,6 +1371,8 @@ const ProfileNFTList = ({
                                   <a
                                     href={`https://evm.confluxscan.net/address/${item.buyer}`}
                                     className="greentext"
+                                    target="_blank"
+                              rel="noreferrer"
                                   >
                                     {shortAddress(item.buyer)}
                                   </a>
@@ -1491,6 +1495,8 @@ const ProfileNFTList = ({
                                     item.seller ?? item.owner
                                   }`}
                                   className="greentext"
+                                  target="_blank"
+                              rel="noreferrer"
                                 >
                                   {shortAddress(item.seller ?? item.owner)}
                                 </a>
@@ -1500,6 +1506,8 @@ const ProfileNFTList = ({
                                   <a
                                     href={`https://evm.confluxscan.net/address/${item.buyer}`}
                                     className="greentext"
+                                    target="_blank"
+                              rel="noreferrer"
                                   >
                                     {shortAddress(item.buyer)}
                                   </a>

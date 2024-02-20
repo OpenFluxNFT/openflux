@@ -8,19 +8,15 @@ import whiteTag from "./assets/whiteTag.svg";
 import confluxIcon from "./assets/confluxIcon.svg";
 import "./makeoffer.scss";
 import moment from "moment";
-import collectionCardPlaceholder from './assets/collectionCardPlaceholder1.png'
+import collectionCardPlaceholder from "./assets/collectionCardPlaceholder1.png";
+import { shortAddress } from "../../hooks/shortAddress";
 
-const MakeOffer = ({
+const MakeOfferForCollection = ({
   open,
   onclose,
-  nft,
-  ethTokenData,
-  dypTokenData,
-  dyptokenData_old,
   handleMakeOffer,
   handleUpdateOffer,
   handleDeleteOffer,
-  nftCount,
   coinbase,
   status,
   nftAddr,
@@ -36,6 +32,10 @@ const MakeOffer = ({
   bestOffer,
   nftAddress,
   floorPrice,
+  totalSupplyPerCollection,
+  uniqueOwners,
+  uniqueOwnersPercentage,
+  collectionFeeRate,
 }) => {
   const windowSize = useWindowSize();
   const [filter1, setFilter1] = useState("1 day");
@@ -101,6 +101,7 @@ const MakeOffer = ({
     setisApprove(result);
     return result;
   };
+ 
 
   return (
     <Modal
@@ -111,13 +112,13 @@ const MakeOffer = ({
       <Box sx={style}>
         <div className="d-flex flex-column gap-3 h-100 justify-content-between">
           <div className="d-flex justify-content-between gap-1  position-relative">
-            <h6 className="text-white summarytitle">Make an offer</h6>
+            <h6 className="text-white summarytitle">
+              Make offer for Collection
+            </h6>
             <img
               src={closeX}
               alt=""
-              onClick={() => {
-                showPopup(false);
-              }}
+              onClick={onclose}
               style={{
                 bottom: "17px",
                 right: "-22px",
@@ -129,42 +130,20 @@ const MakeOffer = ({
           <div className="summarywrapper">
             <div className="d-flex flex-column flex-column flex-xxl-row flex-lg-row align-items-start align-items-lg-center gap-2 gap-lg-0 justify-content-between">
               <div className="d-flex flex-row w-100 flex-xxl-row flex-lg-row  align-items-center gap-2">
-                {!nftData.isVideo ? (
-                  <img
-                    src={ nftData.image50 ? `https://cdnflux.dypius.com/${nftData.image50}` : collectionCardPlaceholder}
-                    className="p-0 nft-img nftimg2"
-                    alt=""
-                    style={{ width: 50, height: 50 }}
-                  />
-                ) : (
-                  <video
-                    preload="auto"
-                    height={36}
-                    width={36}
-                    className="p-0 nft-img nftimg2"
-                    src={`https://cdnflux.dypius.com/${nftData.image}`}
-                    autoPlay={true}
-                    loop={true}
-                    muted="muted"
-                    playsInline={true}
-                    style={{ width: 50, height: 50 }}
-                    controlsList="nodownload"
-                  ></video>
-                )}
+                <img
+                  src={
+                    nftData.collectionProfilePic
+                      ? `https://confluxapi.worldofdypians.com/${nftData.collectionProfilePic}`
+                      : collectionCardPlaceholder
+                  }
+                  className="p-0 nft-img nftimg2"
+                  alt=""
+                  style={{ width: 50, height: 50 }}
+                />
 
                 <div className="d-flex flex-column gap-2">
                   <div className="d-flex flex-column">
-                    <h6 className="itemname mb-0">
-                      {nftData.nftSymbol}{" "}
-                      {nftData.name
-                        ? nftData.name
-                        : nftData.collectionName
-                        ? nftData.collectionName
-                        : "..."}
-                    </h6>
-                    <span className="collection-name">
-                      {nftData.collectionName}
-                    </span>
+                    <h6 className="itemname mb-0">{nftData.collectionName}</h6>
                   </div>
 
                   <div className="d-flex align-items-center gap-1">
@@ -179,38 +158,84 @@ const MakeOffer = ({
                   </div>
                 </div>
               </div>
-
-              <div className="d-flex flex-row flex-lg-column flex-xxl-column gap-2 gap-lg-0 gap-xxl-0 align-items-xxl-end align-items-lg-end align-items-center">
-                <span className="itemname" style={{ whiteSpace: "nowrap" }}>
-                  {getFormattedNumber(nftData.price / 10 ** 18)} WCFX
-                </span>
-                <span className="itemcollectionName">
-                  ($ {getFormattedNumber((nftData.price / 10 ** 18) * cfxPrice)}
-                  )
-                </span>
-              </div>
             </div>
           </div>
           <div className="summarywrapper">
-            <div className="d-flex flex-column align-items-center justify-content-between">
+            <div className="d-flex gap-2 flex-column align-items-center justify-content-between">
               <div className="d-flex w-100 align-items-center gap-3 justify-content-between">
-                <span className="itemchain">Balance</span>
-                <span className="itemvalue">
-                  {getFormattedNumber(balance, 2)} CFX
+                <span className="itemchain">Total Volume</span>
+
+                <span className="itemname" style={{ whiteSpace: "nowrap" }}>
+                  {getFormattedNumber(nftData.lifetimeVolume / 10 ** 18)} WCFX
+                  <span className="itemcollectionName ms-2">
+                    (${" "}
+                    {getFormattedNumber(
+                      (nftData.lifetimeVolume / 10 ** 18) * cfxPrice
+                    )}
+                    )
+                  </span>
+                </span>
+              </div>
+
+              <div className="d-flex w-100 align-items-center gap-3 justify-content-between">
+                <span className="itemchain">Floor price</span>
+                <span className="itemname" style={{ whiteSpace: "nowrap" }}>
+                  {getFormattedNumber(floorPrice ? floorPrice / 1e18 : 0)} WCFX{" "}
+                  <span className="itemcollectionName ms-2">
+                    (${" "}
+                    {getFormattedNumber(
+                      (floorPrice ? floorPrice / 1e18 : 0) * cfxPrice
+                    )}
+                    )
+                  </span>
                 </span>
               </div>
               <div className="d-flex w-100 align-items-center gap-3 justify-content-between">
-                <span className="itemchain">WCFX Balance</span>
+                <span className="itemchain">Collection Owner</span>
+                <a
+                  href={`https://evm.confluxscan.net/address/${nftData.owner}`}
+                  className="greentext"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {shortAddress(nftData.owner)}
+                </a>
+              </div>
+              <div className="d-flex w-100 align-items-center gap-3 justify-content-between">
+                <span className="itemchain">Created date</span>
+                <span className="itemvalue">
+                {new Date(nftData.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+              <div className="d-flex w-100 align-items-center gap-3 justify-content-between">
+                <span className="itemchain">Creator Earnings</span>
+
+                <span className="itemname" style={{ whiteSpace: "nowrap" }}>
+                  {collectionFeeRate}%
+                </span>
+              </div>
+              <div className="d-flex w-100 align-items-center gap-3 justify-content-between">
+                <span className="itemchain">Total Items</span>
+                <span className="itemvalue">
+                  {getFormattedNumber(totalSupplyPerCollection, 0)} NFTs
+                </span>
+              </div>
+              
+              <div className="d-flex w-100 align-items-center gap-3 justify-content-between">
+                <span className="itemchain">Owners (unique)</span>
+                <span className="itemvalue">
+                  {getFormattedNumber(uniqueOwners, 0)} (
+                  {getFormattedNumber(uniqueOwnersPercentage ?? 0, 0)})%
+                </span>
+              </div>
+
+              <div className="d-flex w-100 align-items-center gap-3 justify-content-between">
+                <span className="itemchain">My WCFX Balance</span>
                 <span className="itemvalue">
                   {getFormattedNumber(wcfxBalance, 2)} WCFX
                 </span>
               </div>
-              <div className="d-flex w-100 align-items-center gap-3 justify-content-between">
-                <span className="itemchain">Floor price</span>
-                <span className="itemvalue">
-                  {getFormattedNumber(floorPrice ? floorPrice / 1e18 : 0)} WCFX
-                </span>
-              </div>
+
               {offerData && offerData.amount && (
                 <div className="d-flex  w-100 align-items-center gap-3 justify-content-between">
                   <span className="itemchain">Best offer</span>
@@ -371,7 +396,7 @@ const MakeOffer = ({
                 className="makeoffer-btn"
                 onClick={() => {
                   isApprove
-                    ? handleMakeOffer(nftAddress, nftId, price, filter2)
+                    ? handleMakeOffer(price, filter2)
                     : approveMakeOffer(price);
                 }}
               >
@@ -488,4 +513,4 @@ const MakeOffer = ({
   );
 };
 
-export default MakeOffer;
+export default MakeOfferForCollection;

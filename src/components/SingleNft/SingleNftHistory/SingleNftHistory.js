@@ -131,20 +131,20 @@ const SingleNftHistory = ({
                                 .humanize(true)}
                             </td>
                             <td className="item-history-table-td text-center">
-                              {getFormattedNumber(
-                                lowestPriceNftListed / 1e18 > item.amount / 1e18
+                              {getFormattedNumber( lowestPriceNftListed ?
+                                (lowestPriceNftListed / 1e18 > item.amount / 1e18
                                   ? (lowestPriceNftListed / 1e18 -
                                       item.amount / 1e18) /
                                       100
                                   : (item.amount / 1e18 -
                                       lowestPriceNftListed / 1e18) /
-                                      100,
+                                      100) : 0,
                                 3
                               )}
                               %{" "}
-                              {lowestPriceNftListed / 1e18 > item.amount / 1e18
+                              {lowestPriceNftListed ? lowestPriceNftListed / 1e18 > item.amount / 1e18
                                 ? "Below"
-                                : "Above"}
+                                : "Above" : 'Below'}
                             </td>
                             <td className="item-history-table-td greentext right-border text-center">
                               <a

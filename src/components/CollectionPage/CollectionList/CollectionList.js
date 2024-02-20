@@ -26,6 +26,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const CollectionList = ({
+  offerData,
   currentCollection,
   allNftArray,
   collectionAddress,
@@ -41,9 +42,11 @@ const CollectionList = ({
   hasListedNfts,
   getFilter,
   fetchSearchNftsPerCollection,
+  onShowPopup,
 }) => {
   const windowSize = useWindowSize();
   const [openFilters, setOpenFilters] = useState(false);
+
   const [buyStatus, setbuyStatus] = useState("buy"); //buy
   const [buyloading, setbuyLoading] = useState(false); //buy
   const [selectedNftId, setSelectedNftId] = useState(""); //buy
@@ -739,7 +742,17 @@ const CollectionList = ({
                   <img src={filterIcon} width={20} height={20} alt="" />
                 </div>
               </div>
-              <div className="col-8 col-lg-7">
+              <div
+                className={
+                  currentCollection &&
+                  currentCollection.owner &&
+                  coinbase &&
+                  currentCollection.owner.toLowerCase() ===
+                    coinbase.toLowerCase()
+                    ? "col-8 col-lg-7"
+                    : "col-6 col-lg-5"
+                }
+              >
                 <div className="position-relative">
                   <img src={searchIcon} alt="" className="search-icon" />
                   <input
@@ -837,6 +850,24 @@ const CollectionList = ({
                   </div>
                 </div>
               </div>
+              {currentCollection &&
+              currentCollection.owner &&
+              coinbase &&
+              currentCollection.owner.toLowerCase() ===
+                coinbase.toLowerCase() ? (
+                <></>
+              ) : (
+                <div className="col-2">
+                  <button
+                    className="blue-btn py-2 border-0 w-100 h-auto"
+                    onClick={onShowPopup}
+                  >
+                    {offerData && offerData.amount
+                      ? "Update Offer"
+                      : "Make Offer"}
+                  </button>
+                </div>
+              )}
             </div>
             <div className="d-flex mt-3 align-items-center gap-2 flex-wrap">
               {queryItems.length > 0 &&

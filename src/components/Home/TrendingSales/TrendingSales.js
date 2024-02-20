@@ -555,7 +555,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
                       style={{ minHeight: "450px" }}
                     >
                       <h6 className="text-white">
-                        There are no recently listed NFT's
+                        There are no recently listed NFTs
                       </h6>
                     </div>
                     <div></div>
@@ -568,7 +568,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
                       style={{ minHeight: "450px" }}
                     >
                       <h6 className="text-white">
-                        There are no trending NFT's
+                        There are no trending collections
                       </h6>
                     </div>
                     <div></div>
@@ -581,7 +581,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
                       style={{ minHeight: "450px" }}
                     >
                       <h6 className="text-white">
-                        There are no top sold NFT's
+                        There are no top sold NFTs
                       </h6>
                     </div>
                     <div></div>

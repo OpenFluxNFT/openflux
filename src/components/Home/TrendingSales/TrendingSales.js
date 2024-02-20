@@ -547,7 +547,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
                     </div>
                   );
                 }) :
-                recents.length === 0 ? (
+               option === "recentSales" && recents.length === 0 ? (
                   <>
                     <div></div>
                     <div
@@ -556,6 +556,32 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice }) => {
                     >
                       <h6 className="text-white">
                         There are no recently listed NFT's
+                      </h6>
+                    </div>
+                    <div></div>
+                  </>
+                ) :  option === "trending" && recents.length === 0 ? (
+                  <>
+                    <div></div>
+                    <div
+                      className="d-flex w-100 align-items-center justify-content-center"
+                      style={{ minHeight: "450px" }}
+                    >
+                      <h6 className="text-white">
+                        There are no trending NFT's
+                      </h6>
+                    </div>
+                    <div></div>
+                  </>
+                ) :  option === "topSales" && topSales.length === 0 ? (
+                  <>
+                    <div></div>
+                    <div
+                      className="d-flex w-100 align-items-center justify-content-center"
+                      style={{ minHeight: "450px" }}
+                    >
+                      <h6 className="text-white">
+                        There are no top sold NFT's
                       </h6>
                     </div>
                     <div></div>

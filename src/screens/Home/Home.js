@@ -31,7 +31,7 @@ const Home = ({
       cfxPrice={cfxPrice}
       />
       <HomeInfo />
-      <TrendingSales recentlySoldNfts={recentlySoldNfts} cfxPrice={cfxPrice}/>
+      <TrendingSales recentlySoldNfts={recentlySoldNfts} cfxPrice={cfxPrice} allCollections={allCollections}/>
       <RecentlyListed
         recentlyListedNfts={recentlyListedNfts}
         cfxPrice={cfxPrice}

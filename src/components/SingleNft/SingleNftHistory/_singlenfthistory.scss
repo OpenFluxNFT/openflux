@@ -99,6 +99,15 @@
     border-radius: 12px;
   }
 
+
+  .left-border {
+    border-radius: 0px 0 0 10px;
+  }
+
+  .right-border {
+    border-radius: 0 10px 10px 0;
+  }
+}
   .greentext {
     color: #3dbda7;
     text-align: center;
@@ -109,11 +118,3 @@
     letter-spacing: 0.6px;
     text-transform: capitalize;
   }
-  .left-border {
-    border-radius: 0px 0 0 10px;
-  }
-
-  .right-border {
-    border-radius: 0 10px 10px 0;
-  }
-}

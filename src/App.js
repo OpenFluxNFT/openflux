@@ -59,6 +59,7 @@ function App() {
   const [cfxPrice, setCfxPrice] = useState(0);
   const [favoriteNft, setFavoriteNft] = useState(false);
   const [balance, setUserBalance] = useState(0);
+  const [wcfxBalance, setwcfxBalance] = useState(0);
 
   const [successUpdateProfile, setSuccessUpdateProfile] = useState({
     success: null,
@@ -937,6 +938,19 @@ function App() {
                           contractAddress: favData[item1].contractAddress,
                           collectionName: collectionName,
                         };
+                      } else {
+                        // nftArray.push({
+                        //   ...nft_data,
+                        //   tokenId: Number(favData[item1].tokenIds[i]),
+                        //   contractAddress: favData[item1].contractAddress,
+                        //   collectionName: collectionName,
+                        // });
+
+                        return {
+                          tokenId: Number(favData[item1].tokenIds[i]),
+                          contractAddress: favData[item1].contractAddress,
+                          collectionName: collectionName,
+                        };
                       }
                     }
                   })
@@ -1162,6 +1176,7 @@ function App() {
 
   useEffect(() => {
     getUserBalance();
+    getWcfxBalance()
   }, [coinbase, isConnected, chainId]);
 
   //const message = I am updating my profile with wallet address ${walletAddress}
@@ -1350,6 +1365,23 @@ function App() {
         const amount = web3cfx.utils.fromWei(stringBalance, "ether");
         setUserBalance(amount);
       }
+    }
+  };
+
+  const getWcfxBalance = async () => {
+    if (coinbase) {
+      const contract = new window.confluxWeb3.eth.Contract(
+        window.TOKEN_ABI,
+        window.config.wcfx_address
+      );
+
+      const balance = await contract.methods
+        .balanceOf(coinbase)
+        .call()
+        .then((data) => {
+          return window.confluxWeb3.utils.fromWei(data, "ether");
+        });
+      setwcfxBalance(balance);
     }
   };
 
@@ -1550,6 +1582,7 @@ function App() {
               onNewCollectionFetched={() => {
                 setisNewCollection(false);
               }}
+              wcfxBalance={wcfxBalance}
             />
           }
         />
@@ -1619,6 +1652,7 @@ function App() {
               handleAddFavoriteNft={handleAddFavoriteNft}
               handleRemoveFavoriteNft={handleRemoveFavoriteNft}
               userNftFavs={userNftFavsInitial}
+              wcfxBalance={wcfxBalance}
             />
           }
         />

@@ -9,6 +9,7 @@ import axios, { isCancel } from "axios";
 import Web3 from "web3";
 import getFormattedNumber from "../../hooks/get-formatted-number";
 import moment from "moment";
+import MakeOfferForCollection from "../../components/MakeOffer/MakeOfferForCollection";
 
 const CollectionPage = ({
   coinbase,
@@ -23,6 +24,7 @@ const CollectionPage = ({
   onRefreshListings,
   isNewCollection,
   onNewCollectionFetched,
+  wcfxBalance,
 }) => {
   const [favorite, setFavorite] = useState(false);
 
@@ -43,7 +45,17 @@ const CollectionPage = ({
   const [filter, setFilter] = useState(null);
   const [next, setnext] = useState(12);
   const [nextSearch, setnextSearch] = useState(100);
+  const [showOfferPopup, setshowOfferPopup] = useState(false);
+  const [offerStatus, setOfferStatus] = useState("initial");
 
+  const [offerdeleteStatus, setOfferdeleteStatus] = useState("initial");
+  const [offerupdateStatus, setOfferupdateStatus] = useState("initial");
+  const [offeracceptStatus, setOfferacceptStatus] = useState("initial");
+
+  const [offerData, setofferData] = useState([]);
+  const [bestOffer, setbestOffer] = useState([]);
+
+  const { BigNumber } = window;
   const baseURL = "https://confluxapi.worldofdypians.com";
   const dataFetchedRef = useRef(false);
   const containerRef = useRef(false);
@@ -514,7 +526,7 @@ const CollectionPage = ({
           listednftsArray &&
           listednftsArray.length > 0
         ) {
-          settotalListedNfts(listednftsArray.length); 
+          settotalListedNfts(listednftsArray.length);
           sethasListedNfts(true);
           await Promise.all(
             window.range(0, listednftsArray.length - 1).map(async (j) => {
@@ -1122,7 +1134,7 @@ const CollectionPage = ({
       });
 
     if (result && result.status === 200) {
-      console.log(result.data);
+      
       // setfloorPrice(result.data.floorPrice / 1e18);
     }
   };
@@ -1162,9 +1174,126 @@ const CollectionPage = ({
     }
   };
 
+  const getUserOffersForCollection = async () => {
+    const result = await window
+      .getAllCollectionOffers(collectionAddress)
+      .catch((e) => {
+        console.error(e);
+      });
+    if (result) {
+      let finalArray = [];
+      let offerArray = [];
+
+      const finalResult = result[1];
+      if (finalResult && finalResult.length > 0) {
+        if (coinbase) {
+          finalArray = finalResult.filter((object) => {
+            return object.offeror.toLowerCase() === coinbase.toLowerCase();
+          });
+
+          let finalArrayIndex = finalResult.findIndex((object) => {
+            return object.offeror.toLowerCase() === coinbase.toLowerCase();
+          });
+
+          if (finalArray && finalArray.length > 0) {
+            offerArray = finalArray.map((item) => {
+              return { ...item, index: finalArrayIndex };
+            });
+          }
+          const maxPrice = Math.max(...finalResult.map((o) => o.amount));
+          const obj = finalResult.find((item) => item.amount == maxPrice);
+          setbestOffer(obj);
+          if (offerArray && offerArray.length > 0) {
+            const hasExpired2 = moment
+              .duration(offerArray[0].expiresAt * 1000 - Date.now())
+              .humanize(true)
+              .includes("ago");
+            if (!hasExpired2) {
+              setofferData(...offerArray);
+            } else setofferData([]);
+          } else setofferData([]);
+        }
+      } else {
+        setofferData([]);
+      }
+    }
+  };
+   
+  const handleMakeOffer = async (price, duration) => {
+    if (price !== "" && price !== 0) {
+      setOfferStatus("loading");
+      const newPrice = new BigNumber(price * 1e18).toFixed();
+      console.log(collectionAddress, newPrice, duration);
+      await window
+        .makeCollectionOffer(collectionAddress, newPrice, duration)
+        .then(() => {
+          setOfferStatus("success");
+          setTimeout(() => {
+            setOfferStatus("initial");
+            getUserOffersForCollection();
+          }, 3000);
+        })
+        .catch((e) => {
+          console.log(e);
+          setOfferStatus("fail");
+          setTimeout(() => {
+            setOfferStatus("initial");
+          }, 3000);
+        });
+    } else window.alertify.error("Please put a valid price!");
+  };
+
+  const handleUpdateOffer = async (price, offerIndex) => {
+    if (price !== "" && price !== 0) {
+      setOfferupdateStatus("loadingupdate");
+      const newPrice = new BigNumber(price * 1e18).toFixed();
+      await window
+        .updateCollectionOffer(collectionAddress, offerIndex, newPrice)
+        .then(() => {
+          setOfferupdateStatus("successupdate");
+          setTimeout(() => {
+            setOfferupdateStatus("initial");
+            getUserOffersForCollection();
+          }, 3000);
+        })
+        .catch((e) => {
+          console.log(e);
+          setOfferupdateStatus("failupdate");
+          setTimeout(() => {
+            setOfferupdateStatus("initial");
+          }, 3000);
+        });
+    } else window.alertify.error("Please put a valid price!");
+  };
+
+  const handleDeleteOffer = async (offerIndex) => {
+    setOfferdeleteStatus("loadingdelete");
+    await window
+      .cancelCollectionOffer(collectionAddress, offerIndex)
+      .then(() => {
+        getUserOffersForCollection();
+        setOfferdeleteStatus("successdelete");
+        setTimeout(() => {
+          setOfferdeleteStatus("initial");
+        }, 3000);
+      })
+      .catch((e) => {
+        console.log(e);
+        setOfferdeleteStatus("faildelete");
+
+        setTimeout(() => {
+          setOfferdeleteStatus("initial");
+        }, 3000);
+      });
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    getUserOffersForCollection();
+  }, [coinbase]);
 
   useEffect(() => {
     if (dataFetchedRef.current) return;
@@ -1187,7 +1316,7 @@ const CollectionPage = ({
       });
       getCollectionInfo();
       getCollectionTotalVolume();
-
+      getUserOffersForCollection();
       getCollectionUniqueOwners();
     }
   }, [isNewCollection]);
@@ -1213,64 +1342,96 @@ const CollectionPage = ({
   }, [filter]);
 
   return (
-    <div
-      className="container-fluid py-4 home-wrapper px-0"
-      ref={containerRef}
-      id="header2"
-    >
-      <CollectionBanner
-        title={currentCollection.collectionName}
-        logo={
-          currentCollection.collectionProfilePic
-            ? `https://confluxapi.worldofdypians.com/${currentCollection.collectionProfilePic}`
-            : collectionIcon
-        }
-        banner={
-          currentCollection.collectionBackgroundPic
-            ? `https://confluxapi.worldofdypians.com/${currentCollection.collectionBackgroundPic}`
-            : banner
-        }
-        socials={collectionSocials}
-        desc={currentCollection.description ?? "No description"}
-        info={collectionInfo}
-        isFavorite={favorite}
-        handleFavorite={() => {
-          favorite ? handleRemoveFavorite() : handleAddFavorite();
-        }}
-        isVerified={currentCollection.verified === "yes" ? true : false}
-        currentCollection={currentCollection}
-        totalSupplyPerCollection={totalSupplyPerCollection}
-        collectionFeeRate={collectionFeeRate}
-      />
-      <CollectionList
-        currentCollection={currentCollection}
-        getRecentlySold={handleGetRecentlySoldNfts}
-        allNftArray={allNftArray}
-        collectionAddress={collectionAddress}
-        loading={loading}
-        handleAddFavoriteNft={handleAddFavoriteNft}
-        handleRemoveFavoriteNft={handleRemoveFavoriteNft}
-        userNftFavs={userNftFavs}
-        cfxPrice={cfxPrice}
-        coinbase={coinbase}
-        onRefreshListings={onRefreshListings}
-        totalSupplyPerCollection={totalSupplyPerCollection}
-        hasListedNfts={hasListedNfts}
-        getFilter={getFilter}
-        fetchSearchNftsPerCollection={fetchSearchNftsPerCollection}
-      />
+    <>
+      <div
+        className="container-fluid py-4 home-wrapper px-0"
+        ref={containerRef}
+        id="header2"
+      >
+        <CollectionBanner
+        
+          title={currentCollection.collectionName}
+          logo={
+            currentCollection.collectionProfilePic
+              ? `https://confluxapi.worldofdypians.com/${currentCollection.collectionProfilePic}`
+              : collectionIcon
+          }
+          banner={
+            currentCollection.collectionBackgroundPic
+              ? `https://confluxapi.worldofdypians.com/${currentCollection.collectionBackgroundPic}`
+              : banner
+          }
+          socials={collectionSocials}
+          desc={currentCollection.description ?? "No description"}
+          info={collectionInfo}
+          isFavorite={favorite}
+          handleFavorite={() => {
+            favorite ? handleRemoveFavorite() : handleAddFavorite();
+          }}
+          isVerified={currentCollection.verified === "yes" ? true : false}
+          currentCollection={currentCollection}
+          totalSupplyPerCollection={totalSupplyPerCollection}
+          collectionFeeRate={collectionFeeRate}
+        />
+        <CollectionList
+        offerData={offerData}
+          currentCollection={currentCollection}
+          getRecentlySold={handleGetRecentlySoldNfts}
+          allNftArray={allNftArray}
+          collectionAddress={collectionAddress}
+          loading={loading}
+          handleAddFavoriteNft={handleAddFavoriteNft}
+          handleRemoveFavoriteNft={handleRemoveFavoriteNft}
+          userNftFavs={userNftFavs}
+          cfxPrice={cfxPrice}
+          coinbase={coinbase}
+          onRefreshListings={onRefreshListings}
+          totalSupplyPerCollection={totalSupplyPerCollection}
+          hasListedNfts={hasListedNfts}
+          getFilter={getFilter}
+          fetchSearchNftsPerCollection={fetchSearchNftsPerCollection}
+          onShowPopup={() => {
+            setshowOfferPopup(true);
+          }}
+        />
 
-      {totalSupplyPerCollection &&
-        next <= totalSupplyPerCollection &&
-        totalSupplyPerCollection > 0 &&
-        loading === false && (
-          <div className="d-flex justify-content-center mt-5">
-            <button className="buy-btn px-5 m-auto" onClick={loadMore}>
-              Load more
-            </button>
-          </div>
-        )}
-    </div>
+        {totalSupplyPerCollection &&
+          next <= totalSupplyPerCollection &&
+          totalSupplyPerCollection > 0 &&
+          loading === false && (
+            <div className="d-flex justify-content-center mt-5">
+              <button className="buy-btn px-5 m-auto" onClick={loadMore}>
+                Load more
+              </button>
+            </div>
+          )}
+      </div>
+      {showOfferPopup === true && (
+        <MakeOfferForCollection
+          open={showOfferPopup}
+          onclose={() => {
+            setshowOfferPopup(false);
+          }}
+          coinbase={coinbase}
+          floorPrice={floorPrice}
+          nftData={currentCollection}
+          cfxPrice={cfxPrice}
+          wcfxBalance={wcfxBalance}
+          totalSupplyPerCollection={totalSupplyPerCollection}
+          uniqueOwners={uniqueOwners}
+          uniqueOwnersPercentage={uniqueOwnersPercentage}
+          collectionFeeRate={collectionFeeRate}
+          status={offerStatus}
+          handleMakeOffer={handleMakeOffer}
+          handleUpdateOffer={handleUpdateOffer}
+          handleDeleteOffer={handleDeleteOffer}
+          offerData={offerData}
+          bestOffer={bestOffer}
+          deletestatus={offerdeleteStatus}
+          updatestatus={offerupdateStatus}
+        />
+      )}
+    </>
   );
 };
 

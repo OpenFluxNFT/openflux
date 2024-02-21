@@ -45,6 +45,7 @@
       border-style: double;
       .item-history-table-td {
         background: transparent;
+        vertical-align: middle;
       }
     }
   }
@@ -69,6 +70,8 @@
     font-weight: 500;
     line-height: normal;
     text-transform: capitalize;
+    vertical-align: middle;
+
   }
 
   .active-accept-btn {

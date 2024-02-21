@@ -177,7 +177,10 @@ const SingleNft = ({
       .isApprovedNFT(nftId, nftAddress, coinbase)
       .then((data) => {
         return data;
-      });
+      }).catch((e)=>{
+        console.log(e)
+        setOfferacceptStatus("fail");
+      })
 
     if (isApproved) {
       acceptOfferFunc(offerIndex, offeror);
@@ -191,6 +194,10 @@ const SingleNft = ({
           }, 1000);
         })
         .catch((e) => {
+          setOfferacceptStatus("fail");
+          setTimeout(() => {
+            acceptOfferFunc(offerIndex, offeror);
+          }, 1000);
           console.log(e);
         });
     }
@@ -330,7 +337,7 @@ if(result){
 
     if (
       abiresult &&
-      abiresult.status === 200 &&
+      abiresult.status === 200 &&  abiresult.data.message === "OK" &&
       listednfts &&
       listednfts.status === 200
     ) {

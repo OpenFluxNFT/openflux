@@ -307,7 +307,7 @@ function App() {
           const abiresult = await axios.get(
             `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
           );
-          if (abiresult && abiresult.status === 200) {
+          if (abiresult && abiresult.status === 200&& abiresult.data.message === "OK") {
             let lastSale = 0;
             const abi = JSON.parse(abiresult.data.result);
             const collection_contract = new web3.eth.Contract(
@@ -786,7 +786,34 @@ function App() {
       });
 
     if (result && result.status === 200) {
-      setuserCollection(result.data.ownedCollections);
+      const finalResult = await Promise.all(
+        result.data.ownedCollections.map(async (item) => {
+          let floorprice = 0;
+          const result = await axios
+            .get(`${baseURL}/api/floor-price/${item.contractAddress}`, {
+              headers: {
+                cascadestyling:
+                  "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+              },
+            })
+            .catch((e) => {
+              console.error(e);
+            });
+
+          if (result && result.status === 200) {
+            floorprice = result.data.floorPrice;
+          }
+
+          return {
+            ...item,
+            floorPrice: floorprice,
+          };
+        })
+      );
+
+      if(finalResult) {
+        setuserCollection(finalResult)
+      }
     }
   };
 
@@ -1176,7 +1203,7 @@ function App() {
 
   useEffect(() => {
     getUserBalance();
-    getWcfxBalance()
+    getWcfxBalance();
   }, [coinbase, isConnected, chainId]);
 
   //const message = I am updating my profile with wallet address ${walletAddress}
@@ -1349,9 +1376,6 @@ function App() {
     }
   };
 
-  
-  
-
   const getUserBalance = async () => {
     if (isConnected && coinbase && chainId === 1030) {
       const balance = await window.ethereum.request({
@@ -1387,20 +1411,17 @@ function App() {
 
   const logout = localStorage.getItem("logout");
 
-
   const initializeLocalStorage = () => {
-    const viewedNfts = JSON.parse(localStorage.getItem('viewedNfts'));
-  
+    const viewedNfts = JSON.parse(localStorage.getItem("viewedNfts"));
+
     if (!viewedNfts || !Array.isArray(viewedNfts)) {
-      localStorage.setItem('viewedNfts', JSON.stringify([]));
+      localStorage.setItem("viewedNfts", JSON.stringify([]));
     }
   };
 
   useEffect(() => {
     initializeLocalStorage();
-  }, [])
-  
-
+  }, []);
 
   useEffect(() => {
     if (ethereum) {
@@ -1583,6 +1604,7 @@ function App() {
                 setisNewCollection(false);
               }}
               wcfxBalance={wcfxBalance}
+              userNftsOwnedArray={userNftsOwnedArray}
             />
           }
         />

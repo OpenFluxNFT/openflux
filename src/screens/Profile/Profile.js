@@ -15,6 +15,7 @@ const Profile = ({
   updateUserData,
   successUpdateProfile,
   userCollectionFavs,
+  userCollection,
   allCollections,
   userNftFavs,
   handleAddFavoriteNft,
@@ -24,6 +25,7 @@ const Profile = ({
   cfxPrice,
   userCollectionArray,
   recentlyListedNfts,
+  onRefreshListings,
 }) => {
   const [option, setOption] = useState("collected");
   const profileSocials = ["website", "twitter", "instagram"];
@@ -43,6 +45,8 @@ const Profile = ({
   const [allNFTSOffer, setallNFTSOffer] = useState([]);
   const [saleHistory, setsaleHistory] = useState([]);
   const [totalSoldNfts, settotalSoldNfts] = useState([]);
+  const [collectionOffers, setcollectionOffers] = useState([]);
+  const [offeracceptStatus, setOfferacceptStatus] = useState("initial");
 
   const { id } = useParams();
 
@@ -258,15 +262,15 @@ const Profile = ({
     }
   };
 
-  const fetchUserOffers = async () => {
+  const fetchUserOffersMadeForNft = async () => {
     if (coinbase) {
       const result = await window.getAllOffersMadeForNft(coinbase);
       const web3 = window.confluxWeb3;
 
       if (result) {
-        console.log(result);
+        // console.log(result);
         // const alloffers = await Promise.all(
-        //   result.data.map(async (item) => {
+        //   result.map(async (item) => {
         //     let isApproved = false;
         //     const abiresult = await axios.get(
         //       `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
@@ -283,31 +287,26 @@ const Profile = ({
         //         .catch((e) => {
         //           console.error(e);
         //         });
-
         //       const seller = await collection_contract.methods
         //         .ownerOf(item.tokenId)
         //         .call()
         //         .catch((e) => {
         //           console.error(e);
         //         });
-
         //       const collectionName = await collection_contract.methods
         //         .name()
         //         .call()
         //         .catch((e) => {
         //           console.error(e);
         //         });
-
         //       const isApprovedresult = await window
         //         .isApprovedBuy(item.price)
         //         .catch((e) => {
         //           console.error(e);
         //         });
-
         //       if (isApprovedresult) {
         //         isApproved = isApprovedresult;
         //       }
-
         //       const nft_data = await fetch(
         //         `https://cdnflux.dypius.com/collectionsmetadatas/${item.nftAddress.toLowerCase()}/${
         //           item.tokenId
@@ -350,6 +349,214 @@ const Profile = ({
     }
   };
 
+  const fetchUserOffersMadeForCollection = async () => {
+    if (coinbase) {
+      const result = await window.getAllOffersMadeForCollection(coinbase);
+      const web3 = window.confluxWeb3;
+
+      if (result) {
+        
+
+        console.log(result);
+
+        // const alloffers = await Promise.all(
+        //   result.map(async (item) => {
+        //     let isApproved = false;
+        //     const abiresult = await axios.get(
+        //       `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
+        //     );
+        //     if (abiresult && abiresult.status === 200) {
+        //       const abi = JSON.parse(abiresult.data.result);
+        //       const collection_contract = new web3.eth.Contract(
+        //         abi,
+        //         item.nftAddress
+        //       );
+        //       const tokenName = await collection_contract.methods
+        //         .symbol()
+        //         .call()
+        //         .catch((e) => {
+        //           console.error(e);
+        //         });
+        //       const seller = await collection_contract.methods
+        //         .ownerOf(item.tokenId)
+        //         .call()
+        //         .catch((e) => {
+        //           console.error(e);
+        //         });
+        //       const collectionName = await collection_contract.methods
+        //         .name()
+        //         .call()
+        //         .catch((e) => {
+        //           console.error(e);
+        //         });
+        //       const isApprovedresult = await window
+        //         .isApprovedBuy(item.price)
+        //         .catch((e) => {
+        //           console.error(e);
+        //         });
+        //       if (isApprovedresult) {
+        //         isApproved = isApprovedresult;
+        //       }
+        //       const nft_data = await fetch(
+        //         `https://cdnflux.dypius.com/collectionsmetadatas/${item.nftAddress.toLowerCase()}/${
+        //           item.tokenId
+        //         }/metadata.json`
+        //       )
+        //         .then((res) => res.json())
+        //         .then((data) => {
+        //           return data;
+        //         })
+        //         .catch((err) => {
+        //           console.log(err.message);
+        //         });
+        //       if (
+        //         nft_data &&
+        //         nft_data.code !== 404 &&
+        //         typeof nft_data !== "string"
+        //       ) {
+        //         return {
+        //           ...item,
+        //           ...nft_data,
+        //           image: `${nft_data.image}`,
+        //           tokenName: tokenName,
+        //           isApproved: isApproved,
+        //           seller: seller,
+        //           collectionName: collectionName,
+        //         };
+        //       } else
+        //         return {
+        //           ...item,
+        //           image: undefined,
+        //           tokenName: tokenName,
+        //           seller: seller,
+        //           collectionName: collectionName,
+        //         };
+        //     }
+        //   })
+        // );
+        // setallOffersMade(alloffers);
+      }
+    }
+  };
+
+  const fetchCollectionOffers = async () => {
+    if (userCollection && userCollection.length > 0) {
+      if (coinbase) {
+        const resultfinal = await Promise.all(
+          window.range(0, userCollection.length - 1).map(async (i) => {
+            if (
+              coinbase.toLowerCase() === userCollection[i].owner.toLowerCase()
+            ) {
+              const result = await window.getAllCollectionOffers(
+                userCollection[i].contractAddress
+              );
+              const web3 = window.confluxWeb3;
+
+              if (result) {
+                const finalResult = result[1];
+
+                const contract = new window.confluxWeb3.eth.Contract(
+                  window.TOKEN_ABI,
+                  window.config.wcfx_address
+                );
+                if (finalResult && finalResult.length > 0) {
+                  return Promise.all(
+                    window.range(0, finalResult.length - 1).map(async (k) => {
+                      if (userCollection[i].contractAddress) {
+                        const abiresult = await axios.get(
+                          `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${userCollection[i].contractAddress}`
+                        );
+                        if (abiresult && abiresult.status === 200) {
+                          const abi = JSON.parse(abiresult.data.result);
+                          const collection_contract = new web3.eth.Contract(
+                            abi,
+                            userCollection[i].contractAddress
+                          );
+
+                          const balance = await contract.methods
+                            .balanceOf(finalResult[k].offeror)
+                            .call()
+                            .then((data) => {
+                              return window.confluxWeb3.utils.fromWei(
+                                data,
+                                "ether"
+                              );
+                            });
+
+                          const allowance = await contract.methods
+                            .allowance(
+                              finalResult[k].offeror,
+                              window.config.nft_marketplace_address
+                            )
+                            .call()
+                            .then((data) => {
+                              return window.confluxWeb3.utils.fromWei(
+                                data,
+                                "ether"
+                              );
+                            });
+
+                          const priceFormatted = finalResult[k].amount / 1e18;
+
+                          const collectionName =
+                            await collection_contract.methods
+                              .name()
+                              .call()
+                              .catch((e) => {
+                                console.error(e);
+                              });
+
+                          const hasExpired = moment
+                            .duration(
+                              finalResult[k].expiresAt * 1000 - Date.now()
+                            )
+                            .humanize(true)
+                            .includes("ago");
+
+                          if (hasExpired === false) {
+                            return {
+                              ...userCollection[i],
+                              index: k,
+                              isAllowed:
+                                balance >= priceFormatted &&
+                                allowance >= priceFormatted,
+                              ...finalResult[k],
+                              collectionName: collectionName,
+                            };
+                          }
+                        }
+                      } else
+                        return {
+                          ...userCollection[i],
+                          ...finalResult[k],
+                        };
+                    })
+                  );
+                }
+              }
+            }
+          })
+        );
+
+        let collectionArray = [];
+        const finalArray = [...resultfinal];
+        if (finalArray.length > 0) {
+          finalArray.map((item) => {
+            if (item.length > 1) {
+              item.map((item2) => {
+                return collectionArray.push({ ...item2 });
+              });
+            } else if (item.length === 1) {
+              return collectionArray.push({ ...item[0] });
+            }
+          });
+          //
+          setcollectionOffers(collectionArray);
+        }
+      }
+    }
+  };
+
   const fetchUserSaleHistory = async () => {
     if (coinbase) {
       const result = await axios
@@ -369,7 +576,11 @@ const Profile = ({
             const abiresult = await axios.get(
               `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
             );
-            if (abiresult && abiresult.status === 200) {
+            if (
+              abiresult &&
+              abiresult.status === 200 &&
+              abiresult.data.message === "OK"
+            ) {
               const abi = JSON.parse(abiresult.data.result);
               const collection_contract = new web3.eth.Contract(
                 abi,
@@ -461,7 +672,7 @@ const Profile = ({
       }
     }
   };
-
+  // console.log(collectionOffers);
   useEffect(() => {
     checkIfSameAccount();
   }, [userData, id]);
@@ -525,14 +736,74 @@ const Profile = ({
     },
   ];
 
+  const acceptOfferFunc = async (offerIndex, offeror, contractAddress) => {
+    setOfferacceptStatus("loading");
+    await window
+      .acceptOffer(contractAddress, offerIndex)
+      .then(() => {
+        onRefreshListings();
+        setOfferacceptStatus("success");
+        setTimeout(() => {
+          setOfferacceptStatus("initial");
+        }, 3000);
+      })
+      .catch((e) => {
+        console.log(e);
+        setOfferacceptStatus("fail");
+        setTimeout(() => {
+          setOfferacceptStatus("initial");
+        }, 3000);
+      });
+  };
+
+  const handleAcceptOffer = async (offerIndex, offeror, contractAddress) => {
+    setOfferacceptStatus("loading");
+    const isApproved = await window
+      .isApprovedNFT(contractAddress, coinbase)
+      .then((data) => {
+        return data;
+      }).catch((e)=>{
+        console.log(e)
+        setOfferacceptStatus("fail");
+        setTimeout(() => {
+          setOfferacceptStatus("initial");
+        }, 4000);
+      })
+
+    if (isApproved) {
+      acceptOfferFunc(offerIndex, offeror, contractAddress);
+    } else {
+      await window
+        .approveNFT(contractAddress)
+        .then(() => {
+          setOfferacceptStatus("success");
+          setTimeout(() => {
+            acceptOfferFunc(offerIndex, offeror);
+          }, 1000);
+        })
+        .catch((e) => {
+          setOfferacceptStatus("fail");
+          setTimeout(() => {
+            setOfferacceptStatus("initial");
+          }, 4000);
+          console.log(e);
+        });
+    }
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   useEffect(() => {
-    fetchUserOffers();
+    fetchUserOffersMadeForNft();
     fetchUserSaleHistory();
+    fetchUserOffersMadeForCollection();
   }, [coinbase]);
+
+  // useEffect(() => {
+  //   fetchCollectionOffers();
+  // }, [userCollection, coinbase]);
 
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
@@ -620,6 +891,10 @@ const Profile = ({
             allNFTSOffer={allNFTSOffer}
             recentlyListedNfts={recentlyListedNfts}
             saleHistory={saleHistory}
+            collectionOffers={collectionOffers}
+            userCollection={userCollection}
+            handleAcceptOffer={handleAcceptOffer}
+            offeracceptStatus={offeracceptStatus}
           />
         </div>
       </div>

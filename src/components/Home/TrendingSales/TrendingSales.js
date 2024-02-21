@@ -168,7 +168,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
           const abiresult = await axios.get(
             `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
           );
-          if (abiresult && abiresult.status === 200) {
+          if (abiresult && abiresult.status === 200 && abiresult.data.message === "OK") {
             let lastSale = 0;
             const abi = JSON.parse(abiresult.data.result);
             const collection_contract = new web3.eth.Contract(

@@ -448,6 +448,17 @@ window.acceptOffer = async (nftAddress, tokenId, offerIndex) => {
     .send({ from: await getCoinbase() });
 };
 
+window.acceptCollectionOffer = async (nftAddress, tokenId, offerIndex) => {
+  const marketplace = new window.web3.eth.Contract(
+    window.MARKETPLACE_ABI,
+    window.config.nft_marketplace_address
+  );
+
+  await marketplace.methods
+    .acceptOfferForCollection(nftAddress, tokenId, offerIndex)
+    .send({ from: await getCoinbase() });
+};
+
 window.isApprovedOffer = async (amount) => {
   window.web3 = new Web3(window.ethereum);
 

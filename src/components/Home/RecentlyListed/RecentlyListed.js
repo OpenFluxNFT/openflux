@@ -391,7 +391,7 @@ const RecentlyListed = ({
                       src={
                         item.image
                           ? `https://cdnflux.dypius.com/${item.image}`
-                          : require(`./assets/nftPlaceholder1.png`)
+                          : require(`./assets/collectionCardPlaceholder2.png`)
                       }
                       className="card-img"
                       alt=""

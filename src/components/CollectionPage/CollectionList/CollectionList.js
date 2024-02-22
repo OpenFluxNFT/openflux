@@ -43,6 +43,9 @@ const CollectionList = ({
   getFilter,
   fetchSearchNftsPerCollection,
   onShowPopup,
+  onShowAcceptPopup,
+  allOffers,
+  bestOffer,
 }) => {
   const windowSize = useWindowSize();
   const [openFilters, setOpenFilters] = useState(false);
@@ -65,6 +68,7 @@ const CollectionList = ({
   ]);
   const [queryItems, setQueryItems] = useState([]);
   const [search, setSearch] = useState("");
+  const [priceFilter, setpriceFilter] = useState("Filter by Price");
 
   const [nftList, setNftList] = useState([]);
 
@@ -360,6 +364,28 @@ const CollectionList = ({
       setCollectionLoading(false);
     }, 1500);
   };
+
+  const filterByPrice = (filter) => {
+    setCollectionLoading(true);
+    if (filter === "lth") {
+      let lth = allNftArray.sort((a, b) => {
+        return a.price - b.price;
+      });
+      setNftList(lth);
+      setTimeout(() => {
+        setCollectionLoading(false);
+      }, 1500);
+    } else if (filter === "htl") {
+      let htl = allNftArray.sort((a, b) => {
+        return b.price - a.price;
+      });
+      setNftList(htl);
+      setTimeout(() => {
+        setCollectionLoading(false);
+      }, 1500);
+    }
+  };
+
   const handleRefreshData = async (nft) => {
     const listednfts = await axios
       .get(
@@ -513,7 +539,7 @@ const CollectionList = ({
                   </h2>
                   <div
                     id="collapseOne"
-                    className="accordion-collapse collapse"
+                    className="accordion-collapse collapse show"
                     aria-labelledby="headingOne"
                     data-bs-parent="#accordionExample"
                   >
@@ -578,7 +604,28 @@ const CollectionList = ({
                               }}
                             />
                           }
-                          label="Has Offers"
+                          label="NFT Offers"
+                        />
+
+                        <FormControlLabel
+                          onChange={() => {
+                            setListed("collectionoffers");
+                          }}
+                          control={
+                            <Checkbox
+                              checked={
+                                listType === "collectionoffers" ? true : false
+                              }
+                              size="small"
+                              sx={{
+                                color: "white",
+                                "&.Mui-checked": {
+                                  color: "#3DBDA7",
+                                },
+                              }}
+                            />
+                          }
+                          label="Collection Offers"
                         />
                       </FormGroup>
                     </div>
@@ -732,7 +779,7 @@ const CollectionList = ({
             </div>
           </div>
           <div className="col-12 col-lg-10">
-            <div className="row">
+            <div className="row gap-lg-0 gap-2">
               <div className="col-2 d-flex d-lg-none">
                 <div
                   className="categories-dropdown p-3  d-flex align-items-center justify-content-center"
@@ -778,27 +825,29 @@ const CollectionList = ({
                     style={{ width: windowSize.width > 786 ? "100%" : "34px" }}
                   >
                     {windowSize.width > 786 ? (
-                      "Price: Low to High"
+                      <>{priceFilter}</>
                     ) : (
                       <img src={priceIcon} width={20} height={20} alt="" />
                     )}
                   </button>
                   <ul className="dropdown-menu categories-dropdown-menu w-100">
-                    <li>
-                      <a
-                        className="dropdown-item categories-dropdown-item"
-                        href="#"
-                      >
-                        Low to High
-                      </a>
+                    <li
+                      className="dropdown-item categories-dropdown-item"
+                      onClick={() => {
+                        setpriceFilter("Low to High");
+                        filterByPrice("lth");
+                      }}
+                    >
+                      Low to High
                     </li>
-                    <li>
-                      <a
-                        className="dropdown-item categories-dropdown-item"
-                        href="#"
-                      >
-                        High to Low
-                      </a>
+                    <li
+                      className="dropdown-item categories-dropdown-item"
+                      onClick={() => {
+                        setpriceFilter("High to Low");
+                        filterByPrice("htl");
+                      }}
+                    >
+                      High to Low
                     </li>
                     {/* <li>
                       <a
@@ -857,7 +906,7 @@ const CollectionList = ({
                 coinbase.toLowerCase() ? (
                 <></>
               ) : (
-                <div className="col-2">
+                <div className="col-lg-2">
                   <button
                     className="blue-btn py-2 border-0 w-100 h-auto"
                     onClick={onShowPopup}
@@ -963,7 +1012,7 @@ const CollectionList = ({
 
             <div
               className={`${
-                gridView === "list"
+                gridView === "list" || listType === "collectionoffers"
                   ? "list-view-grid"
                   : gridView === "big-grid"
                   ? "big-cards-grid"
@@ -1135,6 +1184,108 @@ const CollectionList = ({
                         </td>
                       </>
                     ))
+                  )}
+                </table>
+              ) : listType === "collectionoffers" ? (
+                <table className="table nft-table">
+                  <thead>
+                    <tr style={{ borderBottom: "2px solid #828FBB" }}>
+                      <th
+                        className="table-header"
+                        style={{ textAlign: "left" }}
+                        scope="col"
+                      >
+                        Item
+                      </th>
+                      <th className="table-header" scope="col">
+                        Price
+                      </th>
+                      <th className="table-header" scope="col">
+                        Best Offer
+                      </th>
+                      <th className="table-header" scope="col">
+                        From
+                      </th>
+                      <th className="table-header" scope="col">
+                        Expires
+                      </th>
+                      <th className="table-header" scope="col">
+                        Accept
+                      </th>
+                    </tr>
+                  </thead>
+                  {allOffers && allOffers.length > 0 && (
+                    <tbody>
+                      {allOffers.map((item, index) => (
+                        <tr
+                          className="nft-table-row p-1"
+                          key={index}
+                          // onClick={() => onShowAcceptPopup(item)}
+                          // style={{ cursor: "pointer" }}
+                        >
+                          <td
+                            className="table-item col-2 d-flex align-items-center gap-1 w-100"
+                            scope="row"
+                          >
+                            <img
+                              src={
+                                currentCollection.collectionProfilePic
+                                  ? `https://confluxapi.worldofdypians.com/${currentCollection.collectionProfilePic}`
+                                  : require(`./assets/collectionCardPlaceholder2.png`)
+                              }
+                              className="table-img nftimg2"
+                              height={36}
+                              width={36}
+                              alt=""
+                            />
+
+                            {currentCollection.collectionName}
+                          </td>
+                          <td className="table-item col-2">
+                            {getFormattedNumber(item.amount / 10 ** 18)} WCFX
+                          </td>
+                          <td className="table-item col-2">
+                            {bestOffer && bestOffer.amount
+                              ? getFormattedNumber(bestOffer.amount / 1e18)
+                              : getFormattedNumber(0)}{" "}
+                            WCFX
+                          </td>
+                          <td className="table-item col-2">
+                            <a
+                              href={`https://evm.confluxscan.net/address/${item.offeror}`}
+                              className="greentext"
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              {shortAddress(item.offeror)}
+                            </a>
+                          </td>
+                          <td className="table-item col-2">
+                            {moment
+                              .duration(item.expiresAt * 1000 - Date.now())
+                              .humanize(true)}
+                          </td>
+                          <td className="table-item col-2">
+                            <button
+                              className="btn blue-btn py-2 border-0 w-100 h-auto"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                onShowAcceptPopup(item);
+                              }}
+                              disabled={
+                                item.offeror.toLowerCase() ===
+                                  coinbase?.toLowerCase() || !coinbase
+                                  ? true
+                                  : false
+                              }
+                            >
+                              Accept
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
                   )}
                 </table>
               ) : allNftArray &&
@@ -1348,7 +1499,7 @@ const CollectionList = ({
                     </NavLink>
                   </div>
                 ))
-              ) : (
+              ) : listType !== "collectionoffers" ? (
                 dummyCards.map((item, index) => (
                   <Skeleton
                     key={index}
@@ -1357,9 +1508,20 @@ const CollectionList = ({
                     height={250}
                   />
                 ))
+              ) : (
+                <></>
               )}
+
+              {listType === "collectionoffers" &&
+                allOffers &&
+                allOffers.length === 0 && (
+                  <span className="text-white d-flex w-100 align-items-center justify-content-center">
+                    There are no offers for this collection.
+                  </span>
+                )}
             </div>
             {collectionLoading === true &&
+            listType !== "collectionoffers" &&
             (gridView === "small-grid" || gridView === "big-grid") ? (
               <div
                 className={`${
@@ -1500,7 +1662,28 @@ const CollectionList = ({
                           }}
                         />
                       }
-                      label="Has Offers"
+                      label="NFT Offers"
+                    />
+
+                    <FormControlLabel
+                      onChange={() => {
+                        setListed("collectionoffers");
+                      }}
+                      control={
+                        <Checkbox
+                          size="small"
+                          checked={
+                            listType === "collectionoffers" ? true : false
+                          }
+                          sx={{
+                            color: "white",
+                            "&.Mui-checked": {
+                              color: "#3DBDA7",
+                            },
+                          }}
+                        />
+                      }
+                      label="Collection Offers"
                     />
                   </FormGroup>
                 </div>

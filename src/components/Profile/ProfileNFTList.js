@@ -45,6 +45,10 @@ const ProfileNFTList = ({
   allNFTSOffer,
   recentlyListedNfts,
   saleHistory,
+  collectionOffers,
+  handleAcceptOffer,
+  offeracceptStatus,
+  userCollection,
 }) => {
   const [favoritesOption, setfavoritesOption] = useState("items");
   const [gridView, setGridView] = useState("small-grid");
@@ -55,7 +59,6 @@ const ProfileNFTList = ({
   const [listedOptions, setlistedOptions] = useState([]);
   const [saleHistoryOptions, setsaleHistoryOptions] = useState([]);
 
-
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
   const [dummyMinPrice, setDummyMinPrice] = useState(0);
@@ -64,6 +67,8 @@ const ProfileNFTList = ({
   const [generalFilter, setGeneralFilter] = useState(null);
   const [search, setSearch] = useState("");
   const [queryItems, setQueryItems] = useState([]);
+
+  const [selectedNftId, setSelectedNftId] = useState(""); //buy
 
   const handleKeyPress = (val) => (event) => {
     if (option !== "favorites") {
@@ -251,7 +256,7 @@ const ProfileNFTList = ({
 
     setuserCollectionArrayFinal([...userCollectionArrayFinal]);
   };
-  
+
   useEffect(() => {
     setuserCollectionArrayFinal([]);
   }, [option, favoritesOption]);
@@ -310,16 +315,15 @@ const ProfileNFTList = ({
     let seenNames = new Set();
 
     saleHistory.forEach((obj) => {
-        let lowercaseName = obj.collectionName?.toLowerCase();
-        if (!seenNames.has(lowercaseName)) {
-          seenNames.add(lowercaseName);
-          uniqueObjects.push(obj);
-        }
-      });
+      let lowercaseName = obj.collectionName?.toLowerCase();
+      if (!seenNames.has(lowercaseName)) {
+        seenNames.add(lowercaseName);
+        uniqueObjects.push(obj);
+      }
+    });
 
     setsaleHistoryOptions(uniqueObjects);
   };
-
 
   useEffect(() => {
     testFunc();
@@ -330,17 +334,15 @@ const ProfileNFTList = ({
     testFuncListed();
   }, [userNftsOwnedArray, option, loading]);
 
-  useEffect(()=>{
-    testFuncSaleHistory()
-  },[saleHistory, option,loading])
+  useEffect(() => {
+    testFuncSaleHistory();
+  }, [saleHistory, option, loading]);
 
   useEffect(() => {
     if (option !== "favorites") {
       setNftList(userNftsOwnedArray);
     }
   }, [option, userNftsOwnedArray]);
-
-  
 
   return (
     <div className="container-lg">
@@ -355,7 +357,29 @@ const ProfileNFTList = ({
               <span className="collection-info mb-0">Live</span>
             </div>
             <div className="d-flex align-items-center gap-1">
-              <span className="collection-info mb-0">9,943</span>
+              <span className="collection-info mb-0">
+                {option === "collected"
+                  ? getFormattedNumber(userNftsOwnedArray.length, 0)
+                  : option === "favorites" && favoritesOption === "items"
+                  ? userNftFavs.length
+                  : option === "favorites" && favoritesOption === "collections"
+                  ? userCollectionFavs.length
+                  : option === "listed"
+                  ? nftList.filter((obj) => {
+                      return obj.price !== undefined;
+                    }).length
+                  : option === "hasOffers"
+                  ? nftList.filter(({ tokenId: id1, nftAddress: nftAddr1 }) =>
+                      allOffers.some(
+                        ({ tokenId: id2, nftAddress: nftAddr2 }) =>
+                          id1.toString() === id2.toString() &&
+                          nftAddr1.toLowerCase() === nftAddr2.toLowerCase()
+                      )
+                    ).length
+                  : option === "activity"
+                  ? saleHistory.length
+                  : 0}
+              </span>
               <span className="collection-info-span mb-0">Results</span>
             </div>
           </div>
@@ -415,7 +439,7 @@ const ProfileNFTList = ({
                   </div>
                 )}
 
-{option === "activity" && (
+                {option === "activity" && (
                   <div
                     id="collapseOne"
                     className="accordion-collapse collapse"
@@ -671,7 +695,7 @@ const ProfileNFTList = ({
                   </div>
                 )}
               </div>
-              {option !== "favorites" && (
+              {(option !== "favorites" || option !== "offersMade") && (
                 <div className="accordion-item">
                   <h2 className="accordion-header" id="headingTwo">
                     <button
@@ -729,7 +753,7 @@ const ProfileNFTList = ({
         </div>
         <div className="col-12 col-lg-10">
           <div className="row">
-            <div className="col-10">
+            <div className=" col-lg-10 col-md-10 col-6">
               <div className="position-relative">
                 <img src={searchIcon} alt="" className="search-icon" />
                 <input
@@ -786,8 +810,30 @@ const ProfileNFTList = ({
                 </ul>
               </div> 
             </div>*/}
-            <div className="col-2">
+            <div className=" col-lg-2 col-md-2 col-6">
               {option === "favorites" ? (
+                <div className="grid-types-wrapper d-flex align-items-center justify-content-between">
+                  <div
+                    className={`grid-icon-wrapper ${
+                      favoritesOption === "items" && "grid-icon-wrapper-active"
+                    } p-2 d-flex align-items-center justify-content-center`}
+                    onClick={() => setfavoritesOption("items")}
+                    style={{ width: "50%" }}
+                  >
+                    Items
+                  </div>
+                  <div
+                    className={`grid-icon-wrapper ${
+                      favoritesOption === "collections" &&
+                      "grid-icon-wrapper-active"
+                    } p-2 d-flex align-items-center justify-content-center`}
+                    onClick={() => setfavoritesOption("collections")}
+                    style={{ width: "50%" }}
+                  >
+                    Collections
+                  </div>
+                </div>
+              ) : option === "offersMade" ? (
                 <div className="grid-types-wrapper d-flex align-items-center justify-content-between">
                   <div
                     className={`grid-icon-wrapper ${
@@ -1361,7 +1407,7 @@ const ProfileNFTList = ({
                                   }`}
                                   className="greentext"
                                   target="_blank"
-                              rel="noreferrer"
+                                  rel="noreferrer"
                                 >
                                   {shortAddress(item.seller ?? item.owner)}
                                 </a>
@@ -1372,7 +1418,7 @@ const ProfileNFTList = ({
                                     href={`https://evm.confluxscan.net/address/${item.buyer}`}
                                     className="greentext"
                                     target="_blank"
-                              rel="noreferrer"
+                                    rel="noreferrer"
                                   >
                                     {shortAddress(item.buyer)}
                                   </a>
@@ -1429,98 +1475,253 @@ const ProfileNFTList = ({
                         </th>
                       </thead>
                       <tbody>
-                        {saleHistory.filter(({ nftAddress: nftAddr1 }) =>
-                      userCollectionArrayFinal.some(
-                        (obj) => nftAddr1.toLowerCase() === obj.toLowerCase()
-                      )
-                    ).map((item, index) => {
+                        {saleHistory
+                          .filter(({ nftAddress: nftAddr1 }) =>
+                            userCollectionArrayFinal.some(
+                              (obj) =>
+                                nftAddr1.toLowerCase() === obj.toLowerCase()
+                            )
+                          )
+                          .map((item, index) => {
+                            return (
+                              <tr
+                                key={index}
+                                onClick={() =>
+                                  navigate(
+                                    `/nft/${item.tokenId}/${item.nftAddress}`
+                                  )
+                                }
+                                style={{ cursor: "pointer" }}
+                              >
+                                <td className="item-history-table-td left-border text-center">
+                                  {!item.isVideo && item.image ? (
+                                    <img
+                                      src={`https://cdnflux.dypius.com/${item.image}`}
+                                      className="table-img nftimg2"
+                                      height={36}
+                                      width={36}
+                                      alt=""
+                                    />
+                                  ) : item.image && item.isVideo ? (
+                                    <video
+                                      src={`https://cdnflux.dypius.com/${item.image}`}
+                                      alt=""
+                                      className="table-img nftimg2"
+                                      height={36}
+                                      width={36}
+                                      controlsList="nodownload"
+                                      autoPlay={true}
+                                      loop={true}
+                                      muted="muted"
+                                      playsInline={true}
+                                    />
+                                  ) : (
+                                    <img
+                                      src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                                      className="table-img nftimg2"
+                                      alt=""
+                                      height={36}
+                                      width={36}
+                                    />
+                                  )}{" "}
+                                  {item.tokenName} #{item.tokenId}
+                                </td>
+                                <td className="item-history-table-td text-center">
+                                  <img
+                                    src={
+                                      item.type === "sale" ? saleIcon : listIcon
+                                    }
+                                    alt=""
+                                  />{" "}
+                                  {item.type}
+                                </td>
+                                <td className="item-history-table-td text-center">
+                                  {getFormattedNumber(item.amount / 1e18)} WCFX
+                                </td>
+                                <td className="item-history-table-td greentext text-center">
+                                  <a
+                                    href={`https://evm.confluxscan.net/address/${
+                                      item.seller ?? item.owner
+                                    }`}
+                                    className="greentext"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                  >
+                                    {shortAddress(item.seller ?? item.owner)}
+                                  </a>
+                                </td>
+                                <td className="item-history-table-td greentext text-center">
+                                  {item.buyer ? (
+                                    <a
+                                      href={`https://evm.confluxscan.net/address/${item.buyer}`}
+                                      className="greentext"
+                                      target="_blank"
+                                      rel="noreferrer"
+                                    >
+                                      {shortAddress(item.buyer)}
+                                    </a>
+                                  ) : (
+                                    "N/A"
+                                  )}
+                                </td>
+                                <td className="item-history-table-td right-border text-center">
+                                  {moment
+                                    .duration(
+                                      item.blockTimestamp * 1000 - Date.now()
+                                    )
+                                    .humanize(true)}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                      </tbody>
+                    </table>
+                  )}
+                  {saleHistory && saleHistory.length === 0 && (
+                    <span className="text-secondary d-flex justify-content-center w-100 h-100 align-items-center">
+                      No activity yet
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          ) : option === "offersMade" &&
+            userCollectionArrayFinal.length === 0 &&
+            favoritesOption === "collections" ? (
+            <div className="nft-history-wrapper w-100 bg-transparent p-3">
+              <div className="d-flex flex-column gap-2">
+                {/* <span className="item-history-text"></span> */}
+                <div className="single-nft-table-wrapper h-100">
+                  {collectionOffers && collectionOffers.length > 0 && (
+                    <table className="table item-history-table">
+                      <thead className="item-history-table-thead">
+                        <th className="item-history-table-th text-center">
+                          Item
+                        </th>
+
+                        <th className="item-history-table-th text-center">
+                          Price
+                        </th>
+                        <th className="item-history-table-th text-center">
+                          Expiration
+                        </th>
+                        <th className="item-history-table-th text-center">
+                          Floor Difference
+                        </th>
+                        <th className="item-history-table-th text-center">
+                          From
+                        </th>
+                        <th className="item-history-table-th text-center">
+                          Action
+                        </th>
+                      </thead>
+                      <tbody>
+                        {collectionOffers.map((item, index) => {
                           return (
                             <tr
                               key={index}
                               onClick={() =>
                                 navigate(
-                                  `/nft/${item.tokenId}/${item.nftAddress}`
+                                  `/collection/${item.contractAddress}/${item.symbol}`
                                 )
                               }
                               style={{ cursor: "pointer" }}
                             >
                               <td className="item-history-table-td left-border text-center">
-                                {!item.isVideo && item.image ? (
-                                  <img
-                                    src={`https://cdnflux.dypius.com/${item.image}`}
-                                    className="table-img nftimg2"
-                                    height={36}
-                                    width={36}
-                                    alt=""
-                                  />
-                                ) : item.image && item.isVideo ? (
-                                  <video
-                                    src={`https://cdnflux.dypius.com/${item.image}`}
-                                    alt=""
-                                    className="table-img nftimg2"
-                                    height={36}
-                                    width={36}
-                                    controlsList="nodownload"
-                                    autoPlay={true}
-                                    loop={true}
-                                    muted="muted"
-                                    playsInline={true}
-                                  />
-                                ) : (
-                                  <img
-                                    src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
-                                    className="table-img nftimg2"
-                                    alt=""
-                                    height={36}
-                                    width={36}
-                                  />
-                                )}{" "}
-                                {item.tokenName} #{item.tokenId}
-                              </td>
-                              <td className="item-history-table-td text-center">
                                 <img
-                                  src={
-                                    item.type === "sale" ? saleIcon : listIcon
-                                  }
+                                  src={`https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`}
+                                  className="table-img nftimg2"
+                                  height={36}
+                                  width={36}
                                   alt=""
-                                />{" "}
-                                {item.type}
+                                />
+
+                                {item.collectionName ?? "Collection name"}
                               </td>
                               <td className="item-history-table-td text-center">
                                 {getFormattedNumber(item.amount / 1e18)} WCFX
                               </td>
-                              <td className="item-history-table-td greentext text-center">
-                                <a
-                                  href={`https://evm.confluxscan.net/address/${
-                                    item.seller ?? item.owner
-                                  }`}
-                                  className="greentext"
-                                  target="_blank"
-                              rel="noreferrer"
-                                >
-                                  {shortAddress(item.seller ?? item.owner)}
-                                </a>
+                              <td className="item-history-table-td text-center">
+                                {moment
+                                  .duration(item.expiresAt * 1000 - Date.now())
+                                  .humanize(true)}
                               </td>
                               <td className="item-history-table-td greentext text-center">
-                                {item.buyer ? (
+                                {getFormattedNumber(
+                                  item.floorPrice
+                                    ? item.floorPrice / 1e18 >
+                                      item.amount / 1e18
+                                      ? (item.floorPrice / 1e18 -
+                                          item.amount / 1e18) /
+                                        100
+                                      : (item.amount / 1e18 -
+                                          item.floorPrice / 1e18) /
+                                        100
+                                    : 0,
+                                  3
+                                )}
+                                %{" "}
+                                {item.floorPrice
+                                  ? item.floorPrice / 1e18 > item.amount / 1e18
+                                    ? "Below"
+                                    : "Above"
+                                  : "Below"}
+                              </td>
+                              <td className="item-history-table-td greentext text-center">
+                                {item.offeror ? (
                                   <a
-                                    href={`https://evm.confluxscan.net/address/${item.buyer}`}
+                                    href={`https://evm.confluxscan.net/address/${item.offeror}`}
                                     className="greentext"
                                     target="_blank"
-                              rel="noreferrer"
+                                    rel="noreferrer"
                                   >
-                                    {shortAddress(item.buyer)}
+                                    {shortAddress(item.offeror)}
                                   </a>
                                 ) : (
                                   "N/A"
                                 )}
                               </td>
                               <td className="item-history-table-td right-border text-center">
-                                {moment
-                                  .duration(
-                                    item.blockTimestamp * 1000 - Date.now()
-                                  )
-                                  .humanize(true)}
+                                <button
+                                  disabled={!item.isAllowed}
+                                  className={` px-3 py-1 ${
+                                    item.isAllowed
+                                      ? "active-accept-btn"
+                                      : "disabled-accept-btn"
+                                  } `}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    handleAcceptOffer(
+                                      item.index,
+                                      item.offeror,
+                                      item.contractAddress
+                                    );
+                                    setSelectedNftId(item.index);
+                                  }}
+                                >
+                                  {offeracceptStatus === "initial" ? (
+                                    "Accept"
+                                  ) : offeracceptStatus === "loading" &&
+                                    selectedNftId === item.index ? (
+                                    <>
+                                      Accepting
+                                      <div
+                                        className="spinner-border mx-1"
+                                        role="status"
+                                        style={{ width: 10, height: 10 }}
+                                      ></div>
+                                    </>
+                                  ) : offeracceptStatus === "success" &&
+                                    selectedNftId === item.index ? (
+                                    "Success"
+                                  ) : offeracceptStatus === "fail" &&
+                                    selectedNftId === item.index ? (
+                                    "Failed"
+                                  ) : (
+                                    "Accept"
+                                  )}
+                                </button>
                               </td>
                             </tr>
                           );
@@ -1528,7 +1729,161 @@ const ProfileNFTList = ({
                       </tbody>
                     </table>
                   )}
-                  {saleHistory && saleHistory.length === 0 && (
+                </div>
+              </div>
+            </div>
+          ) : option === "offersMade" &&
+            userCollectionArrayFinal.length > 0 &&
+            favoritesOption === "collections" ? (
+            <div className="nft-history-wrapper w-100 bg-transparent p-3">
+              <div className="d-flex flex-column gap-2">
+                {/* <span className="item-history-text"></span> */}
+                <div className="single-nft-table-wrapper h-100">
+                  {collectionOffers && collectionOffers.length > 0 && (
+                    <table className="table item-history-table">
+                      <thead className="item-history-table-thead">
+                        <th className="item-history-table-th text-center">
+                          Item
+                        </th>
+
+                        <th className="item-history-table-th text-center">
+                          Price
+                        </th>
+                        <th className="item-history-table-th text-center">
+                          Expiration
+                        </th>
+                        <th className="item-history-table-th text-center">
+                          Floor Difference
+                        </th>
+                        <th className="item-history-table-th text-center">
+                          From
+                        </th>
+                        <th className="item-history-table-th text-center">
+                          Action
+                        </th>
+                      </thead>
+                      <tbody>
+                        {collectionOffers
+                          .filter(({ contractAddress: nftAddr1 }) =>
+                            userCollectionArrayFinal.some(
+                              (obj) =>
+                                nftAddr1.toLowerCase() === obj.toLowerCase()
+                            )
+                          )
+                          .map((item, index) => {
+                            return (
+                              <tr
+                                key={index}
+                                onClick={() =>
+                                  navigate(
+                                    `/collection/${item.contractAddress}/${item.symbol}`
+                                  )
+                                }
+                                style={{ cursor: "pointer" }}
+                              >
+                                <td className="item-history-table-td left-border text-center">
+                                  <img
+                                    src={`https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`}
+                                    className="table-img nftimg2"
+                                    height={36}
+                                    width={36}
+                                    alt=""
+                                  />
+
+                                  {item.collectionName ?? "Collection name"}
+                                </td>
+                                <td className="item-history-table-td text-center">
+                                  {getFormattedNumber(item.amount / 1e18)} WCFX
+                                </td>
+                                <td className="item-history-table-td text-center">
+                                  {moment
+                                    .duration(
+                                      item.expiresAt * 1000 - Date.now()
+                                    )
+                                    .humanize(true)}
+                                </td>
+                                <td className="item-history-table-td greentext text-center">
+                                  {getFormattedNumber(
+                                    item.floorPrice
+                                      ? item.floorPrice / 1e18 >
+                                        item.amount / 1e18
+                                        ? (item.floorPrice / 1e18 -
+                                            item.amount / 1e18) /
+                                          100
+                                        : (item.amount / 1e18 -
+                                            item.floorPrice / 1e18) /
+                                          100
+                                      : 0,
+                                    3
+                                  )}
+                                  %{" "}
+                                  {item.floorPrice
+                                    ? item.floorPrice / 1e18 >
+                                      item.amount / 1e18
+                                      ? "Below"
+                                      : "Above"
+                                    : "Below"}
+                                </td>
+                                <td className="item-history-table-td greentext text-center">
+                                  {item.offeror ? (
+                                    <a
+                                      href={`https://evm.confluxscan.net/address/${item.offeror}`}
+                                      className="greentext"
+                                      target="_blank"
+                                      rel="noreferrer"
+                                    >
+                                      {shortAddress(item.offeror)}
+                                    </a>
+                                  ) : (
+                                    "N/A"
+                                  )}
+                                </td>
+                                <td className="item-history-table-td right-border text-center">
+                                  <button
+                                    disabled={!item.isAllowed}
+                                    className={` px-3 py-1 ${
+                                      item.isAllowed
+                                        ? "active-accept-btn"
+                                        : "disabled-accept-btn"
+                                    } `}
+                                    onClick={() => {
+                                      handleAcceptOffer(
+                                        item.index,
+                                        item.offeror
+                                      );
+                                      setSelectedNftId(item.index);
+                                    }}
+                                  >
+                                    {offeracceptStatus === "initial" ? (
+                                      "Accept"
+                                    ) : offeracceptStatus === "loading" &&
+                                      selectedNftId === item.index ? (
+                                      <>
+                                        Accepting
+                                        <div
+                                          className="spinner-border mx-1"
+                                          role="status"
+                                          style={{ width: 10, height: 10 }}
+                                        ></div>
+                                      </>
+                                    ) : offeracceptStatus === "success" &&
+                                      selectedNftId === item.index ? (
+                                      "Success"
+                                    ) : offeracceptStatus === "fail" &&
+                                      selectedNftId === item.index ? (
+                                      "Failed"
+                                    ) : (
+                                      "Accept"
+                                    )}
+                                  </button>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                      </tbody>
+                    </table>
+                  )}
+                  {collectionOffers && collectionOffers.length === 0 && (
                     <span className="text-secondary d-flex justify-content-center w-100 h-100 align-items-center">
                       No activity yet
                     </span>
@@ -2028,7 +2383,6 @@ const ProfileNFTList = ({
                             </td>
                           </tr>
                         ))}
-
                     {option === "hasOffers" &&
                       allOffers &&
                       userCollectionArrayFinal.length === 0 &&
@@ -3314,11 +3668,14 @@ const ProfileNFTList = ({
                 You currently do not have any NFTs in your wallet
               </span>
             )}
-          {option === "collected" && nftList && nftList.length === 0 && (
-            <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
-              There are no items avaliable with this filter
-            </span>
-          )}
+          {option === "collected" &&
+            nftList &&
+            nftList.length === 0 &&
+            userCollectionArrayFinal.length > 0 && (
+              <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
+                There are no items avaliable with this filter
+              </span>
+            )}
           {option === "listed" &&
             userNftsOwnedArray &&
             !userNftsOwnedArray.find((obj) => {
@@ -3328,11 +3685,14 @@ const ProfileNFTList = ({
                 You currently do not have any NFTs listed
               </span>
             )}
-          {option === "listed" && nftList && nftList.length === 0 && (
-            <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
-              There are no items avaliable with this filter
-            </span>
-          )}
+          {option === "listed" &&
+            nftList &&
+            nftList.length === 0 &&
+            userCollectionArrayFinal.length > 0 && (
+              <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
+                There are no items avaliable with this filter
+              </span>
+            )}
           {option === "hasOffers" &&
             ((allOffers &&
               allOffers.length > 0 &&
@@ -3349,23 +3709,70 @@ const ProfileNFTList = ({
                 You do not have any offers for your NFTs at the moment
               </span>
             )}
-          {option === "hasOffers" && nftList && nftList.length === 0 && (
-            <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
-              There are no items avaliable with this filter
-            </span>
-          )}
+          {option === "hasOffers" &&
+            userCollectionArrayFinal.length > 0 &&
+            nftList &&
+            nftList.length === 0 && (
+              <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
+                There are no items avaliable with this filter
+              </span>
+            )}
+
           {option === "offersMade" &&
+            favoritesOption === "items" &&
+            nftList &&
+            nftList.length === 0 &&
+            userCollectionArrayFinal.length > 0 && (
+              <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
+                There are no items avaliable with this filter
+              </span>
+            )}
+
+          {option === "offersMade" &&
+            favoritesOption === "items" &&
             allOffersMade &&
             allOffersMade.length === 0 && (
               <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
                 You have not made any offers for any NFTs
               </span>
             )}
-          {option === "offersMade" && nftList && nftList.length === 0 && (
-            <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
-              There are no items avaliable with this filter
-            </span>
-          )}
+          {option === "offersMade" &&
+            favoritesOption === "items" &&
+            nftList &&
+            nftList.length === 0 &&
+            userCollectionArrayFinal.length > 0 && (
+              <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
+                There are no items avaliable with this filter
+              </span>
+            )}
+
+          {option === "offersMade" &&
+            favoritesOption === "collections" &&
+            nftList &&
+            nftList.length === 0 &&
+            userCollectionArrayFinal.length > 0 && (
+              <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
+                There are no items avaliable with this filter
+              </span>
+            )}
+
+          {option === "offersMade" &&
+            favoritesOption === "collections" &&
+            collectionOffers &&
+            collectionOffers.length === 0 && (
+              <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
+                You have not made any collection offers
+              </span>
+            )}
+          {option === "offersMade" &&
+            favoritesOption === "collections" &&
+            nftList &&
+            nftList.length === 0 &&
+            userCollectionArrayFinal.length > 0 && (
+              <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
+                There are no items avaliable with this filter
+              </span>
+            )}
         </div>
       </div>
     </div>

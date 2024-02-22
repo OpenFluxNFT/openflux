@@ -10,6 +10,7 @@ import Web3 from "web3";
 import getFormattedNumber from "../../hooks/get-formatted-number";
 import moment from "moment";
 import MakeOfferForCollection from "../../components/MakeOffer/MakeOfferForCollection";
+import AcceptOfferForCollection from "../../components/MakeOffer/AcceptOfferForCollection";
 
 const CollectionPage = ({
   coinbase,
@@ -25,6 +26,7 @@ const CollectionPage = ({
   isNewCollection,
   onNewCollectionFetched,
   wcfxBalance,
+  userNftsOwnedArray,
 }) => {
   const [favorite, setFavorite] = useState(false);
 
@@ -46,14 +48,19 @@ const CollectionPage = ({
   const [next, setnext] = useState(12);
   const [nextSearch, setnextSearch] = useState(100);
   const [showOfferPopup, setshowOfferPopup] = useState(false);
+  const [showOfferAcceptPopup, setshowOfferAcceptPopup] = useState(false);
+  const [selectedOffer, setselectedOffer] = useState([]);
+
   const [offerStatus, setOfferStatus] = useState("initial");
 
   const [offerdeleteStatus, setOfferdeleteStatus] = useState("initial");
   const [offerupdateStatus, setOfferupdateStatus] = useState("initial");
   const [offeracceptStatus, setOfferacceptStatus] = useState("initial");
+  const [allOffers, setallOffers] = useState([]);
 
   const [offerData, setofferData] = useState([]);
   const [bestOffer, setbestOffer] = useState([]);
+  const [userownedNftFilteredArray, setuserownedNftFilteredArray] = useState([])
 
   const { BigNumber } = window;
   const baseURL = "https://confluxapi.worldofdypians.com";
@@ -92,7 +99,18 @@ const CollectionPage = ({
       valueType: `${getFormattedNumber(uniqueOwnersPercentage ?? 0, 0)}%`,
     },
   ];
-
+const filterUserArray = ()=>{
+  const final = userNftsOwnedArray
+  .filter((obj) => {
+    return (
+      obj.nftAddress.toLowerCase() ===
+      collectionAddress.toLowerCase()
+    );
+  })
+  if(final) {
+    setuserownedNftFilteredArray(final)
+  }
+}
   const getFilter = (val) => {
     setFilter(val);
   };
@@ -120,7 +138,11 @@ const CollectionPage = ({
             const abiresult = await axios.get(
               `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
             );
-            if (abiresult && abiresult.status === 200) {
+            if (
+              abiresult &&
+              abiresult.status === 200 &&
+              abiresult.data.message === "OK"
+            ) {
               const abi = JSON.parse(abiresult.data.result);
               const collection_contract = new web3.eth.Contract(
                 abi,
@@ -496,6 +518,7 @@ const CollectionPage = ({
       let nftArray = [];
       let nftListedArray = [];
       let totalSupply = 0;
+      
 
       const abi = JSON.parse(result.data.result);
       const listednftsArray = listednfts.data.listings;
@@ -658,6 +681,7 @@ const CollectionPage = ({
             let tokenByIndex = 0;
             let bestOffer = 0;
             let lastSale = 0;
+            // let price= 0;
             if (result.data.result.includes("tokenByIndex")) {
               tokenByIndex = await collection_contract.methods
                 .tokenByIndex(i)
@@ -1134,7 +1158,6 @@ const CollectionPage = ({
       });
 
     if (result && result.status === 200) {
-      
       // setfloorPrice(result.data.floorPrice / 1e18);
     }
   };
@@ -1183,10 +1206,17 @@ const CollectionPage = ({
     if (result) {
       let finalArray = [];
       let offerArray = [];
-
+      let allOffersArray = [];
+      const web3 = window.confluxWeb3;
       const finalResult = result[1];
       if (finalResult && finalResult.length > 0) {
         if (coinbase) {
+          const abiresult = await axios.get(
+            `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress.toLowerCase()}`
+          );
+
+          const abi = JSON.parse(abiresult.data.result);
+
           finalArray = finalResult.filter((object) => {
             return object.offeror.toLowerCase() === coinbase.toLowerCase();
           });
@@ -1200,6 +1230,7 @@ const CollectionPage = ({
               return { ...item, index: finalArrayIndex };
             });
           }
+
           const maxPrice = Math.max(...finalResult.map((o) => o.amount));
           const obj = finalResult.find((item) => item.amount == maxPrice);
           setbestOffer(obj);
@@ -1211,6 +1242,22 @@ const CollectionPage = ({
             if (!hasExpired2) {
               setofferData(...offerArray);
             } else setofferData([]);
+
+            await Promise.all(
+              window.range(0, finalResult.length - 1).map(async (i) => {
+                const hasExpired = moment
+                  .duration(finalResult[i].expiresAt * 1000 - Date.now())
+                  .humanize(true)
+                  .includes("ago");
+                if (!hasExpired) {
+                  return allOffersArray.push({
+                    ...finalResult[i],
+                    index: i,
+                  });
+                }
+              })
+            );
+            setallOffers(allOffersArray);
           } else setofferData([]);
         }
       } else {
@@ -1218,7 +1265,7 @@ const CollectionPage = ({
       }
     }
   };
-   
+
   const handleMakeOffer = async (price, duration) => {
     if (price !== "" && price !== 0) {
       setOfferStatus("loading");
@@ -1287,10 +1334,76 @@ const CollectionPage = ({
       });
   };
 
+  const handleShowAcceptPopup = async (offerObj) => {
+    setshowOfferAcceptPopup(true);
+    setselectedOffer(offerObj);
+  };
+
+  const acceptOfferFunc = async (contractAddress,selectedId,offerIndex  ) => {
+    setOfferacceptStatus("loading");
+    await window
+      .acceptCollectionOffer(contractAddress,selectedId,offerIndex)
+      .then(() => {
+        onRefreshListings();
+        setOfferacceptStatus("success");
+        setTimeout(() => {
+          setOfferacceptStatus("initial");
+        }, 3000);
+      })
+      .catch((e) => {
+        console.log(e);
+        setOfferacceptStatus("fail");
+        setTimeout(() => {
+          setOfferacceptStatus("initial");
+        }, 3000);
+      });
+  };
+
+  const handleAcceptOffer = async (selectedId,offerIndex) => {
+    setOfferacceptStatus("loading");
+    const isApproved = await window
+      .isApprovedNFT(collectionAddress, coinbase)
+      .then((data) => {
+        return data;
+      }).catch((e)=>{
+        console.log(e)
+        setOfferacceptStatus("fail");
+        setTimeout(() => {
+          setOfferacceptStatus("initial");
+        }, 4000);
+      })
+
+    if (isApproved) {
+      acceptOfferFunc(collectionAddress,selectedId,offerIndex);
+    } else {
+      await window
+        .approveNFT(collectionAddress)
+        .then(() => {
+          setOfferacceptStatus("success");
+          setTimeout(() => {
+            acceptOfferFunc(collectionAddress,selectedId,offerIndex);
+          }, 1000);
+        })
+        .catch((e) => {
+          setOfferacceptStatus("fail");
+          setTimeout(() => {
+            setOfferacceptStatus("initial");
+          }, 4000);
+          console.log(e);
+        });
+    }
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
+  useEffect(()=>{
+    if(userNftsOwnedArray && userNftsOwnedArray.length > 0) {
+      filterUserArray()
+    }
+  },[userNftsOwnedArray]) 
+  
   useEffect(() => {
     getUserOffersForCollection();
   }, [coinbase]);
@@ -1305,7 +1418,7 @@ const CollectionPage = ({
     getCollectionUniqueOwners();
     getCollectionTotalVolume();
   }, []);
-
+  // console.log(userNftsOwnedArray)
   useEffect(() => {
     if (isNewCollection) {
       dataFetchedRef.current = false;
@@ -1341,6 +1454,8 @@ const CollectionPage = ({
     }
   }, [filter]);
 
+
+
   return (
     <>
       <div
@@ -1349,7 +1464,6 @@ const CollectionPage = ({
         id="header2"
       >
         <CollectionBanner
-        
           title={currentCollection.collectionName}
           logo={
             currentCollection.collectionProfilePic
@@ -1374,7 +1488,7 @@ const CollectionPage = ({
           collectionFeeRate={collectionFeeRate}
         />
         <CollectionList
-        offerData={offerData}
+          offerData={offerData}
           currentCollection={currentCollection}
           getRecentlySold={handleGetRecentlySoldNfts}
           allNftArray={allNftArray}
@@ -1393,6 +1507,9 @@ const CollectionPage = ({
           onShowPopup={() => {
             setshowOfferPopup(true);
           }}
+          allOffers={allOffers}
+          bestOffer={bestOffer}
+          onShowAcceptPopup={handleShowAcceptPopup}
         />
 
         {totalSupplyPerCollection &&
@@ -1413,7 +1530,7 @@ const CollectionPage = ({
             setshowOfferPopup(false);
           }}
           coinbase={coinbase}
-          floorPrice={floorPrice}
+          floorPrice={currentCollection.floorPrice}
           nftData={currentCollection}
           cfxPrice={cfxPrice}
           wcfxBalance={wcfxBalance}
@@ -1429,6 +1546,31 @@ const CollectionPage = ({
           bestOffer={bestOffer}
           deletestatus={offerdeleteStatus}
           updatestatus={offerupdateStatus}
+        />
+      )}
+
+      {showOfferAcceptPopup === true && (
+        <AcceptOfferForCollection
+          open={showOfferAcceptPopup}
+          onclose={() => {
+            setshowOfferAcceptPopup(false);
+          }}
+          coinbase={coinbase}
+          floorPrice={floorPrice}
+          nftData={selectedOffer}
+          currentCollection={currentCollection}
+          cfxPrice={cfxPrice}
+          wcfxBalance={wcfxBalance}
+          totalSupplyPerCollection={totalSupplyPerCollection}
+          uniqueOwners={uniqueOwners}
+          uniqueOwnersPercentage={uniqueOwnersPercentage}
+          collectionFeeRate={collectionFeeRate}
+          status={offerStatus}
+          offerData={offerData}
+          bestOffer={bestOffer}
+          userNftsOwnedArray={userownedNftFilteredArray}
+          handleAcceptOffer={handleAcceptOffer}
+          offeracceptStatus={offeracceptStatus}
         />
       )}
     </>

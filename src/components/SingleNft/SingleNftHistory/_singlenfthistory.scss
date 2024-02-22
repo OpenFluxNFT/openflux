@@ -45,6 +45,7 @@
       border-style: double;
       .item-history-table-td {
         background: transparent;
+        vertical-align: middle;
       }
     }
   }
@@ -68,6 +69,30 @@
     font-style: normal;
     font-weight: 500;
     line-height: normal;
+    text-transform: capitalize;
+    vertical-align: middle;
+
+  }
+
+
+
+
+  .left-border {
+    border-radius: 0px 0 0 10px;
+  }
+
+  .right-border {
+    border-radius: 0 10px 10px 0;
+  }
+}
+  .greentext {
+    color: #3dbda7;
+    text-align: center;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    letter-spacing: 0.6px;
     text-transform: capitalize;
   }
 
@@ -97,24 +122,4 @@
     line-height: normal;
     text-transform: capitalize;
     border-radius: 12px;
-  }
-
-
-  .left-border {
-    border-radius: 0px 0 0 10px;
-  }
-
-  .right-border {
-    border-radius: 0 10px 10px 0;
-  }
-}
-  .greentext {
-    color: #3dbda7;
-    text-align: center;
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: normal;
-    letter-spacing: 0.6px;
-    text-transform: capitalize;
   }

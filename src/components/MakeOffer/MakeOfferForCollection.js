@@ -180,7 +180,7 @@ const MakeOfferForCollection = ({
               <div className="d-flex w-100 align-items-center gap-3 justify-content-between">
                 <span className="itemchain">Floor price</span>
                 <span className="itemname" style={{ whiteSpace: "nowrap" }}>
-                  {getFormattedNumber(floorPrice ? floorPrice / 1e18 : 0)} WCFX{" "}
+                  {getFormattedNumber(floorPrice ? floorPrice : 0)} WCFX{" "}
                   <span className="itemcollectionName ms-2">
                     (${" "}
                     {getFormattedNumber(

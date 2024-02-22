@@ -584,6 +584,8 @@ function App() {
 
   const handleMapUserNftsOwned = async (wallet) => {
     let nftsOwned = [];
+    let nftsOwnedAmount = 0;
+
     let allUserCollections = [];
     let nftArray = [];
     const userNftsOwnedresult = await axios
@@ -599,6 +601,7 @@ function App() {
 
     if (userNftsOwnedresult && userNftsOwnedresult.status === 200) {
       nftsOwned = userNftsOwnedresult.data.nftList;
+      nftsOwnedAmount = userNftsOwnedresult.data.totalAmount
     }
 
     if (nftsOwned && nftsOwned.length > 0) {
@@ -626,7 +629,7 @@ function App() {
             let lastSale = 0;
 
             const tokens = await Promise.all(
-              window.range(0, Number(nftsOwned[i].amount) - 1).map((j) =>
+              window.range(0, nftsOwnedAmount - 1).map((j) =>
                 collection_contract.methods
                   .tokenOfOwnerByIndex(wallet, j)
                   .call()

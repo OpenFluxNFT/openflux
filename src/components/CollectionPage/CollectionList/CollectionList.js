@@ -68,6 +68,7 @@ const CollectionList = ({
   ]);
   const [queryItems, setQueryItems] = useState([]);
   const [search, setSearch] = useState("");
+  const [priceFilter, setpriceFilter] = useState("Filter by Price");
 
   const [nftList, setNftList] = useState([]);
 
@@ -364,6 +365,27 @@ const CollectionList = ({
     }, 1500);
   };
 
+  const filterByPrice = (filter) => {
+    setCollectionLoading(true);
+    if (filter === "lth") {
+      let lth = allNftArray.sort((a, b) => {
+        return a.price - b.price;
+      });
+      setNftList(lth);
+      setTimeout(() => {
+        setCollectionLoading(false);
+      }, 1500);
+    } else if (filter === "htl") {
+      let htl = allNftArray.sort((a, b) => {
+        return b.price - a.price;
+      });
+      setNftList(htl);
+      setTimeout(() => {
+        setCollectionLoading(false);
+      }, 1500);
+    }
+  };
+
   const handleRefreshData = async (nft) => {
     const listednfts = await axios
       .get(
@@ -455,7 +477,6 @@ const CollectionList = ({
       }
     } else window.alertify.error("Please connect wallet first!");
   };
- 
 
   useEffect(() => {
     fetchFavoriteCounts();
@@ -518,7 +539,7 @@ const CollectionList = ({
                   </h2>
                   <div
                     id="collapseOne"
-                    className="accordion-collapse collapse"
+                    className="accordion-collapse collapse show"
                     aria-labelledby="headingOne"
                     data-bs-parent="#accordionExample"
                   >
@@ -804,27 +825,29 @@ const CollectionList = ({
                     style={{ width: windowSize.width > 786 ? "100%" : "34px" }}
                   >
                     {windowSize.width > 786 ? (
-                      "Price: Low to High"
+                      <>{priceFilter}</>
                     ) : (
                       <img src={priceIcon} width={20} height={20} alt="" />
                     )}
                   </button>
                   <ul className="dropdown-menu categories-dropdown-menu w-100">
-                    <li>
-                      <a
-                        className="dropdown-item categories-dropdown-item"
-                        href="#"
-                      >
-                        Low to High
-                      </a>
+                    <li
+                      className="dropdown-item categories-dropdown-item"
+                      onClick={() => {
+                        setpriceFilter("Low to High");
+                        filterByPrice("lth");
+                      }}
+                    >
+                      Low to High
                     </li>
-                    <li>
-                      <a
-                        className="dropdown-item categories-dropdown-item"
-                        href="#"
-                      >
-                        High to Low
-                      </a>
+                    <li
+                      className="dropdown-item categories-dropdown-item"
+                      onClick={() => {
+                        setpriceFilter("High to Low");
+                        filterByPrice("htl");
+                      }}
+                    >
+                      High to Low
                     </li>
                     {/* <li>
                       <a
@@ -1197,8 +1220,8 @@ const CollectionList = ({
                         <tr
                           className="nft-table-row p-1"
                           key={index}
-                          onClick={() => onShowAcceptPopup(item)}
-                          style={{ cursor: "pointer" }}
+                          // onClick={() => onShowAcceptPopup(item)}
+                          // style={{ cursor: "pointer" }}
                         >
                           <td
                             className="table-item col-2 d-flex align-items-center gap-1 w-100"
@@ -1244,8 +1267,18 @@ const CollectionList = ({
                           </td>
                           <td className="table-item col-2">
                             <button
-                              className="blue-btn py-2 border-0 w-100 h-auto"
-                              onClick={() => onShowAcceptPopup(item)}
+                              className="btn blue-btn py-2 border-0 w-100 h-auto"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                onShowAcceptPopup(item);
+                              }}
+                              disabled={
+                                item.offeror.toLowerCase() ===
+                                  coinbase?.toLowerCase() || !coinbase
+                                  ? true
+                                  : false
+                              }
                             >
                               Accept
                             </button>
@@ -1255,7 +1288,7 @@ const CollectionList = ({
                     </tbody>
                   )}
                 </table>
-              ) : allNftArray && 
+              ) : allNftArray &&
                 allNftArray.length > 0 &&
                 collectionLoading === false ? (
                 nftList.map((item, index) => (
@@ -1466,7 +1499,7 @@ const CollectionList = ({
                     </NavLink>
                   </div>
                 ))
-              ) :  listType !== "collectionoffers" ? (
+              ) : listType !== "collectionoffers" ? (
                 dummyCards.map((item, index) => (
                   <Skeleton
                     key={index}
@@ -1475,7 +1508,9 @@ const CollectionList = ({
                     height={250}
                   />
                 ))
-              ) : <></>}
+              ) : (
+                <></>
+              )}
 
               {listType === "collectionoffers" &&
                 allOffers &&
@@ -1485,7 +1520,8 @@ const CollectionList = ({
                   </span>
                 )}
             </div>
-            {collectionLoading === true && listType !== "collectionoffers" &&
+            {collectionLoading === true &&
+            listType !== "collectionoffers" &&
             (gridView === "small-grid" || gridView === "big-grid") ? (
               <div
                 className={`${

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import closeX from "./assets/closeX.svg";
@@ -11,6 +11,8 @@ import moment from "moment";
 import collectionCardPlaceholder from "./assets/collectionCardPlaceholder1.png";
 import { shortAddress } from "../../hooks/shortAddress";
 import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
+import Draggable from "./Draggable";
+
 const AcceptOfferForCollection = ({
   open,
   onclose,
@@ -24,6 +26,8 @@ const AcceptOfferForCollection = ({
   floorPrice,
   currentCollection,
   userNftsOwnedArray,
+  handleAcceptOffer,
+  offeracceptStatus,
 }) => {
   const windowSize = useWindowSize();
 
@@ -46,7 +50,9 @@ const AcceptOfferForCollection = ({
     height: windowSize.width < 500 ? "480px" : "auto",
     padding: "20px",
   };
-  
+
+  const journalRef = useRef();
+
   return (
     <Modal
       open={open}
@@ -172,24 +178,23 @@ const AcceptOfferForCollection = ({
             </div>
           )}
           <div className="summaryseparator"></div>
-          <div className="row">
-            <h6 className="itemname ">Select one NFT you wish to trade</h6>
-            <div className={`col-12 mb-3 mb-lg-0`}>
-              <div className="position-relative d-flex  gap-2 align-items-center">
-                {userNftsOwnedArray &&
-                  userNftsOwnedArray.length > 0 &&
-                  userNftsOwnedArray
-                    .filter((obj) => {
-                      return (
-                        obj.nftAddress.toLowerCase() ===
-                        currentCollection.contractAddress.toLowerCase()
-                      );
-                    })
-                    .map((item, index) => {
+          {userNftsOwnedArray && userNftsOwnedArray.length > 0 && (
+            <div className="row">
+              <h6 className="itemname ">Select one NFT you wish to trade</h6>
+              <div className={`col-12 mb-3 mb-lg-0`}>
+                <div className="position-relative d-flex  gap-2 align-items-center">
+                  {userNftsOwnedArray &&
+                    userNftsOwnedArray.length > 0 &&
+                    userNftsOwnedArray.length <= 4 &&
+                    userNftsOwnedArray.map((item, index) => {
                       return (
                         <div
                           className="recently-listed-card p-2 gap-2 d-flex flex-column"
-                          style={{ borderRadius: 11 }}
+                          style={{
+                            borderRadius: 11, cursor: 'pointer',
+                            borderColor:
+                              selectedId === item.tokenId && "#3DBDA7",
+                          }}
                           key={index}
                           onClick={() => {
                             setselectedId(item.tokenId);
@@ -258,33 +263,135 @@ const AcceptOfferForCollection = ({
                         </div>
                       );
                     })}
+                </div>
+                {userNftsOwnedArray &&
+                  userNftsOwnedArray.length > 0 &&
+                  userNftsOwnedArray.length > 4 && (
+                    <div className="d-flex my-3 overflow-hidden min-w-2xl relative w-full will-change-auto hover:will-change-scroll">
+                      <Draggable innerRef={journalRef} rootClass={"drag"}>
+                        <div
+                          className="d-flex flex-row overflow-x-auto w-full"
+                          ref={journalRef}
+                        >
+                          {userNftsOwnedArray.map((item, index) => {
+                            return (
+                              <div className="px-2 col-4 my-3" key={index}>
+                                <div
+                                  className="recently-listed-card p-2 gap-2 d-flex flex-column"
+                                  style={{
+                                    borderRadius: 11, cursor: 'pointer',
+                                    borderColor:
+                                      selectedId === item.tokenId && "#3DBDA7",
+                                  }}
+                                  key={index}
+                                  onClick={() => {
+                                    setselectedId(item.tokenId);
+                                  }}
+                                >
+                                  {!item.isVideo && item.image ? (
+                                    <img
+                                      src={`https://cdnflux.dypius.com/${item.image}`}
+                                      className="card-img nftimg2"
+                                      width={136}
+                                      height={136}
+                                      alt=""
+                                    />
+                                  ) : item.isVideo && item.image ? (
+                                    <video
+                                      preload="auto"
+                                      className="card-img nftimg2"
+                                      src={`https://cdnflux.dypius.com/${item.image}`}
+                                      autoPlay={true}
+                                      loop={true}
+                                      muted="muted"
+                                      playsInline={true}
+                                      // onClick={player}
+                                      controlsList="nodownload"
+                                      width={136}
+                                      height={136}
+                                    ></video>
+                                  ) : (
+                                    <img
+                                      src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                                      className="card-img nftimg2"
+                                      width={136}
+                                      height={136}
+                                      alt=""
+                                    />
+                                  )}
+                                  <h6
+                                    className="recently-listed-title mb-0 d-flex align-items-center w-100 justify-content-between"
+                                    style={{ fontSize: "12px" }}
+                                  >
+                                    {item.tokenName} #{item.tokenId}
+                                    <FormGroup
+                                      key={index}
+                                      sx={{ display: "block !important" }}
+                                    >
+                                      <FormControlLabel
+                                        control={
+                                          <Checkbox
+                                            size="small"
+                                            sx={{
+                                              color: "white",
+                                              padding: 0,
+                                              "&.Mui-checked": {
+                                                color: "#3DBDA7",
+                                              },
+                                            }}
+                                            checked={
+                                              selectedId === item.tokenId
+                                            }
+                                            onChange={() => {
+                                              setselectedId(item.tokenId);
+                                            }}
+                                          />
+                                        }
+                                      />
+                                    </FormGroup>
+                                  </h6>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </Draggable>
+                    </div>
+                  )}
               </div>
             </div>
-          </div>
+          )}
+          {userNftsOwnedArray && userNftsOwnedArray.length === 0 && (
+            <span>You're not holding any NFT from this collection</span>
+          )}
 
           <div className="d-flex align-items-center gap-2 justify-content-center w-100">
             <button
-              className="updateoffer-btn"
+              disabled={!selectedId}
+              className={` px-3 py-1 ${
+                selectedId ? "active-accept-btn" : "disabled-accept-btn"
+              } `}
               onClick={() => {
-                // handleUpdateOffer(price, offerData.index);
+                handleAcceptOffer(nftData.index,selectedId);
               }}
             >
-              {" "}
-              {status === "initial" ? (
-                "Accept Offer"
-              ) : status === "loadingupdate" ? (
+              {offeracceptStatus === "initial" ? (
+                "Accept"
+              ) : offeracceptStatus === "loading" ? (
                 <>
-                  Accepting offer{" "}
+                  Accepting
                   <div
                     className="spinner-border mx-1"
                     role="status"
                     style={{ width: 10, height: 10 }}
                   ></div>
                 </>
-              ) : status === "successupdate" ? (
+              ) : offeracceptStatus === "success" ? (
                 "Success"
-              ) : (
+              ) : offeracceptStatus === "fail" ? (
                 "Failed"
+              ) : (
+                "Accept"
               )}
             </button>
           </div>

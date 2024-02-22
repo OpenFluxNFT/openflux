@@ -736,60 +736,7 @@ const Profile = ({
     },
   ];
 
-  const acceptOfferFunc = async (offerIndex, offeror, contractAddress) => {
-    setOfferacceptStatus("loading");
-    await window
-      .acceptOffer(contractAddress, offerIndex)
-      .then(() => {
-        onRefreshListings();
-        setOfferacceptStatus("success");
-        setTimeout(() => {
-          setOfferacceptStatus("initial");
-        }, 3000);
-      })
-      .catch((e) => {
-        console.log(e);
-        setOfferacceptStatus("fail");
-        setTimeout(() => {
-          setOfferacceptStatus("initial");
-        }, 3000);
-      });
-  };
 
-  const handleAcceptOffer = async (offerIndex, offeror, contractAddress) => {
-    setOfferacceptStatus("loading");
-    const isApproved = await window
-      .isApprovedNFT(contractAddress, coinbase)
-      .then((data) => {
-        return data;
-      }).catch((e)=>{
-        console.log(e)
-        setOfferacceptStatus("fail");
-        setTimeout(() => {
-          setOfferacceptStatus("initial");
-        }, 4000);
-      })
-
-    if (isApproved) {
-      acceptOfferFunc(offerIndex, offeror, contractAddress);
-    } else {
-      await window
-        .approveNFT(contractAddress)
-        .then(() => {
-          setOfferacceptStatus("success");
-          setTimeout(() => {
-            acceptOfferFunc(offerIndex, offeror);
-          }, 1000);
-        })
-        .catch((e) => {
-          setOfferacceptStatus("fail");
-          setTimeout(() => {
-            setOfferacceptStatus("initial");
-          }, 4000);
-          console.log(e);
-        });
-    }
-  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -893,8 +840,7 @@ const Profile = ({
             saleHistory={saleHistory}
             collectionOffers={collectionOffers}
             userCollection={userCollection}
-            handleAcceptOffer={handleAcceptOffer}
-            offeracceptStatus={offeracceptStatus}
+            
           />
         </div>
       </div>

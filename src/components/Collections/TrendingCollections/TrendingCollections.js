@@ -155,27 +155,84 @@ const TrendingCollections = ({
     const sevenDaysInSeconds = 7 * oneDayInSeconds;
     const thirtyDaysInSeconds = 30 * oneDayInSeconds;
 
-    const items24HoursAgo = recentlySoldNfts.filter(
-      (item) =>
-        currentTime - parseInt(item.blockTimestamp, 10) <= oneDayInSeconds
-    );
-    const items7DaysAgo = recentlySoldNfts.filter(
-      (item) =>
-        currentTime - parseInt(item.blockTimestamp, 10) <= sevenDaysInSeconds
-    );
-    const items30DaysAgo = recentlySoldNfts.filter(
-      (item) =>
-        currentTime - parseInt(item.blockTimestamp, 10) <= thirtyDaysInSeconds
-    );
+    if (option === "recentSales") {
+      const items24HoursAgo = recentlySoldNfts.filter(
+        (item) =>
+          currentTime - parseInt(item.blockTimestamp, 10) <= oneDayInSeconds
+      );
+      const items7DaysAgo = recentlySoldNfts.filter(
+        (item) =>
+          currentTime - parseInt(item.blockTimestamp, 10) <= sevenDaysInSeconds
+      );
+      const items30DaysAgo = recentlySoldNfts.filter(
+        (item) =>
+          currentTime - parseInt(item.blockTimestamp, 10) <= thirtyDaysInSeconds
+      );
 
-    if (val === "24h") {
-      setRecents(items24HoursAgo);
-    } else if (val === "7d") {
-      setRecents(items7DaysAgo);
-    } else {
-      setRecents(items30DaysAgo);
+      if (val === "24h") {
+        setRecents(items24HoursAgo);
+      } else if (val === "7d") {
+        setRecents(items7DaysAgo);
+      } else {
+        setRecents(items30DaysAgo);
+      }
+    } else if (option === "trending") {
+      if (trendingCollections.length > 0) {
+        if (val === "24h") {
+          const newestCollections = trendingCollections.sort((a, b) => {
+            const volA = a.volume24h;
+            const volB = b.volume24h;
+            return volB - volA;
+          });
+
+          setTrendingCollections(newestCollections);
+        } else if (val === "7d") {
+          const newestCollections = trendingCollections.sort((a, b) => {
+            const volA = a.volume7d;
+            const volB = b.volume7d;
+            return volB - volA;
+          });
+
+          setTrendingCollections(newestCollections);
+        } else {
+          const newestCollections = trendingCollections.sort((a, b) => {
+            const volA = a.volume30d;
+            const volB = b.volume30d;
+            return volB - volA;
+          });
+
+          setTrendingCollections(newestCollections);
+        }
+      }
+    }else if (option === "new") {
+      if (newestCollections.length > 0) {
+        if (val === "24h") {
+          const finalCollections = newestCollections.sort((a, b) => {
+            const volA = a.volume24h;
+            const volB = b.volume24h;
+            return volB - volA;
+          });
+
+          setNewestCollections(finalCollections);
+        } else if (val === "7d") {
+          const finalCollections = newestCollections.sort((a, b) => {
+            const volA = a.volume7d;
+            const volB = b.volume7d;
+            return volB - volA;
+          });
+
+          setNewestCollections(finalCollections);
+        } else {
+          const finalCollections = newestCollections.sort((a, b) => {
+            const volA = a.volume30d;
+            const volB = b.volume30d;
+            return volB - volA;
+          });
+
+          setNewestCollections(finalCollections);
+        }
+      }
     }
-
     setTimeout(() => {
       setLoading(false);
     }, 1500);
@@ -635,6 +692,57 @@ const TrendingCollections = ({
               <></>
             )}
           </div>
+          {option === "topSales" && topCollections.length === 0 ? (
+            <>
+              <div></div>
+              <div
+                className="d-flex w-100 align-items-center justify-content-center"
+                style={{ minHeight: "450px" }}
+              >
+                <h6 className="text-white">
+                  There are no top sold collections
+                </h6>
+              </div>
+              <div></div>
+            </>
+          ) : option === "new" && newestCollections.length === 0 ? (
+            <>
+              <div></div>
+              <div
+                className="d-flex w-100 align-items-center justify-content-center"
+                style={{ minHeight: "450px" }}
+              >
+                <h6 className="text-white">There are no new collecitons</h6>
+              </div>
+              <div></div>
+            </>
+          ) : option === "trending" && trendingCollections.length === 0 ? (
+            <>
+              <div></div>
+              <div
+                className="d-flex w-100 align-items-center justify-content-center"
+                style={{ minHeight: "450px" }}
+              >
+                <h6 className="text-white">
+                  There are no trending collecitons.
+                </h6>
+              </div>
+              <div></div>
+            </>
+          ) : option === "recentSales" && recentlySoldNfts.length === 0 ? (
+            <>
+              <div></div>
+              <div
+                className="d-flex w-100 align-items-center justify-content-center"
+                style={{ minHeight: "450px" }}
+              >
+                <h6 className="text-white">There are no recent sales.</h6>
+              </div>
+              <div></div>
+            </>
+          ) : (
+            <></>
+          )}
         </div>
       </div>
     </div>

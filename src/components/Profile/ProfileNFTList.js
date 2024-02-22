@@ -344,8 +344,6 @@ const ProfileNFTList = ({
     }
   }, [option, userNftsOwnedArray]);
 
-
-
   return (
     <div className="container-lg">
       <div className="row collection-list-wrapper py-4 px-2">
@@ -359,7 +357,29 @@ const ProfileNFTList = ({
               <span className="collection-info mb-0">Live</span>
             </div>
             <div className="d-flex align-items-center gap-1">
-              <span className="collection-info mb-0">9,943</span>
+              <span className="collection-info mb-0">
+                {option === "collected"
+                  ? getFormattedNumber(userNftsOwnedArray.length, 0)
+                  : option === "favorites" && favoritesOption === "items"
+                  ? userNftFavs.length
+                  : option === "favorites" && favoritesOption === "collections"
+                  ? userCollectionFavs.length
+                  : option === "listed"
+                  ? nftList.filter((obj) => {
+                      return obj.price !== undefined;
+                    }).length
+                  : option === "hasOffers"
+                  ? nftList.filter(({ tokenId: id1, nftAddress: nftAddr1 }) =>
+                      allOffers.some(
+                        ({ tokenId: id2, nftAddress: nftAddr2 }) =>
+                          id1.toString() === id2.toString() &&
+                          nftAddr1.toLowerCase() === nftAddr2.toLowerCase()
+                      )
+                    ).length
+                  : option === "activity"
+                  ? saleHistory.length
+                  : 0}
+              </span>
               <span className="collection-info-span mb-0">Results</span>
             </div>
           </div>
@@ -1672,7 +1692,11 @@ const ProfileNFTList = ({
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     e.preventDefault();
-                                    handleAcceptOffer(item.index, item.offeror, item.contractAddress);
+                                    handleAcceptOffer(
+                                      item.index,
+                                      item.offeror,
+                                      item.contractAddress
+                                    );
                                     setSelectedNftId(item.index);
                                   }}
                                 >
@@ -2359,7 +2383,7 @@ const ProfileNFTList = ({
                             </td>
                           </tr>
                         ))}
- {option === "hasOffers" &&
+                    {option === "hasOffers" &&
                       allOffers &&
                       userCollectionArrayFinal.length === 0 &&
                       allOffers.length > 0 &&
@@ -3693,8 +3717,9 @@ const ProfileNFTList = ({
                 There are no items avaliable with this filter
               </span>
             )}
-      
-          {option === "offersMade" && favoritesOption === 'items' &&
+
+          {option === "offersMade" &&
+            favoritesOption === "items" &&
             nftList &&
             nftList.length === 0 &&
             userCollectionArrayFinal.length > 0 && (
@@ -3703,15 +3728,16 @@ const ProfileNFTList = ({
               </span>
             )}
 
-
-{option === "offersMade" && favoritesOption === 'items' &&
+          {option === "offersMade" &&
+            favoritesOption === "items" &&
             allOffersMade &&
             allOffersMade.length === 0 && (
               <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
                 You have not made any offers for any NFTs
               </span>
             )}
-          {option === "offersMade" && favoritesOption === 'items' &&
+          {option === "offersMade" &&
+            favoritesOption === "items" &&
             nftList &&
             nftList.length === 0 &&
             userCollectionArrayFinal.length > 0 && (
@@ -3720,10 +3746,8 @@ const ProfileNFTList = ({
               </span>
             )}
 
-
-
-
-{option === "offersMade" && favoritesOption === 'collections' &&
+          {option === "offersMade" &&
+            favoritesOption === "collections" &&
             nftList &&
             nftList.length === 0 &&
             userCollectionArrayFinal.length > 0 && (
@@ -3732,15 +3756,16 @@ const ProfileNFTList = ({
               </span>
             )}
 
-
-{option === "offersMade" && favoritesOption === 'collections' &&
+          {option === "offersMade" &&
+            favoritesOption === "collections" &&
             collectionOffers &&
             collectionOffers.length === 0 && (
               <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
                 You have not made any collection offers
               </span>
             )}
-          {option === "offersMade" && favoritesOption === 'collections' &&
+          {option === "offersMade" &&
+            favoritesOption === "collections" &&
             nftList &&
             nftList.length === 0 &&
             userCollectionArrayFinal.length > 0 && (

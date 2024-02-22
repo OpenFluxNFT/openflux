@@ -110,7 +110,6 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
 
     setChunkedArray(myArray);
   };
-  // console.log(recentlySoldNfts)
 
   const categorizeItems = (val) => {
     setLoading(true);
@@ -119,7 +118,41 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
     const oneDayInSeconds = 24 * 60 * 60;
     const sevenDaysInSeconds = 7 * oneDayInSeconds;
     const thirtyDaysInSeconds = 30 * oneDayInSeconds;
-    if (recentlySoldNfts && recentlySoldNfts.length > 0) {
+    if (option === "trending" && trendingCollections.length > 0) {
+      if (val === "24h") {
+        const newestCollections = trendingCollections.sort((a, b) => {
+          const volA = a.volume24h;
+          const volB = b.volume24h;
+          return volB - volA;
+        });
+
+        setTrendingCollections(newestCollections);
+      } else if (val === "7d") {
+        const newestCollections = trendingCollections.sort((a, b) => {
+          const volA = a.volume7d;
+          const volB = b.volume7d;
+          return volB - volA;
+        });
+
+        setTrendingCollections(newestCollections);
+      } else {
+        const newestCollections = trendingCollections.sort((a, b) => {
+          const volA = a.volume30d;
+          const volB = b.volume30d;
+          return volB - volA;
+        });
+
+        setTrendingCollections(newestCollections);
+      }
+
+      setTimeout(() => {
+        setLoading(false);
+      }, 1500);
+    } else if (
+      option === "recentSales" &&
+      recentlySoldNfts &&
+      recentlySoldNfts.length > 0
+    ) {
       const items24HoursAgo = recentlySoldNfts.filter(
         (item) =>
           currentTime - parseInt(item.blockTimestamp, 10) <= oneDayInSeconds
@@ -146,7 +179,6 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
       }, 1500);
     }
   };
-
   const getTopSales = async () => {
     setLoading(true);
     const result = await axios
@@ -159,6 +191,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
       .catch((e) => {
         console.error(e);
       });
+
     const web3 = window.confluxWeb3;
     if (result && result.status === 200) {
       // console.log(result.data);
@@ -168,7 +201,11 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
           const abiresult = await axios.get(
             `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
           );
-          if (abiresult && abiresult.status === 200) {
+          if (
+            abiresult &&
+            abiresult.status === 200 &&
+            abiresult.data.message === "OK"
+          ) {
             let lastSale = 0;
             const abi = JSON.parse(abiresult.data.result);
             const collection_contract = new web3.eth.Contract(
@@ -667,7 +704,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                       </div>
                     );
                   })
-                ) : option === "recentSales" && recents.length === 0 ? (
+                ) : option === "recentSales" && recentlySoldNfts.length === 0 ? (
                   <>
                     <div></div>
                     <div
@@ -675,7 +712,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                       style={{ minHeight: "450px" }}
                     >
                       <h6 className="text-white">
-                        There are no recently listed NFTs
+                        There are no recently sold NFTs
                       </h6>
                     </div>
                     <div></div>
@@ -718,427 +755,743 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                     <Skeleton variant="rounded" width={"100%"} height={135} />
                   </>
                 ) : (
-                  dummyCards.map((item, index) => (
-                    <div
-                      className="trending-card p-3 d-flex align-items-center position-relative gap-2"
-                      key={index}
-                    >
-                      <NavLink
-                        to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
-                        className="w-100 d-flex align-items-center position-relative gap-2"
-                        key={index}
-                        style={{ textDecoration: "none" }}
-                      >
-                        <div className="trending-tag">
-                          <span className="mb-0">{index + 1}</span>
-                        </div>
-                        <img src={item.image} width={100} height={100} alt="" />
-                        <div className="d-flex flex-column">
-                          <div className="d-flex align-items-center gap-1">
-                            <h6 className="trending-card-title mb-0">
-                              {item.title}
-                            </h6>
-                            <img src={checkIcon} alt="" />
-                          </div>
-                          <div className="d-flex flex-column">
-                            <h6 className="trending-card-cfx-price mb-0">
-                              {item.cfxPrice} WCFX
-                            </h6>
-                            <span className="trending-card-usd-price mb-0">
-                              ($ {item.usdPrice})
-                            </span>
-                          </div>
-                        </div>
-                        <div className="sale-tag d-flex align-items-center gap-1">
-                          <span className="mb-0">On Sale</span>
-                          <img src={fireIcon} alt="" />
-                        </div>
-                      </NavLink>
-                      <span className="list-date">Listed 2 hours ago</span>
-                    </div>
-                  ))
+                  <></>
                 )}
               </div>
-            ) : (
+            ) : option === "recentSales" &&
+              recentlySoldNfts &&
+              recentlySoldNfts.length > 0 ? (
               <Slider {...settings}>
                 <div className="trending-cards-grid">
-                  {option === "recentSales" &&
-                  recentlySoldNfts &&
-                  recentlySoldNfts.length > 0
-                    ? recentlySoldNfts.slice(0, 3).map((item, index) => {
-                        return (
-                          <div
-                            className="trending-card p-3 d-flex align-items-center position-relative gap-2"
-                            key={index}
-                          >
-                            <NavLink
-                              to={`/nft/${item.tokenId}/${item.nftAddress}`}
-                              className="w-100 d-flex align-items-center position-relative gap-2"
-                              key={index}
-                              style={{ textDecoration: "none" }}
-                            >
-                              <div className="trending-tag">
-                                <span className="mb-0">{index + 1}</span>
-                              </div>
-
-                              {!item.isVideo ? (
-                                <img
-                                  src={
-                                    item.image
-                                      ? `https://cdnflux.dypius.com/${item.image}`
-                                      : require(`../RecentlyListed/assets/nftPlaceholder1.png`)
-                                  }
-                                  className="card-img2"
-                                  width={100}
-                                  height={100}
-                                  alt=""
-                                />
-                              ) : (
-                                <video
-                                  preload="auto"
-                                  className="card-img2"
-                                  width={100}
-                                  height={100}
-                                  src={`https://cdnflux.dypius.com/${item.image}`}
-                                  autoPlay={true}
-                                  loop={true}
-                                  muted="muted"
-                                  playsInline={true}
-                                  // onClick={player}
-                                  controlsList="nodownload"
-                                ></video>
-                              )}
-                              <div className="d-flex flex-column">
-                                <div className="d-flex align-items-center gap-1">
-                                  <h6 className="trending-card-title mb-0">
-                                    {item.tokenName} {item.name}
-                                  </h6>
-                                  <img src={checkIcon} alt="" />
-                                </div>
-                                <div className="d-flex flex-column">
-                                  <h6 className="trending-card-cfx-price mb-0">
-                                    {getFormattedNumber(item.amount / 1e18)}{" "}
-                                    WCFX
-                                  </h6>
-                                  <span className="trending-card-usd-price mb-0">
-                                    (${" "}
-                                    {getFormattedNumber(
-                                      (item.amount / 1e18) * cfxPrice
-                                    )}
-                                    )
-                                  </span>
-                                </div>
-                              </div>
-                            </NavLink>
-                            <span className="list-date">
-                              Sold{" "}
-                              {moment
-                                .duration(
-                                  item.blockTimestamp * 1000 - Date.now()
-                                )
-                                .humanize(true)}
-                            </span>
-                          </div>
-                        );
-                      })
-                    : dummyCards.slice(0, 3).map((item, index) => (
-                        <div
-                          className="trending-card p-3 d-flex align-items-center position-relative gap-2"
+                  {recentlySoldNfts.slice(0, 3).map((item, index) => {
+                    return (
+                      <div
+                        className="trending-card p-3 d-flex align-items-center position-relative gap-2"
+                        key={index}
+                      >
+                        <NavLink
+                          to={`/nft/${item.tokenId}/${item.nftAddress}`}
+                          className="w-100 d-flex align-items-center position-relative gap-2"
                           key={index}
+                          style={{ textDecoration: "none" }}
                         >
-                          <NavLink
-                            to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
-                            className="w-100 d-flex align-items-center position-relative gap-2"
-                            key={index}
-                            style={{ textDecoration: "none" }}
-                          >
-                            <div className="trending-tag">
-                              <span className="mb-0">{index + 1}</span>
-                            </div>
+                          <div className="trending-tag">
+                            <span className="mb-0">{index + 1}</span>
+                          </div>
+
+                          {!item.isVideo ? (
                             <img
-                              src={item.image}
+                              src={
+                                item.image
+                                  ? `https://cdnflux.dypius.com/${item.image}`
+                                  : require(`../RecentlyListed/assets/nftPlaceholder1.png`)
+                              }
+                              className="card-img2"
                               width={100}
                               height={100}
                               alt=""
                             />
+                          ) : (
+                            <video
+                              preload="auto"
+                              className="card-img2"
+                              width={100}
+                              height={100}
+                              src={`https://cdnflux.dypius.com/${item.image}`}
+                              autoPlay={true}
+                              loop={true}
+                              muted="muted"
+                              playsInline={true}
+                              // onClick={player}
+                              controlsList="nodownload"
+                            ></video>
+                          )}
+                          <div className="d-flex flex-column">
+                            <div className="d-flex align-items-center gap-1">
+                              <h6 className="trending-card-title mb-0">
+                                {item.tokenName} {item.name}
+                              </h6>
+                              <img src={checkIcon} alt="" />
+                            </div>
                             <div className="d-flex flex-column">
-                              <div className="d-flex align-items-center gap-1">
-                                <h6 className="trending-card-title mb-0">
-                                  {item.title}
-                                </h6>
-                                <img src={checkIcon} alt="" />
-                              </div>
-                              <div className="d-flex flex-column">
-                                <h6 className="trending-card-cfx-price mb-0">
-                                  {item.cfxPrice} WCFX
-                                </h6>
-                                <span className="trending-card-usd-price mb-0">
-                                  ($ {item.usdPrice})
-                                </span>
-                              </div>
+                              <h6 className="trending-card-cfx-price mb-0">
+                                {getFormattedNumber(item.amount / 1e18)} WCFX
+                              </h6>
+                              <span className="trending-card-usd-price mb-0">
+                                (${" "}
+                                {getFormattedNumber(
+                                  (item.amount / 1e18) * cfxPrice
+                                )}
+                                )
+                              </span>
                             </div>
-                            <div className="sale-tag d-flex align-items-center gap-1">
-                              <span className="mb-0">On Sale</span>
-                              <img src={fireIcon} alt="" />
-                            </div>
-                          </NavLink>
-                          <span className="list-date">Listed 2 hours ago</span>
-                        </div>
-                      ))}
+                          </div>
+                        </NavLink>
+                        <span className="list-date">
+                          Sold{" "}
+                          {moment
+                            .duration(item.blockTimestamp * 1000 - Date.now())
+                            .humanize(true)}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
 
                 <div className="trending-cards-grid">
-                  {option === "recentSales" &&
-                  recentlySoldNfts &&
-                  recentlySoldNfts.length > 0
-                    ? recentlySoldNfts.slice(3, 6).map((item, index) => {
-                        return (
-                          <div
-                            className="trending-card p-3 d-flex align-items-center position-relative gap-2"
-                            key={index}
-                          >
-                            <NavLink
-                              to={`/nft/${item.tokenId}/${item.nftAddress}`}
-                              className="w-100 d-flex align-items-center position-relative gap-2"
-                              key={index}
-                              style={{ textDecoration: "none" }}
-                            >
-                              <div className="trending-tag">
-                                <span className="mb-0">{index + 4}</span>
-                              </div>
-
-                              {!item.isVideo ? (
-                                <img
-                                  src={
-                                    item.image
-                                      ? `https://cdnflux.dypius.com/${item.image}`
-                                      : require(`../RecentlyListed/assets/nftPlaceholder1.png`)
-                                  }
-                                  className="card-img2"
-                                  width={100}
-                                  height={100}
-                                  alt=""
-                                />
-                              ) : (
-                                <video
-                                  preload="auto"
-                                  className="card-img2"
-                                  width={100}
-                                  height={100}
-                                  src={`https://cdnflux.dypius.com/${item.image}`}
-                                  autoPlay={true}
-                                  loop={true}
-                                  muted="muted"
-                                  playsInline={true}
-                                  // onClick={player}
-                                  controlsList="nodownload"
-                                ></video>
-                              )}
-                              <div className="d-flex flex-column">
-                                <div className="d-flex align-items-center gap-1">
-                                  <h6 className="trending-card-title mb-0">
-                                    {item.tokenName} {item.name}
-                                  </h6>
-                                  <img src={checkIcon} alt="" />
-                                </div>
-                                <div className="d-flex flex-column">
-                                  <h6 className="trending-card-cfx-price mb-0">
-                                    {getFormattedNumber(item.amount / 1e18)}{" "}
-                                    WCFX
-                                  </h6>
-                                  <span className="trending-card-usd-price mb-0">
-                                    (${" "}
-                                    {getFormattedNumber(
-                                      (item.amount / 1e18) * cfxPrice
-                                    )}
-                                    )
-                                  </span>
-                                </div>
-                              </div>
-                            </NavLink>
-                            <span className="list-date">
-                              Sold{" "}
-                              {moment
-                                .duration(
-                                  item.blockTimestamp * 1000 - Date.now()
-                                )
-                                .humanize(true)}
-                            </span>
-                          </div>
-                        );
-                      })
-                    : dummyCards.slice(3, 6).map((item, index) => (
-                        <div
-                          className="trending-card p-3 d-flex align-items-center position-relative gap-2"
+                  {recentlySoldNfts.slice(3, 6).map((item, index) => {
+                    return (
+                      <div
+                        className="trending-card p-3 d-flex align-items-center position-relative gap-2"
+                        key={index}
+                      >
+                        <NavLink
+                          to={`/nft/${item.tokenId}/${item.nftAddress}`}
+                          className="w-100 d-flex align-items-center position-relative gap-2"
                           key={index}
+                          style={{ textDecoration: "none" }}
                         >
-                          <NavLink
-                            to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
-                            className="w-100 d-flex align-items-center position-relative gap-2"
-                            key={index}
-                            style={{ textDecoration: "none" }}
-                          >
-                            <div className="trending-tag">
-                              <span className="mb-0">{index + 4}</span>
-                            </div>
+                          <div className="trending-tag">
+                            <span className="mb-0">{index + 4}</span>
+                          </div>
+
+                          {!item.isVideo ? (
                             <img
-                              src={item.image}
+                              src={
+                                item.image
+                                  ? `https://cdnflux.dypius.com/${item.image}`
+                                  : require(`../RecentlyListed/assets/nftPlaceholder1.png`)
+                              }
+                              className="card-img2"
                               width={100}
                               height={100}
                               alt=""
                             />
+                          ) : (
+                            <video
+                              preload="auto"
+                              className="card-img2"
+                              width={100}
+                              height={100}
+                              src={`https://cdnflux.dypius.com/${item.image}`}
+                              autoPlay={true}
+                              loop={true}
+                              muted="muted"
+                              playsInline={true}
+                              // onClick={player}
+                              controlsList="nodownload"
+                            ></video>
+                          )}
+                          <div className="d-flex flex-column">
+                            <div className="d-flex align-items-center gap-1">
+                              <h6 className="trending-card-title mb-0">
+                                {item.tokenName} {item.name}
+                              </h6>
+                              <img src={checkIcon} alt="" />
+                            </div>
                             <div className="d-flex flex-column">
-                              <div className="d-flex align-items-center gap-1">
-                                <h6 className="trending-card-title mb-0">
-                                  {item.title}
-                                </h6>
-                                <img src={checkIcon} alt="" />
-                              </div>
-                              <div className="d-flex flex-column">
-                                <h6 className="trending-card-cfx-price mb-0">
-                                  {item.cfxPrice} WCFX
-                                </h6>
-                                <span className="trending-card-usd-price mb-0">
-                                  ($ {item.usdPrice})
-                                </span>
-                              </div>
+                              <h6 className="trending-card-cfx-price mb-0">
+                                {getFormattedNumber(item.amount / 1e18)} WCFX
+                              </h6>
+                              <span className="trending-card-usd-price mb-0">
+                                (${" "}
+                                {getFormattedNumber(
+                                  (item.amount / 1e18) * cfxPrice
+                                )}
+                                )
+                              </span>
                             </div>
-                            <div className="sale-tag d-flex align-items-center gap-1">
-                              <span className="mb-0">On Sale</span>
-                              <img src={fireIcon} alt="" />
-                            </div>
-                          </NavLink>
-                          <span className="list-date">Listed 2 hours ago</span>
-                        </div>
-                      ))}
+                          </div>
+                        </NavLink>
+                        <span className="list-date">
+                          Sold{" "}
+                          {moment
+                            .duration(item.blockTimestamp * 1000 - Date.now())
+                            .humanize(true)}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
 
                 <div className="trending-cards-grid">
-                  {option === "recentSales" &&
-                  recentlySoldNfts &&
-                  recentlySoldNfts.length > 0
-                    ? recentlySoldNfts.slice(6, 9).map((item, index) => {
-                        return (
-                          <div
-                            className="trending-card p-3 d-flex align-items-center position-relative gap-2"
-                            key={index}
-                          >
-                            <NavLink
-                              to={`/nft/${item.tokenId}/${item.nftAddress}`}
-                              className="w-100 d-flex align-items-center position-relative gap-2"
-                              key={index}
-                              style={{ textDecoration: "none" }}
-                            >
-                              <div className="trending-tag">
-                                <span className="mb-0">{index + 7}</span>
-                              </div>
-
-                              {!item.isVideo ? (
-                                <img
-                                  src={
-                                    item.image
-                                      ? `https://cdnflux.dypius.com/${item.image}`
-                                      : require(`../RecentlyListed/assets/nftPlaceholder1.png`)
-                                  }
-                                  className="card-img2"
-                                  width={100}
-                                  height={100}
-                                  alt=""
-                                />
-                              ) : (
-                                <video
-                                  preload="auto"
-                                  className="card-img2"
-                                  width={100}
-                                  height={100}
-                                  src={`https://cdnflux.dypius.com/${item.image}`}
-                                  autoPlay={true}
-                                  loop={true}
-                                  muted="muted"
-                                  playsInline={true}
-                                  // onClick={player}
-                                  controlsList="nodownload"
-                                ></video>
-                              )}
-                              <div className="d-flex flex-column">
-                                <div className="d-flex align-items-center gap-1">
-                                  <h6 className="trending-card-title mb-0">
-                                    {item.tokenName} {item.name}
-                                  </h6>
-                                  <img src={checkIcon} alt="" />
-                                </div>
-                                <div className="d-flex flex-column">
-                                  <h6 className="trending-card-cfx-price mb-0">
-                                    {getFormattedNumber(item.amount / 1e18)}{" "}
-                                    WCFX
-                                  </h6>
-                                  <span className="trending-card-usd-price mb-0">
-                                    (${" "}
-                                    {getFormattedNumber(
-                                      (item.amount / 1e18) * cfxPrice
-                                    )}
-                                    )
-                                  </span>
-                                </div>
-                              </div>
-                            </NavLink>
-                            <span className="list-date">
-                              Sold{" "}
-                              {moment
-                                .duration(
-                                  item.blockTimestamp * 1000 - Date.now()
-                                )
-                                .humanize(true)}
-                            </span>
-                          </div>
-                        );
-                      })
-                    : dummyCards.slice(6, 9).map((item, index) => (
-                        <div
-                          className="trending-card p-3 d-flex align-items-center position-relative gap-2"
+                  {recentlySoldNfts.slice(6, 9).map((item, index) => {
+                    return (
+                      <div
+                        className="trending-card p-3 d-flex align-items-center position-relative gap-2"
+                        key={index}
+                      >
+                        <NavLink
+                          to={`/nft/${item.tokenId}/${item.nftAddress}`}
+                          className="w-100 d-flex align-items-center position-relative gap-2"
                           key={index}
+                          style={{ textDecoration: "none" }}
                         >
-                          <NavLink
-                            to={`/nft/0/0xd06cf9e1189feab09c844c597abc3767bc12608c`}
-                            className="w-100 d-flex align-items-center position-relative gap-2"
-                            key={index}
-                            style={{ textDecoration: "none" }}
-                          >
-                            <div className="trending-tag">
-                              <span className="mb-0">{index + 7}</span>
-                            </div>
+                          <div className="trending-tag">
+                            <span className="mb-0">{index + 7}</span>
+                          </div>
+
+                          {!item.isVideo ? (
                             <img
-                              src={item.image}
+                              src={
+                                item.image
+                                  ? `https://cdnflux.dypius.com/${item.image}`
+                                  : require(`../RecentlyListed/assets/nftPlaceholder1.png`)
+                              }
+                              className="card-img2"
                               width={100}
                               height={100}
                               alt=""
                             />
+                          ) : (
+                            <video
+                              preload="auto"
+                              className="card-img2"
+                              width={100}
+                              height={100}
+                              src={`https://cdnflux.dypius.com/${item.image}`}
+                              autoPlay={true}
+                              loop={true}
+                              muted="muted"
+                              playsInline={true}
+                              // onClick={player}
+                              controlsList="nodownload"
+                            ></video>
+                          )}
+                          <div className="d-flex flex-column">
+                            <div className="d-flex align-items-center gap-1">
+                              <h6 className="trending-card-title mb-0">
+                                {item.tokenName} {item.name}
+                              </h6>
+                              <img src={checkIcon} alt="" />
+                            </div>
                             <div className="d-flex flex-column">
-                              <div className="d-flex align-items-center gap-1">
-                                <h6 className="trending-card-title mb-0">
-                                  {item.title}
-                                </h6>
-                                <img src={checkIcon} alt="" />
-                              </div>
-                              <div className="d-flex flex-column">
-                                <h6 className="trending-card-cfx-price mb-0">
-                                  {item.cfxPrice} WCFX
-                                </h6>
-                                <span className="trending-card-usd-price mb-0">
-                                  ($ {item.usdPrice})
-                                </span>
-                              </div>
+                              <h6 className="trending-card-cfx-price mb-0">
+                                {getFormattedNumber(item.amount / 1e18)} WCFX
+                              </h6>
+                              <span className="trending-card-usd-price mb-0">
+                                (${" "}
+                                {getFormattedNumber(
+                                  (item.amount / 1e18) * cfxPrice
+                                )}
+                                )
+                              </span>
                             </div>
-                            <div className="sale-tag d-flex align-items-center gap-1">
-                              <span className="mb-0">On Sale</span>
-                              <img src={fireIcon} alt="" />
-                            </div>
-                          </NavLink>
-                          <span className="list-date">Listed 2 hours ago</span>
-                        </div>
-                      ))}
+                          </div>
+                        </NavLink>
+                        <span className="list-date">
+                          Sold{" "}
+                          {moment
+                            .duration(item.blockTimestamp * 1000 - Date.now())
+                            .humanize(true)}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
               </Slider>
+            ) : option === "trending" &&
+              trendingCollections &&
+              trendingCollections.length > 0 ? (
+              <Slider {...settings}>
+                <div className="trending-cards-grid">
+                  {trendingCollections.slice(0, 3).map((item, index) => {
+                    return (
+                      <div
+                        className="trending-card p-3 d-flex align-items-center position-relative gap-2"
+                        key={index}
+                      >
+                        <NavLink
+                          to={`/collection/${item.contractAddress}/${item.symbol}`}
+                          className="w-100 d-flex align-items-center position-relative gap-2"
+                          key={index}
+                          style={{ textDecoration: "none" }}
+                        >
+                          <div className="trending-tag">
+                            <span className="mb-0">{index + 1}</span>
+                          </div>
+
+                          <img
+                            src={
+                              item.collectionProfilePic
+                                ? `https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`
+                                : collectionCardPlaceholder1
+                            }
+                            style={{
+                              height: "120px",
+                              width: "120px",
+                              borderRadius: "12px",
+                            }}
+                            alt=""
+                          />
+                          <div className="justify-content-between flex-column h-100 d-flex align-items-start align-items-lg-center gap-3">
+                            <div className="d-flex flex-column">
+                              <span className="trending-price-holder mb-1">
+                                Floor
+                              </span>
+                              <div className="trending-price-wrapper d-flex align-items-center justify-content-center p-2">
+                                <h6 className="trending-price mb-0">
+                                  {allCollections.find((obj) => {
+                                    return (
+                                      obj.contractAddress.toLowerCase() ===
+                                      item.contractAddress.toLowerCase()
+                                    );
+                                  })
+                                    ? getFormattedNumber(
+                                        allCollections.find((obj) => {
+                                          return (
+                                            obj.contractAddress.toLowerCase() ===
+                                            item.contractAddress.toLowerCase()
+                                          );
+                                        }).floorPrice
+                                      )
+                                    : 0}{" "}
+                                  WCFX
+                                </h6>
+                              </div>
+                            </div>
+                            <div className="d-flex flex-column">
+                              <span className="trending-price-holder mb-1">
+                                Total Volume
+                              </span>
+                              <div className="trending-price-wrapper d-flex align-items-center justify-content-center p-2">
+                                <h6 className="trending-price mb-0">
+                                  {getFormattedNumber(
+                                    item.lifetimeVolume / 1e18
+                                  ) ?? "0.00"}{" "}
+                                  WCFX
+                                </h6>
+                              </div>
+                            </div>
+                          </div>
+                        </NavLink>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="trending-cards-grid">
+                  {trendingCollections.slice(3, 6).map((item, index) => {
+                    return (
+                      <div
+                        className="trending-card p-3 d-flex align-items-center position-relative gap-2"
+                        key={index}
+                      >
+                        <NavLink
+                          to={`/collection/${item.contractAddress}/${item.symbol}`}
+                          className="w-100 d-flex align-items-center position-relative gap-2"
+                          key={index}
+                          style={{ textDecoration: "none" }}
+                        >
+                          <div className="trending-tag">
+                            <span className="mb-0">{index + 4}</span>
+                          </div>
+
+                          <img
+                            src={
+                              item.collectionProfilePic
+                                ? `https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`
+                                : collectionCardPlaceholder1
+                            }
+                            style={{
+                              height: "120px",
+                              width: "120px",
+                              borderRadius: "12px",
+                            }}
+                            alt=""
+                          />
+                          <div className="justify-content-between flex-column h-100 d-flex align-items-start align-items-lg-center gap-3">
+                            <div className="d-flex flex-column">
+                              <span className="trending-price-holder mb-1">
+                                Floor
+                              </span>
+                              <div className="trending-price-wrapper d-flex align-items-center justify-content-center p-2">
+                                <h6 className="trending-price mb-0">
+                                  {allCollections.find((obj) => {
+                                    return (
+                                      obj.contractAddress.toLowerCase() ===
+                                      item.contractAddress.toLowerCase()
+                                    );
+                                  })
+                                    ? getFormattedNumber(
+                                        allCollections.find((obj) => {
+                                          return (
+                                            obj.contractAddress.toLowerCase() ===
+                                            item.contractAddress.toLowerCase()
+                                          );
+                                        }).floorPrice
+                                      )
+                                    : 0}{" "}
+                                  WCFX
+                                </h6>
+                              </div>
+                            </div>
+                            <div className="d-flex flex-column">
+                              <span className="trending-price-holder mb-1">
+                                Total Volume
+                              </span>
+                              <div className="trending-price-wrapper d-flex align-items-center justify-content-center p-2">
+                                <h6 className="trending-price mb-0">
+                                  {getFormattedNumber(
+                                    item.lifetimeVolume / 1e18
+                                  ) ?? "0.00"}{" "}
+                                  WCFX
+                                </h6>
+                              </div>
+                            </div>
+                          </div>
+                        </NavLink>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="trending-cards-grid">
+                  {trendingCollections.slice(6, 9).map((item, index) => {
+                    return (
+                      <div
+                        className="trending-card p-3 d-flex align-items-center position-relative gap-2"
+                        key={index}
+                      >
+                        <NavLink
+                          to={`/collection/${item.contractAddress}/${item.symbol}`}
+                          className="w-100 d-flex align-items-center position-relative gap-2"
+                          key={index}
+                          style={{ textDecoration: "none" }}
+                        >
+                          <div className="trending-tag">
+                            <span className="mb-0">{index + 7}</span>
+                          </div>
+
+                          <img
+                            src={
+                              item.collectionProfilePic
+                                ? `https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`
+                                : collectionCardPlaceholder1
+                            }
+                            style={{
+                              height: "120px",
+                              width: "120px",
+                              borderRadius: "12px",
+                            }}
+                            alt=""
+                          />
+                          <div className="justify-content-between flex-column h-100 d-flex align-items-start align-items-lg-center gap-3">
+                            <div className="d-flex flex-column">
+                              <span className="trending-price-holder mb-1">
+                                Floor
+                              </span>
+                              <div className="trending-price-wrapper d-flex align-items-center justify-content-center p-2">
+                                <h6 className="trending-price mb-0">
+                                  {allCollections.find((obj) => {
+                                    return (
+                                      obj.contractAddress.toLowerCase() ===
+                                      item.contractAddress.toLowerCase()
+                                    );
+                                  })
+                                    ? getFormattedNumber(
+                                        allCollections.find((obj) => {
+                                          return (
+                                            obj.contractAddress.toLowerCase() ===
+                                            item.contractAddress.toLowerCase()
+                                          );
+                                        }).floorPrice
+                                      )
+                                    : 0}{" "}
+                                  WCFX
+                                </h6>
+                              </div>
+                            </div>
+                            <div className="d-flex flex-column">
+                              <span className="trending-price-holder mb-1">
+                                Total Volume
+                              </span>
+                              <div className="trending-price-wrapper d-flex align-items-center justify-content-center p-2">
+                                <h6 className="trending-price mb-0">
+                                  {getFormattedNumber(
+                                    item.lifetimeVolume / 1e18
+                                  ) ?? "0.00"}{" "}
+                                  WCFX
+                                </h6>
+                              </div>
+                            </div>
+                          </div>
+                        </NavLink>
+                      </div>
+                    );
+                  })}
+                </div>
+              </Slider>
+            ) : option === "topSales" && topSales && topSales.length > 0 ? (
+              <Slider {...settings}>
+                <div className="trending-cards-grid">
+                  {topSales.slice(0, 3).map((item, index) => {
+                    return (
+                      <div
+                        className="trending-card p-3 d-flex align-items-center position-relative gap-2"
+                        key={index}
+                      >
+                        <NavLink
+                          to={`/nft/${item.tokenId}/${item.nftAddress}`}
+                          className="w-100 d-flex align-items-center position-relative gap-2"
+                          key={index}
+                          style={{ textDecoration: "none" }}
+                        >
+                          <div className="trending-tag">
+                            <span className="mb-0">{index + 1}</span>
+                          </div>
+
+                          {!item.isVideo ? (
+                            <img
+                              src={
+                                item.image
+                                  ? `https://cdnflux.dypius.com/${item.image}`
+                                  : require(`../RecentlyListed/assets/nftPlaceholder1.png`)
+                              }
+                              className="card-img2"
+                              width={100}
+                              height={100}
+                              alt=""
+                            />
+                          ) : (
+                            <video
+                              preload="auto"
+                              className="card-img2"
+                              width={100}
+                              height={100}
+                              src={`https://cdnflux.dypius.com/${item.image}`}
+                              autoPlay={true}
+                              loop={true}
+                              muted="muted"
+                              playsInline={true}
+                              // onClick={player}
+                              controlsList="nodownload"
+                            ></video>
+                          )}
+                          <div className="d-flex flex-column">
+                            <div className="d-flex align-items-center gap-1">
+                              <h6 className="trending-card-title mb-0">
+                                {item.tokenName} {item.name}
+                              </h6>
+                              <img src={checkIcon} alt="" />
+                            </div>
+                            <div className="d-flex flex-column">
+                              <h6 className="trending-card-cfx-price mb-0">
+                                {getFormattedNumber(item.amount / 1e18)} WCFX
+                              </h6>
+                              <span className="trending-card-usd-price mb-0">
+                                (${" "}
+                                {getFormattedNumber(
+                                  (item.amount / 1e18) * cfxPrice
+                                )}
+                                )
+                              </span>
+                            </div>
+                          </div>
+                        </NavLink>
+                        <span className="list-date">
+                          Sold{" "}
+                          {moment
+                            .duration(item.blockTimestamp * 1000 - Date.now())
+                            .humanize(true)}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="trending-cards-grid">
+                  {topSales.slice(3, 6).map((item, index) => {
+                    return (
+                      <div
+                        className="trending-card p-3 d-flex align-items-center position-relative gap-2"
+                        key={index}
+                      >
+                        <NavLink
+                          to={`/nft/${item.tokenId}/${item.nftAddress}`}
+                          className="w-100 d-flex align-items-center position-relative gap-2"
+                          key={index}
+                          style={{ textDecoration: "none" }}
+                        >
+                          <div className="trending-tag">
+                            <span className="mb-0">{index + 4}</span>
+                          </div>
+
+                          {!item.isVideo ? (
+                            <img
+                              src={
+                                item.image
+                                  ? `https://cdnflux.dypius.com/${item.image}`
+                                  : require(`../RecentlyListed/assets/nftPlaceholder1.png`)
+                              }
+                              className="card-img2"
+                              width={100}
+                              height={100}
+                              alt=""
+                            />
+                          ) : (
+                            <video
+                              preload="auto"
+                              className="card-img2"
+                              width={100}
+                              height={100}
+                              src={`https://cdnflux.dypius.com/${item.image}`}
+                              autoPlay={true}
+                              loop={true}
+                              muted="muted"
+                              playsInline={true}
+                              // onClick={player}
+                              controlsList="nodownload"
+                            ></video>
+                          )}
+                          <div className="d-flex flex-column">
+                            <div className="d-flex align-items-center gap-1">
+                              <h6 className="trending-card-title mb-0">
+                                {item.tokenName} {item.name}
+                              </h6>
+                              <img src={checkIcon} alt="" />
+                            </div>
+                            <div className="d-flex flex-column">
+                              <h6 className="trending-card-cfx-price mb-0">
+                                {getFormattedNumber(item.amount / 1e18)} WCFX
+                              </h6>
+                              <span className="trending-card-usd-price mb-0">
+                                (${" "}
+                                {getFormattedNumber(
+                                  (item.amount / 1e18) * cfxPrice
+                                )}
+                                )
+                              </span>
+                            </div>
+                          </div>
+                        </NavLink>
+                        <span className="list-date">
+                          Sold{" "}
+                          {moment
+                            .duration(item.blockTimestamp * 1000 - Date.now())
+                            .humanize(true)}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="trending-cards-grid">
+                  {topSales.slice(6, 9).map((item, index) => {
+                    return (
+                      <div
+                        className="trending-card p-3 d-flex align-items-center position-relative gap-2"
+                        key={index}
+                      >
+                        <NavLink
+                          to={`/nft/${item.tokenId}/${item.nftAddress}`}
+                          className="w-100 d-flex align-items-center position-relative gap-2"
+                          key={index}
+                          style={{ textDecoration: "none" }}
+                        >
+                          <div className="trending-tag">
+                            <span className="mb-0">{index + 7}</span>
+                          </div>
+
+                          {!item.isVideo ? (
+                            <img
+                              src={
+                                item.image
+                                  ? `https://cdnflux.dypius.com/${item.image}`
+                                  : require(`../RecentlyListed/assets/nftPlaceholder1.png`)
+                              }
+                              className="card-img2"
+                              width={100}
+                              height={100}
+                              alt=""
+                            />
+                          ) : (
+                            <video
+                              preload="auto"
+                              className="card-img2"
+                              width={100}
+                              height={100}
+                              src={`https://cdnflux.dypius.com/${item.image}`}
+                              autoPlay={true}
+                              loop={true}
+                              muted="muted"
+                              playsInline={true}
+                              // onClick={player}
+                              controlsList="nodownload"
+                            ></video>
+                          )}
+                          <div className="d-flex flex-column">
+                            <div className="d-flex align-items-center gap-1">
+                              <h6 className="trending-card-title mb-0">
+                                {item.tokenName} {item.name}
+                              </h6>
+                              <img src={checkIcon} alt="" />
+                            </div>
+                            <div className="d-flex flex-column">
+                              <h6 className="trending-card-cfx-price mb-0">
+                                {getFormattedNumber(item.amount / 1e18)} WCFX
+                              </h6>
+                              <span className="trending-card-usd-price mb-0">
+                                (${" "}
+                                {getFormattedNumber(
+                                  (item.amount / 1e18) * cfxPrice
+                                )}
+                                )
+                              </span>
+                            </div>
+                          </div>
+                        </NavLink>
+                        <span className="list-date">
+                          Sold{" "}
+                          {moment
+                            .duration(item.blockTimestamp * 1000 - Date.now())
+                            .humanize(true)}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </Slider>
+            ) : option === "recentSales" && recentlySoldNfts.length === 0 ? (
+              <>
+                <div></div>
+                <div
+                  className="d-flex w-100 align-items-center justify-content-center"
+                  style={{ minHeight: "250px" }}
+                >
+                  <h6 className="text-white">
+                    There are no recently sold NFTs
+                  </h6>
+                </div>
+                <div></div>
+              </>
+            ) : option === "trending" &&
+              trendingCollections.length === 0 ? (
+              <>
+                <div></div>
+                <div
+                  className="d-flex w-100 align-items-center justify-content-center"
+                  style={{ minHeight: "250px" }}
+                >
+                  <h6 className="text-white">
+                    There are no trending collections
+                  </h6>
+                </div>
+                <div></div>
+              </>
+            ) : option === "topSales" && topSales.length === 0 ? (
+              <>
+                <div></div>
+                <div
+                  className="d-flex w-100 align-items-center justify-content-center"
+                  style={{ minHeight: "250px" }}
+                >
+                  <h6 className="text-white">There are no top sold NFTs</h6>
+                </div>
+                <div></div>
+              </>
+            ) : (
+              <></>
             )}
           </div>
         </div>

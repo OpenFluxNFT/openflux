@@ -84,25 +84,46 @@ const MobileHeader = ({
           </div>
         </div>
       </div>
-      <NavLink
+      <div
         className={`mobile-menu-container ${
           menu && "mobile-active"
         } d-flex flex-column align-items-center justify-content-center gap-3 p-3`}
-        to={"/collections"}
-        style={{ textDecoration: "none" }}
       >
-        <div
+        <NavLink
           className={
-            "mobile-menu-item d-flex align-items-center justify-content-between p-3"
+            "mobile-menu-item d-flex align-items-center justify-content-between w-100"
           }
-          onClick={() => {
-            setMenu(false);
-            console.log(menu, "menu");
-          }}
+          style={{ textDecoration: "none" }}
+          to={"/collections"}
         >
-          <h6 className="mb-0 text-white">Collections</h6>
-          <img src={mobileNavArrow} alt="" />
-        </div>
+          <div
+            className="d-flex align-items-center justify-content-between p-3 w-100"
+            onClick={() => {
+              setMenu(false);
+            }}
+          >
+            <h6 className="mb-0 text-white">Collections</h6>
+            <img src={mobileNavArrow} alt="" />
+          </div>
+        </NavLink>
+
+        <NavLink
+          className={
+            "mobile-menu-item d-flex align-items-center justify-content-between w-100"
+          }
+          style={{ textDecoration: "none" }}
+          to={`/profile/${coinbase}`}
+        >
+          <div
+            className="d-flex align-items-center justify-content-between p-3 w-100"
+            onClick={() => {
+              setMenu(false);
+            }}
+          >
+            <h6 className="mb-0 text-white">Account</h6>
+            <img src={mobileNavArrow} alt="" />
+          </div>
+        </NavLink>
 
         {/* <div className="mobile-menu-item d-flex align-items-center justify-content-between p-3">
           <h6 className="mb-0 text-white">Mint</h6>
@@ -115,7 +136,7 @@ const MobileHeader = ({
 
           <img src={mobileNavArrow} alt="" />
         </div> */}
-        <div className="d-flex align-items-center gap-3">
+        <div className="w-100 d-flex align-items-center gap-3 justify-content-between">
           <a
             href="https://swappi.io/"
             style={{ textDecoration: "none" }}
@@ -150,24 +171,9 @@ const MobileHeader = ({
               {shortAddress(coinbase)}
             </button>
           )}
-          {coinbase && isConnected ? (
-            <NavLink
-              className="btn blue-btn"
-              to={`/profile/${coinbase}`}
-              onClick={() => setMenu(false)}
-            >
-              <img src={userIcon} alt="" />
-            </NavLink>
-          ) : (
-            <button
-              className="btn blue-btn"
-              onClick={handleSignupAndRedirectToAccount}
-            >
-              <img src={userIcon} alt="" />
-            </button>
-          )}
+        
         </div>
-      </NavLink>
+      </div>
     </>
   );
 };

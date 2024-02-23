@@ -362,9 +362,9 @@ const AcceptOfferForCollection = ({
             </div>
           )}
           {userNftsOwnedArray && userNftsOwnedArray.length === 0 && (
-            <span>You're not holding any NFT from this collection</span>
+              <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">You're not holding any NFT from this collection</span>
           )}
-
+{userNftsOwnedArray && userNftsOwnedArray.length > 0 &&
           <div className="d-flex align-items-center gap-2 justify-content-center w-100">
             <button
               disabled={!selectedId}
@@ -372,7 +372,7 @@ const AcceptOfferForCollection = ({
                 selectedId ? "active-accept-btn" : "disabled-accept-btn"
               } `}
               onClick={() => {
-                handleAcceptOffer(nftData.index,selectedId);
+                handleAcceptOffer(nftData.index,selectedId, nftData.offeror);
               }}
             >
               {offeracceptStatus === "initial" ? (
@@ -394,7 +394,7 @@ const AcceptOfferForCollection = ({
                 "Accept"
               )}
             </button>
-          </div>
+          </div> }
           {/* <div className="invisible">Loading</div> */}
         </div>
       </Box>

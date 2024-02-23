@@ -76,7 +76,7 @@ const CollectionPage = ({
   const collectionInfo = [
     {
       title: "Total Volume",
-      value: getFormattedNumber(currentCollection.lifetimeVolume?? 0 / 1e18 ?? 0),
+      value: getFormattedNumber(currentCollection.lifetimeVolume ? currentCollection.lifetimeVolume / 1e18 : 0),
       valueType: "WCFX",
     },
     {
@@ -1591,6 +1591,7 @@ const CollectionPage = ({
           allOffers={allOffers}
           bestOffer={bestOffer}
           onShowAcceptPopup={handleShowAcceptPopup}
+          isVerified={currentCollection.verified === "yes" ? true : false}
         />
 
         {totalSupplyPerCollection &&

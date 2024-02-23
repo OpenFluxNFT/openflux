@@ -45,7 +45,7 @@ const CollectionList = ({
   onShowPopup,
   onShowAcceptPopup,
   allOffers,
-  bestOffer,
+  bestOffer,isVerified
 }) => {
   const windowSize = useWindowSize();
   const [openFilters, setOpenFilters] = useState(false);
@@ -1013,13 +1013,13 @@ const CollectionList = ({
             <div
               className={`${
                 gridView === "list" || listType === "collectionoffers"
-                  ? "list-view-grid"
+                  ? "list-view-grid p-1"
                   : gridView === "big-grid"
                   ? "big-cards-grid"
                   : "small-cards-grid"
               } mt-3`}
             >
-              {gridView === "list" ? (
+              {gridView === "list" && listType !== '' ? (
                 <table className="table nft-table">
                   <thead>
                     <tr style={{ borderBottom: "2px solid #828FBB" }}>
@@ -1289,7 +1289,7 @@ const CollectionList = ({
                 </table>
               ) : allNftArray &&
                 allNftArray.length > 0 &&
-                collectionLoading === false ? (
+                collectionLoading === false && listType !== '' &&  totalSupplyPerCollection > 0 ? (
                 nftList.map((item, index) => (
                   <div
                     className="recently-listed-card p-3 d-flex flex-column"
@@ -1428,7 +1428,7 @@ const CollectionList = ({
                             " " +
                             (item.name ? item.name : ` #${item.tokenId}`)}
                         </h6>
-                        <img src={checkIcon} alt="" />
+                      {isVerified &&  <img src={checkIcon} alt="" /> }
                       </div>
                       {item.seller ? (
                         <div className="d-flex align-items-center mt-2 gap-3">
@@ -1498,7 +1498,7 @@ const CollectionList = ({
                     </NavLink>
                   </div>
                 ))
-              ) : listType !== "collectionoffers" ? (
+              ) : listType !== "collectionoffers" && listType !== '' ? (
                 dummyCards.map((item, index) => (
                   <Skeleton
                     key={index}
@@ -1520,7 +1520,7 @@ const CollectionList = ({
                 )}
             </div>
             {collectionLoading === true &&
-            listType !== "collectionoffers" &&
+            listType !== "collectionoffers" &&   totalSupplyPerCollection > 0 &&
             (gridView === "small-grid" || gridView === "big-grid") ? (
               <div
                 className={`${
@@ -1540,7 +1540,7 @@ const CollectionList = ({
                   />
                 ))}
               </div>
-            ) : collectionLoading === true && gridView === "list" ? (
+            ) : collectionLoading === true &&  totalSupplyPerCollection > 0 && gridView === "list" ? (
               <div
                 className={`${
                   gridView === "list"

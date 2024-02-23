@@ -149,6 +149,7 @@ const SingleNft = ({
       .acceptOffer(nftAddress, nftId, offerIndex)
       .then(() => {
         refreshUserHistory(offeror);
+        refreshUserHistory(coinbase);
         getUpdatedNftData().then(() => {
           refreshMetadata(nftId);
           fetchInitialNftsPerCollection(nftId);
@@ -208,7 +209,7 @@ const SingleNft = ({
   const refreshUserHistory = async (wallet) => {
     const result = await axios
       .get(
-        `${baseURL}/api/refresh-user-history/${wallet.toLowerCase()}/${nftId}`,
+        `${baseURL}/api/refresh-user-history/${wallet.toLowerCase()}`,
         {
           headers: {
             cascadestyling:
@@ -1067,12 +1068,13 @@ if(result){
         isConnected={isConnected}
         handleSignup={handleSignup}
         cfxPrice={cfxPrice}
-        handleRefreshData={() => {
+        handleRefreshData={(seller) => {
           getUpdatedNftData().then(() => {
             refreshMetadata(nftId);
             fetchInitialNftsPerCollection(nftId);
             fetchNftSaleHistoryCache(nftAddress, nftId);
             refreshUserHistory(coinbase);
+            refreshUserHistory(seller);
             getCollectionFloorPriceCache();
             onRefreshListings();
           });

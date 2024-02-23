@@ -130,6 +130,39 @@ const RecentlyListed = ({
     }
   };
 
+  const refreshUserHistory = async (wallet) => {
+    const result = await axios
+      .get(
+        `${baseURL}/api/refresh-user-history/${wallet.toLowerCase()}`,
+        {
+          headers: {
+            cascadestyling:
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        }
+      )
+      .catch((e) => {
+        console.error(e);
+      });
+
+    if (result && result.status === 200) {
+      console.log(result.data);
+    }
+  };
+  const handleGetRecentlySoldNftsCache = async () => {
+    await axios
+      .get(`${baseURL}/api/refresh-recent-sales`, {
+        headers: {
+          cascadestyling:
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  };
+
+
   const handleBuyNft = async (nft) => {
     setSelectedNftId(nft.tokenId);
     let listingsArray = [];
@@ -165,7 +198,7 @@ const RecentlyListed = ({
           object.tokenId === nft.tokenId
       );
 
-      console.log(listingIndex);
+  
 
       if (isApproved) {
         setbuyLoading(true);
@@ -175,7 +208,9 @@ const RecentlyListed = ({
           .buyNFT(nft.nftAddress, listingIndex, nft.price)
           .then((result) => {
             setbuyLoading(false);
-
+            refreshUserHistory(coinbase);
+            refreshUserHistory(nft.owner)
+            handleGetRecentlySoldNftsCache()
             setbuyStatus("success");
             handleRefreshData(nft);
             setTimeout(() => {

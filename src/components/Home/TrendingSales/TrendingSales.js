@@ -515,7 +515,9 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                               <h6 className="trending-card-title mb-0">
                                 {item.tokenName} {item.name}
                               </h6>
-                              <img src={checkIcon} alt="" />
+                              {item.verified === "yes" && (
+                            <img src={checkIcon} alt="" />
+                         )}
                             </div>
                             <div className="d-flex flex-column">
                               <h6 className="trending-card-cfx-price mb-0">
@@ -592,7 +594,9 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                               <h6 className="trending-card-title mb-0">
                                 {item.tokenName} {item.name}
                               </h6>
-                              <img src={checkIcon} alt="" />
+                              {item.verified === "yes" && (
+                            <img src={checkIcon} alt="" />
+                         )}
                             </div>
                             <div className="d-flex flex-column">
                               <h6 className="trending-card-cfx-price mb-0">
@@ -657,7 +661,9 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                               <h6 className="trending-card-title mb-0">
                                 {item.collectionName}
                               </h6>
-                              <img src={checkIcon} alt="" />
+                              {item.verified === "yes" && (
+                            <img src={checkIcon} alt="" />
+                         )}
                             </div>
                             <div className="d-flex align-items-center gap-3">
                               <div className="d-flex flex-column">
@@ -811,7 +817,9 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                               <h6 className="trending-card-title mb-0">
                                 {item.tokenName} {item.name}
                               </h6>
-                              <img src={checkIcon} alt="" />
+                              {item.verified === "yes" && (
+                            <img src={checkIcon} alt="" />
+                         )}
                             </div>
                             <div className="d-flex flex-column">
                               <h6 className="trending-card-cfx-price mb-0">
@@ -887,7 +895,9 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                               <h6 className="trending-card-title mb-0">
                                 {item.tokenName} {item.name}
                               </h6>
-                              <img src={checkIcon} alt="" />
+                              {item.verified === "yes" && (
+                            <img src={checkIcon} alt="" />
+                         )}
                             </div>
                             <div className="d-flex flex-column">
                               <h6 className="trending-card-cfx-price mb-0">
@@ -963,7 +973,9 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                               <h6 className="trending-card-title mb-0">
                                 {item.tokenName} {item.name}
                               </h6>
-                              <img src={checkIcon} alt="" />
+                              {item.verified === "yes" && (
+                            <img src={checkIcon} alt="" />
+                         )}
                             </div>
                             <div className="d-flex flex-column">
                               <h6 className="trending-card-cfx-price mb-0">
@@ -1273,7 +1285,9 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                               <h6 className="trending-card-title mb-0">
                                 {item.tokenName} {item.name}
                               </h6>
-                              <img src={checkIcon} alt="" />
+                              {item.verified === "yes" && (
+                            <img src={checkIcon} alt="" />
+                         )}
                             </div>
                             <div className="d-flex flex-column">
                               <h6 className="trending-card-cfx-price mb-0">
@@ -1349,7 +1363,9 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                               <h6 className="trending-card-title mb-0">
                                 {item.tokenName} {item.name}
                               </h6>
-                              <img src={checkIcon} alt="" />
+                              {item.verified === "yes" && (
+                            <img src={checkIcon} alt="" />
+                         )}
                             </div>
                             <div className="d-flex flex-column">
                               <h6 className="trending-card-cfx-price mb-0">
@@ -1425,7 +1441,9 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                               <h6 className="trending-card-title mb-0">
                                 {item.tokenName} {item.name}
                               </h6>
-                              <img src={checkIcon} alt="" />
+                              {item.verified === "yes" && (
+                            <img src={checkIcon} alt="" />
+                         )}
                             </div>
                             <div className="d-flex flex-column">
                               <h6 className="trending-card-cfx-price mb-0">

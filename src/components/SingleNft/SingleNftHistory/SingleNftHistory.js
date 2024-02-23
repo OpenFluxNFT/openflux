@@ -55,12 +55,12 @@ const SingleNftHistory = ({
                           </td>
                           <td className="item-history-table-td greentext text-center">
                             <a
-                              href={`https://evm.confluxscan.net/address/${item.buyer}`}
+                              href={`https://evm.confluxscan.net/address/${item.buyer ?? item.offeror}`}
                               className="greentext"
                               target="_blank"
                               rel="noreferrer"
                             >
-                              {shortAddress(item.buyer)}
+                              {shortAddress(item.buyer ?? item.offeror)}
                             </a>
                           </td>
                           <td className="item-history-table-td right-border text-center">

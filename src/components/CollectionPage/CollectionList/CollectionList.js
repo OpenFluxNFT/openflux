@@ -1210,7 +1210,7 @@ const CollectionList = ({
                         Expires
                       </th>
                       <th className="table-header" scope="col">
-                        Accept
+                        Action
                       </th>
                     </tr>
                   </thead>
@@ -1269,18 +1269,17 @@ const CollectionList = ({
                             <button
                               className="btn blue-btn py-2 border-0 w-100 h-auto"
                               onClick={(e) => {
-                                e.stopPropagation();
-                                e.preventDefault();
-                                onShowAcceptPopup(item);
+                                item.offeror.toLowerCase() !==
+                                coinbase?.toLowerCase()
+                                  ? onShowAcceptPopup(item)
+                                  : onShowPopup();
                               }}
-                              disabled={
-                                item.offeror.toLowerCase() ===
-                                  coinbase?.toLowerCase() || !coinbase
-                                  ? true
-                                  : false
-                              }
+                              disabled={!coinbase?.toLowerCase() || !coinbase}
                             >
-                              Accept
+                              {item.offeror.toLowerCase() ===
+                                coinbase?.toLowerCase() || !coinbase
+                                ? "Update"
+                                : "Accept"}
                             </button>
                           </td>
                         </tr>

@@ -60,7 +60,9 @@ const CollectionPage = ({
 
   const [offerData, setofferData] = useState([]);
   const [bestOffer, setbestOffer] = useState([]);
-  const [userownedNftFilteredArray, setuserownedNftFilteredArray] = useState([])
+  const [userownedNftFilteredArray, setuserownedNftFilteredArray] = useState(
+    []
+  );
 
   const { BigNumber } = window;
   const baseURL = "https://confluxapi.worldofdypians.com";
@@ -74,7 +76,7 @@ const CollectionPage = ({
   const collectionInfo = [
     {
       title: "Total Volume",
-      value: getFormattedNumber(currentCollection.lifetimeVolume / 1e18 ?? 0),
+      value: getFormattedNumber(currentCollection.lifetimeVolume?? 0 / 1e18 ?? 0),
       valueType: "WCFX",
     },
     {
@@ -99,18 +101,14 @@ const CollectionPage = ({
       valueType: `${getFormattedNumber(uniqueOwnersPercentage ?? 0, 0)}%`,
     },
   ];
-const filterUserArray = ()=>{
-  const final = userNftsOwnedArray
-  .filter((obj) => {
-    return (
-      obj.nftAddress.toLowerCase() ===
-      collectionAddress.toLowerCase()
-    );
-  })
-  if(final) {
-    setuserownedNftFilteredArray(final)
-  }
-}
+  const filterUserArray = () => {
+    const final = userNftsOwnedArray.filter((obj) => {
+      return obj.nftAddress.toLowerCase() === collectionAddress.toLowerCase();
+    });
+    if (final) {
+      setuserownedNftFilteredArray(final);
+    }
+  };
   const getFilter = (val) => {
     setFilter(val);
   };
@@ -512,13 +510,13 @@ const filterUserArray = ()=>{
     if (
       result &&
       result.status === 200 &&
+      result.data.message === "OK" &&
       listednfts &&
       listednfts.status === 200
     ) {
       let nftArray = [];
       let nftListedArray = [];
       let totalSupply = 0;
-      
 
       const abi = JSON.parse(result.data.result);
       const listednftsArray = listednfts.data.listings;
@@ -1130,7 +1128,7 @@ const filterUserArray = ()=>{
 
   const getCollectionFloorPrice = async () => {
     const result = await axios
-      .get(`${baseURL}/api/floor-price/${collectionAddress}`, {
+      .get(`${baseURL}/api/refresh-floor-price/${collectionAddress}`, {
         headers: {
           cascadestyling:
             "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
@@ -1201,22 +1199,34 @@ const filterUserArray = ()=>{
     const result = await window
       .getAllCollectionOffers(collectionAddress)
       .catch((e) => {
-        console.error(e);
+        console.log(e);
       });
+
     if (result) {
       let finalArray = [];
       let offerArray = [];
       let allOffersArray = [];
       const web3 = window.confluxWeb3;
       const finalResult = result[1];
+      console.log("finalResult", finalResult);
       if (finalResult && finalResult.length > 0) {
         if (coinbase) {
-          const abiresult = await axios.get(
-            `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress.toLowerCase()}`
+          await Promise.all(
+            window.range(0, finalResult.length - 1).map(async (i) => {
+              const hasExpired = moment
+                .duration(finalResult[i].expiresAt * 1000 - Date.now())
+                .humanize(true)
+                .includes("ago");
+
+              if (!hasExpired) {
+                return allOffersArray.push({
+                  ...finalResult[i],
+                  index: i,
+                });
+              }
+            })
           );
-
-          const abi = JSON.parse(abiresult.data.result);
-
+          setallOffers(allOffersArray);
           finalArray = finalResult.filter((object) => {
             return object.offeror.toLowerCase() === coinbase.toLowerCase();
           });
@@ -1242,30 +1252,15 @@ const filterUserArray = ()=>{
             if (!hasExpired2) {
               setofferData(...offerArray);
             } else setofferData([]);
-
-            await Promise.all(
-              window.range(0, finalResult.length - 1).map(async (i) => {
-                const hasExpired = moment
-                  .duration(finalResult[i].expiresAt * 1000 - Date.now())
-                  .humanize(true)
-                  .includes("ago");
-                if (!hasExpired) {
-                  return allOffersArray.push({
-                    ...finalResult[i],
-                    index: i,
-                  });
-                }
-              })
-            );
-            setallOffers(allOffersArray);
           } else setofferData([]);
         }
       } else {
         setofferData([]);
+        setallOffers([]);
       }
     }
   };
-
+  // console.log('alloffers', allOffers)
   const handleMakeOffer = async (price, duration) => {
     if (price !== "" && price !== 0) {
       setOfferStatus("loading");
@@ -1339,15 +1334,102 @@ const filterUserArray = ()=>{
     setselectedOffer(offerObj);
   };
 
-  const acceptOfferFunc = async (contractAddress,selectedId,offerIndex  ) => {
+  const getUpdatedNftData = async () => {
+    await axios
+      .get(
+        `${baseURL}/api/collections/${collectionAddress.toLowerCase()}/refresh-listings`,
+        {
+          headers: {
+            cascadestyling:
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        }
+      )
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const refreshUserHistory = async (wallet, nftId) => {
+    const result = await axios
+      .get(
+        `${baseURL}/api/refresh-user-history/${wallet.toLowerCase()}/${nftId}`,
+        {
+          headers: {
+            cascadestyling:
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        }
+      )
+      .catch((e) => {
+        console.error(e);
+      });
+
+    if (result && result.status === 200) {
+      console.log(result.data);
+    }
+  };
+
+  const fetchNftSaleHistory = async (nftAddr, nftId) => {
+    await axios
+      .get(
+        `${baseURL}/api/nft-sale-history/${nftAddr.toLowerCase()}/${nftId}`,
+        {
+          headers: {
+            cascadestyling:
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        }
+      )
+      .catch((e) => {
+        console.error(e);
+      });
+  };
+
+  const fetchNftSaleHistoryCache = async (nftAddr, nftId) => {
+    const result = await axios
+      .get(
+        `${baseURL}/api/refresh-sale-history-cache/${nftAddr.toLowerCase()}/${nftId}`,
+        {
+          headers: {
+            cascadestyling:
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        }
+      )
+      .catch((e) => {
+        console.error(e);
+      });
+
+    if (result && result.status === 200) {
+      fetchNftSaleHistory(nftAddr, nftId);
+    }
+  };
+
+  const acceptOfferFunc = async (
+    contractAddress,
+    selectedId,
+    offerIndex,
+    offeror
+  ) => {
     setOfferacceptStatus("loading");
     await window
-      .acceptCollectionOffer(contractAddress,selectedId,offerIndex)
+      .acceptCollectionOffer(contractAddress, selectedId, offerIndex)
       .then(() => {
-        onRefreshListings();
+        refreshUserHistory(coinbase, selectedId);
+        refreshUserHistory(offeror, selectedId);
+        getUserOffersForCollection();
+        getCollectionTotalVolume();
+        getUpdatedNftData().then(() => {
+          fetchInitialNftsPerCollection();
+          fetchNftSaleHistoryCache(contractAddress, selectedId);
+          getCollectionFloorPrice();
+          onRefreshListings();
+        });
         setOfferacceptStatus("success");
         setTimeout(() => {
           setOfferacceptStatus("initial");
+          setshowOfferAcceptPopup(false);
         }, 3000);
       })
       .catch((e) => {
@@ -1359,29 +1441,30 @@ const filterUserArray = ()=>{
       });
   };
 
-  const handleAcceptOffer = async (selectedId,offerIndex) => {
+  const handleAcceptOffer = async (offerIndex, selectedId, offeror) => {
     setOfferacceptStatus("loading");
     const isApproved = await window
       .isApprovedNFT(collectionAddress, coinbase)
       .then((data) => {
         return data;
-      }).catch((e)=>{
-        console.log(e)
+      })
+      .catch((e) => {
+        console.log(e);
         setOfferacceptStatus("fail");
         setTimeout(() => {
           setOfferacceptStatus("initial");
         }, 4000);
-      })
+      });
 
     if (isApproved) {
-      acceptOfferFunc(collectionAddress,selectedId,offerIndex);
+      acceptOfferFunc(collectionAddress, selectedId, offerIndex, offeror);
     } else {
       await window
         .approveNFT(collectionAddress)
         .then(() => {
           setOfferacceptStatus("success");
           setTimeout(() => {
-            acceptOfferFunc(collectionAddress,selectedId,offerIndex);
+            acceptOfferFunc(collectionAddress, selectedId, offerIndex, offeror);
           }, 1000);
         })
         .catch((e) => {
@@ -1398,12 +1481,12 @@ const filterUserArray = ()=>{
     window.scrollTo(0, 0);
   }, []);
 
-  useEffect(()=>{
-    if(userNftsOwnedArray && userNftsOwnedArray.length > 0) {
-      filterUserArray()
+  useEffect(() => {
+    if (userNftsOwnedArray && userNftsOwnedArray.length > 0) {
+      filterUserArray();
     }
-  },[userNftsOwnedArray]) 
-  
+  }, [userNftsOwnedArray]);
+
   useEffect(() => {
     getUserOffersForCollection();
   }, [coinbase]);
@@ -1453,8 +1536,6 @@ const filterUserArray = ()=>{
       window.addEventListener("scroll", onScroll);
     }
   }, [filter]);
-
-
 
   return (
     <>

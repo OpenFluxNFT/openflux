@@ -1553,7 +1553,7 @@ function App() {
               onRefreshListings={() => {
                 handleGetRecentlyListedNftsCache();
                 handleGetRecentlySoldNftsCache();
-              }}
+              }}     
             />
           }
         />
@@ -1635,6 +1635,7 @@ function App() {
               cfxPrice={cfxPrice}
               userCollectionArray={userCollectionArray}
               recentlyListedNfts={recentlyListedNfts}
+               
             />
           }
         />

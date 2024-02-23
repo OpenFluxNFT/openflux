@@ -214,6 +214,41 @@ const MoreFromCollection = ({
     }
   };
 
+  const refreshUserHistory = async (wallet) => {
+    const result = await axios
+      .get(
+        `${baseURL}/api/refresh-user-history/${wallet.toLowerCase()}`,
+        {
+          headers: {
+            cascadestyling:
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        }
+      )
+      .catch((e) => {
+        console.error(e);
+      });
+
+    if (result && result.status === 200) {
+      console.log(result.data);
+    }
+  };
+
+  const handleGetRecentlySoldNftsCache = async () => {
+    await axios
+      .get(`${baseURL}/api/refresh-recent-sales`, {
+        headers: {
+          cascadestyling:
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  };
+
+
+
   const checkNftApprovalForBuying = async (amount) => {
     const result = await window.isApprovedBuy(amount).catch((e) => {
       console.error(e);
@@ -228,6 +263,8 @@ const MoreFromCollection = ({
     }
   };
 
+
+
   const handleBuyNft = async (nft) => {
     setSelectedNftId(nft.tokenId);
 
@@ -238,8 +275,6 @@ const MoreFromCollection = ({
         }
       );
 
-      console.log(nft.listingIndex);
-
       if (isApproved) {
         setbuyLoading(true);
         setbuyStatus("buy");
@@ -248,7 +283,9 @@ const MoreFromCollection = ({
           .buyNFT(nft.nftAddress, nft.listingIndex, nft.price)
           .then((result) => {
             setbuyLoading(false);
-
+            refreshUserHistory(coinbase);
+            refreshUserHistory(nft.owner)
+            handleGetRecentlySoldNftsCache()
             setbuyStatus("success");
             handleRefreshData(nft);
             setTimeout(() => {

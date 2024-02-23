@@ -402,9 +402,9 @@ const TrendingCollections = ({
                             <h6 className="trending-collection-title mb-0">
                               {item.tokenName} {item.name}
                             </h6>
-                            {/* {item.verified === "yes" && ( */}
+                            {item.verified === "yes" && (
                             <img src={checkIcon} alt="" />
-                            {/* )} */}
+                         )}
                           </div>
                           <div className="d-flex align-items-center gap-3">
                             <div className="d-flex flex-column">

@@ -1353,7 +1353,7 @@ const CollectionPage = ({
   const refreshUserHistory = async (wallet, nftId) => {
     const result = await axios
       .get(
-        `${baseURL}/api/refresh-user-history/${wallet.toLowerCase()}/${nftId}`,
+        `${baseURL}/api/refresh-user-history/${wallet.toLowerCase()}`,
         {
           headers: {
             cascadestyling:

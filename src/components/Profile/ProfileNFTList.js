@@ -284,27 +284,8 @@ const ProfileNFTList = ({
   const testFuncCollected = () => {
     let uniqueObjects = [];
     let seenNames = new Set();
-
-    userNftsOwnedArray.forEach((obj) => {
-      let lowercaseName = obj.collectionName?.toLowerCase();
-      if (!seenNames.has(lowercaseName)) {
-        seenNames.add(lowercaseName);
-        uniqueObjects.push(obj);
-      }
-    });
-
-    setcollectedOptions(uniqueObjects);
-  };
-
-  const testFuncListed = () => {
-    let uniqueObjects = [];
-    let seenNames = new Set();
-
-    userNftsOwnedArray
-      .filter((item) => {
-        return item.price !== undefined;
-      })
-      .forEach((obj) => {
+    if (userNftsOwnedArray && userNftsOwnedArray.length > 0) {
+      userNftsOwnedArray.forEach((obj) => {
         let lowercaseName = obj.collectionName?.toLowerCase();
         if (!seenNames.has(lowercaseName)) {
           seenNames.add(lowercaseName);
@@ -312,52 +293,77 @@ const ProfileNFTList = ({
         }
       });
 
-    setlistedOptions(uniqueObjects);
+      setcollectedOptions(uniqueObjects);
+    }
+  };
+
+  const testFuncListed = () => {
+    let uniqueObjects = [];
+    let seenNames = new Set();
+    if (userNftsOwnedArray && userNftsOwnedArray.length > 0) {
+      userNftsOwnedArray
+        .filter((item) => {
+          return item.price !== undefined;
+        })
+        .forEach((obj) => {
+          let lowercaseName = obj.collectionName?.toLowerCase();
+          if (!seenNames.has(lowercaseName)) {
+            seenNames.add(lowercaseName);
+            uniqueObjects.push(obj);
+          }
+        });
+
+      setlistedOptions(uniqueObjects);
+    }
   };
 
   const testFuncSaleHistory = () => {
     let uniqueObjects = [];
     let seenNames = new Set();
+    if (saleHistory && saleHistory.length > 0) {
+      saleHistory.forEach((obj) => {
+        let lowercaseName = obj.collectionName?.toLowerCase();
+        if (!seenNames.has(lowercaseName)) {
+          seenNames.add(lowercaseName);
+          uniqueObjects.push(obj);
+        }
+      });
 
-    saleHistory.forEach((obj) => {
-      let lowercaseName = obj.collectionName?.toLowerCase();
-      if (!seenNames.has(lowercaseName)) {
-        seenNames.add(lowercaseName);
-        uniqueObjects.push(obj);
-      }
-    });
-
-    setsaleHistoryOptions(uniqueObjects);
+      setsaleHistoryOptions(uniqueObjects);
+    }
   };
 
   const testFuncOffersMadeNft = () => {
     let uniqueObjects = [];
     let seenNames = new Set();
+    console.log(usersNftOffers)
+    if (usersNftOffers && usersNftOffers.length > 0) {
+      usersNftOffers.forEach((obj) => {
+        let lowercaseName = obj.nftAddress?.toLowerCase();
+        if (!seenNames.has(lowercaseName)) {
+          seenNames.add(lowercaseName);
+          uniqueObjects.push(obj);
+        }
+      });
 
-    usersNftOffers.forEach((obj) => {
-      let lowercaseName = obj.nftAddress?.toLowerCase();
-      if (!seenNames.has(lowercaseName)) {
-        seenNames.add(lowercaseName);
-        uniqueObjects.push(obj);
-      }
-    });
-
-    setuserOffersMadeNftOptions(uniqueObjects);
+      setuserOffersMadeNftOptions(uniqueObjects);
+    }
   };
 
   const testFuncOffersMadeCollection = () => {
     let uniqueObjects = [];
     let seenNames = new Set();
+    if (usersCollectionOffers && usersCollectionOffers.length > 0) {
+      usersCollectionOffers.forEach((obj) => {
+        let lowercaseName = obj.nftAddress?.toLowerCase();
+        if (!seenNames.has(lowercaseName)) {
+          seenNames.add(lowercaseName);
+          uniqueObjects.push(obj);
+        }
+      });
 
-    usersCollectionOffers.forEach((obj) => {
-      let lowercaseName = obj.nftAddress?.toLowerCase();
-      if (!seenNames.has(lowercaseName)) {
-        seenNames.add(lowercaseName);
-        uniqueObjects.push(obj);
-      }
-    });
-
-    setuserOffersMadeCollectionOptions(uniqueObjects);
+      setuserOffersMadeCollectionOptions(uniqueObjects);
+    }
   };
 
   useEffect(() => {
@@ -421,9 +427,9 @@ const ProfileNFTList = ({
                     ).length
                   : option === "activity"
                   ? saleHistory.length
-                  : option === "offersMade" && favoritesOption === 'items'
+                  : option === "offersMade" && favoritesOption === "items"
                   ? usersNftOffers.length
-                  : option === "offersMade" && favoritesOption === 'collections'
+                  : option === "offersMade" && favoritesOption === "collections"
                   ? usersCollectionOffers.length
                   : 0}
               </span>
@@ -1930,11 +1936,12 @@ const ProfileNFTList = ({
                         </tbody>
                       </table>
                     )}
-                  {usersCollectionOffers && usersCollectionOffers.length === 0 && (
-                    <span className="text-secondary d-flex justify-content-center w-100 h-100 align-items-center">
-                      No activity yet
-                    </span>
-                  )}
+                  {usersCollectionOffers &&
+                    usersCollectionOffers.length === 0 && (
+                      <span className="text-secondary d-flex justify-content-center w-100 h-100 align-items-center">
+                        No activity yet
+                      </span>
+                    )}
                 </div>
               </div>
             </div>

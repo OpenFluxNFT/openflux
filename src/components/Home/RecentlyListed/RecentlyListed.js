@@ -19,6 +19,7 @@ const RecentlyListed = ({
   userNftFavsInitial,
   coinbase,
   onRefreshListings,
+  chainId,
 }) => {
   const settings = {
     // dots: true,
@@ -37,6 +38,7 @@ const RecentlyListed = ({
   const [buyStatus, setbuyStatus] = useState("buy"); //buy
   const [buyloading, setbuyLoading] = useState(false); //buy
   const [selectedNftId, setSelectedNftId] = useState(""); //buy
+  const [isApproved, setisApproved] = useState(false); //buy
 
   const windowSize = useWindowSize();
 
@@ -132,15 +134,12 @@ const RecentlyListed = ({
 
   const refreshUserHistory = async (wallet) => {
     const result = await axios
-      .get(
-        `${baseURL}/api/refresh-user-history/${wallet.toLowerCase()}`,
-        {
-          headers: {
-            cascadestyling:
-              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-          },
-        }
-      )
+      .get(`${baseURL}/api/refresh-user-history/${wallet.toLowerCase()}`, {
+        headers: {
+          cascadestyling:
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
       .catch((e) => {
         console.error(e);
       });
@@ -161,7 +160,6 @@ const RecentlyListed = ({
         console.error(e);
       });
   };
-
 
   const handleBuyNft = async (nft) => {
     setSelectedNftId(nft.tokenId);
@@ -188,6 +186,7 @@ const RecentlyListed = ({
     if (coinbase) {
       const isApproved = await checkNftApprovalForBuying(nft.price).then(
         (data) => {
+          setisApproved(data);
           return data;
         }
       );
@@ -198,8 +197,6 @@ const RecentlyListed = ({
           object.tokenId === nft.tokenId
       );
 
-  
-
       if (isApproved) {
         setbuyLoading(true);
         setbuyStatus("buy");
@@ -209,8 +206,8 @@ const RecentlyListed = ({
           .then((result) => {
             setbuyLoading(false);
             refreshUserHistory(coinbase);
-            refreshUserHistory(nft.owner)
-            handleGetRecentlySoldNftsCache()
+            refreshUserHistory(nft.seller);
+            handleGetRecentlySoldNftsCache();
             setbuyStatus("success");
             handleRefreshData(nft);
             setTimeout(() => {
@@ -237,6 +234,7 @@ const RecentlyListed = ({
             }, 3000);
             setbuyStatus("success");
             setbuyLoading(false);
+            setisApproved(true);
           })
           .catch((e) => {
             console.error(e);
@@ -380,7 +378,13 @@ const RecentlyListed = ({
                               ? "View Details"
                               : coinbase.toLowerCase() !==
                                   item.seller?.toLowerCase() &&
-                                item.isApproved === false
+                                selectedNftId === item.tokenId &&
+                                item.isApproved === false &&
+                                isApproved === false
+                              ? "Approve Buy"
+                              : coinbase.toLowerCase() !==
+                                  item.seller?.toLowerCase() &&
+                                selectedNftId !== item.tokenId
                               ? "Approve Buy"
                               : "Buy"
                             : "Buy"}
@@ -534,16 +538,47 @@ const RecentlyListed = ({
                           handleBuyNft(item);
                         }}
                       >
-                        {coinbase
+                        {!buyloading && chainId !== 1030
+                          ? "Switch Network"
+                          : (buyStatus === "buy" &&
+                              selectedNftId === item.tokenId) ||
+                            item.isApproved === true
+                          ? "Buy"
+                          : buyStatus === "approve" ||
+                            buyStatus === "" ||
+                            (item.isApproved === false && isApproved === false)
+                          ? "Approve buy"
+                          : buyStatus === "success" &&
+                            selectedNftId === item.tokenId
+                          ? "Success"
+                          : coinbase &&
+                            coinbase.toLowerCase() ===
+                              item.seller?.toLowerCase()
+                          ? "View Details"
+                          : selectedNftId !== item.tokenId &&
+                            coinbase &&
+                            coinbase.toLowerCase() !==
+                              item.seller?.toLowerCase()
+                          ? "Approve Buy"
+                          : "Failed"}
+
+                        {/* {coinbase
                           ? coinbase.toLowerCase() ===
                             item.seller?.toLowerCase()
                             ? "View Details"
                             : coinbase.toLowerCase() !==
                                 item.seller?.toLowerCase() &&
-                              item.isApproved === false
+                              selectedNftId === item.tokenId &&
+                              item.isApproved === false &&
+                              isApproved === false
+                            ? "Approve Buy"
+                            : coinbase.toLowerCase() !==
+                                item.seller?.toLowerCase() &&
+                              selectedNftId !== item.tokenId
                             ? "Approve Buy"
                             : "Buy"
-                          : "Buy"}
+                          : "Buy"} */}
+
                         {buyloading && selectedNftId === item.tokenId && (
                           <div
                             className="spinner-border spinner-border-sm text-light ms-1"

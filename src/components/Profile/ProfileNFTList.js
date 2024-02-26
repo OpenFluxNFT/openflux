@@ -1457,7 +1457,7 @@ const ProfileNFTList = ({
                               }
                               style={{ cursor: "pointer" }}
                             >
-                              <td className="item-history-table-td left-border text-center">
+                              <td className="item-history-table-td left-border">
                                 {!item.isVideo && item.image ? (
                                   <img
                                     src={`https://cdnflux.dypius.com/${item.image}`}
@@ -1595,7 +1595,7 @@ const ProfileNFTList = ({
                                 }
                                 style={{ cursor: "pointer" }}
                               >
-                                <td className="item-history-table-td left-border text-center">
+                                <td className="item-history-table-td left-border">
                                   {!item.isVideo && item.image ? (
                                     <img
                                       src={`https://cdnflux.dypius.com/${item.image}`}
@@ -1862,7 +1862,7 @@ const ProfileNFTList = ({
                                   }
                                   style={{ cursor: "pointer" }}
                                 >
-                                  <td className="item-history-table-td left-border text-center">
+                                  <td className="item-history-table-td left-border">
                                     <img
                                       src={
                                         allCollections.find((obj) => {

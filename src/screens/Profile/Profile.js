@@ -616,7 +616,7 @@ const Profile = ({
         });
 
         settotalSoldNfts(uniqueObjects.length);
-        setsaleHistory(saleHistory);
+        setsaleHistory(saleHistory.reverse());
         // console.log("saleHistory", saleHistory);
       }
     }

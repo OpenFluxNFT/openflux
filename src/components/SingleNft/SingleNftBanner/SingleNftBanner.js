@@ -24,7 +24,7 @@ const SingleNftBanner = ({
   isConnected,
   handleSignup,
   cfxPrice,
-  handleRefreshData,
+  handleRefreshData,handleRefreshData2,
   handleSwitchNetwork,
   loading,
   offerData,
@@ -88,7 +88,7 @@ const SingleNftBanner = ({
       return false;
     }
   };
-
+ 
   const handleBuyNft = async () => {
     const isApproved = await checkNftApprovalForBuying(nftData.price).then(
       (data) => {
@@ -111,6 +111,8 @@ const SingleNftBanner = ({
           setPurchaseStatus("Successfully purchased!");
           setPurchaseColor("#00FECF");
           handleRefreshData(nftData.owner);
+          handleRefreshData2(nftData.owner);
+
           setTimeout(() => {
             setPurchaseStatus("");
             setPurchaseColor("#00FECF");

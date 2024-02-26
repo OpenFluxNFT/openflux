@@ -406,12 +406,13 @@ function App() {
                 seller: seller,
                 collectionName: collectionName,
                 lastSale: lastSale,
+                isApproved: isApproved,
               };
           }
         })
       );
 
-      setrecentlyListedNfts(recentlyListed);
+      setrecentlyListedNfts(recentlyListed.reverse());
     }
   };
 
@@ -1554,6 +1555,7 @@ function App() {
                 handleGetRecentlyListedNftsCache();
                 handleGetRecentlySoldNftsCache();
               }}     
+              chainId={chainId}
             />
           }
         />

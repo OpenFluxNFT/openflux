@@ -522,16 +522,16 @@ const CollectionList = ({
     getFilter(generalFilter);
   }, [generalFilter]);
 
-  useEffect(() => {
-    if (queryItems.length === 0) {
-      setCollectionLoading(true);
-      setNftList(allNftArray);
-      setTimeout(() => {
-        setCollectionLoading(false);
-      }, 1500);
-    }
-  }, [queryItems]);
-
+  // useEffect(() => {
+  //   if (queryItems.length === 0) {
+  //     setCollectionLoading(true);
+  //     setNftList(allNftArray);
+  //     setTimeout(() => {
+  //       setCollectionLoading(false);
+  //     }, 1500);
+  //   }
+  // }, [queryItems]);
+ 
   return (
     <>
       <div className="container-lg">
@@ -1049,7 +1049,7 @@ const CollectionList = ({
                   : "small-cards-grid"
               } mt-3`}
             >
-              {gridView === "list" && listType !== '' && listType !== "collectionoffers" ? (
+              {gridView === "list" && listType !== "collectionoffers" ? (
                 <table className="table nft-table">
                   <thead>
                     <tr style={{ borderBottom: "2px solid #828FBB" }}>
@@ -1610,7 +1610,7 @@ const CollectionList = ({
                   )}
                 </table>
               ) : collectionLoading === false &&
-                ((listType !== '' && listType !== "collectionoffers") ||
+                ((listType !== "" && listType !== "collectionoffers") ||
                   (Number(minPrice) > 0 && Number(maxPrice) > 0)) ? (
                 allNftArray &&
                 nftList.length > 0 &&
@@ -1753,7 +1753,7 @@ const CollectionList = ({
                             " " +
                             (item.name ? item.name : ` #${item.tokenId}`)}
                         </h6>
-                      {isVerified &&  <img src={checkIcon} alt="" /> }
+                        {isVerified && <img src={checkIcon} alt="" />}
                       </div>
                       {item.seller ? (
                         <div className="d-flex align-items-center mt-2 gap-3">
@@ -1823,15 +1823,6 @@ const CollectionList = ({
                     </NavLink>
                   </div>
                 ))
-              ) : listType !== "collectionoffers" && listType !== '' && collectionLoading === true ? (
-                dummyCards.map((item, index) => (
-                  <Skeleton
-                    key={index}
-                    variant="rounded"
-                    width={"100%"}
-                    height={250}
-                  />
-                ))
               ) : (
                 <></>
               )}
@@ -1844,11 +1835,11 @@ const CollectionList = ({
                   </span>
                 )}
             </div>
-            {collectionLoading === true && loading === true &&
-            listType !== "collectionoffers" &&   totalSupplyPerCollection > 0 && allNftArray &&
-           ( nftList.length === 0 ||
-            allNftArray.length === 0 )&&
-            (gridView === "small-grid" || gridView === "big-grid") ? (
+
+            {(collectionLoading === true || loading === true) &&
+            listType !== "collectionoffers" &&
+            totalSupplyPerCollection > 0 &&
+            allNftArray && (gridView === "small-grid" || gridView === "big-grid") ? (
               <div
                 className={`${
                   gridView === "list"
@@ -1867,7 +1858,9 @@ const CollectionList = ({
                   />
                 ))}
               </div>
-            ) : collectionLoading === true &&  loading === true && totalSupplyPerCollection > 0 && gridView === "list" ? (
+            ) : (collectionLoading === true || loading === true) &&
+              totalSupplyPerCollection > 0 &&
+              gridView === "list" ? (
               <div
                 className={`${
                   gridView === "list"

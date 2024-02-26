@@ -700,7 +700,9 @@ const CollectionPage = ({
               .catch((e) => {
                 console.log(e);
               });
-            finalOfferResult = offersresult[1];
+            if (offersresult) {
+              finalOfferResult = offersresult[1];
+            }
 
             if (finalOfferResult && finalOfferResult.length > 0) {
               // finalArray = finalOfferResult.filter((object) => {
@@ -863,7 +865,7 @@ const CollectionPage = ({
 
       if (totalSupply && totalSupply > 0) {
         const limit = totalSupply >= next ? next : totalSupply;
-        console.log("next, limit+nftPerRow - 1", next, limit + nftPerRow - 1);
+
         await Promise.all(
           window.range(next, limit + nftPerRow - 1).map(async (i) => {
             let tokenByIndex = 0;
@@ -887,7 +889,9 @@ const CollectionPage = ({
               .catch((e) => {
                 console.log(e);
               });
-            finalOfferResult = offersresult[1];
+            if (offersresult) {
+              finalOfferResult = offersresult[1];
+            }
 
             if (finalOfferResult && finalOfferResult.length > 0) {
               // finalArray = finalOfferResult.filter((object) => {
@@ -1004,7 +1008,6 @@ const CollectionPage = ({
   };
 
   const loadMore = () => {
-    console.log("testt");
     setnext(next + nftPerRow);
   };
 
@@ -1024,7 +1027,7 @@ const CollectionPage = ({
 
         // }
         // document.removeEventListener("scroll", onScroll);
-//  console.log(document.documentElement.offsetHeight,window.innerHeight + document.documentElement.scrollTop)
+        //  console.log(document.documentElement.offsetHeight,window.innerHeight + document.documentElement.scrollTop)
         if (
           window.innerHeight + document.documentElement.scrollTop !==
           document.documentElement.offsetHeight
@@ -1229,23 +1232,23 @@ const CollectionPage = ({
       const finalResult = result[1];
       console.log("finalResult", finalResult);
       if (finalResult && finalResult.length > 0) {
-        if (coinbase) {
-          await Promise.all(
-            window.range(0, finalResult.length - 1).map(async (i) => {
-              const hasExpired = moment
-                .duration(finalResult[i].expiresAt * 1000 - Date.now())
-                .humanize(true)
-                .includes("ago");
+        await Promise.all(
+          window.range(0, finalResult.length - 1).map(async (i) => {
+            const hasExpired = moment
+              .duration(finalResult[i].expiresAt * 1000 - Date.now())
+              .humanize(true)
+              .includes("ago");
 
-              if (!hasExpired) {
-                return allOffersArray.push({
-                  ...finalResult[i],
-                  index: i,
-                });
-              }
-            })
-          );
-          setallOffers(allOffersArray);
+            if (!hasExpired) {
+              return allOffersArray.push({
+                ...finalResult[i],
+                index: i,
+              });
+            }
+          })
+        );
+        setallOffers(allOffersArray);
+        if (coinbase) {
           finalArray = finalResult.filter((object) => {
             return object.offeror.toLowerCase() === coinbase.toLowerCase();
           });

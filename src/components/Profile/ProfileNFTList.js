@@ -284,27 +284,8 @@ const ProfileNFTList = ({
   const testFuncCollected = () => {
     let uniqueObjects = [];
     let seenNames = new Set();
-
-    userNftsOwnedArray.forEach((obj) => {
-      let lowercaseName = obj.collectionName?.toLowerCase();
-      if (!seenNames.has(lowercaseName)) {
-        seenNames.add(lowercaseName);
-        uniqueObjects.push(obj);
-      }
-    });
-
-    setcollectedOptions(uniqueObjects);
-  };
-
-  const testFuncListed = () => {
-    let uniqueObjects = [];
-    let seenNames = new Set();
-
-    userNftsOwnedArray
-      .filter((item) => {
-        return item.price !== undefined;
-      })
-      .forEach((obj) => {
+    if (userNftsOwnedArray && userNftsOwnedArray.length > 0) {
+      userNftsOwnedArray.forEach((obj) => {
         let lowercaseName = obj.collectionName?.toLowerCase();
         if (!seenNames.has(lowercaseName)) {
           seenNames.add(lowercaseName);
@@ -312,52 +293,77 @@ const ProfileNFTList = ({
         }
       });
 
-    setlistedOptions(uniqueObjects);
+      setcollectedOptions(uniqueObjects);
+    }
+  };
+
+  const testFuncListed = () => {
+    let uniqueObjects = [];
+    let seenNames = new Set();
+    if (userNftsOwnedArray && userNftsOwnedArray.length > 0) {
+      userNftsOwnedArray
+        .filter((item) => {
+          return item.price !== undefined;
+        })
+        .forEach((obj) => {
+          let lowercaseName = obj.collectionName?.toLowerCase();
+          if (!seenNames.has(lowercaseName)) {
+            seenNames.add(lowercaseName);
+            uniqueObjects.push(obj);
+          }
+        });
+
+      setlistedOptions(uniqueObjects);
+    }
   };
 
   const testFuncSaleHistory = () => {
     let uniqueObjects = [];
     let seenNames = new Set();
+    if (saleHistory && saleHistory.length > 0) {
+      saleHistory.forEach((obj) => {
+        let lowercaseName = obj.collectionName?.toLowerCase();
+        if (!seenNames.has(lowercaseName)) {
+          seenNames.add(lowercaseName);
+          uniqueObjects.push(obj);
+        }
+      });
 
-    saleHistory.forEach((obj) => {
-      let lowercaseName = obj.collectionName?.toLowerCase();
-      if (!seenNames.has(lowercaseName)) {
-        seenNames.add(lowercaseName);
-        uniqueObjects.push(obj);
-      }
-    });
-
-    setsaleHistoryOptions(uniqueObjects);
+      setsaleHistoryOptions(uniqueObjects);
+    }
   };
 
   const testFuncOffersMadeNft = () => {
     let uniqueObjects = [];
     let seenNames = new Set();
+    console.log(usersNftOffers);
+    if (usersNftOffers && usersNftOffers.length > 0) {
+      usersNftOffers.forEach((obj) => {
+        let lowercaseName = obj.nftAddress?.toLowerCase();
+        if (!seenNames.has(lowercaseName)) {
+          seenNames.add(lowercaseName);
+          uniqueObjects.push(obj);
+        }
+      });
 
-    usersNftOffers.forEach((obj) => {
-      let lowercaseName = obj.nftAddress?.toLowerCase();
-      if (!seenNames.has(lowercaseName)) {
-        seenNames.add(lowercaseName);
-        uniqueObjects.push(obj);
-      }
-    });
-
-    setuserOffersMadeNftOptions(uniqueObjects);
+      setuserOffersMadeNftOptions(uniqueObjects);
+    }
   };
 
   const testFuncOffersMadeCollection = () => {
     let uniqueObjects = [];
     let seenNames = new Set();
+    if (usersCollectionOffers && usersCollectionOffers.length > 0) {
+      usersCollectionOffers.forEach((obj) => {
+        let lowercaseName = obj.nftAddress?.toLowerCase();
+        if (!seenNames.has(lowercaseName)) {
+          seenNames.add(lowercaseName);
+          uniqueObjects.push(obj);
+        }
+      });
 
-    usersCollectionOffers.forEach((obj) => {
-      let lowercaseName = obj.nftAddress?.toLowerCase();
-      if (!seenNames.has(lowercaseName)) {
-        seenNames.add(lowercaseName);
-        uniqueObjects.push(obj);
-      }
-    });
-
-    setuserOffersMadeCollectionOptions(uniqueObjects);
+      setuserOffersMadeCollectionOptions(uniqueObjects);
+    }
   };
 
   useEffect(() => {
@@ -386,6 +392,8 @@ const ProfileNFTList = ({
       setNftList(userNftsOwnedArray);
     }
   }, [option, userNftsOwnedArray]);
+
+
 
   return (
     <div className="container-lg">
@@ -421,9 +429,9 @@ const ProfileNFTList = ({
                     ).length
                   : option === "activity"
                   ? saleHistory.length
-                  : option === "offersMade" && favoritesOption === 'items'
+                  : option === "offersMade" && favoritesOption === "items"
                   ? usersNftOffers.length
-                  : option === "offersMade" && favoritesOption === 'collections'
+                  : option === "offersMade" && favoritesOption === "collections"
                   ? usersCollectionOffers.length
                   : 0}
               </span>
@@ -1088,7 +1096,27 @@ const ProfileNFTList = ({
                           >
                             {item.name ?? `#${item.tokenId}`}
                           </h6>
-                          <img src={checkIcon} alt="" />
+                          {allCollections &&
+                          allCollections.length > 0 &&
+                          allCollections.find((obj) => {
+                            return (
+                              obj.contractAddress.toLowerCase() ===
+                              item.contractAddress.toLowerCase()
+                            );
+                          }) ? (
+                            allCollections.find((obj) => {
+                              return (
+                                obj.contractAddress.toLowerCase() ===
+                                item.contractAddress.toLowerCase()
+                              );
+                            }).verified === "yes" ? (
+                              <img src={checkIcon} alt="" className="ms-2" />
+                            ) : (
+                              <></>
+                            )
+                          ) : (
+                            <></>
+                          )}
                         </div>
                         <div className="d-flex align-items-center mt-2 gap-3">
                           <h6
@@ -1232,7 +1260,27 @@ const ProfileNFTList = ({
                             >
                               {item.name ?? `#${item.tokenId}`}
                             </h6>
-                            <img src={checkIcon} alt="" />
+                            {allCollections &&
+                            allCollections.length > 0 &&
+                            allCollections.find((obj) => {
+                              return (
+                                obj.contractAddress.toLowerCase() ===
+                                item.contractAddress.toLowerCase()
+                              );
+                            }) ? (
+                              allCollections.find((obj) => {
+                                return (
+                                  obj.contractAddress.toLowerCase() ===
+                                  item.contractAddress.toLowerCase()
+                                );
+                              }).verified === "yes" ? (
+                                <img src={checkIcon} alt="" className="ms-2" />
+                              ) : (
+                                <></>
+                              )
+                            ) : (
+                              <></>
+                            )}
                           </div>
                           <div className="d-flex align-items-center mt-2 gap-3">
                             <h6
@@ -1344,7 +1392,27 @@ const ProfileNFTList = ({
                               })?.collectionName
                             }
                           </h6>
-                          <img src={checkIcon} alt="" />
+                          {allCollections &&
+                          allCollections.length > 0 &&
+                          allCollections.find((obj) => {
+                            return (
+                              obj.contractAddress.toLowerCase() ===
+                              item.contractAddress.toLowerCase()
+                            );
+                          }) ? (
+                            allCollections.find((obj) => {
+                              return (
+                                obj.contractAddress.toLowerCase() ===
+                                item.contractAddress.toLowerCase()
+                              );
+                            }).verified === "yes" ? (
+                              <img src={checkIcon} alt="" className="ms-2" />
+                            ) : (
+                              <></>
+                            )
+                          ) : (
+                            <></>
+                          )}
                         </div>
                         <img src={star} alt="" />
                       </div>
@@ -1399,7 +1467,27 @@ const ProfileNFTList = ({
                                 })?.collectionName
                               }
                             </h6>
-                            <img src={checkIcon} alt="" />
+                            {allCollections &&
+                            allCollections.length > 0 &&
+                            allCollections.find((obj) => {
+                              return (
+                                obj.contractAddress.toLowerCase() ===
+                                item.contractAddress.toLowerCase()
+                              );
+                            }) ? (
+                              allCollections.find((obj) => {
+                                return (
+                                  obj.contractAddress.toLowerCase() ===
+                                  item.contractAddress.toLowerCase()
+                                );
+                              }).verified === "yes" ? (
+                                <img src={checkIcon} alt="" className="ms-2" />
+                              ) : (
+                                <></>
+                              )
+                            ) : (
+                              <></>
+                            )}
                           </div>
                           <img src={star} alt="" />
                         </div>
@@ -1451,7 +1539,7 @@ const ProfileNFTList = ({
                               }
                               style={{ cursor: "pointer" }}
                             >
-                              <td className="item-history-table-td left-border text-center">
+                              <td className="item-history-table-td left-border">
                                 {!item.isVideo && item.image ? (
                                   <img
                                     src={`https://cdnflux.dypius.com/${item.image}`}
@@ -1483,6 +1571,31 @@ const ProfileNFTList = ({
                                   />
                                 )}{" "}
                                 {item.tokenName} #{item.tokenId}
+                                {allCollections &&
+                                allCollections.length > 0 &&
+                                allCollections.find((obj) => {
+                                  return (
+                                    obj.contractAddress.toLowerCase() ===
+                                    item.nftAddress.toLowerCase()
+                                  );
+                                }) ? (
+                                  allCollections.find((obj) => {
+                                    return (
+                                      obj.contractAddress.toLowerCase() ===
+                                      item.nftAddress.toLowerCase()
+                                    );
+                                  }).verified === "yes" ? (
+                                    <img
+                                      src={checkIcon}
+                                      alt=""
+                                      className="ms-2"
+                                    />
+                                  ) : (
+                                    <></>
+                                  )
+                                ) : (
+                                  <></>
+                                )}
                               </td>
                               <td className="item-history-table-td text-center">
                                 <img
@@ -1589,7 +1702,7 @@ const ProfileNFTList = ({
                                 }
                                 style={{ cursor: "pointer" }}
                               >
-                                <td className="item-history-table-td left-border text-center">
+                                <td className="item-history-table-td left-border">
                                   {!item.isVideo && item.image ? (
                                     <img
                                       src={`https://cdnflux.dypius.com/${item.image}`}
@@ -1621,6 +1734,31 @@ const ProfileNFTList = ({
                                     />
                                   )}{" "}
                                   {item.tokenName} #{item.tokenId}
+                                  {allCollections &&
+                                  allCollections.length > 0 &&
+                                  allCollections.find((obj) => {
+                                    return (
+                                      obj.contractAddress.toLowerCase() ===
+                                      item.nftAddress.toLowerCase()
+                                    );
+                                  }) ? (
+                                    allCollections.find((obj) => {
+                                      return (
+                                        obj.contractAddress.toLowerCase() ===
+                                        item.nftAddress.toLowerCase()
+                                      );
+                                    }).verified === "yes" ? (
+                                      <img
+                                        src={checkIcon}
+                                        alt=""
+                                        className="ms-2"
+                                      />
+                                    ) : (
+                                      <></>
+                                    )
+                                  ) : (
+                                    <></>
+                                  )}
                                 </td>
                                 <td className="item-history-table-td text-center">
                                   <img
@@ -1758,6 +1896,31 @@ const ProfileNFTList = ({
                                       item.nftAddress.toLowerCase()
                                     );
                                   }).collectionName ?? "Collection name"}
+                                  {allCollections &&
+                                  allCollections.length > 0 &&
+                                  allCollections.find((obj) => {
+                                    return (
+                                      obj.contractAddress.toLowerCase() ===
+                                      item.nftAddress.toLowerCase()
+                                    );
+                                  }) ? (
+                                    allCollections.find((obj) => {
+                                      return (
+                                        obj.contractAddress.toLowerCase() ===
+                                        item.nftAddress.toLowerCase()
+                                      );
+                                    }).verified === "yes" ? (
+                                      <img
+                                        src={checkIcon}
+                                        alt=""
+                                        className="ms-2"
+                                      />
+                                    ) : (
+                                      <></>
+                                    )
+                                  ) : (
+                                    <></>
+                                  )}
                                 </td>
                                 <td className="item-history-table-td text-center">
                                   {getFormattedNumber(item.amount / 1e18)} WCFX
@@ -1856,7 +2019,7 @@ const ProfileNFTList = ({
                                   }
                                   style={{ cursor: "pointer" }}
                                 >
-                                  <td className="item-history-table-td left-border text-center">
+                                  <td className="item-history-table-td left-border">
                                     <img
                                       src={
                                         allCollections.find((obj) => {
@@ -1887,6 +2050,31 @@ const ProfileNFTList = ({
                                         item.nftAddress.toLowerCase()
                                       );
                                     }).collectionName ?? "Collection name"}
+                                    {allCollections &&
+                                    allCollections.length > 0 &&
+                                    allCollections.find((obj) => {
+                                      return (
+                                        obj.contractAddress.toLowerCase() ===
+                                        item.nftAddress.toLowerCase()
+                                      );
+                                    }) ? (
+                                      allCollections.find((obj) => {
+                                        return (
+                                          obj.contractAddress.toLowerCase() ===
+                                          item.nftAddress.toLowerCase()
+                                        );
+                                      }).verified === "yes" ? (
+                                        <img
+                                          src={checkIcon}
+                                          alt=""
+                                          className="ms-2"
+                                        />
+                                      ) : (
+                                        <></>
+                                      )
+                                    ) : (
+                                      <></>
+                                    )}
                                   </td>
                                   <td className="item-history-table-td text-center">
                                     {getFormattedNumber(item.amount / 1e18)}{" "}
@@ -1930,11 +2118,12 @@ const ProfileNFTList = ({
                         </tbody>
                       </table>
                     )}
-                  {usersCollectionOffers && usersCollectionOffers.length === 0 && (
-                    <span className="text-secondary d-flex justify-content-center w-100 h-100 align-items-center">
-                      No activity yet
-                    </span>
-                  )}
+                  {usersCollectionOffers &&
+                    usersCollectionOffers.length === 0 && (
+                      <span className="text-secondary d-flex justify-content-center w-100 h-100 align-items-center">
+                        No activity yet
+                      </span>
+                    )}
                 </div>
               </div>
             </div>
@@ -2025,6 +2214,27 @@ const ProfileNFTList = ({
                               />
                             )}
                             {item.tokenName} #{item.tokenId}
+                            {allCollections &&
+                            allCollections.length > 0 &&
+                            allCollections.find((obj) => {
+                              return (
+                                obj.contractAddress.toLowerCase() ===
+                                item.nftAddress.toLowerCase()
+                              );
+                            }) ? (
+                              allCollections.find((obj) => {
+                                return (
+                                  obj.contractAddress.toLowerCase() ===
+                                  item.nftAddress.toLowerCase()
+                                );
+                              }).verified === "yes" ? (
+                                <img src={checkIcon} alt="" className="ms-2" />
+                              ) : (
+                                <></>
+                              )
+                            ) : (
+                              <></>
+                            )}
                           </td>
                           <td className="table-item col-2">
                             {item.price
@@ -2139,6 +2349,31 @@ const ProfileNFTList = ({
                                 />
                               )}
                               {item.tokenName} #{item.tokenId}
+                              {allCollections &&
+                              allCollections.length > 0 &&
+                              allCollections.find((obj) => {
+                                return (
+                                  obj.contractAddress.toLowerCase() ===
+                                  item.nftAddress.toLowerCase()
+                                );
+                              }) ? (
+                                allCollections.find((obj) => {
+                                  return (
+                                    obj.contractAddress.toLowerCase() ===
+                                    item.nftAddress.toLowerCase()
+                                  );
+                                }).verified === "yes" ? (
+                                  <img
+                                    src={checkIcon}
+                                    alt=""
+                                    className="ms-2"
+                                  />
+                                ) : (
+                                  <></>
+                                )
+                              ) : (
+                                <></>
+                              )}
                             </td>
                             <td className="table-item col-2">
                               {item.price
@@ -2260,6 +2495,31 @@ const ProfileNFTList = ({
                                 />
                               )}
                               {item.tokenName} #{item.tokenId}
+                              {allCollections &&
+                              allCollections.length > 0 &&
+                              allCollections.find((obj) => {
+                                return (
+                                  obj.contractAddress.toLowerCase() ===
+                                  item.nftAddress.toLowerCase()
+                                );
+                              }) ? (
+                                allCollections.find((obj) => {
+                                  return (
+                                    obj.contractAddress.toLowerCase() ===
+                                    item.nftAddress.toLowerCase()
+                                  );
+                                }).verified === "yes" ? (
+                                  <img
+                                    src={checkIcon}
+                                    alt=""
+                                    className="ms-2"
+                                  />
+                                ) : (
+                                  <></>
+                                )
+                              ) : (
+                                <></>
+                              )}
                             </td>
                             <td className="table-item col-2">
                               {item.price
@@ -2374,6 +2634,31 @@ const ProfileNFTList = ({
                                 />
                               )}
                               {item.tokenName} #{item.tokenId}
+                              {allCollections &&
+                              allCollections.length > 0 &&
+                              allCollections.find((obj) => {
+                                return (
+                                  obj.contractAddress.toLowerCase() ===
+                                  item.nftAddress.toLowerCase()
+                                );
+                              }) ? (
+                                allCollections.find((obj) => {
+                                  return (
+                                    obj.contractAddress.toLowerCase() ===
+                                    item.nftAddress.toLowerCase()
+                                  );
+                                }).verified === "yes" ? (
+                                  <img
+                                    src={checkIcon}
+                                    alt=""
+                                    className="ms-2"
+                                  />
+                                ) : (
+                                  <></>
+                                )
+                              ) : (
+                                <></>
+                              )}
                             </td>
                             <td className="table-item col-2">
                               {item.price
@@ -2489,6 +2774,31 @@ const ProfileNFTList = ({
                                 />
                               )}
                               {item.tokenName} #{item.tokenId}
+                              {allCollections &&
+                              allCollections.length > 0 &&
+                              allCollections.find((obj) => {
+                                return (
+                                  obj.contractAddress.toLowerCase() ===
+                                  item.nftAddress.toLowerCase()
+                                );
+                              }) ? (
+                                allCollections.find((obj) => {
+                                  return (
+                                    obj.contractAddress.toLowerCase() ===
+                                    item.nftAddress.toLowerCase()
+                                  );
+                                }).verified === "yes" ? (
+                                  <img
+                                    src={checkIcon}
+                                    alt=""
+                                    className="ms-2"
+                                  />
+                                ) : (
+                                  <></>
+                                )
+                              ) : (
+                                <></>
+                              )}
                             </td>
                             <td className="table-item col-2">
                               {item.price
@@ -2595,6 +2905,31 @@ const ProfileNFTList = ({
                                 />
                               )}
                               {item.tokenName} #{item.tokenId}
+                              {allCollections &&
+                              allCollections.length > 0 &&
+                              allCollections.find((obj) => {
+                                return (
+                                  obj.contractAddress.toLowerCase() ===
+                                  item.nftAddress.toLowerCase()
+                                );
+                              }) ? (
+                                allCollections.find((obj) => {
+                                  return (
+                                    obj.contractAddress.toLowerCase() ===
+                                    item.nftAddress.toLowerCase()
+                                  );
+                                }).verified === "yes" ? (
+                                  <img
+                                    src={checkIcon}
+                                    alt=""
+                                    className="ms-2"
+                                  />
+                                ) : (
+                                  <></>
+                                )
+                              ) : (
+                                <></>
+                              )}
                             </td>
                             <td className="table-item col-2">
                               {item.price
@@ -2703,7 +3038,27 @@ const ProfileNFTList = ({
                         >
                           {item.tokenName} #{item.tokenId}
                         </h6>
-                        <img src={checkIcon} alt="" />
+                        {allCollections &&
+                        allCollections.length > 0 &&
+                        allCollections.find((obj) => {
+                          return (
+                            obj.contractAddress.toLowerCase() ===
+                            item.nftAddress.toLowerCase()
+                          );
+                        }) ? (
+                          allCollections.find((obj) => {
+                            return (
+                              obj.contractAddress.toLowerCase() ===
+                              item.nftAddress.toLowerCase()
+                            );
+                          }).verified === "yes" ? (
+                            <img src={checkIcon} alt="" className="ms-2" />
+                          ) : (
+                            <></>
+                          )
+                        ) : (
+                          <></>
+                        )}
                       </div>
                       <div className="d-flex align-items-center mt-2 gap-3">
                         <h6
@@ -2801,7 +3156,27 @@ const ProfileNFTList = ({
                           >
                             {item.tokenName} #{item.tokenId}
                           </h6>
-                          <img src={checkIcon} alt="" />
+                          {allCollections &&
+                          allCollections.length > 0 &&
+                          allCollections.find((obj) => {
+                            return (
+                              obj.contractAddress.toLowerCase() ===
+                              item.nftAddress.toLowerCase()
+                            );
+                          }) ? (
+                            allCollections.find((obj) => {
+                              return (
+                                obj.contractAddress.toLowerCase() ===
+                                item.nftAddress.toLowerCase()
+                              );
+                            }).verified === "yes" ? (
+                              <img src={checkIcon} alt="" className="ms-2" />
+                            ) : (
+                              <></>
+                            )
+                          ) : (
+                            <></>
+                          )}
                         </div>
                         <div className="d-flex align-items-center mt-2 gap-3">
                           <h6
@@ -2908,7 +3283,27 @@ const ProfileNFTList = ({
                           >
                             {item.tokenName} #{item.tokenId}
                           </h6>
-                          <img src={checkIcon} alt="" />
+                          {allCollections &&
+                          allCollections.length > 0 &&
+                          allCollections.find((obj) => {
+                            return (
+                              obj.contractAddress.toLowerCase() ===
+                              item.nftAddress.toLowerCase()
+                            );
+                          }) ? (
+                            allCollections.find((obj) => {
+                              return (
+                                obj.contractAddress.toLowerCase() ===
+                                item.nftAddress.toLowerCase()
+                              );
+                            }).verified === "yes" ? (
+                              <img src={checkIcon} alt="" className="ms-2" />
+                            ) : (
+                              <></>
+                            )
+                          ) : (
+                            <></>
+                          )}
                         </div>
                         <div className="d-flex align-items-center mt-2 gap-3">
                           <h6
@@ -3020,7 +3415,27 @@ const ProfileNFTList = ({
                           >
                             {item.tokenName} #{item.tokenId}
                           </h6>
-                          <img src={checkIcon} alt="" />
+                          {allCollections &&
+                          allCollections.length > 0 &&
+                          allCollections.find((obj) => {
+                            return (
+                              obj.contractAddress.toLowerCase() ===
+                              item.nftAddress.toLowerCase()
+                            );
+                          }) ? (
+                            allCollections.find((obj) => {
+                              return (
+                                obj.contractAddress.toLowerCase() ===
+                                item.nftAddress.toLowerCase()
+                              );
+                            }).verified === "yes" ? (
+                              <img src={checkIcon} alt="" className="ms-2" />
+                            ) : (
+                              <></>
+                            )
+                          ) : (
+                            <></>
+                          )}
                         </div>
                         <div className="d-flex align-items-center mt-2 gap-3">
                           <h6
@@ -3126,7 +3541,27 @@ const ProfileNFTList = ({
                           >
                             {item.tokenName} #{item.tokenId}
                           </h6>
-                          <img src={checkIcon} alt="" />
+                          {allCollections &&
+                          allCollections.length > 0 &&
+                          allCollections.find((obj) => {
+                            return (
+                              obj.contractAddress.toLowerCase() ===
+                              item.nftAddress.toLowerCase()
+                            );
+                          }) ? (
+                            allCollections.find((obj) => {
+                              return (
+                                obj.contractAddress.toLowerCase() ===
+                                item.nftAddress.toLowerCase()
+                              );
+                            }).verified === "yes" ? (
+                              <img src={checkIcon} alt="" className="ms-2" />
+                            ) : (
+                              <></>
+                            )
+                          ) : (
+                            <></>
+                          )}
                         </div>
                         <div className="d-flex align-items-center mt-2 gap-3">
                           <h6
@@ -3237,7 +3672,27 @@ const ProfileNFTList = ({
                           >
                             {item.tokenName} #{item.tokenId}
                           </h6>
-                          <img src={checkIcon} alt="" />
+                          {allCollections &&
+                          allCollections.length > 0 &&
+                          allCollections.find((obj) => {
+                            return (
+                              obj.contractAddress.toLowerCase() ===
+                              item.nftAddress.toLowerCase()
+                            );
+                          }) ? (
+                            allCollections.find((obj) => {
+                              return (
+                                obj.contractAddress.toLowerCase() ===
+                                item.nftAddress.toLowerCase()
+                              );
+                            }).verified === "yes" ? (
+                              <img src={checkIcon} alt="" className="ms-2" />
+                            ) : (
+                              <></>
+                            )
+                          ) : (
+                            <></>
+                          )}
                         </div>
                         <div className="d-flex align-items-center mt-2 gap-3">
                           <h6
@@ -3317,7 +3772,27 @@ const ProfileNFTList = ({
                         >
                           {item.tokenName} #{item.tokenId}
                         </h6>
-                        <img src={checkIcon} alt="" />
+                        {allCollections &&
+                        allCollections.length > 0 &&
+                        allCollections.find((obj) => {
+                          return (
+                            obj.contractAddress.toLowerCase() ===
+                            item.nftAddress.toLowerCase()
+                          );
+                        }) ? (
+                          allCollections.find((obj) => {
+                            return (
+                              obj.contractAddress.toLowerCase() ===
+                              item.nftAddress.toLowerCase()
+                            );
+                          }).verified === "yes" ? (
+                            <img src={checkIcon} alt="" className="ms-2" />
+                          ) : (
+                            <></>
+                          )
+                        ) : (
+                          <></>
+                        )}
                       </div>
                       <div className="d-flex align-items-center mt-2 gap-3">
                         <h6
@@ -3418,7 +3893,27 @@ const ProfileNFTList = ({
                           >
                             {item.tokenName} #{item.tokenId}
                           </h6>
-                          <img src={checkIcon} alt="" />
+                          {allCollections &&
+                          allCollections.length > 0 &&
+                          allCollections.find((obj) => {
+                            return (
+                              obj.contractAddress.toLowerCase() ===
+                              item.nftAddress.toLowerCase()
+                            );
+                          }) ? (
+                            allCollections.find((obj) => {
+                              return (
+                                obj.contractAddress.toLowerCase() ===
+                                item.nftAddress.toLowerCase()
+                              );
+                            }).verified === "yes" ? (
+                              <img src={checkIcon} alt="" className="ms-2" />
+                            ) : (
+                              <></>
+                            )
+                          ) : (
+                            <></>
+                          )}
                         </div>
                         <div className="d-flex align-items-center mt-2 gap-3">
                           <h6
@@ -3489,7 +3984,7 @@ const ProfileNFTList = ({
                 //         >
                 //           CAWS #1125
                 //         </h6>
-                //         <img src={checkIcon} alt="" />
+                //         <img src={checkIcon} alt=""  className="ms-2"/>
                 //       </div>
                 //       <div className="d-flex align-items-center mt-2 gap-3">
                 //         <h6

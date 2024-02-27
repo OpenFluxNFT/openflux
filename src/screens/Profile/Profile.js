@@ -272,38 +272,44 @@ const Profile = ({
 
       if (result) {
         const alloffers = await Promise.all(
-          result.map(async (item) => {
-            const abiresult = await axios.get(
-              `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
-            );
-            if (abiresult && abiresult.status === 200) {
-              const abi = JSON.parse(abiresult.data.result);
-              const collection_contract = new web3.eth.Contract(
-                abi,
-                item.nftAddress
+          window.range(0, result.length - 1).map(async (i) => {
+            const hasExpired = moment
+              .duration(result[i].expiresAt * 1000 - Date.now())
+              .humanize(true)
+              .includes("ago");
+            if (!hasExpired) {
+              const abiresult = await axios.get(
+                `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${result[i].nftAddress}`
               );
-              const tokenName = await collection_contract.methods
-                .symbol()
-                .call()
-                .catch((e) => {
-                  console.error(e);
-                });
+              if (
+                abiresult &&
+                abiresult.status === 200 &&
+                abiresult.data.message === "OK"
+              ) {
+                const abi = JSON.parse(abiresult.data.result);
+                const collection_contract = new web3.eth.Contract(
+                  abi,
+                  result[i].nftAddress
+                );
+                const tokenName = await collection_contract.methods
+                  .symbol()
+                  .call()
+                  .catch((e) => {
+                    console.error(e);
+                  });
 
-              const collectionName = await collection_contract.methods
-                .name()
-                .call()
-                .catch((e) => {
-                  console.error(e);
-                });
-              const hasExpired = moment
-                .duration(item.expiresAt * 1000 - Date.now())
-                .humanize(true)
-                .includes("ago");
+                const collectionName = await collection_contract.methods
+                  .name()
+                  .call()
+                  .catch((e) => {
+                    console.error(e);
+                  });
 
-              if (!hasExpired) {
                 const nft_data = await fetch(
-                  `https://cdnflux.dypius.com/collectionsmetadatas/${item.nftAddress.toLowerCase()}/${
-                    item.tokenId
+                  `https://cdnflux.dypius.com/collectionsmetadatas/${result[
+                    i
+                  ].nftAddress.toLowerCase()}/${
+                    result[i].tokenId
                   }/metadata.json`
                 )
                   .then((res) => res.json())
@@ -319,7 +325,7 @@ const Profile = ({
                   typeof nft_data !== "string"
                 ) {
                   return {
-                    ...item,
+                    ...result[i],
                     ...nft_data,
                     image: `${nft_data.image}`,
                     tokenName: tokenName,
@@ -327,16 +333,19 @@ const Profile = ({
                   };
                 } else
                   return {
-                    ...item,
+                    ...result[i],
                     image: undefined,
                     tokenName: tokenName,
                     collectionName: collectionName,
                   };
               }
-            }
+            } else return null;
           })
         );
-        setusersNftOffers(alloffers);
+
+        const filteredOffers = alloffers.filter((offer) => offer !== null);
+
+        setusersNftOffers(filteredOffers);
       }
     }
   };
@@ -597,12 +606,15 @@ const Profile = ({
         );
 
         let uniqueObjects = [];
-
+        let seenNames = new Set();
         saleHistory.forEach((obj) => {
           let type = obj.type?.toLowerCase();
-
+          let lowercaseName = obj.tokenId;
           if (type === "sale") {
+            if (!seenNames.has(lowercaseName)) {
+            seenNames.add(lowercaseName);
             uniqueObjects.push(obj);
+            }
           }
         });
 

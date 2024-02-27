@@ -18,6 +18,7 @@ import { NavLink } from "react-router-dom";
 import getFormattedNumber from "../../../hooks/get-formatted-number";
 import { Skeleton } from "@mui/material";
 import collectionCardPlaceholder1 from "../CollectionCategories/assets/collectionCardPlaceholder1.png";
+import moment from "moment";
 
 import axios from "axios";
 
@@ -204,7 +205,7 @@ const TrendingCollections = ({
           setTrendingCollections(newestCollections);
         }
       }
-    }else if (option === "new") {
+    } else if (option === "new") {
       if (newestCollections.length > 0) {
         if (val === "24h") {
           const finalCollections = newestCollections.sort((a, b) => {
@@ -241,7 +242,7 @@ const TrendingCollections = ({
   useEffect(() => {
     categorizeItems("30d");
     setLoading(false);
-  }, [recentlySoldNfts]);
+  }, [recentlySoldNfts, option]);
 
   useEffect(() => {
     if (window.location.hash === `#recent-sales`) {
@@ -403,8 +404,8 @@ const TrendingCollections = ({
                               {item.tokenName} {item.name}
                             </h6>
                             {item.verified === "yes" && (
-                            <img src={checkIcon} alt="" />
-                         )}
+                              <img src={checkIcon} alt="" />
+                            )}
                           </div>
                           <div className="d-flex align-items-center gap-3">
                             <div className="d-flex flex-column">

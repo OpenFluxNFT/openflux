@@ -619,7 +619,9 @@ const Profile = ({
         });
 
         settotalSoldNfts(uniqueObjects.length);
-        setsaleHistory(saleHistory);
+        setsaleHistory(saleHistory.sort((a, b) => {
+          return b.blockTimestamp - a.blockTimestamp;
+        }));
         // console.log("saleHistory", saleHistory);
       }
     }

@@ -606,12 +606,12 @@ function App() {
 
     if (userNftsOwnedresult && userNftsOwnedresult.status === 200) {
       nftsOwned = userNftsOwnedresult.data.nftList;
-      nftsOwnedAmount = userNftsOwnedresult.data.totalAmount;
     }
 
     if (nftsOwned && nftsOwned.length > 0) {
       await Promise.all(
         window.range(0, nftsOwned.length - 1).map(async (i) => {
+          nftsOwnedAmount = nftsOwned[i].amount;
           const result = await axios
             .get(
               `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${nftsOwned[i].contract}`
@@ -635,7 +635,6 @@ function App() {
 
             const tokens = await Promise.all(
               window.range(0, nftsOwnedAmount - 1).map((j) =>
-              
                 collection_contract.methods
                   .tokenOfOwnerByIndex(wallet, j)
                   .call()

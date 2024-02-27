@@ -112,7 +112,7 @@ const SingleNftBanner = ({
           setbuyStatus("success");
           setPurchaseStatus("Successfully purchased!");
           setPurchaseColor("#00FECF");
-          handleRefreshData(nftData.owner);
+          handleRefreshData();
           handleRefreshData2(nftData.owner);
 
           setTimeout(() => {

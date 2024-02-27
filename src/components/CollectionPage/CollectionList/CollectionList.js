@@ -449,6 +449,30 @@ const CollectionList = ({
       });
   };
 
+  const buyFunc = async(nft)=>{
+    await window
+    .buyNFT(nft.nftAddress, nft.listingIndex, nft.price)
+    .then((result) => {
+      setbuyLoading(false);
+      refreshUserHistory(coinbase);
+      refreshUserHistory(nft.owner);
+      handleGetRecentlySoldNftsCache();
+      setbuyStatus("success");
+      handleRefreshData(nft);
+      setTimeout(() => {
+        setbuyStatus("");
+      }, 2000);
+    })
+    .catch((e) => {
+      setbuyStatus("failed");
+      setbuyLoading(false);
+      setTimeout(() => {
+        setbuyStatus("buy");
+      }, 3000);
+      console.error(e);
+    });
+  }
+
   const handleBuyNft = async (nft) => {
     setSelectedNftId(nft.tokenId);
 
@@ -462,28 +486,8 @@ const CollectionList = ({
       if (isApproved) {
         setbuyLoading(true);
         setbuyStatus("buy");
+        buyFunc()
 
-        await window
-          .buyNFT(nft.nftAddress, nft.listingIndex, nft.price)
-          .then((result) => {
-            setbuyLoading(false);
-            refreshUserHistory(coinbase);
-            refreshUserHistory(nft.owner);
-            handleGetRecentlySoldNftsCache();
-            setbuyStatus("success");
-            handleRefreshData(nft);
-            setTimeout(() => {
-              setbuyStatus("");
-            }, 2000);
-          })
-          .catch((e) => {
-            setbuyStatus("failed");
-            setbuyLoading(false);
-            setTimeout(() => {
-              setbuyStatus("buy");
-            }, 3000);
-            console.error(e);
-          });
       } else {
         setbuyStatus("approve");
         setbuyLoading(true);
@@ -493,7 +497,8 @@ const CollectionList = ({
           .then(() => {
             setTimeout(() => {
               setbuyStatus("buy");
-            }, 3000);
+              buyFunc()
+            }, 1000);
             setbuyStatus("success");
             setbuyLoading(false);
           })
@@ -1438,7 +1443,7 @@ const CollectionList = ({
                             " " +
                             (item.name ? item.name : ` #${item.tokenId}`)}
                         </h6>
-                        <img src={checkIcon} alt="" />
+                        {isVerified && <img src={checkIcon} alt="" />}
                       </div>
                       {item.seller ? (
                         <div className="d-flex align-items-center mt-2 gap-3">

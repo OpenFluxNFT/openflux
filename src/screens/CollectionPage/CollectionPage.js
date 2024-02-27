@@ -597,20 +597,25 @@ const CollectionPage = ({
                 .catch((e) => {
                   console.log(e);
                 });
-              const finalOfferResultListed = offersresultListed[1];
+              if (offersresultListed) {
+                const finalOfferResultListed = offersresultListed[1];
 
-              if (finalOfferResultListed && finalOfferResultListed.length > 0) {
-                const maxPrice = Math.max(
-                  ...finalOfferResultListed.map((o) => o.amount)
-                );
-                const obj = finalOfferResultListed.find(
-                  (item) => item.amount == maxPrice
-                );
-                if (obj) {
-                  bestOfferListed = obj.amount;
+                if (
+                  finalOfferResultListed &&
+                  finalOfferResultListed.length > 0
+                ) {
+                  const maxPrice = Math.max(
+                    ...finalOfferResultListed.map((o) => o.amount)
+                  );
+                  const obj = finalOfferResultListed.find(
+                    (item) => item.amount == maxPrice
+                  );
+                  if (obj) {
+                    bestOfferListed = obj.amount;
+                  }
+                } else {
+                  bestOfferListed = 0;
                 }
-              } else {
-                bestOfferListed = 0;
               }
 
               const resultSale = await axios
@@ -835,7 +840,7 @@ const CollectionPage = ({
     }
   };
 
-  const fetchSlicedNftsPerCollection = async () => {
+  const fetchSlicedNftsPerCollection = async (slice) => {
     let nftArray = [];
     let totalSupply = 0;
     setLoading(true);
@@ -1016,48 +1021,17 @@ const CollectionPage = ({
       const wrappedElement = document.getElementById("header2");
 
       if (wrappedElement) {
-        // const isBottom =
-        //   parseInt(wrappedElement.getBoundingClientRect()?.bottom) <=
-        //   window.innerHeight;
-        // if (isBottom) {
-        //   if (next <= totalSupplyPerCollection) {
-        //     loadMore();
-        //     document.removeEventListener("scroll", onScroll);
-        //   }
-
-        // }
-        // document.removeEventListener("scroll", onScroll);
-        //  console.log(document.documentElement.offsetHeight,window.innerHeight + document.documentElement.scrollTop)
-        if (
-          window.innerHeight + document.documentElement.scrollTop !==
-          document.documentElement.offsetHeight
-        ) {
-          return;
+        const isBottom =
+          parseInt(wrappedElement.getBoundingClientRect()?.bottom) <=
+          window.innerHeight;
+        if (isBottom) {
+          if (next <= totalSupplyPerCollection) {
+            loadMore();
+            document.removeEventListener("scroll", onScroll);
+          }
         }
-        loadMore();
-        return;
       }
     }
-    // const { clientHeight, scrollHeight, scrollTop } =
-    //   document.documentElement || document.body;
-
-    // // Adjust the threshold as needed
-    // const threshold = 100;
-    // console.log(scrollHeight, scrollTop, clientHeight);
-    // if (scrollHeight - scrollTop - clientHeight < threshold) {
-    //   // You've reached the bottom, trigger your API request here
-    //   // console.log('Reached bottom, trigger API request');
-    //   console.log("yes1", totalSupplyPerCollection);
-    //   if (next <= totalSupplyPerCollection || next === 12) {
-    //     console.log("yes2");
-
-    //     setnext(next + nftPerRow);
-    //     fetchSlicedNftsPerCollection();
-    //   }
-
-    //   // Optionally, you can remove the event listener to stop further calls
-    //   window.removeEventListener("scroll", onScroll);
-    // }
   };
 
   const fetchCurrentCollection = (collectionAddr) => {

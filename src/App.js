@@ -1665,6 +1665,7 @@ function App() {
           path="/nft/:nftId/:nftAddress"
           element={
             <SingleNft
+            allCollections={allCollections}
               isConnected={isConnected}
               chainId={chainId}
               coinbase={coinbase}

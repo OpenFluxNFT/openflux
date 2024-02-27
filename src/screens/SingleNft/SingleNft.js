@@ -23,7 +23,7 @@ const SingleNft = ({
   handleAddFavoriteNft,
   handleRemoveFavoriteNft,
   userNftFavs,
-  wcfxBalance,
+  wcfxBalance,allCollections
 }) => {
   const [showOfferPopup, setShowOfferPopup] = useState(false);
   const [nftData, setNftData] = useState([]);
@@ -1085,6 +1085,8 @@ const SingleNft = ({
         bestOffer={bestOffer}
         lastSale={saleHistory}
         collectionFeeRate={collectionFeeRate}
+        allCollections={allCollections}
+
       />
       <SingleNftHistory
         allOffers={allOffers}
@@ -1114,6 +1116,7 @@ const SingleNft = ({
         handleAddFavoriteNft={handleAddFavoriteNft}
         handleRemoveFavoriteNft={handleRemoveFavoriteNft}
         userNftFavs={userNftFavs}
+        allCollections={allCollections}
       />
       {showOfferPopup && (
         <MakeOffer

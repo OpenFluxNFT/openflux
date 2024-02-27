@@ -24,7 +24,8 @@ const SingleNftBanner = ({
   isConnected,
   handleSignup,
   cfxPrice,
-  handleRefreshData,handleRefreshData2,
+  handleRefreshData,
+  handleRefreshData2,
   handleSwitchNetwork,
   loading,
   offerData,
@@ -32,6 +33,7 @@ const SingleNftBanner = ({
   lastSale,
   views,
   collectionFeeRate,
+  allCollections,
 }) => {
   const [isOwner, setIsOwner] = useState(false);
   const [isListed, setIsListed] = useState(false);
@@ -88,7 +90,7 @@ const SingleNftBanner = ({
       return false;
     }
   };
- 
+
   const handleBuyNft = async () => {
     const isApproved = await checkNftApprovalForBuying(nftData.price).then(
       (data) => {
@@ -471,7 +473,27 @@ const SingleNftBanner = ({
                     >
                       {nftData.collectionName ?? "..."}
                     </NavLink>
-                    <img alt="" src={checkIcon} />
+                    {allCollections &&
+                    allCollections.length > 0 &&
+                    allCollections.find((obj) => {
+                      return (
+                        obj.contractAddress.toLowerCase() ===
+                        nftAddress.toLowerCase()
+                      );
+                    }) ? (
+                      allCollections.find((obj) => {
+                        return (
+                          obj.contractAddress.toLowerCase() ===
+                          nftAddress.toLowerCase()
+                        );
+                      }).verified === "yes" ? (
+                        <img src={checkIcon} alt="" />
+                      ) : (
+                        <></>
+                      )
+                    ) : (
+                      <></>
+                    )}
                   </div>
                   <div className="collection-info-owner-wrapper">
                     <div className="d-flex flex-column gap-1 px-3 py-2">
@@ -528,7 +550,10 @@ const SingleNftBanner = ({
                   <div className="d-flex align-items-center gap-2 border-bottom-div">
                     <span className="nft-info-left">Best offer</span>
                     <span className="nft-info-right">
-                      {getFormattedNumber(bestOffer.amount? bestOffer.amount/ 1e18 : 0 )} WCFX
+                      {getFormattedNumber(
+                        bestOffer.amount ? bestOffer.amount / 1e18 : 0
+                      )}{" "}
+                      WCFX
                     </span>
                   </div>
                   <div className="d-flex align-items-center gap-2 border-bottom-div">
@@ -562,7 +587,27 @@ const SingleNftBanner = ({
                         ? nftData.collectionName
                         : "..."}
                     </span>
-                    <img alt="" src={checkIcon} />
+                    {allCollections &&
+                    allCollections.length > 0 &&
+                    allCollections.find((obj) => {
+                      return (
+                        obj.contractAddress.toLowerCase() ===
+                        nftAddress.toLowerCase()
+                      );
+                    }) ? (
+                      allCollections.find((obj) => {
+                        return (
+                          obj.contractAddress.toLowerCase() ===
+                          nftAddress.toLowerCase()
+                        );
+                      }).verified === "yes" ? (
+                        <img src={checkIcon} alt="" />
+                      ) : (
+                        <></>
+                      )
+                    ) : (
+                      <></>
+                    )}
                   </div>
                   <div className="d-flex align-items-center gap-2">
                     <img alt="" src={websiteIcon} />
@@ -659,7 +704,11 @@ const SingleNftBanner = ({
                         )}
 
                         <span className="nft-price-usd">
-                          ($ {getFormattedNumber((nftData?.price / 10 ** 18) * cfxPrice)})
+                          (${" "}
+                          {getFormattedNumber(
+                            (nftData?.price / 10 ** 18) * cfxPrice
+                          )}
+                          )
                         </span>
                       </div>
                     </div>
@@ -734,10 +783,7 @@ const SingleNftBanner = ({
                       There is a listing fee of 0.1% for the selected duration
                     </span> */}
                   </>
-                ) :
-                  nftData.collectionName &&
-                  isListed &&
-                  loading === false ? (
+                ) : nftData.collectionName && isListed && loading === false ? (
                   <div className="nft-price-wrapper px-3 py-1 d-flex align-items-center justify-content-between">
                     <span className="current-price-text">Listing ends</span>
                     <div className="duration-tab d-flex align-items-center justify-content-center">

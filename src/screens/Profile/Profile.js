@@ -606,17 +606,20 @@ const Profile = ({
         );
 
         let uniqueObjects = [];
-
+        let seenNames = new Set();
         saleHistory.forEach((obj) => {
           let type = obj.type?.toLowerCase();
-
+          let lowercaseName = obj.tokenId;
           if (type === "sale") {
+            if (!seenNames.has(lowercaseName)) {
+            seenNames.add(lowercaseName);
             uniqueObjects.push(obj);
+            }
           }
         });
 
         settotalSoldNfts(uniqueObjects.length);
-        setsaleHistory(saleHistory.reverse());
+        setsaleHistory(saleHistory);
         // console.log("saleHistory", saleHistory);
       }
     }

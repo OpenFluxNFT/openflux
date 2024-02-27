@@ -44,6 +44,7 @@ const Home = ({
         coinbase={coinbase}
         onRefreshListings={onRefreshListings}
         chainId={chainId}
+        allCollections={allCollections}
       />
       <CollectionCategories allCollections={allCollections} />
     </div>

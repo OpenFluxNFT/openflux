@@ -871,7 +871,7 @@ const CollectionPage = ({
           });
       }
 
-      if (totalSupply && totalSupply > 0) {
+      if (totalSupply && totalSupply > 0 && next!==0 && Number(totalSupply)>=12) {
         const limit = totalSupply >= next ? next : totalSupply;
 
         await Promise.all(

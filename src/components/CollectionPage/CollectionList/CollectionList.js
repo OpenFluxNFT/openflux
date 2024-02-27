@@ -46,7 +46,7 @@ const CollectionList = ({
   onShowAcceptPopup,
   allOffers,
   bestOffer,
-  isVerified,
+  isVerified, onSelectCollecitonOffers
 }) => {
   const windowSize = useWindowSize();
   const [openFilters, setOpenFilters] = useState(false);
@@ -486,7 +486,7 @@ const CollectionList = ({
       if (isApproved) {
         setbuyLoading(true);
         setbuyStatus("buy");
-        buyFunc()
+        buyFunc(nft)
 
       } else {
         setbuyStatus("approve");
@@ -497,7 +497,7 @@ const CollectionList = ({
           .then(() => {
             setTimeout(() => {
               setbuyStatus("buy");
-              buyFunc()
+              buyFunc(nft)
             }, 1000);
             setbuyStatus("success");
             setbuyLoading(false);
@@ -646,6 +646,7 @@ const CollectionList = ({
                         <FormControlLabel
                           onChange={() => {
                             setListed("collectionoffers");
+                            onSelectCollecitonOffers(listType === "collectionoffers" ? true : false)
                           }}
                           control={
                             <Checkbox
@@ -826,11 +827,11 @@ const CollectionList = ({
               </div>
               <div
                 className={
-                  currentCollection &&
+                 ( currentCollection &&
                   currentCollection.owner &&
                   coinbase &&
                   currentCollection.owner.toLowerCase() ===
-                    coinbase.toLowerCase()
+                    coinbase.toLowerCase()) || totalSupplyPerCollection === 0
                     ? "col-8 col-lg-7"
                     : "col-6 col-lg-5"
                 }
@@ -934,11 +935,11 @@ const CollectionList = ({
                   </div>
                 </div>
               </div>
-              {currentCollection &&
+              {(currentCollection &&
               currentCollection.owner &&
-              coinbase &&
+              coinbase  &&
               currentCollection.owner.toLowerCase() ===
-                coinbase.toLowerCase() ? (
+                coinbase.toLowerCase()) || totalSupplyPerCollection ===0 ? (
                 <></>
               ) : (
                 <div className="col-lg-2">
@@ -1492,7 +1493,7 @@ const CollectionList = ({
                               handleBuyNft(item);
                             }}
                           >
-                            {item.isApproved ? "Buy" : "Approve Buy"}
+                          Buy
                             {buyloading && selectedNftId === item.tokenId && (
                               <div
                                 className="spinner-border spinner-border-sm text-light ms-1"
@@ -1807,7 +1808,7 @@ const CollectionList = ({
                               handleBuyNft(item);
                             }}
                           >
-                            {item.isApproved ? "Buy" : "Approve Buy"}
+                            Buy
                             {buyloading && selectedNftId === item.tokenId && (
                               <div
                                 className="spinner-border spinner-border-sm text-light ms-1"
@@ -1992,6 +1993,8 @@ const CollectionList = ({
                     <FormControlLabel
                       onChange={() => {
                         setListed("collectionoffers");
+                        onSelectCollecitonOffers(listType === "collectionoffers" ? true : false)
+
                       }}
                       control={
                         <Checkbox

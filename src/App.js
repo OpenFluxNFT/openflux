@@ -307,7 +307,11 @@ function App() {
           const abiresult = await axios.get(
             `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
           );
-          if (abiresult && abiresult.status === 200&& abiresult.data.message === "OK") {
+          if (
+            abiresult &&
+            abiresult.status === 200 &&
+            abiresult.data.message === "OK"
+          ) {
             let lastSale = 0;
             const abi = JSON.parse(abiresult.data.result);
             const collection_contract = new web3.eth.Contract(
@@ -602,7 +606,7 @@ function App() {
 
     if (userNftsOwnedresult && userNftsOwnedresult.status === 200) {
       nftsOwned = userNftsOwnedresult.data.nftList;
-      nftsOwnedAmount = userNftsOwnedresult.data.totalAmount
+      nftsOwnedAmount = userNftsOwnedresult.data.totalAmount;
     }
 
     if (nftsOwned && nftsOwned.length > 0) {
@@ -631,6 +635,7 @@ function App() {
 
             const tokens = await Promise.all(
               window.range(0, nftsOwnedAmount - 1).map((j) =>
+              
                 collection_contract.methods
                   .tokenOfOwnerByIndex(wallet, j)
                   .call()
@@ -815,8 +820,8 @@ function App() {
         })
       );
 
-      if(finalResult) {
-        setuserCollection(finalResult)
+      if (finalResult) {
+        setuserCollection(finalResult);
       }
     }
   };
@@ -1554,7 +1559,7 @@ function App() {
               onRefreshListings={() => {
                 handleGetRecentlyListedNftsCache();
                 handleGetRecentlySoldNftsCache();
-              }}     
+              }}
               chainId={chainId}
             />
           }
@@ -1637,7 +1642,6 @@ function App() {
               cfxPrice={cfxPrice}
               userCollectionArray={userCollectionArray}
               recentlyListedNfts={recentlyListedNfts}
-               
             />
           }
         />
@@ -1665,7 +1669,7 @@ function App() {
           path="/nft/:nftId/:nftAddress"
           element={
             <SingleNft
-            allCollections={allCollections}
+              allCollections={allCollections}
               isConnected={isConnected}
               chainId={chainId}
               coinbase={coinbase}

@@ -30,6 +30,8 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
   const windowSize = useWindowSize();
   const [loading, setLoading] = useState(true);
   const [topSales, setTopSales] = useState([]);
+  const [topSales2, setTopSales2] = useState([]);
+
   const [trendingCollections, setTrendingCollections] = useState([]);
   const baseURL = "https://confluxapi.worldofdypians.com";
 
@@ -118,6 +120,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
     const oneDayInSeconds = 24 * 60 * 60;
     const sevenDaysInSeconds = 7 * oneDayInSeconds;
     const thirtyDaysInSeconds = 30 * oneDayInSeconds;
+
     if (option === "trending" && trendingCollections.length > 0) {
       if (val === "24h") {
         const newestCollections = trendingCollections.sort((a, b) => {
@@ -172,6 +175,36 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
         setRecents(items7DaysAgo);
       } else {
         setRecents(items30DaysAgo);
+      }
+
+      setTimeout(() => {
+        setLoading(false);
+      }, 1500);
+    } else if (option === "topSales" && topSales && topSales.length > 0) {
+     
+
+      const items24HoursAgo = topSales2.filter(
+        (item) =>
+          currentTime - parseInt(item.lastSale.blockTimestamp, 10) <=
+          oneDayInSeconds
+      );
+      const items7DaysAgo = topSales2.filter(
+        (item) =>
+          currentTime - parseInt(item.lastSale.blockTimestamp, 10) <=
+          sevenDaysInSeconds
+      );
+      const items30DaysAgo = topSales2.filter(
+        (item) =>
+          currentTime - parseInt(item.lastSale.blockTimestamp, 10) <=
+          thirtyDaysInSeconds
+      );
+
+      if (val === "24h") {
+        setTopSales(items24HoursAgo);
+      } else if (val === "7d") {
+        setTopSales(items7DaysAgo);
+      } else {
+        setTopSales(items30DaysAgo);
       }
 
       setTimeout(() => {
@@ -308,7 +341,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
           }
         })
       );
-
+      setTopSales2(topSold)
       setTopSales(topSold);
     }
     setTimeout(() => {
@@ -354,7 +387,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
   useEffect(() => {
     categorizeItems("30d");
     setLoading(false);
-  }, [recentlySoldNfts]);
+  }, [recentlySoldNfts, option]);
 
   return (
     <>
@@ -516,8 +549,8 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                                 {item.tokenName} {item.name}
                               </h6>
                               {item.verified === "yes" && (
-                            <img src={checkIcon} alt="" />
-                         )}
+                                <img src={checkIcon} alt="" />
+                              )}
                             </div>
                             <div className="d-flex flex-column">
                               <h6 className="trending-card-cfx-price mb-0">
@@ -592,11 +625,11 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                           <div className="d-flex flex-column">
                             <div className="d-flex align-items-center gap-1">
                               <h6 className="trending-card-title mb-0">
-                                {item.tokenName} {item.name}
+                                {item.tokenName} #{item.tokenId}
                               </h6>
                               {item.verified === "yes" && (
-                            <img src={checkIcon} alt="" />
-                         )}
+                                <img src={checkIcon} alt="" />
+                              )}
                             </div>
                             <div className="d-flex flex-column">
                               <h6 className="trending-card-cfx-price mb-0">
@@ -662,8 +695,8 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                                 {item.collectionName}
                               </h6>
                               {item.verified === "yes" && (
-                            <img src={checkIcon} alt="" />
-                         )}
+                                <img src={checkIcon} alt="" />
+                              )}
                             </div>
                             <div className="d-flex align-items-center gap-3">
                               <div className="d-flex flex-column">
@@ -710,7 +743,8 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                       </div>
                     );
                   })
-                ) : option === "recentSales" && recentlySoldNfts.length === 0 ? (
+                ) : option === "recentSales" &&
+                  recentlySoldNfts.length === 0 ? (
                   <>
                     <div></div>
                     <div
@@ -818,8 +852,8 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                                 {item.tokenName} {item.name}
                               </h6>
                               {item.verified === "yes" && (
-                            <img src={checkIcon} alt="" />
-                         )}
+                                <img src={checkIcon} alt="" />
+                              )}
                             </div>
                             <div className="d-flex flex-column">
                               <h6 className="trending-card-cfx-price mb-0">
@@ -896,8 +930,8 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                                 {item.tokenName} {item.name}
                               </h6>
                               {item.verified === "yes" && (
-                            <img src={checkIcon} alt="" />
-                         )}
+                                <img src={checkIcon} alt="" />
+                              )}
                             </div>
                             <div className="d-flex flex-column">
                               <h6 className="trending-card-cfx-price mb-0">
@@ -974,8 +1008,8 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                                 {item.tokenName} {item.name}
                               </h6>
                               {item.verified === "yes" && (
-                            <img src={checkIcon} alt="" />
-                         )}
+                                <img src={checkIcon} alt="" />
+                              )}
                             </div>
                             <div className="d-flex flex-column">
                               <h6 className="trending-card-cfx-price mb-0">
@@ -1283,11 +1317,11 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                           <div className="d-flex flex-column">
                             <div className="d-flex align-items-center gap-1">
                               <h6 className="trending-card-title mb-0">
-                                {item.tokenName} {item.name}
+                                {item.tokenName} #{item.tokenId}
                               </h6>
                               {item.verified === "yes" && (
-                            <img src={checkIcon} alt="" />
-                         )}
+                                <img src={checkIcon} alt="" />
+                              )}
                             </div>
                             <div className="d-flex flex-column">
                               <h6 className="trending-card-cfx-price mb-0">
@@ -1306,7 +1340,9 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                         <span className="list-date">
                           Sold{" "}
                           {moment
-                            .duration(item.blockTimestamp * 1000 - Date.now())
+                            .duration(
+                              item.lastSale.blockTimestamp * 1000 - Date.now()
+                            )
                             .humanize(true)}
                         </span>
                       </div>
@@ -1361,11 +1397,11 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                           <div className="d-flex flex-column">
                             <div className="d-flex align-items-center gap-1">
                               <h6 className="trending-card-title mb-0">
-                                {item.tokenName} {item.name}
+                                {item.tokenName} #{item.tokenId}
                               </h6>
                               {item.verified === "yes" && (
-                            <img src={checkIcon} alt="" />
-                         )}
+                                <img src={checkIcon} alt="" />
+                              )}
                             </div>
                             <div className="d-flex flex-column">
                               <h6 className="trending-card-cfx-price mb-0">
@@ -1384,7 +1420,9 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                         <span className="list-date">
                           Sold{" "}
                           {moment
-                            .duration(item.blockTimestamp * 1000 - Date.now())
+                            .duration(
+                              item.lastSale.blockTimestamp * 1000 - Date.now()
+                            )
                             .humanize(true)}
                         </span>
                       </div>
@@ -1439,11 +1477,11 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                           <div className="d-flex flex-column">
                             <div className="d-flex align-items-center gap-1">
                               <h6 className="trending-card-title mb-0">
-                                {item.tokenName} {item.name}
+                                {item.tokenName} #{item.tokenId}
                               </h6>
                               {item.verified === "yes" && (
-                            <img src={checkIcon} alt="" />
-                         )}
+                                <img src={checkIcon} alt="" />
+                              )}
                             </div>
                             <div className="d-flex flex-column">
                               <h6 className="trending-card-cfx-price mb-0">
@@ -1462,7 +1500,9 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                         <span className="list-date">
                           Sold{" "}
                           {moment
-                            .duration(item.blockTimestamp * 1000 - Date.now())
+                            .duration(
+                              item.lastSale.blockTimestamp * 1000 - Date.now()
+                            )
                             .humanize(true)}
                         </span>
                       </div>
@@ -1483,8 +1523,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                 </div>
                 <div></div>
               </>
-            ) : option === "trending" &&
-              trendingCollections.length === 0 ? (
+            ) : option === "trending" && trendingCollections.length === 0 ? (
               <>
                 <div></div>
                 <div

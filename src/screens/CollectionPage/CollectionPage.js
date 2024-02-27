@@ -60,6 +60,8 @@ const CollectionPage = ({
 
   const [offerData, setofferData] = useState([]);
   const [bestOffer, setbestOffer] = useState([]);
+  const [showBtn, setshowBtn] = useState(true);
+
   const [userownedNftFilteredArray, setuserownedNftFilteredArray] = useState(
     []
   );
@@ -676,6 +678,7 @@ const CollectionPage = ({
                     tokenName: tokenName,
                     bestOffer: bestOfferListed,
                     lastSale: lastSaleListed,
+                    owner:owner
                   });
                 }
               }
@@ -1017,7 +1020,7 @@ const CollectionPage = ({
   };
 
   const onScroll = () => {
-    if (filter === null) {
+    if (filter === null && showBtn) {
       const wrappedElement = document.getElementById("header2");
 
       if (wrappedElement) {
@@ -1580,7 +1583,10 @@ const CollectionPage = ({
           userNftFavs={userNftFavs}
           cfxPrice={cfxPrice}
           coinbase={coinbase}
-          onRefreshListings={onRefreshListings}
+          onRefreshListings={() => {
+            fetchInitialNftsPerCollection();
+            onRefreshListings();
+          }}
           totalSupplyPerCollection={totalSupplyPerCollection}
           hasListedNfts={hasListedNfts}
           getFilter={getFilter}
@@ -1592,12 +1598,13 @@ const CollectionPage = ({
           bestOffer={bestOffer}
           onShowAcceptPopup={handleShowAcceptPopup}
           isVerified={currentCollection.verified === "yes" ? true : false}
+          onSelectCollecitonOffers={(value)=>{setshowBtn(value)}}
         />
 
         {totalSupplyPerCollection &&
           next <= totalSupplyPerCollection &&
           totalSupplyPerCollection > 0 &&
-          loading === false && (
+          loading === false && showBtn && (
             <div className="d-flex justify-content-center mt-5">
               <button className="buy-btn px-5 m-auto" onClick={loadMore}>
                 Load more

@@ -398,7 +398,7 @@ const RecentlyListed = ({
                             handleBuyNft(item);
                           }}
                         >
-                          {item.isApproved ? "Buy" : "Approve Buy"}
+                           Buy
                             {buyloading && selectedNftId === item.tokenId && (
                               <div
                                 className="spinner-border spinner-border-sm text-light ms-1"
@@ -569,7 +569,7 @@ const RecentlyListed = ({
                           handleBuyNft(item);
                         }}
                       >
-                      {item.isApproved ? "Buy" : "Approve Buy"}
+                       Buy
                             {buyloading && selectedNftId === item.tokenId && (
                               <div
                                 className="spinner-border spinner-border-sm text-light ms-1"

@@ -19,7 +19,7 @@ const MoreFromCollection = ({
   handleRemoveFavoriteNft,
   handleAddFavoriteNft,
   userNftFavs,
-  nftAddress,
+  nftAddress,allCollections
 }) => {
   const settings = {
     // dots: true,
@@ -263,6 +263,30 @@ const MoreFromCollection = ({
     }
   };
 
+  const buyFunc = async(nft)=>{
+    await window
+    .buyNFT(nft.nftAddress, nft.listingIndex, nft.price)
+    .then(() => {
+      setbuyLoading(false);
+      refreshUserHistory(coinbase);
+      refreshUserHistory(nft.owner)
+      handleGetRecentlySoldNftsCache()
+      setbuyStatus("success");
+      handleRefreshData(nft);
+      setTimeout(() => {
+        setbuyStatus("");
+      }, 2000);
+    })
+    .catch((e) => {
+      setbuyStatus("failed");
+      setbuyLoading(false);
+      setTimeout(() => {
+        setbuyStatus("buy");
+      }, 3000);
+      console.error(e);
+    });
+  }
+
 
 
   const handleBuyNft = async (nft) => {
@@ -278,28 +302,8 @@ const MoreFromCollection = ({
       if (isApproved) {
         setbuyLoading(true);
         setbuyStatus("buy");
-
-        await window
-          .buyNFT(nft.nftAddress, nft.listingIndex, nft.price)
-          .then((result) => {
-            setbuyLoading(false);
-            refreshUserHistory(coinbase);
-            refreshUserHistory(nft.owner)
-            handleGetRecentlySoldNftsCache()
-            setbuyStatus("success");
-            handleRefreshData(nft);
-            setTimeout(() => {
-              setbuyStatus("");
-            }, 2000);
-          })
-          .catch((e) => {
-            setbuyStatus("failed");
-            setbuyLoading(false);
-            setTimeout(() => {
-              setbuyStatus("buy");
-            }, 3000);
-            console.error(e);
-          });
+        buyFunc(nft)
+     
       } else {
         setbuyStatus("approve");
         setbuyLoading(true);
@@ -309,7 +313,8 @@ const MoreFromCollection = ({
           .then(() => {
             setTimeout(() => {
               setbuyStatus("buy");
-            }, 3000);
+              buyFunc(nft)
+            }, 1000);
             setbuyStatus("success");
             setbuyLoading(false);
           })
@@ -436,7 +441,27 @@ const MoreFromCollection = ({
                         >
                           {item.nftSymbol} {item.name}
                         </h6>
-                        <img src={checkIcon} alt="" />
+                        {allCollections &&
+                      allCollections.length > 0 &&
+                      allCollections.find((obj) => {
+                        return (
+                          obj.contractAddress.toLowerCase() ===
+                          item.nftAddress.toLowerCase()
+                        );
+                      }) ? (
+                        allCollections.find((obj) => {
+                          return (
+                            obj.contractAddress.toLowerCase() ===
+                            item.nftAddress.toLowerCase()
+                          );
+                        }).verified === "yes" ? (
+                          <img src={checkIcon} alt="" />
+                        ) : (
+                          <></>
+                        )
+                      ) : (
+                        <></>
+                      )}
                       </div>
                       {item?.price ? (
                         <div className="d-flex align-items-center mt-2 gap-3">

@@ -22,7 +22,8 @@ const SingleNft = ({
   balance,
   handleAddFavoriteNft,
   handleRemoveFavoriteNft,
-  userNftFavs,wcfxBalance
+  userNftFavs,
+  wcfxBalance,allCollections
 }) => {
   const [showOfferPopup, setShowOfferPopup] = useState(false);
   const [nftData, setNftData] = useState([]);
@@ -178,10 +179,11 @@ const SingleNft = ({
       .isApprovedNFT(nftId, nftAddress, coinbase)
       .then((data) => {
         return data;
-      }).catch((e)=>{
-        console.log(e)
-        setOfferacceptStatus("fail");
       })
+      .catch((e) => {
+        console.log(e);
+        setOfferacceptStatus("fail");
+      });
 
     if (isApproved) {
       acceptOfferFunc(offerIndex, offeror);
@@ -204,19 +206,14 @@ const SingleNft = ({
     }
   };
 
-
-
   const refreshUserHistory = async (wallet) => {
     const result = await axios
-      .get(
-        `${baseURL}/api/refresh-user-history/${wallet.toLowerCase()}`,
-        {
-          headers: {
-            cascadestyling:
-              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-          },
-        }
-      )
+      .get(`${baseURL}/api/refresh-user-history/${wallet.toLowerCase()}`, {
+        headers: {
+          cascadestyling:
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
       .catch((e) => {
         console.error(e);
       });
@@ -234,82 +231,83 @@ const SingleNft = ({
     const result = await window.getAllOffers(nftAddr, nftId).catch((e) => {
       console.log(e);
     });
-if(result){
-    const finalResult = result[1];
-    if (finalResult && finalResult.length > 0) {
-      if (coinbase) {
-        finalArray = finalResult.filter((object) => {
-          return object.offeror.toLowerCase() === coinbase.toLowerCase();
-        });
-
-        let finalArrayIndex = finalResult.findIndex((object) => {
-          return object.offeror.toLowerCase() === coinbase.toLowerCase();
-        });
-
-        if (finalArray && finalArray.length > 0) {
-          offerArray = finalArray.map((item) => {
-            return { ...item, index: finalArrayIndex };
+    if (result) {
+      const finalResult = result[1];
+      if (finalResult && finalResult.length > 0) {
+        if (coinbase) {
+          finalArray = finalResult.filter((object) => {
+            return object.offeror.toLowerCase() === coinbase.toLowerCase();
           });
-        }
 
-        const maxPrice = Math.max(...finalResult.map((o) => o.amount));
-        const obj = finalResult.find((item) => item.amount == maxPrice);
-        setbestOffer(obj);
+          let finalArrayIndex = finalResult.findIndex((object) => {
+            return object.offeror.toLowerCase() === coinbase.toLowerCase();
+          });
 
-        if (offerArray && offerArray.length > 0) {
-          const hasExpired2 = moment
-            .duration(offerArray[0].expiresAt * 1000 - Date.now())
-            .humanize(true)
-            .includes("ago");
-          if (!hasExpired2) {
-            setofferData(...offerArray);
-          } else setofferData([]);
-        } else setofferData([]);
-      }
-
-      const contract = new window.confluxWeb3.eth.Contract(
-        window.TOKEN_ABI,
-        window.config.wcfx_address
-      );
-
-      await Promise.all(
-        window.range(0, finalResult.length - 1).map(async (i) => {
-          const balance = await contract.methods
-            .balanceOf(finalResult[i].offeror)
-            .call()
-            .then((data) => {
-              return window.confluxWeb3.utils.fromWei(data, "ether");
-            });
-
-          const allowance = await contract.methods
-            .allowance(
-              finalResult[i].offeror,
-              window.config.nft_marketplace_address
-            )
-            .call()
-            .then((data) => {
-              return window.confluxWeb3.utils.fromWei(data, "ether");
-            });
-
-          const priceFormatted = finalResult[i].amount / 1e18;
-
-          const hasExpired = moment
-            .duration(finalResult[i].expiresAt * 1000 - Date.now())
-            .humanize(true)
-            .includes("ago");
-          if (!hasExpired) {
-            return allOffersArray.push({
-              ...finalResult[i],
-              index: i,
-              isAllowed:
-                balance >= priceFormatted && allowance >= priceFormatted,
+          if (finalArray && finalArray.length > 0) {
+            offerArray = finalArray.map((item) => {
+              return { ...item, index: finalArrayIndex };
             });
           }
-        })
-      );
 
-      setallOffers(allOffersArray);
-    } }else {
+          const maxPrice = Math.max(...finalResult.map((o) => o.amount));
+          const obj = finalResult.find((item) => item.amount == maxPrice);
+          setbestOffer(obj);
+
+          if (offerArray && offerArray.length > 0) {
+            const hasExpired2 = moment
+              .duration(offerArray[0].expiresAt * 1000 - Date.now())
+              .humanize(true)
+              .includes("ago");
+            if (!hasExpired2) {
+              setofferData(...offerArray);
+            } else setofferData([]);
+          } else setofferData([]);
+        }
+
+        const contract = new window.confluxWeb3.eth.Contract(
+          window.TOKEN_ABI,
+          window.config.wcfx_address
+        );
+
+        await Promise.all(
+          window.range(0, finalResult.length - 1).map(async (i) => {
+            const balance = await contract.methods
+              .balanceOf(finalResult[i].offeror)
+              .call()
+              .then((data) => {
+                return window.confluxWeb3.utils.fromWei(data, "ether");
+              });
+
+            const allowance = await contract.methods
+              .allowance(
+                finalResult[i].offeror,
+                window.config.nft_marketplace_address
+              )
+              .call()
+              .then((data) => {
+                return window.confluxWeb3.utils.fromWei(data, "ether");
+              });
+
+            const priceFormatted = finalResult[i].amount / 1e18;
+
+            const hasExpired = moment
+              .duration(finalResult[i].expiresAt * 1000 - Date.now())
+              .humanize(true)
+              .includes("ago");
+            if (!hasExpired) {
+              return allOffersArray.push({
+                ...finalResult[i],
+                index: i,
+                isAllowed:
+                  balance >= priceFormatted && allowance >= priceFormatted,
+              });
+            }
+          })
+        );
+
+        setallOffers(allOffersArray);
+      }
+    } else {
       setbestOffer([]);
       setofferData([]);
       setallOffers([]);
@@ -338,7 +336,8 @@ if(result){
 
     if (
       abiresult &&
-      abiresult.status === 200 &&  abiresult.data.message === "OK" &&
+      abiresult.status === 200 &&
+      abiresult.data.message === "OK" &&
       listednfts &&
       listednfts.status === 200
     ) {
@@ -1054,7 +1053,6 @@ if(result){
     getCollectionInfo();
   }, []);
 
- 
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
       <SingleNftBanner
@@ -1068,16 +1066,18 @@ if(result){
         isConnected={isConnected}
         handleSignup={handleSignup}
         cfxPrice={cfxPrice}
-        handleRefreshData={(seller) => {
+        handleRefreshData={() => {
           getUpdatedNftData().then(() => {
             refreshMetadata(nftId);
             fetchInitialNftsPerCollection(nftId);
             fetchNftSaleHistoryCache(nftAddress, nftId);
             refreshUserHistory(coinbase);
-            refreshUserHistory(seller);
             getCollectionFloorPriceCache();
             onRefreshListings();
           });
+        }}
+        handleRefreshData2={(seller) => {
+          refreshUserHistory(seller);
         }}
         handleSwitchNetwork={handleSwitchNetwork}
         loading={loading}
@@ -1085,6 +1085,8 @@ if(result){
         bestOffer={bestOffer}
         lastSale={saleHistory}
         collectionFeeRate={collectionFeeRate}
+        allCollections={allCollections}
+
       />
       <SingleNftHistory
         allOffers={allOffers}
@@ -1114,6 +1116,7 @@ if(result){
         handleAddFavoriteNft={handleAddFavoriteNft}
         handleRemoveFavoriteNft={handleRemoveFavoriteNft}
         userNftFavs={userNftFavs}
+        allCollections={allCollections}
       />
       {showOfferPopup && (
         <MakeOffer

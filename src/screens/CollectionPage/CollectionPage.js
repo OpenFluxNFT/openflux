@@ -45,7 +45,7 @@ const CollectionPage = ({
   const [uniqueOwnersPercentage, setUniqueOwnersPercentage] = useState(0);
   const [recentlySoldNfts, setRecentlySoldNfts] = useState([]);
   const [filter, setFilter] = useState(null);
-  const [next, setnext] = useState(12);
+  const [next, setnext] = useState(0);
   const [nextSearch, setnextSearch] = useState(100);
   const [showOfferPopup, setshowOfferPopup] = useState(false);
   const [showOfferAcceptPopup, setshowOfferAcceptPopup] = useState(false);
@@ -76,7 +76,11 @@ const CollectionPage = ({
   const collectionInfo = [
     {
       title: "Total Volume",
-      value: getFormattedNumber(currentCollection.lifetimeVolume ? currentCollection.lifetimeVolume / 1e18 : 0),
+      value: getFormattedNumber(
+        currentCollection.lifetimeVolume
+          ? currentCollection.lifetimeVolume / 1e18
+          : 0
+      ),
       valueType: "WCFX",
     },
     {
@@ -593,20 +597,25 @@ const CollectionPage = ({
                 .catch((e) => {
                   console.log(e);
                 });
-              const finalOfferResultListed = offersresultListed[1];
+              if (offersresultListed) {
+                const finalOfferResultListed = offersresultListed[1];
 
-              if (finalOfferResultListed && finalOfferResultListed.length > 0) {
-                const maxPrice = Math.max(
-                  ...finalOfferResultListed.map((o) => o.amount)
-                );
-                const obj = finalOfferResultListed.find(
-                  (item) => item.amount == maxPrice
-                );
-                if (obj) {
-                  bestOfferListed = obj.amount;
+                if (
+                  finalOfferResultListed &&
+                  finalOfferResultListed.length > 0
+                ) {
+                  const maxPrice = Math.max(
+                    ...finalOfferResultListed.map((o) => o.amount)
+                  );
+                  const obj = finalOfferResultListed.find(
+                    (item) => item.amount == maxPrice
+                  );
+                  if (obj) {
+                    bestOfferListed = obj.amount;
+                  }
+                } else {
+                  bestOfferListed = 0;
                 }
-              } else {
-                bestOfferListed = 0;
               }
 
               const resultSale = await axios
@@ -696,7 +705,9 @@ const CollectionPage = ({
               .catch((e) => {
                 console.log(e);
               });
-            finalOfferResult = offersresult[1];
+            if (offersresult) {
+              finalOfferResult = offersresult[1];
+            }
 
             if (finalOfferResult && finalOfferResult.length > 0) {
               // finalArray = finalOfferResult.filter((object) => {
@@ -829,7 +840,7 @@ const CollectionPage = ({
     }
   };
 
-  const fetchSlicedNftsPerCollection = async () => {
+  const fetchSlicedNftsPerCollection = async (slice) => {
     let nftArray = [];
     let totalSupply = 0;
     setLoading(true);
@@ -859,8 +870,9 @@ const CollectionPage = ({
 
       if (totalSupply && totalSupply > 0) {
         const limit = totalSupply >= next ? next : totalSupply;
+
         await Promise.all(
-          window.range(next - nftPerRow, limit - 1).map(async (i) => {
+          window.range(next, limit + nftPerRow - 1).map(async (i) => {
             let tokenByIndex = 0;
             let bestOffer = 0;
             let lastSale = 0;
@@ -882,7 +894,9 @@ const CollectionPage = ({
               .catch((e) => {
                 console.log(e);
               });
-            finalOfferResult = offersresult[1];
+            if (offersresult) {
+              finalOfferResult = offersresult[1];
+            }
 
             if (finalOfferResult && finalOfferResult.length > 0) {
               // finalArray = finalOfferResult.filter((object) => {
@@ -1003,39 +1017,21 @@ const CollectionPage = ({
   };
 
   const onScroll = () => {
-    const wrappedElement = document.getElementById("header2");
-    if (wrappedElement) {
-      const isBottom =
-        parseInt(wrappedElement.getBoundingClientRect()?.bottom) <=
-        window.innerHeight;
-      if (isBottom) {
-        if (next <= totalSupplyPerCollection) {
-          loadMore();
+    if (filter === null) {
+      const wrappedElement = document.getElementById("header2");
+
+      if (wrappedElement) {
+        const isBottom =
+          parseInt(wrappedElement.getBoundingClientRect()?.bottom) <=
+          window.innerHeight;
+        if (isBottom) {
+          if (next <= totalSupplyPerCollection) {
+            loadMore();
+            document.removeEventListener("scroll", onScroll);
+          }
         }
       }
-      document.removeEventListener("scroll", onScroll);
     }
-
-    // const { clientHeight, scrollHeight, scrollTop } =
-    //   document.documentElement || document.body;
-
-    // // Adjust the threshold as needed
-    // const threshold = 100;
-    // console.log(scrollHeight, scrollTop, clientHeight);
-    // if (scrollHeight - scrollTop - clientHeight < threshold) {
-    //   // You've reached the bottom, trigger your API request here
-    //   // console.log('Reached bottom, trigger API request');
-    //   console.log("yes1", totalSupplyPerCollection);
-    //   if (next <= totalSupplyPerCollection || next === 12) {
-    //     console.log("yes2");
-
-    //     setnext(next + nftPerRow);
-    //     fetchSlicedNftsPerCollection();
-    //   }
-
-    //   // Optionally, you can remove the event listener to stop further calls
-    //   window.removeEventListener("scroll", onScroll);
-    // }
   };
 
   const fetchCurrentCollection = (collectionAddr) => {
@@ -1210,23 +1206,23 @@ const CollectionPage = ({
       const finalResult = result[1];
       console.log("finalResult", finalResult);
       if (finalResult && finalResult.length > 0) {
-        if (coinbase) {
-          await Promise.all(
-            window.range(0, finalResult.length - 1).map(async (i) => {
-              const hasExpired = moment
-                .duration(finalResult[i].expiresAt * 1000 - Date.now())
-                .humanize(true)
-                .includes("ago");
+        await Promise.all(
+          window.range(0, finalResult.length - 1).map(async (i) => {
+            const hasExpired = moment
+              .duration(finalResult[i].expiresAt * 1000 - Date.now())
+              .humanize(true)
+              .includes("ago");
 
-              if (!hasExpired) {
-                return allOffersArray.push({
-                  ...finalResult[i],
-                  index: i,
-                });
-              }
-            })
-          );
-          setallOffers(allOffersArray);
+            if (!hasExpired) {
+              return allOffersArray.push({
+                ...finalResult[i],
+                index: i,
+              });
+            }
+          })
+        );
+        setallOffers(allOffersArray);
+        if (coinbase) {
           finalArray = finalResult.filter((object) => {
             return object.offeror.toLowerCase() === coinbase.toLowerCase();
           });
@@ -1352,15 +1348,12 @@ const CollectionPage = ({
 
   const refreshUserHistory = async (wallet, nftId) => {
     const result = await axios
-      .get(
-        `${baseURL}/api/refresh-user-history/${wallet.toLowerCase()}`,
-        {
-          headers: {
-            cascadestyling:
-              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-          },
-        }
-      )
+      .get(`${baseURL}/api/refresh-user-history/${wallet.toLowerCase()}`, {
+        headers: {
+          cascadestyling:
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
       .catch((e) => {
         console.error(e);
       });
@@ -1518,7 +1511,7 @@ const CollectionPage = ({
   }, [isNewCollection]);
 
   useEffect(() => {
-    if (next !== 12) {
+    if (next !== 0) {
       fetchSlicedNftsPerCollection();
     }
   }, [next]);
@@ -1531,11 +1524,18 @@ const CollectionPage = ({
     fetchCurrentCollection(collectionAddress);
   }, [collectionAddress, allCollections]);
 
+  // useEffect(() => {
+  //   if (filter === null) {
+  //     window.addEventListener("scroll", onScroll);
+  //   }
+  // }, [filter,next,totalSupplyPerCollection]);
+
   useEffect(() => {
-    if (filter === null) {
-      window.addEventListener("scroll", onScroll);
-    }
-  }, [filter]);
+    // if (filter === null) {
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+    // }
+  });
 
   return (
     <>

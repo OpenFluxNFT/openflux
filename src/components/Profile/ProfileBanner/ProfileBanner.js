@@ -17,6 +17,7 @@ import { NavLink } from "react-router-dom";
 import { shortAddress } from "../../../hooks/shortAddress";
 import editIcon from "../../SettingsPage/assets/editIcon.svg";
 import Toast from "../../Toast/Toast";
+import OutsideClickHandler from "react-outside-click-handler";
 
 const ProfileBanner = ({
   title,
@@ -33,6 +34,7 @@ const ProfileBanner = ({
 }) => {
   const [profileImage, setProfileImage] = useState(null);
   const [bannerImage, setBannerImage] = useState(null);
+  const [uploadDropdown, setUploadDropdown] = useState(false)
 
 
   const [userInfo, setUserInfo] = useState({
@@ -280,7 +282,19 @@ const ProfileBanner = ({
                     className="info-divider"
                     style={{ height: "25px" }}
                   ></div>
-                  <img src={uploadIcon} alt="" />
+                  <div className="position-relative">
+                  <img src={uploadIcon} style={{cursor: "pointer"}} onClick={() => setUploadDropdown(true)} alt="" />
+                    {uploadDropdown &&
+                    <OutsideClickHandler onOutsideClick={() => setUploadDropdown(false)}>
+                        <div className="upload-dropdown p-3 d-flex flex-column gap-2">
+                          <div className="d-flex align-items-center gap-2" style={{cursor: "pointer"}}>
+                            <img src={uploadIcon} alt="" />
+                            <h6 className="collection-info mb-0">Copy Link</h6>
+                          </div>
+                        </div>
+                    </OutsideClickHandler>
+                    }
+                  </div>
                   <NavLink to="/settings/profile">
                     <img src={settingsIcon} alt="" />
                   </NavLink>

@@ -612,16 +612,18 @@ const Profile = ({
           let lowercaseName = obj.tokenId;
           if (type === "sale") {
             if (!seenNames.has(lowercaseName)) {
-            seenNames.add(lowercaseName);
-            uniqueObjects.push(obj);
+              seenNames.add(lowercaseName);
+              uniqueObjects.push(obj);
             }
           }
         });
 
         settotalSoldNfts(uniqueObjects.length);
-        setsaleHistory(saleHistory.sort((a, b) => {
-          return b.blockTimestamp - a.blockTimestamp;
-        }));
+        setsaleHistory(
+          saleHistory.sort((a, b) => {
+            return b.blockTimestamp - a.blockTimestamp;
+          })
+        );
         // console.log("saleHistory", saleHistory);
       }
     }
@@ -636,9 +638,11 @@ const Profile = ({
       if (id.toLowerCase() !== userData.walletAddress?.toLowerCase()) {
         onViewShared(id);
       }
+    } else {
+      onViewShared(id);
     }
   };
-  // console.log(collectionOffers);
+
   useEffect(() => {
     checkIfSameAccount();
   }, [userData, id]);

@@ -46,7 +46,8 @@ const CollectionList = ({
   onShowAcceptPopup,
   allOffers,
   bestOffer,
-  isVerified, onSelectCollecitonOffers
+  isVerified,
+  onSelectCollecitonOffers,
 }) => {
   const windowSize = useWindowSize();
   const [openFilters, setOpenFilters] = useState(false);
@@ -449,29 +450,29 @@ const CollectionList = ({
       });
   };
 
-  const buyFunc = async(nft)=>{
+  const buyFunc = async (nft) => {
     await window
-    .buyNFT(nft.nftAddress, nft.listingIndex, nft.price)
-    .then((result) => {
-      setbuyLoading(false);
-      refreshUserHistory(coinbase);
-      refreshUserHistory(nft.owner);
-      handleGetRecentlySoldNftsCache();
-      setbuyStatus("success");
-      handleRefreshData(nft);
-      setTimeout(() => {
-        setbuyStatus("");
-      }, 2000);
-    })
-    .catch((e) => {
-      setbuyStatus("failed");
-      setbuyLoading(false);
-      setTimeout(() => {
-        setbuyStatus("buy");
-      }, 3000);
-      console.error(e);
-    });
-  }
+      .buyNFT(nft.nftAddress, nft.listingIndex, nft.price)
+      .then((result) => {
+        setbuyLoading(false);
+        refreshUserHistory(coinbase);
+        refreshUserHistory(nft.owner);
+        handleGetRecentlySoldNftsCache();
+        setbuyStatus("success");
+        handleRefreshData(nft);
+        setTimeout(() => {
+          setbuyStatus("");
+        }, 2000);
+      })
+      .catch((e) => {
+        setbuyStatus("failed");
+        setbuyLoading(false);
+        setTimeout(() => {
+          setbuyStatus("buy");
+        }, 3000);
+        console.error(e);
+      });
+  };
 
   const handleBuyNft = async (nft) => {
     setSelectedNftId(nft.tokenId);
@@ -486,8 +487,7 @@ const CollectionList = ({
       if (isApproved) {
         setbuyLoading(true);
         setbuyStatus("buy");
-        buyFunc(nft)
-
+        buyFunc(nft);
       } else {
         setbuyStatus("approve");
         setbuyLoading(true);
@@ -497,7 +497,7 @@ const CollectionList = ({
           .then(() => {
             setTimeout(() => {
               setbuyStatus("buy");
-              buyFunc(nft)
+              buyFunc(nft);
             }, 1000);
             setbuyStatus("success");
             setbuyLoading(false);
@@ -536,7 +536,7 @@ const CollectionList = ({
   //     }, 1500);
   //   }
   // }, [queryItems]);
- 
+
   return (
     <>
       <div className="container-lg">
@@ -646,7 +646,9 @@ const CollectionList = ({
                         <FormControlLabel
                           onChange={() => {
                             setListed("collectionoffers");
-                            onSelectCollecitonOffers(listType === "collectionoffers" ? true : false)
+                            onSelectCollecitonOffers(
+                              listType === "collectionoffers" ? true : false
+                            );
                           }}
                           control={
                             <Checkbox
@@ -827,11 +829,12 @@ const CollectionList = ({
               </div>
               <div
                 className={
-                 ( currentCollection &&
-                  currentCollection.owner &&
-                  coinbase &&
-                  currentCollection.owner.toLowerCase() ===
-                    coinbase.toLowerCase()) || totalSupplyPerCollection === 0
+                  (currentCollection &&
+                    currentCollection.owner &&
+                    coinbase &&
+                    currentCollection.owner.toLowerCase() ===
+                      coinbase.toLowerCase()) ||
+                  totalSupplyPerCollection === 0
                     ? "col-8 col-lg-7"
                     : "col-6 col-lg-5"
                 }
@@ -936,10 +939,11 @@ const CollectionList = ({
                 </div>
               </div>
               {(currentCollection &&
-              currentCollection.owner &&
-              coinbase  &&
-              currentCollection.owner.toLowerCase() ===
-                coinbase.toLowerCase()) || totalSupplyPerCollection ===0 ? (
+                currentCollection.owner &&
+                coinbase &&
+                currentCollection.owner.toLowerCase() ===
+                  coinbase.toLowerCase()) ||
+              totalSupplyPerCollection === 0 ? (
                 <></>
               ) : (
                 <div className="col-lg-2">
@@ -1493,7 +1497,7 @@ const CollectionList = ({
                               handleBuyNft(item);
                             }}
                           >
-                          Buy
+                            Buy
                             {buyloading && selectedNftId === item.tokenId && (
                               <div
                                 className="spinner-border spinner-border-sm text-light ms-1"
@@ -1844,8 +1848,9 @@ const CollectionList = ({
 
             {(collectionLoading === true || loading === true) &&
             listType !== "collectionoffers" &&
-            totalSupplyPerCollection > 0 &&
-            allNftArray && (gridView === "small-grid" || gridView === "big-grid") ? (
+            // totalSupplyPerCollection > 0 &&
+            allNftArray &&
+            (gridView === "small-grid" || gridView === "big-grid") ? (
               <div
                 className={`${
                   gridView === "list"
@@ -1993,8 +1998,9 @@ const CollectionList = ({
                     <FormControlLabel
                       onChange={() => {
                         setListed("collectionoffers");
-                        onSelectCollecitonOffers(listType === "collectionoffers" ? true : false)
-
+                        onSelectCollecitonOffers(
+                          listType === "collectionoffers" ? true : false
+                        );
                       }}
                       control={
                         <Checkbox

@@ -894,7 +894,7 @@ function App() {
   };
 
   const getFavNftsPerUser = async (walletAddr) => {
-    if (walletAddr && isConnected) {
+    if (walletAddr) {
       const result = await axios
         .get(`${baseURL}/api/users/${walletAddr}`, {
           headers: {
@@ -1629,6 +1629,12 @@ function App() {
               successUpdateProfile={successUpdateProfile}
               onViewShared={(value) => {
                 getOtherUserData(value);
+                getFavNftsPerUser(value);
+                // getUserData(value);
+                fetchuserCollection(value);
+                handleMapUserNftsOwned(value);
+                fetchTotalNftOwned(value);
+
               }}
               userCollection={userCollection}
               userCollectionFavs={userCollectionFavs}

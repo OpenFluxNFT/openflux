@@ -5,7 +5,7 @@ import twitterLogo from "./assets/twitterLogo.svg";
 import telegramLogo from "./assets/telegramLogo.svg";
 import discordLogo from "./assets/discordLogo.svg";
 import mediumLogo from "./assets/mediumLogo.svg";
-import copyrightIcon from "./assets/copyrightIcon.svg";
+import githubLogo from "./assets/githubLogo.svg";
 import { NavLink } from "react-router-dom";
 
 const Footer = () => {
@@ -59,6 +59,9 @@ const Footer = () => {
                   </a>
                   <a href="https://medium.com/@openflux" target="_blank" rel='noreferrer'>
                     <img src={mediumLogo} alt="" />
+                  </a>
+                  <a href="https://github.com/OpenFluxNFT" target="_blank" rel='noreferrer'>
+                    <img src={githubLogo} alt="" />
                   </a>
                 </div>
               </div>

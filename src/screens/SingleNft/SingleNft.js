@@ -1000,6 +1000,14 @@ const SingleNft = ({
     }
   };
 
+  const refreshSingleMetadata = async (nftAddress,nftID)=>{
+    const result = await fetch(
+     `https://cdnflux.dypius.com/executeScript.php?contractAddress=${nftAddress}&tokenID=${nftID}`
+    ).catch((e)=>{
+      console.error(e)
+    })
+  }
+
   const refreshMetadata = async (nftID) => {
     const result = await axios
       .get(
@@ -1039,6 +1047,7 @@ const SingleNft = ({
 
   useEffect(() => {
     getOffer(nftAddress, nftId);
+    refreshSingleMetadata(nftAddress, nftId)
   }, [coinbase, nftAddress, nftId]);
 
   useEffect(() => {

@@ -678,7 +678,7 @@ const CollectionPage = ({
                     tokenName: tokenName,
                     bestOffer: bestOfferListed,
                     lastSale: lastSaleListed,
-                    owner:owner
+                    owner: owner,
                   });
                 }
               }
@@ -871,7 +871,12 @@ const CollectionPage = ({
           });
       }
 
-      if (totalSupply && totalSupply > 0 && next!==0 && Number(totalSupply)>=12) {
+      if (
+        totalSupply &&
+        totalSupply > 0 &&
+        next !== 0 &&
+        Number(totalSupply) >= 12
+      ) {
         const limit = totalSupply >= next ? next : totalSupply;
 
         await Promise.all(
@@ -1022,12 +1027,11 @@ const CollectionPage = ({
   const onScroll = () => {
     if (filter === null && showBtn) {
       const wrappedElement = document.getElementById("header2");
-
       if (wrappedElement) {
         const isBottom =
           parseInt(wrappedElement.getBoundingClientRect()?.bottom) <=
           window.innerHeight;
-        if (isBottom) {
+        if (isBottom && allNftArray.length > 0) {
           if (next <= totalSupplyPerCollection) {
             loadMore();
             document.removeEventListener("scroll", onScroll);
@@ -1207,7 +1211,7 @@ const CollectionPage = ({
       let allOffersArray = [];
       const web3 = window.confluxWeb3;
       const finalResult = result[1];
-      console.log("finalResult", finalResult);
+
       if (finalResult && finalResult.length > 0) {
         await Promise.all(
           window.range(0, finalResult.length - 1).map(async (i) => {
@@ -1347,6 +1351,43 @@ const CollectionPage = ({
       .catch((e) => {
         console.log(e);
       });
+  };
+
+  const refresgListingsNftData = async () => {
+    const result = await axios
+      .get(
+        `${baseURL}/api/collections/${collectionAddress.toLowerCase()}/refresh-listings`,
+        {
+          headers: {
+            cascadestyling:
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        }
+      )
+      .catch((e) => {
+        console.log(e);
+      });
+
+    if (
+      result &&
+      result.status === 200 &&
+      allNftArray &&
+      allNftArray.length > 0
+    ) {
+      const listednfts = result.data.listings;
+      if (listednfts !== "none" && listednfts && listednfts.length > 0) {
+        const uniqueArray_listed = listednfts.filter(
+          ({ tokenId: id1 }) =>
+            !allNftArray.some(
+              ({ tokenId: id2 }) => id1.toString() == id2.toString()
+            )
+        );
+
+        if (uniqueArray_listed && uniqueArray_listed.length > 0) {
+          fetchInitialNftsPerCollection();
+        }
+      }
+    }
   };
 
   const refreshUserHistory = async (wallet, nftId) => {
@@ -1527,6 +1568,13 @@ const CollectionPage = ({
     fetchCurrentCollection(collectionAddress);
   }, [collectionAddress, allCollections]);
 
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      refresgListingsNftData();
+      return () => clearInterval(interval);
+    }, 10000);
+  }, [allNftArray.length]);
+
   // useEffect(() => {
   //   if (filter === null) {
   //     window.addEventListener("scroll", onScroll);
@@ -1598,13 +1646,16 @@ const CollectionPage = ({
           bestOffer={bestOffer}
           onShowAcceptPopup={handleShowAcceptPopup}
           isVerified={currentCollection.verified === "yes" ? true : false}
-          onSelectCollecitonOffers={(value)=>{setshowBtn(value)}}
+          onSelectCollecitonOffers={(value) => {
+            setshowBtn(value);
+          }}
         />
 
         {totalSupplyPerCollection &&
           next <= totalSupplyPerCollection &&
           totalSupplyPerCollection > 0 &&
-          loading === false && showBtn && (
+          loading === false &&
+          showBtn && (
             <div className="d-flex justify-content-center mt-5">
               <button className="buy-btn px-5 m-auto" onClick={loadMore}>
                 Load more

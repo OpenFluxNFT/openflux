@@ -1622,7 +1622,7 @@ const ProfileNFTList = ({
                   ))
               ) : (
                 <span className="text-white">
-                  You haven't marked any NFT collection as a favorite
+                  This user hasn't marked any NFT collection as a favorite
                 </span>
               )}
             </div>
@@ -4697,7 +4697,7 @@ const ProfileNFTList = ({
             userNftsOwnedArray &&
             userNftsOwnedArray.length === 0 && (
               <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
-                You currently do not have any NFTs in your wallet
+                There are currently no NFTs in your wallet
               </span>
             )}
           {option === "collected" &&
@@ -4720,7 +4720,7 @@ const ProfileNFTList = ({
               return obj.price !== undefined;
             }) && (
               <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
-                You currently do not have any NFTs listed
+                There are currently no listed NFTs
               </span>
             )}
           {option === "listed" &&
@@ -4744,7 +4744,7 @@ const ProfileNFTList = ({
               )) ||
               (allOffers && allOffers.length === 0)) && (
               <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
-                You do not have any offers for your NFTs at the moment
+                There are currently no offers for your NFTs at the moment
               </span>
             )}
           {option === "hasOffers" &&

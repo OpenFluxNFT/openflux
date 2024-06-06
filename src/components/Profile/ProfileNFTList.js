@@ -1523,13 +1523,13 @@ const ProfileNFTList = ({
                           allCollections.find((obj) => {
                             return (
                               obj.contractAddress.toLowerCase() ===
-                              item.contractAddress.toLowerCase()
+                              item.toLowerCase()
                             );
                           }) ? (
                             allCollections.find((obj) => {
                               return (
                                 obj.contractAddress.toLowerCase() ===
-                                item.contractAddress.toLowerCase()
+                                item.toLowerCase()
                               );
                             }).verified === "yes" ? (
                               <img src={checkIcon} alt="" className="ms-2" />

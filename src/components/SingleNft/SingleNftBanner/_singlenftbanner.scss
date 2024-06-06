@@ -82,19 +82,7 @@
     flex: 1;
   }
 
-  .connect-btn2 {
-    background: linear-gradient(90deg, #2F80ED 0%, #00A9FF 100%);
-    color: #FFF;
-    text-align: center;
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: normal;
-    text-transform: capitalize;
-    border-radius: 20px;
-    padding: 5px 20px;
 
-  }
 
   .nft-item-name-right {
     color: #fff;
@@ -196,7 +184,19 @@
     text-transform: capitalize;
   }
 }
+  .connect-btn2 {
+    background: linear-gradient(90deg, #2F80ED 0%, #00A9FF 100%);
+    color: #FFF;
+    text-align: center;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    text-transform: capitalize;
+    border-radius: 20px;
+    padding: 5px 20px;
 
+  }
 .duration-tab-active {
   background: linear-gradient(90deg, #2F80ED 0%, #00A9FF 100%);
 }

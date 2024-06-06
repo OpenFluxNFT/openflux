@@ -19,7 +19,8 @@ const MoreFromCollection = ({
   handleRemoveFavoriteNft,
   handleAddFavoriteNft,
   userNftFavs,
-  nftAddress,allCollections
+  nftAddress,
+  allCollections,
 }) => {
   const settings = {
     // dots: true,
@@ -216,15 +217,12 @@ const MoreFromCollection = ({
 
   const refreshUserHistory = async (wallet) => {
     const result = await axios
-      .get(
-        `${baseURL}/api/refresh-user-history/${wallet.toLowerCase()}`,
-        {
-          headers: {
-            cascadestyling:
-              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-          },
-        }
-      )
+      .get(`${baseURL}/api/refresh-user-history/${wallet.toLowerCase()}`, {
+        headers: {
+          cascadestyling:
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
       .catch((e) => {
         console.error(e);
       });
@@ -247,8 +245,6 @@ const MoreFromCollection = ({
       });
   };
 
-
-
   const checkNftApprovalForBuying = async (amount) => {
     const result = await window.isApprovedBuy(amount).catch((e) => {
       console.error(e);
@@ -263,31 +259,29 @@ const MoreFromCollection = ({
     }
   };
 
-  const buyFunc = async(nft)=>{
+  const buyFunc = async (nft) => {
     await window
-    .buyNFT(nft.nftAddress, nft.listingIndex, nft.price)
-    .then(() => {
-      setbuyLoading(false);
-      refreshUserHistory(coinbase);
-      refreshUserHistory(nft.owner)
-      handleGetRecentlySoldNftsCache()
-      setbuyStatus("success");
-      handleRefreshData(nft);
-      setTimeout(() => {
-        setbuyStatus("");
-      }, 2000);
-    })
-    .catch((e) => {
-      setbuyStatus("failed");
-      setbuyLoading(false);
-      setTimeout(() => {
-        setbuyStatus("buy");
-      }, 3000);
-      console.error(e);
-    });
-  }
-
-
+      .buyNFT(nft.nftAddress, nft.listingIndex, nft.price)
+      .then(() => {
+        setbuyLoading(false);
+        refreshUserHistory(coinbase);
+        refreshUserHistory(nft.owner);
+        handleGetRecentlySoldNftsCache();
+        setbuyStatus("success");
+        handleRefreshData(nft);
+        setTimeout(() => {
+          setbuyStatus("");
+        }, 2000);
+      })
+      .catch((e) => {
+        setbuyStatus("failed");
+        setbuyLoading(false);
+        setTimeout(() => {
+          setbuyStatus("buy");
+        }, 3000);
+        console.error(e);
+      });
+  };
 
   const handleBuyNft = async (nft) => {
     setSelectedNftId(nft.tokenId);
@@ -302,8 +296,7 @@ const MoreFromCollection = ({
       if (isApproved) {
         setbuyLoading(true);
         setbuyStatus("buy");
-        buyFunc(nft)
-     
+        buyFunc(nft);
       } else {
         setbuyStatus("approve");
         setbuyLoading(true);
@@ -313,7 +306,7 @@ const MoreFromCollection = ({
           .then(() => {
             setTimeout(() => {
               setbuyStatus("buy");
-              buyFunc(nft)
+              buyFunc(nft);
             }, 1000);
             setbuyStatus("success");
             setbuyLoading(false);
@@ -357,13 +350,13 @@ const MoreFromCollection = ({
                       }}
                       className={"position-relative"}
                     >
-                      {!item.isVideo ? (
+                      {!item.isVideo && item.image ? (
                         <img
                           src={`https://cdnflux.dypius.com/${item.image}`}
                           className="card-img"
                           alt=""
                         />
-                      ) : (
+                      ) : item.isVideo && item.image ? (
                         <video
                           src={`https://cdnflux.dypius.com/${item.image}`}
                           alt=""
@@ -374,7 +367,14 @@ const MoreFromCollection = ({
                           muted="muted"
                           playsInline={true}
                         />
+                      ) : (
+                        <img
+                          src={require(`../../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                          className="card-img"
+                          alt=""
+                        />
                       )}
+
                       <div
                         className="position-absolute favorite-container"
                         onClick={(e) => {
@@ -442,26 +442,26 @@ const MoreFromCollection = ({
                           {item.nftSymbol} {item.name}
                         </h6>
                         {allCollections &&
-                      allCollections.length > 0 &&
-                      allCollections.find((obj) => {
-                        return (
-                          obj.contractAddress.toLowerCase() ===
-                          item.nftAddress.toLowerCase()
-                        );
-                      }) ? (
+                        allCollections.length > 0 &&
                         allCollections.find((obj) => {
                           return (
                             obj.contractAddress.toLowerCase() ===
                             item.nftAddress.toLowerCase()
                           );
-                        }).verified === "yes" ? (
-                          <img src={checkIcon} alt="" />
+                        }) ? (
+                          allCollections.find((obj) => {
+                            return (
+                              obj.contractAddress.toLowerCase() ===
+                              item.nftAddress.toLowerCase()
+                            );
+                          }).verified === "yes" ? (
+                            <img src={checkIcon} alt="" />
+                          ) : (
+                            <></>
+                          )
                         ) : (
                           <></>
-                        )
-                      ) : (
-                        <></>
-                      )}
+                        )}
                       </div>
                       {item?.price ? (
                         <div className="d-flex align-items-center mt-2 gap-3">
@@ -510,7 +510,7 @@ const MoreFromCollection = ({
                               handleBuyNft(item);
                             }}
                           >
-                             Buy
+                            Buy
                             {buyloading && selectedNftId === item.tokenId && (
                               <div
                                 className="spinner-border spinner-border-sm text-light ms-1"

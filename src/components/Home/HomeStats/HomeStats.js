@@ -11,14 +11,18 @@ const HomeStats = ({ cfxPrice }) => {
   const fetchSoldNfts = async () => {
     const response = await axios.get(
       "https://confluxapi.worldofdypians.com/api/total-nfts-sold"
-    );
+    ).catch((e) => {
+      console.error(e);
+    });
 
     setSoldNfts(response.data.totalNFTsSold);
   };
   const fetchTotalTxs = async () => {
     const response = await axios.get(
       "https://confluxapi.worldofdypians.com/api/total-txs"
-    );
+    ).catch((e) => {
+      console.error(e);
+    });
 
     setTotalTxs(response.data.totalTXs);
   };
@@ -26,7 +30,9 @@ const HomeStats = ({ cfxPrice }) => {
   const fetchTotalVolume = async () => {
     const response = await axios.get(
       "https://confluxapi.worldofdypians.com/api/total-volume"
-    );
+    ).catch((e) => {
+      console.error(e);
+    });
     setTotalVolume((response.data.totalVolume / 1e18) * cfxPrice);
   };
 

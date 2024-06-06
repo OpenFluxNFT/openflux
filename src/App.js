@@ -304,9 +304,13 @@ function App() {
       const recentlyListed = await Promise.all(
         result.data.map(async (item) => {
           let isApproved = false;
-          const abiresult = await axios.get(
-            `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
-          );
+          const abiresult = await axios
+            .get(
+              `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
+            )
+            .catch((e) => {
+              console.error(e);
+            });
           if (
             abiresult &&
             abiresult.status === 200 &&
@@ -454,9 +458,13 @@ function App() {
       const recentlySold = await Promise.all(
         result.data.map(async (item) => {
           let isApproved = false;
-          const abiresult = await axios.get(
-            `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
-          );
+          const abiresult = await axios
+            .get(
+              `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
+            )
+            .catch((e) => {
+              console.error(e);
+            });
 
           if (
             abiresult &&
@@ -834,7 +842,9 @@ function App() {
         if (obj.data["conflux-token"] && obj.data["conflux-token"] !== NaN) {
           setCfxPrice(obj.data["conflux-token"].usd);
         }
-      });
+      }).catch((e) => {
+        console.error(e);
+      });;
   };
 
   const handleAdduserWithSignature = async (walletAddr) => {
@@ -931,9 +941,13 @@ function App() {
                         console.log(err.message);
                       });
 
-                    const abiresult = await axios.get(
-                      `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${favData[item1].contractAddress}`
-                    );
+                    const abiresult = await axios
+                      .get(
+                        `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${favData[item1].contractAddress}`
+                      )
+                      .catch((e) => {
+                        console.error(e);
+                      });
 
                     if (
                       abiresult &&
@@ -1634,7 +1648,6 @@ function App() {
                 fetchuserCollection(value);
                 handleMapUserNftsOwned(value);
                 fetchTotalNftOwned(value);
-
               }}
               userCollection={userCollection}
               userCollectionFavs={userCollectionFavs}

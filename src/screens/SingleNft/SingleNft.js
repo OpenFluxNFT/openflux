@@ -321,7 +321,9 @@ const SingleNft = ({
     let favoriteCount = 0;
     const abiresult = await axios.get(
       `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${nftAddress.toLowerCase()}`
-    );
+    ).catch((e) => {
+      console.error(e);
+    });
 
     const listednfts = await axios
       .get(`${baseURL}/api/collections/${nftAddress.toLowerCase()}/listings`, {
@@ -519,7 +521,9 @@ const SingleNft = ({
 
     const abiresult = await axios.get(
       `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${nftAddress.toLowerCase()}`
-    );
+    ).catch((e) => {
+      console.error(e);
+    });
 
     const listednfts = await axios
       .get(
@@ -711,7 +715,9 @@ const SingleNft = ({
     setLoading(true);
     const result = await axios.get(
       `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${nftAddress.toLowerCase()}`
-    );
+    ).catch((e) => {
+      console.error(e);
+    });
     const listednfts = await axios
       .get(`${baseURL}/api/collections/${nftAddress.toLowerCase()}/listings`, {
         headers: {
@@ -1000,6 +1006,11 @@ const SingleNft = ({
     }
   };
 
+  const handleRefreshNftTraits = ()=>{
+    refreshSingleMetadata(nftAddress, nftId)
+    getNftData(nftId);
+  }
+
   const refreshSingleMetadata = async (nftAddress,nftID)=>{
     const result = await fetch(
      `https://cdnflux.dypius.com/executeScript.php?contractAddress=${nftAddress}&tokenID=${nftID}`
@@ -1107,7 +1118,7 @@ const SingleNft = ({
         lowestPriceNftListed={floorPrice}
         saleHistory={saleHistory}
       />
-      <NftTraits nftData={nftData} />
+      <NftTraits nftData={nftData} onRefreshNftTraits={handleRefreshNftTraits}/>
       <MoreFromCollection
         loading={loading}
         cfxPrice={cfxPrice}

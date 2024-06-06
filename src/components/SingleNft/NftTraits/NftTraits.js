@@ -1,12 +1,17 @@
 import React from "react";
 import "./_nfttraits.scss";
 
-const NftTraits = ({ nftData }) => {
+const NftTraits = ({ nftData, onRefreshNftTraits }) => {
   return (
     <div className="container-lg py-3">
       <div className="row mx-0">
         <div className="traits-wrapper p-3">
-          <h6 className="traits-title">Traits</h6>
+          <div className="d-flex align-items-center gap-2 justify-content-between">
+            <h6 className="traits-title">Traits</h6>
+            <button className="btn connect-btn2" onClick={onRefreshNftTraits}>
+              Refresh Traits
+            </button>
+          </div>
           <div className="row">
             {nftData &&
               nftData.attributes &&
@@ -20,13 +25,14 @@ const NftTraits = ({ nftData }) => {
                   </div>
                 </div>
               ))}
-            {nftData &&
+            {(nftData &&
               nftData.attributes &&
-              nftData.attributes === "false" && (
+              nftData.attributes === "false") ||
+              (nftData.metadatas === false && (
                 <span className="text-secondary d-flex justify-content-center">
                   No traits available for this NFT
                 </span>
-              )}
+              ))}
           </div>
         </div>
       </div>

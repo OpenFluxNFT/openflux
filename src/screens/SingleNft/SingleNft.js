@@ -1000,6 +1000,11 @@ const SingleNft = ({
     }
   };
 
+  const handleRefreshNftTraits = ()=>{
+    refreshSingleMetadata(nftAddress, nftId)
+    getNftData(nftId);
+  }
+
   const refreshSingleMetadata = async (nftAddress,nftID)=>{
     const result = await fetch(
      `https://cdnflux.dypius.com/executeScript.php?contractAddress=${nftAddress}&tokenID=${nftID}`
@@ -1107,7 +1112,7 @@ const SingleNft = ({
         lowestPriceNftListed={floorPrice}
         saleHistory={saleHistory}
       />
-      <NftTraits nftData={nftData} />
+      <NftTraits nftData={nftData} onRefreshNftTraits={handleRefreshNftTraits}/>
       <MoreFromCollection
         loading={loading}
         cfxPrice={cfxPrice}

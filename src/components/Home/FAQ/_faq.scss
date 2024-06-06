@@ -1,0 +1,26 @@
+.accordion-button {
+      background-color: #23264f;
+      color: white;
+       font-size: 1.25rem !important;
+       font-weight: 400 !important;
+    }
+
+    .accordion-button:not(.collapsed) {
+      background-color: #23264f;
+      color: white;
+       font-size: 1.25rem !important;
+       font-weight: 400 !important;
+    }
+
+    .accordion-button:after {
+      filter: invert(100%);
+    }
+
+    .accordion-body {
+      background-color: #23264f;
+      color: white;
+    }
+
+    .accordion-button:focus {
+        box-shadow: none; /* Remove the focus box shadow */
+      }

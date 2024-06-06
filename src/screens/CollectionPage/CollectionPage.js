@@ -141,7 +141,9 @@ const CollectionPage = ({
             let isApproved = false;
             const abiresult = await axios.get(
               `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
-            );
+            ).catch((e) => {
+              console.error(e);
+            });
             if (
               abiresult &&
               abiresult.status === 200 &&
@@ -232,7 +234,9 @@ const CollectionPage = ({
 
     const result = await axios.get(
       `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress}`
-    );
+    ).catch((e) => {
+      console.error(e);
+    });
 
     if (result && result.status === 200) {
       const abi = JSON.parse(result.data.result);
@@ -264,7 +268,9 @@ const CollectionPage = ({
 
     const result = await axios.get(
       `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress}`
-    );
+    ).catch((e) => {
+      console.error(e);
+    });
     // const listednfts = await axios
     //   .get(`${baseURL}/api/collections/${collectionAddress}/listings`, {
     //     headers: {
@@ -501,7 +507,9 @@ const CollectionPage = ({
 
     const result = await axios.get(
       `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress}`
-    );
+    ).catch((e) => {
+      console.error(e);
+    });
     const listednfts = await axios
       .get(`${baseURL}/api/collections/${collectionAddress}/listings`, {
         headers: {
@@ -547,7 +555,7 @@ const CollectionPage = ({
 
       if (totalSupply && totalSupply > 0) {
         const limit = totalSupply >= 12 ? 12 : totalSupply;
-
+console.log('listednftsArray',listednftsArray)
         if (
           listednftsArray !== "none" &&
           listednftsArray &&
@@ -850,7 +858,9 @@ const CollectionPage = ({
 
     const result = await axios.get(
       `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress}`
-    );
+    ).catch((e) => {
+      console.error(e);
+    });
     if (result && result.status === 200) {
       const abi = JSON.parse(result.data.result);
       const web3 = window.confluxWeb3;

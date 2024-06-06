@@ -233,7 +233,9 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
           let isApproved = false;
           const abiresult = await axios.get(
             `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
-          );
+          ).catch((e) => {
+            console.error(e);
+          });
           if (
             abiresult &&
             abiresult.status === 200 &&
@@ -355,7 +357,9 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
     let initialArr;
     const response = await axios.get(
       "https://confluxapi.worldofdypians.com/api/top-collections/lifetime-volume"
-    );
+    ).catch((e) => {
+      console.error(e);
+    });
 
     if (time === "24h") {
       initialArr = response.data.sort((a, b) => {

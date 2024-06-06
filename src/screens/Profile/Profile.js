@@ -70,7 +70,9 @@ const Profile = ({
           });
         const abiresult = await axios.get(
           `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${userNftsOwnedArray[i].nftAddress}`
-        );
+        ).catch((e) => {
+          console.error(e);
+        });
         if (abiresult && abiresult.status === 200) {
         }
         if (result) {
@@ -280,7 +282,9 @@ const Profile = ({
             if (!hasExpired) {
               const abiresult = await axios.get(
                 `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${result[i].nftAddress}`
-              );
+              ).catch((e) => {
+                console.error(e);
+              });
               if (
                 abiresult &&
                 abiresult.status === 200 &&
@@ -363,7 +367,9 @@ const Profile = ({
             let symbol = "";
             const abiresult = await axios.get(
               `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${result[i].nftAddress}`
-            );
+            ).catch((e) => {
+              console.error(e);
+            });
 
             if (
               abiresult &&
@@ -426,7 +432,9 @@ const Profile = ({
                       if (userCollection[i].contractAddress) {
                         const abiresult = await axios.get(
                           `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${userCollection[i].contractAddress}`
-                        );
+                        ).catch((e) => {
+                          console.error(e);
+                        });
                         if (abiresult && abiresult.status === 200) {
                           const abi = JSON.parse(abiresult.data.result);
                           const collection_contract = new web3.eth.Contract(
@@ -536,7 +544,9 @@ const Profile = ({
           result.data.map(async (item) => {
             const abiresult = await axios.get(
               `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
-            );
+            ).catch((e) => {
+              console.error(e);
+            });
             if (
               abiresult &&
               abiresult.status === 200 &&

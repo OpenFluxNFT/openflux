@@ -32,6 +32,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
   const [topSales, setTopSales] = useState([]);
   const [topSales2, setTopSales2] = useState([]);
 
+
   const [trendingCollections, setTrendingCollections] = useState([]);
   const baseURL = "https://confluxapi.worldofdypians.com";
 
@@ -168,6 +169,9 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
         (item) =>
           currentTime - parseInt(item.blockTimestamp, 10) <= thirtyDaysInSeconds
       );
+
+      console.log(recentlySoldNfts, "Ago");
+
 
       if (val === "24h") {
         setRecents(items24HoursAgo);
@@ -392,6 +396,8 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
     categorizeItems("30d");
     setLoading(false);
   }, [recentlySoldNfts, option]);
+
+
 
   return (
     <>
@@ -748,7 +754,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                     );
                   })
                 ) : option === "recentSales" &&
-                  recentlySoldNfts.length === 0 ? (
+                  recents.length === 0 ? (
                   <>
                     <div></div>
                     <div

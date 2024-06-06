@@ -1,18 +1,18 @@
-.accordion-button {
+.faq-button {
       background-color: #23264f;
       color: white;
        font-size: 1.25rem !important;
        font-weight: 400 !important;
     }
 
-    .accordion-button:not(.collapsed) {
+    .faq-button:not(.collapsed) {
       background-color: #23264f;
       color: white;
        font-size: 1.25rem !important;
        font-weight: 400 !important;
     }
 
-    .accordion-button:after {
+    .faq-button:after {
       filter: invert(100%);
     }
 
@@ -21,6 +21,6 @@
       color: white;
     }
 
-    .accordion-button:focus {
+    .faq-button:focus {
         box-shadow: none; /* Remove the focus box shadow */
       }

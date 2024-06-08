@@ -318,10 +318,10 @@ const ProfileBanner = ({
                               className="d-flex align-items-center gap-2"
                               style={{ cursor: "pointer" }}
                             >
-                              {copied === false && <img src={uploadIcon} alt="" />}
+                            
                               <h6 className="collection-info mb-0">
                                 {copied === true ? 'Copied' : 'Copy'} Link
-                              </h6>
+                              </h6>  {copied === false && <img src={uploadIcon} alt="" />}
                               {copied === true && (
                                 <span
                                   className="d-inline-block"

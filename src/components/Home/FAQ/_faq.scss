@@ -1,0 +1,26 @@
+.faq-button {
+      background-color: #23264f;
+      color: white;
+       font-size: 14px !important;
+       font-weight: 600 !important;
+    }
+
+    .faq-button:not(.collapsed) {
+      background-color: #23264f;
+      color: white;
+       font-size: 14px !important;
+       font-weight: 600 !important;
+    }
+
+    .faq-button:after {
+      filter: invert(100%);
+    }
+
+    .accordion-body {
+      background-color: #23264f;
+      color: white;
+    }
+
+    .faq-button:focus {
+        box-shadow: none; /* Remove the focus box shadow */
+      }

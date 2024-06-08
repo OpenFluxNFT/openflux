@@ -7,6 +7,7 @@ import TrendingSales from "../../components/Home/TrendingSales/TrendingSales";
 import RecentlyListed from "../../components/Home/RecentlyListed/RecentlyListed";
 import TrendingCollections from "../../components/Home/TrendingCollections/TrendingCollections";
 import CollectionCategories from "../../components/Collections/CollectionCategories/CollectionCategories";
+import FAQ from "../../components/Home/FAQ/FAQ";
 
 const Home = ({
   allCollections,
@@ -47,6 +48,7 @@ const Home = ({
         allCollections={allCollections}
       />
       <CollectionCategories allCollections={allCollections} />
+      <FAQ />
     </div>
   );
 };

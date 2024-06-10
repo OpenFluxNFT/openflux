@@ -68,11 +68,13 @@ const Profile = ({
           .catch((e) => {
             console.log(e);
           });
-        const abiresult = await axios.get(
-          `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${userNftsOwnedArray[i].nftAddress}`
-        ).catch((e) => {
-          console.error(e);
-        });
+        const abiresult = await axios
+          .get(
+            `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${userNftsOwnedArray[i].nftAddress}`
+          )
+          .catch((e) => {
+            console.error(e);
+          });
         if (abiresult && abiresult.status === 200) {
         }
         if (result) {
@@ -280,11 +282,13 @@ const Profile = ({
               .humanize(true)
               .includes("ago");
             if (!hasExpired) {
-              const abiresult = await axios.get(
-                `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${result[i].nftAddress}`
-              ).catch((e) => {
-                console.error(e);
-              });
+              const abiresult = await axios
+                .get(
+                  `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${result[i].nftAddress}`
+                )
+                .catch((e) => {
+                  console.error(e);
+                });
               if (
                 abiresult &&
                 abiresult.status === 200 &&
@@ -356,20 +360,28 @@ const Profile = ({
 
   const fetchUserOffersMadeForCollection = async () => {
     if (coinbase) {
+      let final = [];
       const result = await window.getAllOffersMadeForCollection(coinbase);
+      final.map((i) => {
+        return result.push({
+          ...i,
+        });
+      });
 
       const web3 = window.confluxWeb3;
-      if (result && result.length > 0) {
-        const maxPrice = Math.max(...result.map((o) => o.amount));
+      if (final && final.length > 0) {
+        const maxPrice = Math.max(...final.map((o) => o.amount));
 
         const allOffers = await Promise.all(
-          window.range(0, result.length - 1).map(async (i) => {
+          window.range(0, final.length - 1).map(async (i) => {
             let symbol = "";
-            const abiresult = await axios.get(
-              `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${result[i].nftAddress}`
-            ).catch((e) => {
-              console.error(e);
-            });
+            const abiresult = await axios
+              .get(
+                `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${final[i].nftAddress}`
+              )
+              .catch((e) => {
+                console.error(e);
+              });
 
             if (
               abiresult &&
@@ -379,7 +391,7 @@ const Profile = ({
               const abiresult1 = JSON.parse(abiresult.data.result);
               const collection_contract = new web3.eth.Contract(
                 abiresult1,
-                result[i].nftAddress
+                final[i].nftAddress
               );
 
               symbol = await collection_contract.methods
@@ -391,12 +403,12 @@ const Profile = ({
             }
 
             const hasExpired = moment
-              .duration(result[i].expiresAt * 1000 - Date.now())
+              .duration(final[i].expiresAt * 1000 - Date.now())
               .humanize(true)
               .includes("ago");
 
             if (!hasExpired) {
-              return { ...result[i], bestOffer: maxPrice, symbol: symbol };
+              return { ...final[i], bestOffer: maxPrice, symbol: symbol };
             }
           })
         );
@@ -430,11 +442,13 @@ const Profile = ({
                   return Promise.all(
                     window.range(0, finalResult.length - 1).map(async (k) => {
                       if (userCollection[i].contractAddress) {
-                        const abiresult = await axios.get(
-                          `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${userCollection[i].contractAddress}`
-                        ).catch((e) => {
-                          console.error(e);
-                        });
+                        const abiresult = await axios
+                          .get(
+                            `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${userCollection[i].contractAddress}`
+                          )
+                          .catch((e) => {
+                            console.error(e);
+                          });
                         if (abiresult && abiresult.status === 200) {
                           const abi = JSON.parse(abiresult.data.result);
                           const collection_contract = new web3.eth.Contract(
@@ -542,11 +556,13 @@ const Profile = ({
       if (result && result.status === 200) {
         const saleHistory = await Promise.all(
           result.data.map(async (item) => {
-            const abiresult = await axios.get(
-              `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
-            ).catch((e) => {
-              console.error(e);
-            });
+            const abiresult = await axios
+              .get(
+                `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
+              )
+              .catch((e) => {
+                console.error(e);
+              });
             if (
               abiresult &&
               abiresult.status === 200 &&

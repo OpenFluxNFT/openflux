@@ -342,15 +342,15 @@ const SingleNft = ({
 
     if (
       abiresult &&
-      abiresult.status === 200   &&
+      abiresult.status === 200 &&
       listednfts &&
       listednfts.status === 200
     ) {
       const listednftsArray = listednfts.data.listings;
 
       const abi = abiresult.data.result
-      ? JSON.parse(abiresult.data.result)
-      : window.BACKUP_ABI;
+        ? JSON.parse(abiresult.data.result)
+        : window.BACKUP_ABI;
 
       const collection_contract = new web3.eth.Contract(
         abi,
@@ -555,8 +555,8 @@ const SingleNft = ({
       ) {
         const listednftsArray = listednfts.data.listings;
         const abi = abiresult.data.result
-        ? JSON.parse(abiresult.data.result)
-        : window.BACKUP_ABI;
+          ? JSON.parse(abiresult.data.result)
+          : window.BACKUP_ABI;
         const collection_contract = new web3.eth.Contract(abi, nftAddress);
 
         const nftSymbol = await collection_contract.methods
@@ -778,7 +778,7 @@ const SingleNft = ({
         .catch((e) => {
           console.log(e);
         });
-      console.log("totalSupply", totalSupply);
+        
       if (totalSupply && totalSupply > 0) {
         const limit = totalSupply >= 12 ? 12 : totalSupply;
 
@@ -898,7 +898,7 @@ const SingleNft = ({
               nft_data &&
               nft_data.code !== 404 &&
               typeof nft_data !== "string"
-            ) { 
+            ) {
               nftArray.push({
                 ...nft_data,
                 tokenId: Number(tokenByIndex),
@@ -1083,7 +1083,7 @@ const SingleNft = ({
   useEffect(() => {
     if (dataFetchedRef.current) return;
     dataFetchedRef.current = true;
-    updateViewNft(); 
+    updateViewNft();
     getCollectionFloorPrice();
     refreshMetadata(nftId);
     getCollectionInfo();
@@ -1148,25 +1148,28 @@ const SingleNft = ({
         nftData={nftData}
         onRefreshNftTraits={handleRefreshNftTraits}
       />
-      <MoreFromCollection
-        loading={loading}
-        cfxPrice={cfxPrice}
-        allNftArray={allNftArray}
-        onNftClick={(value) => {
-          getNftData(value);
-          getOffer(nftAddress, value);
-          fetchInitialNftsPerCollection(value);
-          fetchNftSaleHistory(nftAddress, value);
-          refreshMetadata(value);
-        }}
-        coinbase={coinbase}
-        onRefreshListings={onRefreshListings}
-        nftAddress={nftAddress}
-        handleAddFavoriteNft={handleAddFavoriteNft}
-        handleRemoveFavoriteNft={handleRemoveFavoriteNft}
-        userNftFavs={userNftFavs}
-        allCollections={allCollections}
-      />
+      {allNftArray && allNftArray.length > 1 && (
+        <MoreFromCollection
+          loading={loading}
+          cfxPrice={cfxPrice}
+          allNftArray={allNftArray}
+          onNftClick={(value) => {
+            getNftData(value);
+            getOffer(nftAddress, value);
+            fetchInitialNftsPerCollection(value);
+            fetchNftSaleHistory(nftAddress, value);
+            refreshMetadata(value);
+          }}
+          coinbase={coinbase}
+          onRefreshListings={onRefreshListings}
+          nftAddress={nftAddress}
+          handleAddFavoriteNft={handleAddFavoriteNft}
+          handleRemoveFavoriteNft={handleRemoveFavoriteNft}
+          userNftFavs={userNftFavs}
+          allCollections={allCollections}
+          nftId={nftId}
+        />
+      )}
       {showOfferPopup && (
         <MakeOffer
           open={showOfferPopup}

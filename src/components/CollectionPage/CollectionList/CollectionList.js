@@ -536,7 +536,7 @@ const CollectionList = ({
   //     }, 1500);
   //   }
   // }, [queryItems]);
-
+ 
   return (
     <>
       <div className="container-lg">
@@ -722,9 +722,7 @@ const CollectionList = ({
                   </div>
                 </div>
                 {allNftArray.length > 0 &&
-                  (allNftArray[0]?.metadatas
-                    ? allNftArray[0]?.metadatas !== false
-                    : true) &&
+                  allNftArray[0]?.metadatas !== false &&
                   allNftArray[0]?.attributes !== "false" && (
                     <div className="accordion-item">
                       <h2 className="accordion-header" id="headingThree">
@@ -750,12 +748,7 @@ const CollectionList = ({
                           <div className="" id="accordionExample2">
                             {allNftArray.length > 0 &&
                               allNftArray[0]?.attributes &&
-                              (allNftArray[0]?.metadatas &&
-                              allNftArray[0]?.metadatas !== false
-                                ? true
-                                : allNftArray[0]?.attributes !== "false"
-                                ? true
-                                : false) &&
+                              allNftArray[0]?.metadatas !== false &&
                               allNftArray[0]?.attributes !== "false" &&
                               allNftArray[0]?.attributes.map((item, index) => {
                                 return (
@@ -2087,9 +2080,7 @@ const CollectionList = ({
               </div>
             </div>
             {allNftArray.length > 0 &&
-              (allNftArray[0]?.metadatas
-                ? allNftArray[0]?.metadatas !== false
-                : true) &&
+              allNftArray[0]?.metadatas !== false &&
               allNftArray[0]?.attributes !== "false" && (
                 <div className="accordion-item">
                   <h2 className="accordion-header" id="headingThree">

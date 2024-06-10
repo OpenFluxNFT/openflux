@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./_singlenftbanner.scss";
-import cawsLogo from "./assets/cawsLogo.png";
+import cawsLogo from "./assets/dummyProfileIcon.png";
 import checkIcon from "./assets/checkIcon.svg";
 import websiteIcon from "./assets/websiteIcon.svg";
 import shareIcon from "./assets/shareIcon.svg";
@@ -389,7 +389,7 @@ const SingleNftBanner = ({
         <div className="row mx-0 gap-2 align-items-center justify-content-between">
           <div className="col-lg-6">
             <div className="row mx-0 justify-content-start gap-2">
-              {nftData.image && loading === false ? (
+              {nftData.image170 && loading === false ? (
                 <div className="col-lg-6">
                   {!nftData.isVideo ? (
                     <img
@@ -653,7 +653,7 @@ const SingleNftBanner = ({
                       src={shareIcon}
                       style={{ cursor: "pointer" }}
                       onClick={() => setUploadDropdown(true)}
-                      alt=""
+                      
                     />
                     {uploadDropdown && (
                       <OutsideClickHandler

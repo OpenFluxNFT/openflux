@@ -107,6 +107,9 @@ const SingleNftBanner = ({
     }
   };
 
+
+  
+
   const handleBuyNft = async () => {
     const isApproved = await checkNftApprovalForBuying(nftData.price).then(
       (data) => {

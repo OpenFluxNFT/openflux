@@ -6,6 +6,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import moment from "moment";
 import getFormattedNumber from "../../hooks/get-formatted-number";
+import dummyProfileIcon from './assets/dummyProfileIcon.png'
 
 const Profile = ({
   coinbase,
@@ -649,7 +650,7 @@ const Profile = ({
         onViewShared(id);
       }
     } else {
-      onViewShared(id);
+      onViewShared(userData.walletAddress);
     }
   };
 
@@ -733,6 +734,7 @@ const Profile = ({
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
       <ProfileBanner
+      coinbase={coinbase}
         title={userName}
         logo={profilePicture}
         banner={bannerPicture}
@@ -743,6 +745,8 @@ const Profile = ({
         info={profileInfo}
         updateUserData={updateUserData}
         successUpdateProfile={successUpdateProfile}
+        profileIcon={dummyProfileIcon}
+        id={id}
       />
       <div className="container-lg py-5">
         <div className="row mx-0">

@@ -365,6 +365,8 @@ const CollectionList = ({
     }, 1500);
   };
 
+
+  console.log(allNftArray);
   const filterByPrice = (filter) => {
     setCollectionLoading(true);
     if (filter === "lth") {
@@ -776,20 +778,19 @@ const CollectionList = ({
                                       data-bs-parent="#accordionExample2"
                                     >
                                       <div className="accordion-body px-2">
-                                        {dummyTraits.map((trait, index) => (
                                           <FormGroup>
                                             <FormControlLabel
                                               onChange={() =>
                                                 addOrRemove({
                                                   type: item.trait_type,
-                                                  value: trait,
+                                                  value: item.value,
                                                 })
                                               }
                                               control={
                                                 <Checkbox
                                                   checked={checkIfExists({
                                                     type: item.trait_type,
-                                                    value: trait,
+                                                    value: item.value,
                                                   })}
                                                   size="small"
                                                   sx={{
@@ -801,11 +802,42 @@ const CollectionList = ({
                                                 />
                                               }
                                               key={index}
-                                              label={trait}
+                                              label={item.value}
+                                            />
+                                          </FormGroup>
+                                        
+                                      </div>
+                                      {/* <div className="accordion-body px-2">
+                                        {allNftArray[0]?.attributes.map((trait, index) => (
+                                          <FormGroup>
+                                            <FormControlLabel
+                                              onChange={() =>
+                                                addOrRemove({
+                                                  type: item.trait_type,
+                                                  value: trait.value,
+                                                })
+                                              }
+                                              control={
+                                                <Checkbox
+                                                  checked={checkIfExists({
+                                                    type: item.trait_type,
+                                                    value: trait.value,
+                                                  })}
+                                                  size="small"
+                                                  sx={{
+                                                    color: "white",
+                                                    "&.Mui-checked": {
+                                                      color: "#3DBDA7",
+                                                    },
+                                                  }}
+                                                />
+                                              }
+                                              key={index}
+                                              label={trait.value}
                                             />
                                           </FormGroup>
                                         ))}
-                                      </div>
+                                      </div> */}
                                     </div>
                                   </div>
                                 );

@@ -1676,7 +1676,7 @@ function App() {
                 setisOtherUser(true);
                 getOtherUserData(value);
                 getFavNftsPerUser(value);
-                // getUserData(value);
+                getUserData(value);
                 fetchuserCollection(value);
                 handleMapUserNftsOwned(value);
                 fetchTotalNftOwned(value);

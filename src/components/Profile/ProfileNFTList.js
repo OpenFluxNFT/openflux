@@ -436,7 +436,7 @@ const ProfileNFTList = ({
   const testFuncOffersMadeNft = () => {
     let uniqueObjects = [];
     let seenNames = new Set();
-    console.log(usersNftOffers);
+    
     if (usersNftOffers && usersNftOffers.length > 0) {
       usersNftOffers.forEach((obj) => {
         let lowercaseName = obj.nftAddress?.toLowerCase();
@@ -4772,7 +4772,7 @@ const ProfileNFTList = ({
             usersNftOffers &&
             usersNftOffers.length === 0 && (
               <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
-                You have not made any offers for any NFTs
+                This user has not made any offers for any NFTs
               </span>
             )}
           {option === "offersMade" &&
@@ -4800,7 +4800,7 @@ const ProfileNFTList = ({
             usersCollectionOffers &&
             usersCollectionOffers.length === 0 && (
               <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
-                You have not made any collection offers
+                This user has not made any collection offers
               </span>
             )}
           {option === "offersMade" &&

@@ -14,6 +14,8 @@ import { FadeLoader } from "react-spinners";
 import { NavLink, useParams } from "react-router-dom";
 import moment from "moment";
 import { handleSwitchNetworkhook } from "../../../hooks/switchNetwork";
+import Success from "../../Profile/ProfileBanner/Success";
+import OutsideClickHandler from "react-outside-click-handler";
 
 const SingleNftBanner = ({
   chainId,
@@ -54,6 +56,9 @@ const SingleNftBanner = ({
   const [updateStatus, setupdateStatus] = useState("update"); //update
   const [updateLoading, setupdateLoading] = useState(false); //update
 
+  const [uploadDropdown, setUploadDropdown] = useState(false);
+  const [copied, setCopied] = useState(false);
+
   const override = {
     display: "block",
     margin: "20px auto 0",
@@ -75,6 +80,17 @@ const SingleNftBanner = ({
           console.error(e);
         });
     }
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(
+      `https://www.openflux.com/nft/${nftId}/${nftAddress}`
+    );
+    setCopied(true);
+
+    setTimeout(() => {
+      setCopied(false);
+    }, 2000);
   };
 
   const checkNftApprovalForBuying = async (amount) => {
@@ -609,9 +625,70 @@ const SingleNftBanner = ({
                       <></>
                     )}
                   </div>
-                  <div className="d-flex align-items-center gap-2">
-                    <img alt="" src={websiteIcon} />
-                    <img alt="" src={shareIcon} />
+                  <div className="d-flex align-items-center gap-2 position-relative">
+                    {allCollections &&
+                    allCollections.length > 0 &&
+                    allCollections.find((obj) => {
+                      return (
+                        obj.contractAddress.toLowerCase() ===
+                        nftAddress.toLowerCase()
+                      );
+                    }) ? (
+                      allCollections.find((obj) => {
+                        return (
+                          obj.contractAddress.toLowerCase() ===
+                          nftAddress.toLowerCase()
+                        );
+                      }).websiteLink !== "" ? (
+                        <img alt="" src={websiteIcon} />
+                      ) : (
+                        <></>
+                      )
+                    ) : (
+                      <></>
+                    )}
+
+                    <img
+                      alt=""
+                      src={shareIcon}
+                      style={{ cursor: "pointer" }}
+                      onClick={() => setUploadDropdown(true)}
+                      alt=""
+                    />
+                    {uploadDropdown && (
+                      <OutsideClickHandler
+                        onOutsideClick={() => setUploadDropdown(false)}
+                      >
+                        <div
+                          className="upload-dropdown p-3 d-flex flex-column gap-2"
+                          onClick={handleCopy}
+                        >
+                          <div
+                            className="d-flex align-items-center gap-2"
+                            style={{ cursor: "pointer" }}
+                          >
+                           
+                            <h6 className="collection-info mb-0">
+                              {copied === true ? "Copied" : "Copy"} Link
+                            </h6> {copied === false && <img src={shareIcon} alt="" />}
+                            {copied === true && (
+                              <span
+                                className="d-inline-block"
+                                tabindex="0"
+                                data-toggle="tooltip"
+                                title="Copied"
+                                data-placement="top"
+                              >
+                                <Success
+                                  svgColor={"#544ED5"}
+                                  bgColor={"#FFF"}
+                                />
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </OutsideClickHandler>
+                    )}
                   </div>
                 </div>
                 {loading && (
@@ -637,7 +714,7 @@ const SingleNftBanner = ({
                         </span>
                       </div>
                     </div>
-                    {isConnected ? (
+                    {isConnected && chainId === 1030 ? (
                       <button
                         className="btn make-offer-btn px-3 py-1 col-lg-3 col-5"
                         onClick={onShowMakeOfferPopup}
@@ -646,12 +723,19 @@ const SingleNftBanner = ({
                           ? "Update Offer"
                           : "Make Offer"}
                       </button>
-                    ) : (
+                    ) : !isConnected && chainId === 1030 ? (
                       <button
-                        className="btn connect-btn2 d-flex align-items-center justify-content-center gap-2 col-5"
+                        className="btn connect-btn2 d-flex align-items-center gap-2 col-5 justify-content-center "
                         onClick={handleSignup}
                       >
                         Connect Wallet
+                      </button>
+                    ) : (
+                      <button
+                        onClick={handleConfluxChain}
+                        className="deleteoffer-btn  px-3 py-1 col-lg-4 col-5"
+                      >
+                        Switch Network
                       </button>
                     )}
                   </div>

@@ -2,7 +2,7 @@ import React from "react";
 import "./_mainhero.scss";
 import cawsBanner from "./assets/cawsBanner.webp";
 import newCollectionBanner from "./assets/newCollectionBanner.webp";
-
+import RecentlySoldNftsBanner from "./RecentlySoldNftsBanner";
 import Slider from "react-slick";
 import { NavLink } from "react-router-dom";
 
@@ -38,7 +38,7 @@ const mainHeroItems = [
   },
 ];
 
-const MainHero = ({ allCollections }) => {
+const MainHero = ({ allCollections, recentlySoldNfts }) => {
   return (
     <div className="container-lg main-hero-wrapper p-4 ">
       <Slider {...settings}>
@@ -72,10 +72,14 @@ const MainHero = ({ allCollections }) => {
                 </div>
               )}
               {item.image && (
-                <img
-                  src={item.image}
-                  className="w-100 d-none d-lg-block"
-                  alt=""
+                // <img
+                //   src={item.image}
+                //   className="w-100 d-none d-lg-block"
+                //   alt=""
+                // />
+                <RecentlySoldNftsBanner
+                  recentlySoldNfts={recentlySoldNfts}
+                  allCollections={allCollections}
                 />
               )}
               {index === 0 && (

@@ -555,7 +555,7 @@ const CollectionPage = ({
 
       if (totalSupply && totalSupply > 0) {
         const limit = totalSupply >= 12 ? 12 : totalSupply;
-console.log('listednftsArray',listednftsArray)
+
         if (
           listednftsArray !== "none" &&
           listednftsArray &&

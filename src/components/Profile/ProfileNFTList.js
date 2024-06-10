@@ -454,6 +454,7 @@ const ProfileNFTList = ({
     let uniqueObjects = [];
     let seenNames = new Set();
     if (usersCollectionOffers && usersCollectionOffers.length > 0) {
+      console.log('usersCollectionOffers',usersCollectionOffers)
       usersCollectionOffers.forEach((obj) => {
         let lowercaseName = obj.nftAddress?.toLowerCase();
         if (!seenNames.has(lowercaseName)) {

@@ -11,7 +11,7 @@ const settings = {
   arrows: false,
   infinite: true,
   autoplay: true,
-  autoplaySpeed: 4000,
+  autoplaySpeed: 6000,
   speed: 500,
   slidesToShow: 1,
   slidesToScroll: 1,
@@ -24,17 +24,18 @@ const mainHeroItems = [
     desc: "The leading NFT Marketplace on Conflux eSpace, home to the next generation of digital creators, where you can discover the best NFT collections.",
     button: "explore",
   },
-  {
-    title: "Recently Sold NFTs Showcase",
-    desc: "Browse through the recently sold NFTs to witness the latest transactions in our vibrant digital marketplace.",
-    button: "explore",
-    image: cawsBanner,
-  },
+
   {
     title: "New NFT Collections Unveiled",
     desc: "Explore the latest trends and artistic expressions in the world of digital art with our curated selection of new NFT collections.",
     button: "explore",
     heroImage: newCollectionBanner,
+  },
+    {
+    title: "Recently Sold NFTs Showcase",
+    desc: "Browse through the recently sold NFTs to witness the latest transactions in our vibrant digital marketplace.",
+    button: "explore",
+    image: cawsBanner,
   },
 ];
 

@@ -242,11 +242,12 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
           });
           if (
             abiresult &&
-            abiresult.status === 200 &&
-            abiresult.data.message === "OK"
+            abiresult.status === 200  
           ) {
             let lastSale = 0;
-            const abi = JSON.parse(abiresult.data.result);
+            const abi = abiresult.data.result
+      ? JSON.parse(abiresult.data.result)
+      : window.BACKUP_ABI;
             const collection_contract = new web3.eth.Contract(
               abi,
               item.nftAddress

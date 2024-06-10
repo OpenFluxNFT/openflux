@@ -3,7 +3,7 @@ import "./_collectionpage.scss";
 import CollectionBanner from "../../components/CollectionPage/CollectionBanner/CollectionBanner";
 import CollectionList from "../../components/CollectionPage/CollectionList/CollectionList";
 import banner from "../../components/CollectionPage/CollectionBanner/assets/bannerPlaceholder.png";
-import collectionIcon from "../../components/CollectionPage/CollectionBanner/assets/cawsIcon.png";
+import collectionIcon from "../../components/CollectionPage/CollectionBanner/assets/dummyProfileIcon.png";
 import { useParams } from "react-router-dom";
 import axios, { isCancel } from "axios";
 import Web3 from "web3";
@@ -97,7 +97,7 @@ const CollectionPage = ({
         totalSupplyPerCollection === 0
           ? 0
           : ((totalListedNfts ? totalListedNfts : 0) * 100) /
-              totalSupplyPerCollection,
+              parseInt(totalSupplyPerCollection),
         2
       )}%`,
     },
@@ -139,17 +139,20 @@ const CollectionPage = ({
           })
           .map(async (item) => {
             let isApproved = false;
-            const abiresult = await axios.get(
-              `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
-            ).catch((e) => {
-              console.error(e);
-            });
+            const abiresult = await axios
+              .get(
+                `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
+              )
+              .catch((e) => {
+                console.error(e);
+              });
             if (
               abiresult &&
-              abiresult.status === 200 &&
-              abiresult.data.message === "OK"
+              abiresult.status === 200  
             ) {
-              const abi = JSON.parse(abiresult.data.result);
+              const abi = abiresult.data.result
+              ? JSON.parse(abiresult.data.result)
+              : window.BACKUP_ABI;
               const collection_contract = new web3.eth.Contract(
                 abi,
                 item.nftAddress
@@ -230,47 +233,21 @@ const CollectionPage = ({
   };
 
   const getCollectionTotalSupply = async () => {
-    let totalSupply = 0;
-
-    const result = await axios.get(
-      `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress}`
-    ).catch((e) => {
-      console.error(e);
-    });
-
-    if (result && result.status === 200) {
-      const abi = JSON.parse(result.data.result);
-      const web3 = window.confluxWeb3;
-      const collection_contract = new web3.eth.Contract(abi, collectionAddress);
-      if (result.data.result.includes("_totalSupply")) {
-        totalSupply = await collection_contract.methods
-          ._totalSupply()
-          .call()
-          .catch((e) => {
-            console.error(e);
-          });
-      } else if (result.data.result.includes("totalSupply")) {
-        totalSupply = await collection_contract.methods
-          .totalSupply()
-          .call()
-          .catch((e) => {
-            console.error(e);
-          });
-      }
-
-      settotalSupplyPerCollection(totalSupply);
-    }
+    let totalSupply = parseInt(currentCollection.totalSupply);
+    settotalSupplyPerCollection(totalSupply);
   };
 
   const fetchSearchNftsPerCollection = async (tokenIdBySearch) => {
     console.log(tokenIdBySearch);
     // setLoading(true);
 
-    const result = await axios.get(
-      `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress}`
-    ).catch((e) => {
-      console.error(e);
-    });
+    const result = await axios
+      .get(
+        `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress}`
+      )
+      .catch((e) => {
+        console.error(e);
+      });
     // const listednfts = await axios
     //   .get(`${baseURL}/api/collections/${collectionAddress}/listings`, {
     //     headers: {
@@ -284,35 +261,20 @@ const CollectionPage = ({
 
     if (
       result &&
-      result.status === 200 &&
-      result.data.message === "OK"
+      result.status === 200
       //  && listednfts &&
       //   listednfts.status === 200
     ) {
       //   let nftArray = [];
       //   let nftListedArray = [];
       let tokensArray = [];
-      let totalSupply = 0;
-      const abi = JSON.parse(result.data.result);
+      let totalSupply = parseInt(currentCollection.totalSupply);
+      const abi = result.data.result
+        ? JSON.parse(result.data.result)
+        : window.BACKUP_ABI;
       //   const listednftsArray = listednfts.data.listings;
       const web3 = window.confluxWeb3;
       const collection_contract = new web3.eth.Contract(abi, collectionAddress);
-
-      if (result.data.result.includes("_totalSupply")) {
-        totalSupply = await collection_contract.methods
-          ._totalSupply()
-          .call()
-          .catch((e) => {
-            console.error(e);
-          });
-      } else if (result.data.result.includes("totalSupply")) {
-        totalSupply = await collection_contract.methods
-          .totalSupply()
-          .call()
-          .catch((e) => {
-            console.error(e);
-          });
-      }
 
       if (totalSupply && totalSupply > 0) {
         const limit =
@@ -324,16 +286,20 @@ const CollectionPage = ({
             .range(Number(tokenIdBySearch) - 1, limit - 1)
             .map(async (j) => {
               let tokenByIndex = 0;
-              if (result.data.result.includes("tokenByIndex")) {
-                tokenByIndex = await collection_contract.methods
-                  .tokenByIndex(j)
-                  .call()
-                  .catch((e) => {
-                    console.error(e);
-                  });
-              } else if (!result.data.result.includes("tokenByIndex")) {
+
+              if (collection_contract.methods.tokenByIndex) {
+                try {
+                  tokenByIndex = await collection_contract.methods.tokenByIndex(j).call();
+                } catch (e) {
+                  console.error(e);
+                  tokenByIndex = j;
+                }
+              } else {
+                console.warn("tokenByIndex method does not exist in the contract ABI");
                 tokenByIndex = j;
               }
+  
+
               if (tokenByIndex) {
                 if (
                   tokenByIndex.toString().includes(tokenIdBySearch.toString())
@@ -343,7 +309,7 @@ const CollectionPage = ({
               }
             })
         );
-        console.log(tokensArray);
+        
       }
       //     const limit = totalSupply >= 12 ? 12 : totalSupply;
 
@@ -505,11 +471,13 @@ const CollectionPage = ({
   const fetchInitialNftsPerCollection = async () => {
     setLoading(true);
 
-    const result = await axios.get(
-      `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress}`
-    ).catch((e) => {
-      console.error(e);
-    });
+    const result = await axios
+      .get(
+        `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress}`
+      )
+      .catch((e) => {
+        console.error(e);
+      });
     const listednfts = await axios
       .get(`${baseURL}/api/collections/${collectionAddress}/listings`, {
         headers: {
@@ -524,34 +492,19 @@ const CollectionPage = ({
     if (
       result &&
       result.status === 200 &&
-      result.data.message === "OK" &&
       listednfts &&
       listednfts.status === 200
     ) {
       let nftArray = [];
       let nftListedArray = [];
-      let totalSupply = 0;
+      let totalSupply = parseInt(currentCollection.totalSupply);
 
-      const abi = JSON.parse(result.data.result);
+      const abi = result.data.result
+        ? JSON.parse(result.data.result)
+        : window.BACKUP_ABI;
       const listednftsArray = listednfts.data.listings;
       const web3 = window.confluxWeb3;
       const collection_contract = new web3.eth.Contract(abi, collectionAddress);
-
-      if (result.data.result.includes("_totalSupply")) {
-        totalSupply = await collection_contract.methods
-          ._totalSupply()
-          .call()
-          .catch((e) => {
-            console.error(e);
-          });
-      } else if (result.data.result.includes("totalSupply")) {
-        totalSupply = await collection_contract.methods
-          .totalSupply()
-          .call()
-          .catch((e) => {
-            console.error(e);
-          });
-      }
 
       if (totalSupply && totalSupply > 0) {
         const limit = totalSupply >= 12 ? 12 : totalSupply;
@@ -700,16 +653,20 @@ const CollectionPage = ({
             let bestOffer = 0;
             let lastSale = 0;
             // let price= 0;
-            if (result.data.result.includes("tokenByIndex")) {
-              tokenByIndex = await collection_contract.methods
-                .tokenByIndex(i)
-                .call()
-                .catch((e) => {
-                  console.error(e);
-                });
-            } else if (!result.data.result.includes("tokenByIndex")) {
+            if (collection_contract.methods.tokenByIndex) {
+              try {
+                tokenByIndex = await collection_contract.methods.tokenByIndex(i).call();
+              } catch (e) {
+                console.error(e);
+                tokenByIndex = i;
+              }
+            } else {
+              console.warn("tokenByIndex method does not exist in the contract ABI");
               tokenByIndex = i;
             }
+
+          
+
             let finalOfferResult = [];
             const offersresult = await window
               .getAllOffers(collectionAddress.toLowerCase(), tokenByIndex)
@@ -804,12 +761,13 @@ const CollectionPage = ({
               .catch((err) => {
                 console.log(err.message);
               });
+
             if (
               nft_data &&
               nft_data.code !== 404 &&
               typeof nft_data !== "string"
             ) {
-              // console.log('nft_data', nft_data);
+              
               nftArray.push({
                 ...nft_data,
                 tokenId: Number(tokenByIndex),
@@ -853,33 +811,22 @@ const CollectionPage = ({
 
   const fetchSlicedNftsPerCollection = async (slice) => {
     let nftArray = [];
-    let totalSupply = 0;
+    let totalSupply = parseInt(currentCollection.totalSupply);
     setLoading(true);
 
-    const result = await axios.get(
-      `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress}`
-    ).catch((e) => {
-      console.error(e);
-    });
+    const result = await axios
+      .get(
+        `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress}`
+      )
+      .catch((e) => {
+        console.error(e);
+      });
     if (result && result.status === 200) {
-      const abi = JSON.parse(result.data.result);
+      const abi = result.data.result
+        ? JSON.parse(result.data.result)
+        : window.BACKUP_ABI;
       const web3 = window.confluxWeb3;
       const collection_contract = new web3.eth.Contract(abi, collectionAddress);
-      if (result.data.result.includes("_totalSupply")) {
-        totalSupply = await collection_contract.methods
-          ._totalSupply()
-          .call()
-          .catch((e) => {
-            console.error(e);
-          });
-      } else if (result.data.result.includes("totalSupply")) {
-        totalSupply = await collection_contract.methods
-          .totalSupply()
-          .call()
-          .catch((e) => {
-            console.error(e);
-          });
-      }
 
       if (
         totalSupply &&
@@ -894,16 +841,19 @@ const CollectionPage = ({
             let tokenByIndex = 0;
             let bestOffer = 0;
             let lastSale = 0;
-            if (result.data.result.includes("tokenByIndex")) {
-              tokenByIndex = await collection_contract.methods
-                .tokenByIndex(i)
-                .call()
-                .catch((e) => {
-                  console.error(e);
-                });
-            } else if (!result.data.result.includes("tokenByIndex")) {
+
+            if (collection_contract.methods.tokenByIndex) {
+              try {
+                tokenByIndex = await collection_contract.methods.tokenByIndex(i).call();
+              } catch (e) {
+                console.error(e);
+                tokenByIndex = i;
+              }
+            } else {
+              console.warn("tokenByIndex method does not exist in the contract ABI");
               tokenByIndex = i;
             }
+
 
             let finalOfferResult = [];
 
@@ -1042,7 +992,7 @@ const CollectionPage = ({
           parseInt(wrappedElement.getBoundingClientRect()?.bottom) <=
           window.innerHeight;
         if (isBottom && allNftArray.length > 0) {
-          if (next <= totalSupplyPerCollection) {
+          if (next <= totalSupplyPerCollection && totalSupplyPerCollection>12) {
             loadMore();
             document.removeEventListener("scroll", onScroll);
           }
@@ -1057,7 +1007,8 @@ const CollectionPage = ({
     });
     if (result) {
       setcurrentCollection(result);
-
+      let totalSupply = parseInt(result.totalSupply);
+      settotalSupplyPerCollection(totalSupply);
       const socialsObject = [
         { title: "website", link: result.websiteLink },
         { title: "twitter", link: result.twitterLink },
@@ -1541,7 +1492,6 @@ const CollectionPage = ({
   useEffect(() => {
     if (dataFetchedRef.current) return;
     dataFetchedRef.current = true;
-    fetchInitialNftsPerCollection();
     getCollectionFloorPrice();
     getCollectionTotalSupply();
     getCollectionInfo();
@@ -1553,7 +1503,6 @@ const CollectionPage = ({
     if (isNewCollection) {
       dataFetchedRef.current = false;
       getCollectionFloorPrice();
-      getCollectionTotalSupply();
       fetchInitialNftsPerCollection().then(() => {
         onNewCollectionFetched();
       });
@@ -1584,6 +1533,10 @@ const CollectionPage = ({
       return () => clearInterval(interval);
     }, 10000);
   }, [allNftArray.length]);
+
+  useEffect(() => {
+    if (!isNaN(totalSupplyPerCollection)) fetchInitialNftsPerCollection();
+  }, [totalSupplyPerCollection]);
 
   // useEffect(() => {
   //   if (filter === null) {
@@ -1664,7 +1617,7 @@ const CollectionPage = ({
         {totalSupplyPerCollection &&
           next <= totalSupplyPerCollection &&
           totalSupplyPerCollection > 0 &&
-          loading === false &&
+          loading === false&& totalSupplyPerCollection > 12 &&
           showBtn && (
             <div className="d-flex justify-content-center mt-5">
               <button className="buy-btn px-5 m-auto" onClick={loadMore}>

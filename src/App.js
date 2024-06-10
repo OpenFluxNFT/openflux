@@ -55,6 +55,8 @@ function App() {
   const [userNftsOwned, setUserNftsOwned] = useState(0);
   const [userNftsOwnedArray, setUserNftsOwnedArray] = useState([]);
   const [userCollectionArray, setuserCollectionArray] = useState([]);
+  const [isOtherUser, setisOtherUser] = useState(false);
+
 
   const [cfxPrice, setCfxPrice] = useState(0);
   const [favoriteNft, setFavoriteNft] = useState(false);
@@ -192,6 +194,8 @@ function App() {
     }
   };
 
+  // console.log(window.location)
+
   const handleSetOrderedCollection = async () => {
     const result = await axios
       .get(`${baseURL}/api/collections`, {
@@ -213,23 +217,23 @@ function App() {
       const finalResult = await Promise.all(
         window.range(0, newestCollections.length - 1).map(async (i) => {
           let floorprice = 0;
-          const result = await axios
-            .get(
-              `${baseURL}/api/floor-price/${newestCollections[i].contractAddress}`,
-              {
-                headers: {
-                  cascadestyling:
-                    "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-                },
-              }
-            )
-            .catch((e) => {
-              console.error(e);
-            });
+          // const result = await axios
+          //   .get(
+          //     `${baseURL}/api/floor-price/${newestCollections[i].contractAddress}`,
+          //     {
+          //       headers: {
+          //         cascadestyling:
+          //           "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          //       },
+          //     }
+          //   )
+          //   .catch((e) => {
+          //     console.error(e);
+          //   });
 
-          if (result && result.status === 200) {
-            floorprice = result.data.floorPrice / 1e18;
-          }
+          // if (result && result.status === 200) {
+          //   floorprice = result.data.floorPrice / 1e18;
+          // }
 
           return {
             ...newestCollections[i],
@@ -258,23 +262,23 @@ function App() {
       const finalResult = await Promise.all(
         window.range(0, regularCollection.length - 1).map(async (i) => {
           let floorprice = 0;
-          const result = await axios
-            .get(
-              `${baseURL}/api/floor-price/${regularCollection[i].contractAddress}`,
-              {
-                headers: {
-                  cascadestyling:
-                    "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-                },
-              }
-            )
-            .catch((e) => {
-              console.error(e);
-            });
+          // const result = await axios
+          //   .get(
+          //     `${baseURL}/api/floor-price/${regularCollection[i].contractAddress}`,
+          //     {
+          //       headers: {
+          //         cascadestyling:
+          //           "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          //       },
+          //     }
+          //   )
+          //   .catch((e) => {
+          //     console.error(e);
+          //   });
 
-          if (result && result.status === 200) {
-            floorprice = result.data.floorPrice / 1e18;
-          }
+          // if (result && result.status === 200) {
+          //   floorprice = result.data.floorPrice / 1e18;
+          // }
 
           return {
             ...regularCollection[i],
@@ -313,11 +317,12 @@ function App() {
             });
           if (
             abiresult &&
-            abiresult.status === 200 &&
-            abiresult.data.message === "OK"
+            abiresult.status === 200  
           ) {
             let lastSale = 0;
-            const abi = JSON.parse(abiresult.data.result);
+            const abi = abiresult.data.result
+      ? JSON.parse(abiresult.data.result)
+      : window.BACKUP_ABI;
             const collection_contract = new web3.eth.Contract(
               abi,
               item.nftAddress
@@ -436,7 +441,7 @@ function App() {
         console.error(e);
       });
 
-    if (result && result.status === 200) {
+    if (result && result.status === 200 && coinbase) {
       handleGetRecentlyListedNfts();
       handleMapUserNftsOwned(coinbase);
     }
@@ -468,10 +473,11 @@ function App() {
 
           if (
             abiresult &&
-            abiresult.status === 200 &&
-            abiresult.data.message === "OK"
+            abiresult.status === 200 
           ) {
-            const abi = JSON.parse(abiresult.data.result);
+            const abi = abiresult.data.result
+      ? JSON.parse(abiresult.data.result)
+      : window.BACKUP_ABI;
             const collection_contract = new web3.eth.Contract(
               abi,
               item.nftAddress
@@ -578,20 +584,22 @@ function App() {
   };
 
   const fetchTotalNftOwned = async (walletAddr) => {
-    const result = await axios
-      .get(`${baseURL}/api/nft-amount/${walletAddr}`, {
-        headers: {
-          cascadestyling:
-            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-        },
-      })
-      .catch((e) => {
-        console.error(e);
-      });
+    if (walletAddr) {
+      const result = await axios
+        .get(`${baseURL}/api/nft-amount/${walletAddr}`, {
+          headers: {
+            cascadestyling:
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        })
+        .catch((e) => {
+          console.error(e);
+        });
 
-    if (result && result.status === 200) {
-      setUserNftsOwned(result.data.nftList);
-      setUserTotalNftsOwned(result.data.totalAmount);
+      if (result && result.status === 200) {
+        setUserNftsOwned(result.data.nftList);
+        setUserTotalNftsOwned(result.data.totalAmount);
+      }
     }
   };
 
@@ -632,8 +640,8 @@ function App() {
             nftAddress: nftsOwned[i].contract,
           });
 
-          if (result && result.status === 200 && result.data.message === "OK") {
-            const abi = JSON.parse(result.data.result);
+          if (result && result.status === 200) {
+            const abi = result.data.result ? JSON.parse(result.data.result) : window.BACKUP_ABI;
             const web3 = window.confluxWeb3;
             const collection_contract = new web3.eth.Contract(
               abi,
@@ -790,45 +798,47 @@ function App() {
   };
 
   const fetchuserCollection = async (walletAddr) => {
-    const result = await axios
-      .get(`${baseURL}/api/users/checkCollections/${walletAddr}`, {
-        headers: {
-          cascadestyling:
-            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-        },
-      })
-      .catch((e) => {
-        console.error(e);
-      });
-
-    if (result && result.status === 200) {
-      const finalResult = await Promise.all(
-        result.data.ownedCollections.map(async (item) => {
-          let floorprice = 0;
-          const result = await axios
-            .get(`${baseURL}/api/floor-price/${item.contractAddress}`, {
-              headers: {
-                cascadestyling:
-                  "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-              },
-            })
-            .catch((e) => {
-              console.error(e);
-            });
-
-          if (result && result.status === 200) {
-            floorprice = result.data.floorPrice;
-          }
-
-          return {
-            ...item,
-            floorPrice: floorprice,
-          };
+    if (walletAddr) {
+      const result = await axios
+        .get(`${baseURL}/api/users/checkCollections/${walletAddr}`, {
+          headers: {
+            cascadestyling:
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
         })
-      );
+        .catch((e) => {
+          console.error(e);
+        });
 
-      if (finalResult) {
-        setuserCollection(finalResult);
+      if (result && result.status === 200) {
+        const finalResult = await Promise.all(
+          result.data.ownedCollections.map(async (item) => {
+            let floorprice = 0;
+            // const result = await axios
+            //   .get(`${baseURL}/api/floor-price/${item.contractAddress}`, {
+            //     headers: {
+            //       cascadestyling:
+            //         "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+            //     },
+            //   })
+            //   .catch((e) => {
+            //     console.error(e);
+            //   });
+
+            // if (result && result.status === 200) {
+            //   floorprice = result.data.floorPrice;
+            // }
+
+            return {
+              ...item,
+              floorPrice: floorprice,
+            };
+          })
+        );
+
+        if (finalResult) {
+          setuserCollection(finalResult);
+        }
       }
     }
   };
@@ -842,9 +852,10 @@ function App() {
         if (obj.data["conflux-token"] && obj.data["conflux-token"] !== NaN) {
           setCfxPrice(obj.data["conflux-token"].usd);
         }
-      }).catch((e) => {
+      })
+      .catch((e) => {
         console.error(e);
-      });;
+      });
   };
 
   const handleAdduserWithSignature = async (walletAddr) => {
@@ -951,12 +962,13 @@ function App() {
 
                     if (
                       abiresult &&
-                      abiresult.status === 200 &&
-                      abiresult.data.message === "OK"
+                      abiresult.status === 200  
                     ) {
                       const web3 = window.confluxWeb3;
 
-                      const abi = JSON.parse(abiresult.data.result);
+                      const abi = abiresult.data.result
+      ? JSON.parse(abiresult.data.result)
+      : window.BACKUP_ABI;
                       const collection_contract = new web3.eth.Contract(
                         abi,
                         favData[item1].contractAddress
@@ -1501,7 +1513,10 @@ function App() {
   }, []);
 
   useEffect(() => {
-    getFavNftsPerUser(coinbase);
+    if(isOtherUser === false) {
+         getFavNftsPerUser(coinbase);
+    }
+ 
   }, [coinbase, isConnected]);
 
   useEffect(() => {
@@ -1642,6 +1657,7 @@ function App() {
               updateUserData={updateUserData}
               successUpdateProfile={successUpdateProfile}
               onViewShared={(value) => {
+                setisOtherUser(true);
                 getOtherUserData(value);
                 getFavNftsPerUser(value);
                 // getUserData(value);

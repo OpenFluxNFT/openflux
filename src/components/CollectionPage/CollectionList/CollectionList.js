@@ -722,7 +722,9 @@ const CollectionList = ({
                   </div>
                 </div>
                 {allNftArray.length > 0 &&
-                  allNftArray[0]?.metadatas !== false &&
+                  (allNftArray[0]?.metadatas
+                    ? allNftArray[0]?.metadatas !== false
+                    : true) &&
                   allNftArray[0]?.attributes !== "false" && (
                     <div className="accordion-item">
                       <h2 className="accordion-header" id="headingThree">
@@ -748,66 +750,73 @@ const CollectionList = ({
                           <div className="" id="accordionExample2">
                             {allNftArray.length > 0 &&
                               allNftArray[0]?.attributes &&
-                              allNftArray[0]?.metadatas !== false &&
+                              (allNftArray[0]?.metadatas &&
+                              allNftArray[0]?.metadatas !== false
+                                ? true
+                                : allNftArray[0]?.attributes !== "false"
+                                ? true
+                                : false) &&
                               allNftArray[0]?.attributes !== "false" &&
-                              allNftArray[0]?.attributes.map((item, index) => (
-                                <div className="accordion-item" key={index}>
-                                  <h2
-                                    className="accordion-header"
-                                    id={`headingOne${item.trait_type}`}
-                                  >
-                                    <button
-                                      className="accordion-button collection-filter px-2 py-2 d-flex align-items-center gap-2 collapsed"
-                                      type="button"
-                                      data-bs-toggle="collapse"
-                                      data-bs-target={`#collapseOne${item.trait_type}`}
-                                      aria-expanded="false"
-                                      aria-controls={`collapseOne${item.trait_type}`}
-                                      style={{ fontSize: "10px" }}
+                              allNftArray[0]?.attributes.map((item, index) => {
+                                return (
+                                  <div className="accordion-item" key={index}>
+                                    <h2
+                                      className="accordion-header"
+                                      id={`headingOne${item.trait_type}`}
                                     >
-                                      {item.trait_type}
-                                    </button>
-                                  </h2>
-                                  <div
-                                    id={`collapseOne${item.trait_type}`}
-                                    className="accordion-collapse collapse"
-                                    aria-labelledby={`headingOne${item.trait_type}`}
-                                    data-bs-parent="#accordionExample2"
-                                  >
-                                    <div className="accordion-body px-2">
-                                      {dummyTraits.map((trait, index) => (
-                                        <FormGroup>
-                                          <FormControlLabel
-                                            onChange={() =>
-                                              addOrRemove({
-                                                type: item.trait_type,
-                                                value: trait,
-                                              })
-                                            }
-                                            control={
-                                              <Checkbox
-                                                checked={checkIfExists({
+                                      <button
+                                        className="accordion-button collection-filter px-2 py-2 d-flex align-items-center gap-2 collapsed"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target={`#collapseOne${item.trait_type}`}
+                                        aria-expanded="false"
+                                        aria-controls={`collapseOne${item.trait_type}`}
+                                        style={{ fontSize: "10px" }}
+                                      >
+                                        {item.trait_type}
+                                      </button>
+                                    </h2>
+                                    <div
+                                      id={`collapseOne${item.trait_type}`}
+                                      className="accordion-collapse collapse"
+                                      aria-labelledby={`headingOne${item.trait_type}`}
+                                      data-bs-parent="#accordionExample2"
+                                    >
+                                      <div className="accordion-body px-2">
+                                        {dummyTraits.map((trait, index) => (
+                                          <FormGroup>
+                                            <FormControlLabel
+                                              onChange={() =>
+                                                addOrRemove({
                                                   type: item.trait_type,
                                                   value: trait,
-                                                })}
-                                                size="small"
-                                                sx={{
-                                                  color: "white",
-                                                  "&.Mui-checked": {
-                                                    color: "#3DBDA7",
-                                                  },
-                                                }}
-                                              />
-                                            }
-                                            key={index}
-                                            label={trait}
-                                          />
-                                        </FormGroup>
-                                      ))}
+                                                })
+                                              }
+                                              control={
+                                                <Checkbox
+                                                  checked={checkIfExists({
+                                                    type: item.trait_type,
+                                                    value: trait,
+                                                  })}
+                                                  size="small"
+                                                  sx={{
+                                                    color: "white",
+                                                    "&.Mui-checked": {
+                                                      color: "#3DBDA7",
+                                                    },
+                                                  }}
+                                                />
+                                              }
+                                              key={index}
+                                              label={trait}
+                                            />
+                                          </FormGroup>
+                                        ))}
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
-                              ))}
+                                );
+                              })}
                           </div>
                         </div>
                       </div>
@@ -1044,6 +1053,8 @@ const CollectionList = ({
             {nftList &&
               nftList.length === 0 &&
               collectionLoading === false &&
+              (totalSupplyPerCollection === 0 ||
+                isNaN(totalSupplyPerCollection)) &&
               loading === false && (
                 <span className="text-white d-flex w-100 justify-content-center mt-5">
                   This collection doesn't have any NFTs.
@@ -1846,7 +1857,11 @@ const CollectionList = ({
                 )}
             </div>
 
-            {(collectionLoading === true || loading === true) &&
+            {(collectionLoading === true ||
+              loading === true ||
+              (collectionLoading === false &&
+                loading === false &&
+                allNftArray.length === 0)) &&
             listType !== "collectionoffers" &&
             // totalSupplyPerCollection > 0 &&
             allNftArray &&
@@ -2072,7 +2087,9 @@ const CollectionList = ({
               </div>
             </div>
             {allNftArray.length > 0 &&
-              allNftArray[0]?.metadatas !== false &&
+              (allNftArray[0]?.metadatas
+                ? allNftArray[0]?.metadatas !== false
+                : true) &&
               allNftArray[0]?.attributes !== "false" && (
                 <div className="accordion-item">
                   <h2 className="accordion-header" id="headingThree">

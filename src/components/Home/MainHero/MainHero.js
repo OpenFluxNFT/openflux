@@ -60,7 +60,7 @@ const MainHero = ({ allCollections, recentlySoldNfts,newestCollections }) => {
                 </NavLink>
               </div>
             </div>
-            <div className="col-12 col-lg-5 position-relative">
+            <div className="col-12 col-lg-4 position-relative">
               {item.heroImage && (
                 <div className="position-relative package-blur">
                   <div className="first-box-blur first-bigbox-blur d-none d-lg-flex  align-items-end justify-content-center"></div>
@@ -89,7 +89,7 @@ const MainHero = ({ allCollections, recentlySoldNfts,newestCollections }) => {
                     <div className="d-flex gap-3 justify-content-end">
                       {newestCollections &&
                         newestCollections.length > 0 &&
-                        newestCollections.slice(0, 4).map((item, index) => {
+                        newestCollections.slice(0, 3).map((item, index) => {
                           return (
                             <NavLink
                               to={`/collection/${item.contractAddress}/${item.symbol}`}
@@ -118,7 +118,7 @@ const MainHero = ({ allCollections, recentlySoldNfts,newestCollections }) => {
                     <div className="d-flex gap-3 justify-content-start">
                       {newestCollections &&
                         newestCollections.length > 0 &&
-                        newestCollections.slice(4, 8).map((item, index) => {
+                        newestCollections.slice(3, 6).map((item, index) => {
                           return (
                             <NavLink
                               to={`/collection/${item.contractAddress}/${item.symbol}`}
@@ -147,7 +147,7 @@ const MainHero = ({ allCollections, recentlySoldNfts,newestCollections }) => {
                     <div className="d-flex gap-3 justify-content-end">
                       {newestCollections &&
                         newestCollections.length > 0 &&
-                        newestCollections.slice(8, 12).map((item, index) => {
+                        newestCollections.slice(6, 9).map((item, index) => {
                           return (
                             <NavLink
                               to={`/collection/${item.contractAddress}/${item.symbol}`}

@@ -33,6 +33,8 @@ function App() {
   const [userCollection, setuserCollection] = useState([]);
 
   const [allCollections, setAllCollections] = useState([]);
+  const [newestCollections, setnewestCollections] = useState([]);
+
   const [recentlyListedNfts, setrecentlyListedNfts] = useState([]);
   const [recentlySoldNfts, setrecentlySoldNfts] = useState([]);
 
@@ -290,6 +292,18 @@ function App() {
       setAllCollections(finalResult);
     }
   };
+
+  const fetchNewestCollections = async()=>{
+    const response = await axios.get(
+      "https://confluxapi.worldofdypians.com/api/newest-collections"
+    ).catch((e) => {
+      console.error(e);
+    });
+
+    if(response && response.status === 200) {
+      setnewestCollections(response.data)
+    }
+  }
 
   const handleGetRecentlyListedNfts = async () => {
     const result = await axios
@@ -1509,6 +1523,7 @@ function App() {
     handleGetRecentlySoldNfts();
     getAllCollections();
     handleSetOrderedCollection();
+    fetchNewestCollections()
     fetchCFXPrice();
   }, []);
 
@@ -1576,6 +1591,7 @@ function App() {
           element={
             <Home
               allCollections={allCollections}
+              newestCollections={newestCollections}
               recentlyListedNfts={recentlyListedNfts}
               recentlySoldNfts={recentlySoldNfts}
               cfxPrice={cfxPrice}

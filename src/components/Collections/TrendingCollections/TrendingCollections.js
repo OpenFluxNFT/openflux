@@ -56,7 +56,7 @@ const TrendingCollections = ({
       "https://confluxapi.worldofdypians.com/api/newest-collections"
     ).catch((e) => {
       console.error(e);
-    });;
+    });
 
     if (time === "24h") {
       initialArr = response.data.sort((a, b) => {

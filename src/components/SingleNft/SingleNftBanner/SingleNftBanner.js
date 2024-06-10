@@ -36,6 +36,7 @@ const SingleNftBanner = ({
   views,
   collectionFeeRate,
   allCollections,
+  currentCollection,
 }) => {
   const [isOwner, setIsOwner] = useState(false);
   const [isListed, setIsListed] = useState(false);
@@ -106,9 +107,6 @@ const SingleNftBanner = ({
       return false;
     }
   };
-
-
-  
 
   const handleBuyNft = async () => {
     const isApproved = await checkNftApprovalForBuying(nftData.price).then(
@@ -392,7 +390,7 @@ const SingleNftBanner = ({
         <div className="row mx-0 gap-2 align-items-center justify-content-between">
           <div className="col-lg-6">
             <div className="row mx-0 justify-content-start gap-2">
-              {nftData.image170 && loading === false ? (
+              {nftData.image && loading === false ? (
                 <div className="col-lg-6">
                   {!nftData.isVideo ? (
                     <img
@@ -483,7 +481,11 @@ const SingleNftBanner = ({
                   <div className="d-flex align-items-center gap-2">
                     <img
                       alt=""
-                      src={cawsLogo}
+                      src={
+                        currentCollection.collectionProfilePic
+                          ? `https://confluxapi.worldofdypians.com/${currentCollection.collectionProfilePic}`
+                          : cawsLogo
+                      }
                       className="nft-collection-logo"
                     />
                     <NavLink
@@ -492,24 +494,8 @@ const SingleNftBanner = ({
                     >
                       {nftData.collectionName ?? "..."}
                     </NavLink>
-                    {allCollections &&
-                    allCollections.length > 0 &&
-                    allCollections.find((obj) => {
-                      return (
-                        obj.contractAddress.toLowerCase() ===
-                        nftAddress.toLowerCase()
-                      );
-                    }) ? (
-                      allCollections.find((obj) => {
-                        return (
-                          obj.contractAddress.toLowerCase() ===
-                          nftAddress.toLowerCase()
-                        );
-                      }).verified === "yes" ? (
-                        <img src={checkIcon} alt="" />
-                      ) : (
-                        <></>
-                      )
+                    {currentCollection.verified === "yes" ? (
+                      <img src={checkIcon} alt="" />
                     ) : (
                       <></>
                     )}
@@ -606,47 +592,21 @@ const SingleNftBanner = ({
                         ? nftData.collectionName
                         : "..."}
                     </span>
-                    {allCollections &&
-                    allCollections.length > 0 &&
-                    allCollections.find((obj) => {
-                      return (
-                        obj.contractAddress.toLowerCase() ===
-                        nftAddress.toLowerCase()
-                      );
-                    }) ? (
-                      allCollections.find((obj) => {
-                        return (
-                          obj.contractAddress.toLowerCase() ===
-                          nftAddress.toLowerCase()
-                        );
-                      }).verified === "yes" ? (
-                        <img src={checkIcon} alt="" />
-                      ) : (
-                        <></>
-                      )
+                    {currentCollection.verified === "yes" ? (
+                      <img src={checkIcon} alt="" />
                     ) : (
                       <></>
                     )}
                   </div>
                   <div className="d-flex align-items-center gap-2 position-relative">
-                    {allCollections &&
-                    allCollections.length > 0 &&
-                    allCollections.find((obj) => {
-                      return (
-                        obj.contractAddress.toLowerCase() ===
-                        nftAddress.toLowerCase()
-                      );
-                    }) ? (
-                      allCollections.find((obj) => {
-                        return (
-                          obj.contractAddress.toLowerCase() ===
-                          nftAddress.toLowerCase()
-                        );
-                      }).websiteLink !== "" ? (
+                    {currentCollection && currentCollection.websiteLink && currentCollection.websiteLink !== "" ? (
+                      <a
+                        href={currentCollection.websiteLink}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
                         <img alt="" src={websiteIcon} />
-                      ) : (
-                        <></>
-                      )
+                      </a>
                     ) : (
                       <></>
                     )}
@@ -656,7 +616,6 @@ const SingleNftBanner = ({
                       src={shareIcon}
                       style={{ cursor: "pointer" }}
                       onClick={() => setUploadDropdown(true)}
-                      
                     />
                     {uploadDropdown && (
                       <OutsideClickHandler
@@ -670,10 +629,10 @@ const SingleNftBanner = ({
                             className="d-flex align-items-center gap-2"
                             style={{ cursor: "pointer" }}
                           >
-                           
                             <h6 className="collection-info mb-0">
                               {copied === true ? "Copied" : "Copy"} Link
-                            </h6> {copied === false && <img src={shareIcon} alt="" />}
+                            </h6>{" "}
+                            {copied === false && <img src={shareIcon} alt="" />}
                             {copied === true && (
                               <span
                                 className="d-inline-block"
@@ -728,7 +687,7 @@ const SingleNftBanner = ({
                       </button>
                     ) : !isConnected && chainId === 1030 ? (
                       <button
-                        className="btn connect-btn2 d-flex align-items-center gap-2 col-5 justify-content-center "
+                        className="btn connect-btn2 d-flex align-items-center gap-2 col-lg-5 justify-content-center "
                         onClick={handleSignup}
                       >
                         Connect Wallet
@@ -938,7 +897,7 @@ const SingleNftBanner = ({
                       </>
                     ) : !isConnected && chainId === 1030 ? (
                       <button
-                        className="btn connect-btn2 d-flex align-items-center gap-2 col-5 justify-content-center "
+                        className="btn connect-btn2 d-flex align-items-center gap-2 col-lg-5 justify-content-center "
                         onClick={handleSignup}
                       >
                         Connect Wallet
@@ -984,7 +943,7 @@ const SingleNftBanner = ({
                       </button>
                     ) : (
                       <button
-                        className="btn connect-btn2 d-flex align-items-center gap-2 col-5 justify-content-center "
+                        className="btn connect-btn2 d-flex align-items-center gap-2 col-lg-5 justify-content-center "
                         onClick={handleSignup}
                       >
                         Connect Wallet
@@ -1046,7 +1005,7 @@ const SingleNftBanner = ({
                       </>
                     ) : (
                       <button
-                        className="btn connect-btn2 d-flex align-items-center gap-2 col-5 justify-content-center "
+                        className="btn connect-btn2 d-flex align-items-center gap-2 col-lg-5 justify-content-center "
                         onClick={handleSignup}
                       >
                         Connect Wallet

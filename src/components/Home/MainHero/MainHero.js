@@ -39,7 +39,7 @@ const mainHeroItems = [
   },
 ];
 
-const MainHero = ({ allCollections, recentlySoldNfts }) => {
+const MainHero = ({ allCollections, recentlySoldNfts,newestCollections }) => {
   return (
     <div className="container-lg main-hero-wrapper p-4 ">
       <Slider {...settings}>
@@ -87,9 +87,9 @@ const MainHero = ({ allCollections, recentlySoldNfts }) => {
                 <div className="small-collection-wrapper d-none d-lg-block d-md-block p-3">
                   <div className="d-flex flex-column gap-3">
                     <div className="d-flex gap-3 justify-content-end">
-                      {allCollections &&
-                        allCollections.length > 0 &&
-                        allCollections.slice(10, 14).map((item, index) => {
+                      {newestCollections &&
+                        newestCollections.length > 0 &&
+                        newestCollections.slice(0, 4).map((item, index) => {
                           return (
                             <NavLink
                               to={`/collection/${item.contractAddress}/${item.symbol}`}
@@ -98,22 +98,27 @@ const MainHero = ({ allCollections, recentlySoldNfts }) => {
                                 className="single-small-collection-wrapper"
                                 key={index}
                               >
+                                { item.collectionProfilePic ?  <img
+                                  src={`https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`}
+                                  alt=""
+                                  className="small-collection-img"
+                                /> :
                                 <img
                                   src={require(`./assets/small-collection-${
                                     index + 1
                                   }.png`)}
                                   alt=""
                                   className="small-collection-img"
-                                />
+                                /> }
                               </div>
                             </NavLink>
                           );
                         })}
                     </div>
                     <div className="d-flex gap-3 justify-content-start">
-                      {allCollections &&
-                        allCollections.length > 0 &&
-                        allCollections.slice(14, 18).map((item, index) => {
+                      {newestCollections &&
+                        newestCollections.length > 0 &&
+                        newestCollections.slice(4, 8).map((item, index) => {
                           return (
                             <NavLink
                               to={`/collection/${item.contractAddress}/${item.symbol}`}
@@ -122,22 +127,27 @@ const MainHero = ({ allCollections, recentlySoldNfts }) => {
                                 className="single-small-collection-wrapper"
                                 key={index}
                               >
+                                { item.collectionProfilePic ?  <img
+                                  src={`https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`}
+                                  alt=""
+                                  className="small-collection-img"
+                                /> :
                                 <img
                                   src={require(`./assets/small-collection-${
                                     index + 1
                                   }.png`)}
                                   alt=""
                                   className="small-collection-img"
-                                />
+                                /> }
                               </div>
                             </NavLink>
                           );
                         })}
                     </div>
                     <div className="d-flex gap-3 justify-content-end">
-                      {allCollections &&
-                        allCollections.length > 0 &&
-                        allCollections.slice(18, 22).map((item, index) => {
+                      {newestCollections &&
+                        newestCollections.length > 0 &&
+                        newestCollections.slice(8, 12).map((item, index) => {
                           return (
                             <NavLink
                               to={`/collection/${item.contractAddress}/${item.symbol}`}
@@ -146,13 +156,18 @@ const MainHero = ({ allCollections, recentlySoldNfts }) => {
                                 className="single-small-collection-wrapper"
                                 key={index}
                               >
+                                { item.collectionProfilePic ?  <img
+                                  src={`https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`}
+                                  alt=""
+                                  className="small-collection-img"
+                                /> :
                                 <img
                                   src={require(`./assets/small-collection-${
                                     index + 1
                                   }.png`)}
                                   alt=""
                                   className="small-collection-img"
-                                />
+                                /> }
                               </div>
                             </NavLink>
                           );

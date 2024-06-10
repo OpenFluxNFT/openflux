@@ -32,6 +32,8 @@ const SingleNft = ({
   const [allNftArray, setAllNftArray] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalSupplyPerCollection, settotalSupplyPerCollection] = useState(0);
+  const [currentCollection, setcurrentCollection] = useState([]);
+
 
   const [offerStatus, setOfferStatus] = useState("initial");
   const [offerdeleteStatus, setOfferdeleteStatus] = useState("initial");
@@ -730,6 +732,7 @@ const SingleNft = ({
       if (resultcollection) {
         let totalSupply = parseInt(resultcollection.totalSupply);
         settotalSupplyPerCollection(totalSupply);
+        setcurrentCollection(resultcollection)
       }
     }
   };
@@ -1107,6 +1110,7 @@ const SingleNft = ({
         onShowMakeOfferPopup={() => {
           setShowOfferPopup(true);
         }}
+        currentCollection={currentCollection}
         views={nftView?.view_count}
         nftData={nftData}
         coinbase={coinbase}

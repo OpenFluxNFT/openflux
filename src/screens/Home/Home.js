@@ -19,7 +19,7 @@ const Home = ({
   userNftFavsInitial,
   coinbase,
   onRefreshListings,
-  recentlySoldNfts,chainId
+  recentlySoldNfts,chainId,newestCollections
 }) => {
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -27,7 +27,7 @@ const Home = ({
 
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
-      <MainHero allCollections={allCollections} recentlySoldNfts={recentlySoldNfts}/>
+      <MainHero allCollections={allCollections} recentlySoldNfts={recentlySoldNfts} newestCollections={newestCollections}/>
       <HomeStats cfxPrice={cfxPrice} />
       <HomeInfo />
       <TrendingSales

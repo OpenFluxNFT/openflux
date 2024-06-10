@@ -170,7 +170,6 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
           currentTime - parseInt(item.blockTimestamp, 10) <= thirtyDaysInSeconds
       );
 
-      console.log(recentlySoldNfts, "Ago");
 
 
       if (val === "24h") {

@@ -3,7 +3,6 @@ import { NavLink } from "react-router-dom";
 import checkIcon from "../RecentlyListed/assets/checkIcon.svg";
 
 const RecentlySoldNftsBanner = ({ recentlySoldNfts, allCollections }) => {
-  console.log(recentlySoldNfts);
   return (
     <div className="recent-nfts-sold-wrapper d-none d-lg-block position-relative">
       <div className="d-flex position-relative">

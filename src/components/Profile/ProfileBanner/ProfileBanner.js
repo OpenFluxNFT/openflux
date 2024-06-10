@@ -13,7 +13,7 @@ import telegramIcon from "./assets/telegramIcon.svg";
 import uploadIcon from "./assets/uploadIcon.svg";
 import settingsIcon from "./assets/settingsIcon.svg";
 import checkIcon from "../../Collections/TopCollections/assets/checkIcon.svg";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation, useParams } from "react-router-dom";
 import { shortAddress } from "../../../hooks/shortAddress";
 import editIcon from "../../SettingsPage/assets/editIcon.svg";
 import Toast from "../../Toast/Toast";
@@ -32,6 +32,9 @@ const ProfileBanner = ({
   updateUserData,
   successUpdateProfile,
   website,
+  coinbase,
+  profileIcon,
+  id,
 }) => {
   const [profileImage, setProfileImage] = useState(null);
   const [bannerImage, setBannerImage] = useState(null);
@@ -189,20 +192,24 @@ const ProfileBanner = ({
           <div className="collection-banner d-flex flex-column px-0">
             <div className="collection-banner-up position-relative">
               <div className="collection-banner-empty position-relative">
-                <input
-                  type="file"
-                  accept=".png"
-                  onChange={uploadBannerImage}
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "100%",
-                    opacity: 0,
-                    cursor: "pointer",
-                  }}
-                />
+                {coinbase && coinbase === id ? (
+                  <input
+                    type="file"
+                    accept=".png"
+                    onChange={uploadBannerImage}
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: "100%",
+                      opacity: 0,
+                      cursor: "pointer",
+                    }}
+                  />
+                ) : (
+                  <></>
+                )}
                 {bannerImage && (
                   <img
                     src={bannerImage}
@@ -210,12 +217,16 @@ const ProfileBanner = ({
                     alt=""
                   />
                 )}
-                <img
-                  src={editIcon}
-                  alt=""
-                  className="edit-image"
-                  style={{ cursor: "pointer" }}
-                />
+                {coinbase && coinbase === id ? (
+                  <img
+                    src={editIcon}
+                    alt=""
+                    className="edit-image"
+                    style={{ cursor: "pointer" }}
+                  />
+                ) : (
+                  <></>
+                )}
               </div>
 
               <div className="ps-0 ps-lg-5 collection-position">
@@ -226,33 +237,45 @@ const ProfileBanner = ({
                         className="profile-image-placeholder-small position-relative"
                         style={{ cursor: "pointer" }}
                       >
-                        {profileImage && (
+                        {profileImage ? (
                           <img
                             src={profileImage}
                             className="collection-logo"
                             alt=""
                           />
+                        ) : (
+                          <img
+                            src={profileIcon}
+                            className="collection-logo"
+                            alt=""
+                          />
                         )}
-                        <input
-                          type="file"
-                          accept=".png"
-                          onChange={uploadProfileImage}
-                          style={{
-                            position: "absolute",
-                            top: 0,
-                            left: 0,
-                            width: "100%",
-                            height: "100%",
-                            opacity: 0,
-                            cursor: "pointer",
-                          }}
-                        />
-                        <img
-                          src={editIcon}
-                          alt=""
-                          className="edit-image"
-                          style={{ cursor: "pointer" }}
-                        />
+                        {coinbase && coinbase === id ? (
+                          <>
+                            <input
+                              type="file"
+                              accept=".png"
+                              onChange={uploadProfileImage}
+                              style={{
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                width: "100%",
+                                height: "100%",
+                                opacity: 0,
+                                cursor: "pointer",
+                              }}
+                            />
+                            <img
+                              src={editIcon}
+                              alt=""
+                              className="edit-image"
+                              style={{ cursor: "pointer" }}
+                            />
+                          </>
+                        ) : (
+                          <></>
+                        )}
                       </div>
 
                       <h6 className="collection-title mb-0">{title}</h6>
@@ -318,10 +341,12 @@ const ProfileBanner = ({
                               className="d-flex align-items-center gap-2"
                               style={{ cursor: "pointer" }}
                             >
-                            
                               <h6 className="collection-info mb-0">
-                                {copied === true ? 'Copied' : 'Copy'} Link
-                              </h6>  {copied === false && <img src={uploadIcon} alt="" />}
+                                {copied === true ? "Copied" : "Copy"} Link
+                              </h6>{" "}
+                              {copied === false && (
+                                <img src={uploadIcon} alt="" />
+                              )}
                               {copied === true && (
                                 <span
                                   className="d-inline-block"
@@ -341,9 +366,13 @@ const ProfileBanner = ({
                         </OutsideClickHandler>
                       )}
                     </div>
-                    <NavLink to="/settings/profile">
-                      <img src={settingsIcon} alt="" />
-                    </NavLink>
+                    {coinbase && coinbase === id ? (
+                      <NavLink to="/settings/profile">
+                        <img src={settingsIcon} alt="" />
+                      </NavLink>
+                    ) : (
+                      <></>
+                    )}
                   </div>
                 </div>
               </div>

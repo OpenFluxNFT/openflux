@@ -16,6 +16,7 @@ import websiteIcon from "./assets/websiteIcon.svg";
 import telegramIcon from "./assets/telegramIcon.svg";
 import checkIcon from "../../Collections/TopCollections/assets/checkIcon.svg";
 import getFormattedNumber from "../../../hooks/get-formatted-number";
+import dummyCollectionIcon from './assets/dummyCollectionIcon.png'
 
 const CollectionBanner = ({
   title,
@@ -49,7 +50,7 @@ const CollectionBanner = ({
               <div className="collection-banner-main-info d-flex flex-column flex-lg-row gap-3 gap-lg-0 align-items-start ps-3 ps-lg-5 pe-3 py-3 justify-content-between">
                 <div className="d-flex flex-column gap-3">
                   <div className="d-flex align-items-center gap-2 position-relative">
-                    <img src={logo} className="collection-logo" alt="" />
+                    <img src={dummyCollectionIcon} className="collection-logo" alt="" />
                     <h6 className="collection-title mb-0">{title}</h6>
                     {isVerified && <img src={checkIcon} alt="" />}
                   </div>

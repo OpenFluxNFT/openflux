@@ -8,6 +8,7 @@ import getFormattedNumber from "../../../hooks/get-formatted-number";
 import axios from "axios";
 import emptyFavorite from "../../Home/RecentlyListed/assets/emptyFavorite.svg";
 import redFavorite from "../../Home/RecentlyListed/assets/redFavorite.svg";
+import useWindowSize from "../../../hooks/useWindowSize";
 
 const MoreFromCollection = ({
   loading,
@@ -22,6 +23,9 @@ const MoreFromCollection = ({
   nftAddress,
   allCollections,
 }) => {
+
+
+  const windowSize = useWindowSize()
   const settings = {
     // dots: true,
     arrows: false,
@@ -136,6 +140,7 @@ const MoreFromCollection = ({
   const [buyloading, setbuyLoading] = useState(false); //buy
   const [selectedNftId, setSelectedNftId] = useState(""); //buy
   const [nftFinalArray, setnftFinalArray] = useState([]);
+  const [placeholderLength, setPlaceholderLength] = useState(0);
   const baseURL = "https://confluxapi.worldofdypians.com";
 
   const fetchFavoriteCounts = async () => {
@@ -325,7 +330,12 @@ const MoreFromCollection = ({
 
   useEffect(() => {
     fetchFavoriteCounts();
+    if (allNftArray.length < 6) {
+      setPlaceholderLength(6 - allNftArray.length);
+    }
   }, [allNftArray]);
+
+  console.log(placeholderLength, "length");
   return (
     <div className="container-lg py-3">
       <div className="row mx-0">
@@ -334,7 +344,8 @@ const MoreFromCollection = ({
 
           <Slider {...settings}>
             {allNftArray && allNftArray.length > 0
-              ? allNftArray.map((item, index) => (
+              ? 
+              allNftArray.map((item, index) => (
                   <div
                     className="recently-listed-card p-3 d-flex flex-column"
                     key={index}
@@ -531,14 +542,20 @@ const MoreFromCollection = ({
                     </NavLink>
                   </div>
                 ))
+             
               : dummyCards.map((item, index) => (
                   <Skeleton
                     variant="rounded"
-                    height={240}
+                    height={282}
                     width={"100%"}
                     key={index}
                   />
                 ))}
+              {placeholderLength > 0 && windowSize.width > 786 && [...Array(placeholderLength)].map((item, index) => {
+                return (
+                <div style={{width: "100%", height: "282px", }}></div>
+                );
+              })}
           </Slider>
         </div>
       </div>

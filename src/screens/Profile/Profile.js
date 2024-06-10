@@ -665,10 +665,11 @@ const Profile = ({
         onViewShared(id);
       } 
       
-      // else {
-      //   onViewShared(userData.walletAddress);
-      // }
+      
     } 
+    else {
+        onViewShared(id);
+      }
   };
 
   useEffect(() => {

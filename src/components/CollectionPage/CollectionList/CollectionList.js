@@ -47,7 +47,8 @@ const CollectionList = ({
   allOffers,
   bestOffer,
   isVerified,
-  onSelectCollecitonOffers,collectionJson
+  onSelectCollecitonOffers,
+  collectionJson
 }) => {
   const windowSize = useWindowSize();
   const [openFilters, setOpenFilters] = useState(false);
@@ -73,6 +74,7 @@ const CollectionList = ({
   const [priceFilter, setpriceFilter] = useState("Filter by Price");
 
   const [nftList, setNftList] = useState([]);
+
 
   const navigate = useNavigate();
   const [gridView, setGridView] = useState("small-grid");
@@ -537,6 +539,7 @@ const CollectionList = ({
   //   }
   // }, [queryItems]);
 
+
   return (
     <>
       <div className="container-lg">
@@ -749,64 +752,63 @@ const CollectionList = ({
                                   <div className="accordion-item" key={index}>
                                     <h2
                                       className="accordion-header"
-                                      id={`headingOne${item.key
+                                      id={`headingOne${item.key.replace(/\s+/g, '')
                                       }`}
                                     >
                                       <button
                                         className="accordion-button collection-filter px-2 py-2 d-flex align-items-center gap-2 collapsed"
                                         type="button"
                                         data-bs-toggle="collapse"
-                                        data-bs-target={`#collapseOne${item.key
+                                        data-bs-target={`#collapseOne${item.key.replace(/\s+/g, '')
                                         }`}
                                         aria-expanded="false"
-                                        aria-controls={`collapseOne${item.key
+                                        aria-controls={`collapseOne${item.key.replace(/\s+/g, '')
                                         }`}
                                         style={{ fontSize: "10px" }}
                                       >
                                         {item.key}
                                       </button>
                                     </h2>
-                                    {Object.keys(item.value).map((item2, index2)=>{
-                                      return( <div
-                                      key={index2}
-                                      id={`collapseOne${item2}`}
+                                     <div
+                                      id={`collapseOne${item.key.replace(/\s+/g, '')}`}
                                       className="accordion-collapse collapse"
-                                      aria-labelledby={`headingOne${item2}`}
+                                      aria-labelledby={`headingOne${item.key.replace(/\s+/g, '')}`}
                                       data-bs-parent="#accordionExample2"
                                     >
                                       <div className="accordion-body px-2">
-                                          <FormGroup>
-                                            <FormControlLabel
-                                              onChange={() =>
-                                                addOrRemove({
-                                                  type: item2,
-                                                  value: item2,
-                                                })
-                                              }
-                                              control={
-                                                <Checkbox
-                                                  checked={checkIfExists({
-                                                    type: item2,
-                                                    value: item2,
-                                                  })}
-                                                  size="small"
-                                                  sx={{
-                                                    color: "white",
-                                                    "&.Mui-checked": {
-                                                      color: "#3DBDA7",
-                                                    },
-                                                  }}
-                                                />
-                                              }
-                                              key={index2}
-                                              label={item2}
-                                            />
-                                          </FormGroup>
+                                       {Object.entries(item.value).map(([key, value]) => (
+                                           <FormGroup>
+                                           <FormControlLabel
+                                             onChange={() =>
+                                               addOrRemove({
+                                                 type: key,
+                                                 value: key,
+                                               })
+                                             }
+                                             control={
+                                               <Checkbox
+                                                 checked={checkIfExists({
+                                                   type: key,
+                                                   value: key,
+                                                 })}
+                                                 size="small"
+                                                 sx={{
+                                                   color: "white",
+                                                   "&.Mui-checked": {
+                                                     color: "#3DBDA7",
+                                                   },
+                                                 }}
+                                               />
+                                             }
+                                             key={value}
+                                             label={key}
+                                           />
+                                         </FormGroup>
+                                       ))}
                                         
                                       </div>
                                     
-                                    </div>)
-                                    })}
+                                    </div>
                                    
                                   </div>
                                 );

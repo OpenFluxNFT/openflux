@@ -89,7 +89,7 @@ const MobileHeader = ({
           menu && "mobile-active"
         } d-flex flex-column align-items-center justify-content-center gap-3 p-3`}
       >
-        <NavLink
+        {/* <NavLink
           className={
             "mobile-menu-item d-flex align-items-center justify-content-between w-100"
           }
@@ -105,7 +105,7 @@ const MobileHeader = ({
             <h6 className="mb-0 text-white">Collections</h6>
             <img src={mobileNavArrow} alt="" />
           </div>
-        </NavLink>
+        </NavLink> */}
 
         <NavLink
           className={

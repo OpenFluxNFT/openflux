@@ -247,16 +247,12 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
             const abi = abiresult.data.result
       ? JSON.parse(abiresult.data.result)
       : window.BACKUP_ABI;
+      const currentCollection = allCollections.filter((obj)=>{return obj.contractAddress.toLowerCase() === item.nftAddress.toLowerCase()})
             const collection_contract = new web3.eth.Contract(
               abi,
               item.nftAddress
             );
-            const tokenName = await collection_contract.methods
-              .symbol()
-              .call()
-              .catch((e) => {
-                console.error(e);
-              });
+            const tokenName = currentCollection?.symbol;
 
             const seller = await collection_contract.methods
               .ownerOf(item.tokenId)
@@ -265,12 +261,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                 console.error(e);
               });
 
-            const collectionName = await collection_contract.methods
-              .name()
-              .call()
-              .catch((e) => {
-                console.error(e);
-              });
+            const collectionName = currentCollection?.collectionName;
 
             const isApprovedresult = await window
               .isApprovedBuy(item.price)

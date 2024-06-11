@@ -6,7 +6,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import moment from "moment";
 import getFormattedNumber from "../../hooks/get-formatted-number";
-import dummyProfileIcon from './assets/dummyProfileIcon.png'
+import dummyProfileIcon from "./assets/dummyProfileIcon.png";
 
 const Profile = ({
   coinbase,
@@ -69,8 +69,7 @@ const Profile = ({
           .catch((e) => {
             console.log(e);
           });
-      
-     
+
         if (result) {
           const finalResult = result[1];
           if (finalResult && finalResult.length > 0) {
@@ -276,72 +275,48 @@ const Profile = ({
               .humanize(true)
               .includes("ago");
             if (!hasExpired) {
-              const abiresult = await axios
-                .get(
-                  `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${result[i].nftAddress}`
-                )
-                .catch((e) => {
-                  console.error(e);
+              const currentCollection = allCollections.filter((obj) => {
+                return (
+                  obj.contractAddress.toLowerCase() ===
+                  result[i].nftAddress.toLowerCase()
+                );
+              });
+
+              const tokenName = currentCollection?.symbol;
+
+              const collectionName = currentCollection?.collectionName;
+
+              const nft_data = await fetch(
+                `https://cdnflux.dypius.com/collectionsmetadatas/${result[
+                  i
+                ].nftAddress.toLowerCase()}/${result[i].tokenId}/metadata.json`
+              )
+                .then((res) => res.json())
+                .then((data) => {
+                  return data;
+                })
+                .catch((err) => {
+                  console.log(err.message);
                 });
               if (
-                abiresult &&
-                abiresult.status === 200  
+                nft_data &&
+                nft_data.code !== 404 &&
+                typeof nft_data !== "string"
               ) {
-                const abi = abiresult.data.result
-                ? JSON.parse(abiresult.data.result)
-                : window.BACKUP_ABI;
-                const collection_contract = new web3.eth.Contract(
-                  abi,
-                  result[i].nftAddress
-                );
-                const tokenName = await collection_contract.methods
-                  .symbol()
-                  .call()
-                  .catch((e) => {
-                    console.error(e);
-                  });
-
-                const collectionName = await collection_contract.methods
-                  .name()
-                  .call()
-                  .catch((e) => {
-                    console.error(e);
-                  });
-
-                const nft_data = await fetch(
-                  `https://cdnflux.dypius.com/collectionsmetadatas/${result[
-                    i
-                  ].nftAddress.toLowerCase()}/${
-                    result[i].tokenId
-                  }/metadata.json`
-                )
-                  .then((res) => res.json())
-                  .then((data) => {
-                    return data;
-                  })
-                  .catch((err) => {
-                    console.log(err.message);
-                  });
-                if (
-                  nft_data &&
-                  nft_data.code !== 404 &&
-                  typeof nft_data !== "string"
-                ) {
-                  return {
-                    ...result[i],
-                    ...nft_data,
-                    image: `${nft_data.image}`,
-                    tokenName: tokenName,
-                    collectionName: collectionName,
-                  };
-                } else
-                  return {
-                    ...result[i],
-                    image: undefined,
-                    tokenName: tokenName,
-                    collectionName: collectionName,
-                  };
-              }
+                return {
+                  ...result[i],
+                  ...nft_data,
+                  image: `${nft_data.image}`,
+                  tokenName: tokenName,
+                  collectionName: collectionName,
+                };
+              } else
+                return {
+                  ...result[i],
+                  image: undefined,
+                  tokenName: tokenName,
+                  collectionName: collectionName,
+                };
             } else return null;
           })
         );
@@ -370,34 +345,15 @@ const Profile = ({
         const allOffers = await Promise.all(
           window.range(0, final.length - 1).map(async (i) => {
             let symbol = "";
-            const abiresult = await axios
-              .get(
-                `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${final[i].nftAddress}`
-              )
-              .catch((e) => {
-                console.error(e);
-              });
 
-            if (
-              abiresult &&
-              abiresult.status === 200  
-            ) {
-              const abiresult1 =  abiresult.data.result
-              ? JSON.parse(abiresult.data.result)
-              : window.BACKUP_ABI;
-
-              const collection_contract = new web3.eth.Contract(
-                abiresult1,
-                final[i].nftAddress
+            const currentCollection = allCollections.filter((obj) => {
+              return (
+                obj.contractAddress.toLowerCase() ===
+                final[i].nftAddress.toLowerCase()
               );
+            });
 
-              symbol = await collection_contract.methods
-                .symbol()
-                .call()
-                .catch((e) => {
-                  console.error(e);
-                });
-            }
+            symbol = currentCollection?.symbol;
 
             const hasExpired = moment
               .duration(final[i].expiresAt * 1000 - Date.now())
@@ -448,8 +404,8 @@ const Profile = ({
                           });
                         if (abiresult && abiresult.status === 200) {
                           const abi = abiresult.data.result
-                          ? JSON.parse(abiresult.data.result)
-                          : window.BACKUP_ABI;
+                            ? JSON.parse(abiresult.data.result)
+                            : window.BACKUP_ABI;
                           const collection_contract = new web3.eth.Contract(
                             abi,
                             userCollection[i].contractAddress
@@ -562,30 +518,24 @@ const Profile = ({
               .catch((e) => {
                 console.error(e);
               });
-            if (
-              abiresult &&
-              abiresult.status === 200  
-            ) {
+            if (abiresult && abiresult.status === 200) {
               const abi = abiresult.data.result
-              ? JSON.parse(abiresult.data.result)
-              : window.BACKUP_ABI;
+                ? JSON.parse(abiresult.data.result)
+                : window.BACKUP_ABI;
+              const currentCollection = allCollections.filter((obj) => {
+                return (
+                  obj.contractAddress.toLowerCase() ===
+                  item.nftAddress.toLowerCase()
+                );
+              });
+
               const collection_contract = new web3.eth.Contract(
                 abi,
                 item.nftAddress
               );
-              const tokenName = await collection_contract.methods
-                .symbol()
-                .call()
-                .catch((e) => {
-                  console.error(e);
-                });
+              const tokenName = currentCollection?.symbol;
 
-              const collectionName = await collection_contract.methods
-                .name()
-                .call()
-                .catch((e) => {
-                  console.error(e);
-                });
+              const collectionName = currentCollection?.collectionName;
 
               const owner = await collection_contract.methods
                 .ownerOf(item.tokenId)
@@ -663,13 +613,10 @@ const Profile = ({
     if (userData && userData.walletAddress) {
       if (id.toLowerCase() !== userData.walletAddress?.toLowerCase()) {
         onViewShared(id);
-      } 
-      
-      
-    } 
-    else {
-        onViewShared(id);
       }
+    } else {
+      onViewShared(id);
+    }
   };
 
   useEffect(() => {
@@ -752,7 +699,7 @@ const Profile = ({
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
       <ProfileBanner
-      coinbase={coinbase}
+        coinbase={coinbase}
         title={userName}
         logo={profilePicture}
         banner={bannerPicture}

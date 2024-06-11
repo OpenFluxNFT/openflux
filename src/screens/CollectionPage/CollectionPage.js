@@ -11,6 +11,7 @@ import getFormattedNumber from "../../hooks/get-formatted-number";
 import moment from "moment";
 import MakeOfferForCollection from "../../components/MakeOffer/MakeOfferForCollection";
 import AcceptOfferForCollection from "../../components/MakeOffer/AcceptOfferForCollection";
+import { useLocation } from "react-router-dom";
 
 const CollectionPage = ({
   coinbase,
@@ -74,6 +75,7 @@ const CollectionPage = ({
   const nftPerRow = 12;
 
   const { collectionAddress } = useParams();
+  const location = useLocation();
 
   const collectionInfo = [
     {
@@ -146,23 +148,15 @@ const CollectionPage = ({
               .catch((e) => {
                 console.error(e);
               });
-            if (
-              abiresult &&
-              abiresult.status === 200  
-            ) {
+            if (abiresult && abiresult.status === 200) {
               const abi = abiresult.data.result
-              ? JSON.parse(abiresult.data.result)
-              : window.BACKUP_ABI;
+                ? JSON.parse(abiresult.data.result)
+                : window.BACKUP_ABI;
               const collection_contract = new web3.eth.Contract(
                 abi,
                 item.nftAddress
               );
-              const tokenName = await collection_contract.methods
-                .symbol()
-                .call()
-                .catch((e) => {
-                  console.error(e);
-                });
+              const tokenName = currentCollection.symbol;
 
               const seller = await collection_contract.methods
                 .ownerOf(item.tokenId)
@@ -171,12 +165,7 @@ const CollectionPage = ({
                   console.error(e);
                 });
 
-              const collectionName = await collection_contract.methods
-                .name()
-                .call()
-                .catch((e) => {
-                  console.error(e);
-                });
+              const collectionName = await currentCollection.collectionName;
 
               const isApprovedresult = await window
                 .isApprovedBuy(item.price)
@@ -238,7 +227,6 @@ const CollectionPage = ({
   };
 
   const fetchSearchNftsPerCollection = async (tokenIdBySearch) => {
-    console.log(tokenIdBySearch);
     // setLoading(true);
 
     const result = await axios
@@ -289,16 +277,19 @@ const CollectionPage = ({
 
               if (collection_contract.methods.tokenByIndex) {
                 try {
-                  tokenByIndex = await collection_contract.methods.tokenByIndex(j).call();
+                  tokenByIndex = await collection_contract.methods
+                    .tokenByIndex(j)
+                    .call();
                 } catch (e) {
                   console.error(e);
                   tokenByIndex = j;
                 }
               } else {
-                console.warn("tokenByIndex method does not exist in the contract ABI");
+                console.warn(
+                  "tokenByIndex method does not exist in the contract ABI"
+                );
                 tokenByIndex = j;
               }
-  
 
               if (tokenByIndex) {
                 if (
@@ -309,7 +300,6 @@ const CollectionPage = ({
               }
             })
         );
-        
       }
       //     const limit = totalSupply >= 12 ? 12 : totalSupply;
 
@@ -545,12 +535,7 @@ const CollectionPage = ({
                 .catch((e) => {
                   console.error(e);
                 });
-              const tokenName = await collection_contract.methods
-                .symbol()
-                .call()
-                .catch((e) => {
-                  console.error(e);
-                });
+              const tokenName = currentCollection.symbol;
 
               const offersresultListed = await window
                 .getAllOffers(
@@ -655,17 +640,19 @@ const CollectionPage = ({
             // let price= 0;
             if (collection_contract.methods.tokenByIndex) {
               try {
-                tokenByIndex = await collection_contract.methods.tokenByIndex(i).call();
+                tokenByIndex = await collection_contract.methods
+                  .tokenByIndex(i)
+                  .call();
               } catch (e) {
                 console.error(e);
                 tokenByIndex = i;
               }
             } else {
-              console.warn("tokenByIndex method does not exist in the contract ABI");
+              console.warn(
+                "tokenByIndex method does not exist in the contract ABI"
+              );
               tokenByIndex = i;
             }
-
-          
 
             let finalOfferResult = [];
             const offersresult = await window
@@ -744,12 +731,7 @@ const CollectionPage = ({
                 console.error(e);
               });
 
-            const tokenName = await collection_contract.methods
-              .symbol()
-              .call()
-              .catch((e) => {
-                console.error(e);
-              });
+            const tokenName = currentCollection.symbol;
 
             const nft_data = await fetch(
               `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress.toLowerCase()}/${tokenByIndex}/metadata.json`
@@ -767,7 +749,6 @@ const CollectionPage = ({
               nft_data.code !== 404 &&
               typeof nft_data !== "string"
             ) {
-              
               nftArray.push({
                 ...nft_data,
                 tokenId: Number(tokenByIndex),
@@ -844,16 +825,19 @@ const CollectionPage = ({
 
             if (collection_contract.methods.tokenByIndex) {
               try {
-                tokenByIndex = await collection_contract.methods.tokenByIndex(i).call();
+                tokenByIndex = await collection_contract.methods
+                  .tokenByIndex(i)
+                  .call();
               } catch (e) {
                 console.error(e);
                 tokenByIndex = i;
               }
             } else {
-              console.warn("tokenByIndex method does not exist in the contract ABI");
+              console.warn(
+                "tokenByIndex method does not exist in the contract ABI"
+              );
               tokenByIndex = i;
             }
-
 
             let finalOfferResult = [];
 
@@ -933,12 +917,7 @@ const CollectionPage = ({
                 console.error(e);
               });
 
-            const tokenName = await collection_contract.methods
-              .symbol()
-              .call()
-              .catch((e) => {
-                console.error(e);
-              });
+            const tokenName = currentCollection.symbol;
 
             const nft_data = await fetch(
               `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress.toLowerCase()}/${tokenByIndex}/metadata.json`
@@ -965,6 +944,14 @@ const CollectionPage = ({
                 bestOffer: bestOffer,
                 lastSale: lastSale,
               });
+            } else {
+              nftArray.push({
+                tokenId: Number(tokenByIndex),
+                owner: owner,
+                tokenName: tokenName,
+                bestOffer: bestOffer,
+                lastSale: lastSale,
+              });
             }
           })
         );
@@ -984,22 +971,22 @@ const CollectionPage = ({
     setnext(next + nftPerRow);
   };
 
-  const onScroll = () => {
-    if (filter === null && showBtn) {
-      const wrappedElement = document.getElementById("header2");
-      if (wrappedElement) {
-        const isBottom =
-          parseInt(wrappedElement.getBoundingClientRect()?.bottom) <=
-          window.innerHeight;
-        if (isBottom && allNftArray.length > 0) {
-          if (next <= totalSupplyPerCollection && totalSupplyPerCollection>12) {
-            loadMore();
-            document.removeEventListener("scroll", onScroll);
-          }
-        }
-      }
-    }
-  };
+  // const onScroll = () => {
+  //   if (filter === null && showBtn) {
+  //     const wrappedElement = document.getElementById("header2");
+  //     if (wrappedElement) {
+  //       const isBottom =
+  //         parseInt(wrappedElement.getBoundingClientRect()?.bottom) <=
+  //         window.innerHeight;
+  //       if (isBottom && allNftArray.length > 0) {
+  //         if (next <= totalSupplyPerCollection && totalSupplyPerCollection>12) {
+  //           loadMore();
+  //           document.removeEventListener("scroll", onScroll);
+  //         }
+  //       }
+  //     }
+  //   }
+  // };
 
   const fetchCurrentCollection = (collectionAddr) => {
     const result = allCollections.find((item) => {
@@ -1314,38 +1301,40 @@ const CollectionPage = ({
       });
   };
 
-  const refresgListingsNftData = async () => {
-    const result = await axios
-      .get(
-        `${baseURL}/api/collections/${collectionAddress.toLowerCase()}/refresh-listings`,
-        {
-          headers: {
-            cascadestyling:
-              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-          },
-        }
-      )
-      .catch((e) => {
-        console.log(e);
-      });
+  const refreshListingsNftData = async () => {
+    if (window.location.pathname.includes("/collection")) {
+      const result = await axios
+        .get(
+          `${baseURL}/api/collections/${collectionAddress.toLowerCase()}/refresh-listings`,
+          {
+            headers: {
+              cascadestyling:
+                "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+            },
+          }
+        )
+        .catch((e) => {
+          console.log(e);
+        });
 
-    if (
-      result &&
-      result.status === 200 &&
-      allNftArray &&
-      allNftArray.length > 0
-    ) {
-      const listednfts = result.data.listings;
-      if (listednfts !== "none" && listednfts && listednfts.length > 0) {
-        const uniqueArray_listed = listednfts.filter(
-          ({ tokenId: id1 }) =>
-            !allNftArray.some(
-              ({ tokenId: id2 }) => id1.toString() == id2.toString()
-            )
-        );
+      if (
+        result &&
+        result.status === 200 &&
+        allNftArray &&
+        allNftArray.length > 0
+      ) {
+        const listednfts = result.data.listings;
+        if (listednfts !== "none" && listednfts && listednfts.length > 0) {
+          const uniqueArray_listed = listednfts.filter(
+            ({ tokenId: id1 }) =>
+              !allNftArray.some(
+                ({ tokenId: id2 }) => id1.toString() == id2.toString()
+              )
+          );
 
-        if (uniqueArray_listed && uniqueArray_listed.length > 0) {
-          fetchInitialNftsPerCollection();
+          if (uniqueArray_listed && uniqueArray_listed.length > 0) {
+            fetchInitialNftsPerCollection();
+          }
         }
       }
     }
@@ -1529,10 +1518,10 @@ const CollectionPage = ({
 
   useEffect(() => {
     const interval = setInterval(async () => {
-      refresgListingsNftData();
+      refreshListingsNftData();
       return () => clearInterval(interval);
     }, 10000);
-  }, [allNftArray.length]);
+  }, [allNftArray.length, window.location]);
 
   useEffect(() => {
     if (!isNaN(totalSupplyPerCollection)) fetchInitialNftsPerCollection();
@@ -1544,13 +1533,13 @@ const CollectionPage = ({
   //   }
   // }, [filter,next,totalSupplyPerCollection]);
 
-  useEffect(() => {
-    // if (filter === null) {
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-    // }
-  }); 
-  
+  // useEffect(() => {
+  // if (filter === null) {
+  // window.addEventListener("scroll", onScroll);
+  // return () => window.removeEventListener("scroll", onScroll);
+  // }
+  // });
+
   return (
     <>
       <div
@@ -1617,7 +1606,8 @@ const CollectionPage = ({
         {totalSupplyPerCollection &&
           next <= totalSupplyPerCollection &&
           totalSupplyPerCollection > 0 &&
-          loading === false&& totalSupplyPerCollection > 12 &&
+          loading === false &&
+          totalSupplyPerCollection > 12 &&
           showBtn && (
             <div className="d-flex justify-content-center mt-5">
               <button className="buy-btn px-5 m-auto" onClick={loadMore}>

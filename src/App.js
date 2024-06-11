@@ -524,8 +524,8 @@ function App() {
                 item.nftAddress.toLowerCase()
               );
             });
-
-            const collection_contract = new web3.eth.Contract(
+if(currentCollection && currentCollection.length >0)
+           { const collection_contract = new web3.eth.Contract(
               abi,
               item.nftAddress
             );
@@ -567,6 +567,7 @@ function App() {
               nft_data.code !== 404 &&
               typeof nft_data !== "string"
             ) {
+              
               return {
                 ...item,
                 ...nft_data,
@@ -584,7 +585,7 @@ function App() {
                 seller: seller,
                 collectionName: collectionName,
               };
-          }
+          }}
         })
       );
 

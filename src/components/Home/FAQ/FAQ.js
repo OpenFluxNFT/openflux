@@ -77,7 +77,7 @@ const FAQ = () => {
     {
       title: "How can I contact OpenFlux support?",
       content: `
-      If you need assistance, you can reach out to our support team via the "Contact Us" page on our website or email us directly at  <a href="mailto:contact@openflux.com" target="__blank">contact@openflux.com</a> or join our Discord community at  <a href="https://discord.gg/openflux" target="__blank">https://discord.gg/openflux</a> https://discord.gg/openflux and raise a ticket. We also have a comprehensive help center with guides and FAQs to address common questions and issues.
+      If you need assistance, you can reach out to our support team via the "Contact Us" page on our website or email us directly at  <a href="mailto:contact@openflux.com" target="__blank">contact@openflux.com</a> or join our Discord community at  <a href="https://discord.gg/openflux" target="__blank">https://discord.gg/openflux</a> and raise a ticket. We also have a comprehensive help center with guides and FAQs to address common questions and issues.
       `,
       id: "Twelve",
     },

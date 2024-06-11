@@ -184,14 +184,14 @@ const Header = ({
           <div className="col-7 px-0">
             <div className="d-flex gap-1 align-items-center justify-content-between">
               <div className="d-flex align-items-center gap-4">
-                <NavLink
+                {/* <NavLink
                   to={"/collections"}
                   className={({ isActive }) =>
                     isActive ? "header-link-active mb-0" : "header-link mb-0"
                   }
                 >
                   Collections
-                </NavLink>
+                </NavLink> */}
                 {/* <NavLink className={"header-link mb-0"} to={"/mint"}>
                   Mint
                 </NavLink> */}

@@ -55,8 +55,6 @@ const CollectionCategories = ({ allCollections }) => {
     }, 1500);
   };
 
-  
-
   useEffect(() => {
     setCollections(allCollections);
   }, [allCollections]);
@@ -179,12 +177,20 @@ const CollectionCategories = ({ allCollections }) => {
                 className="d-flex align-items-center justify-content-center w-100"
                 style={{ height: 353 }}
               >
-                <h6 className="text-white" style={{textAlign: "center"}}>
+                <h6 className="text-white" style={{ textAlign: "center" }}>
                   There are no collections available for this category
                 </h6>
               </div>
             )}
           </>
+        )}
+        {!window.location.pathname.includes("/collections") && (
+          <NavLink
+            to="/collections"
+            className="d-flex justify-content-center mt-4 text-decoration-none"
+          >
+            <button className="buy-btn px-5 m-auto">Explore all</button>
+          </NavLink>
         )}
       </div>
     </div>

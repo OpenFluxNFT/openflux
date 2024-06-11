@@ -47,7 +47,11 @@ const CollectionList = ({
   allOffers,
   bestOffer,
   isVerified,
-  onSelectCollecitonOffers,collectionJson,onClearAll
+  onSelectCollecitonOffers,
+  collectionJson,
+  onClearAll,
+  nftArrayFilteredBySearch,
+  isSearch,
 }) => {
   const windowSize = useWindowSize();
   const [openFilters, setOpenFilters] = useState(false);
@@ -73,7 +77,6 @@ const CollectionList = ({
   const [priceFilter, setpriceFilter] = useState("Filter by Price");
 
   const [nftList, setNftList] = useState([]);
-
 
   const navigate = useNavigate();
   const [gridView, setGridView] = useState("small-grid");
@@ -723,7 +726,9 @@ const CollectionList = ({
                     </div>
                   </div>
                 </div>
-                {collectionJson && collectionJson.traits && collectionJson.traits.length > 0 && (
+                {collectionJson &&
+                  collectionJson.traits &&
+                  collectionJson.traits.length > 0 && (
                     <div className="accordion-item">
                       <h2 className="accordion-header" id="headingThree">
                         <button
@@ -746,69 +751,82 @@ const CollectionList = ({
                       >
                         <div className="accordion-body">
                           <div className="" id="accordionExample2">
-                            {collectionJson.traits && collectionJson.traits.length>0 && collectionJson.traits.map((item, index) => {
+                            {collectionJson.traits &&
+                              collectionJson.traits.length > 0 &&
+                              collectionJson.traits.map((item, index) => {
                                 return (
                                   <div className="accordion-item" key={index}>
                                     <h2
                                       className="accordion-header"
-                                      id={`headingOne${item.key.replace(/\s+/g, '')
-                                      }`}
+                                      id={`headingOne${item.key.replace(
+                                        /\s+/g,
+                                        ""
+                                      )}`}
                                     >
                                       <button
                                         className="accordion-button collection-filter px-2 py-2 d-flex align-items-center gap-2 collapsed"
                                         type="button"
                                         data-bs-toggle="collapse"
-                                        data-bs-target={`#collapseOne${item.key.replace(/\s+/g, '')
-                                        }`}
+                                        data-bs-target={`#collapseOne${item.key.replace(
+                                          /\s+/g,
+                                          ""
+                                        )}`}
                                         aria-expanded="false"
-                                        aria-controls={`collapseOne${item.key.replace(/\s+/g, '')
-                                        }`}
+                                        aria-controls={`collapseOne${item.key.replace(
+                                          /\s+/g,
+                                          ""
+                                        )}`}
                                         style={{ fontSize: "10px" }}
                                       >
                                         {item.key}
                                       </button>
                                     </h2>
-                                     <div
-                                      id={`collapseOne${item.key.replace(/\s+/g, '')}`}
+                                    <div
+                                      id={`collapseOne${item.key.replace(
+                                        /\s+/g,
+                                        ""
+                                      )}`}
                                       className="accordion-collapse collapse"
-                                      aria-labelledby={`headingOne${item.key.replace(/\s+/g, '')}`}
+                                      aria-labelledby={`headingOne${item.key.replace(
+                                        /\s+/g,
+                                        ""
+                                      )}`}
                                       data-bs-parent="#accordionExample2"
                                     >
                                       <div className="accordion-body px-2">
-                                       {Object.entries(item.value).map(([key, value]) => (
-                                           <FormGroup>
-                                           <FormControlLabel
-                                             onChange={() =>
-                                               addOrRemove({
-                                                 type: item.key,
-                                                 value: key,
-                                               })
-                                             }
-                                             control={
-                                               <Checkbox
-                                                 checked={checkIfExists({
-                                                   type: item.key,
-                                                   value: key,
-                                                 })}
-                                                 size="small"
-                                                 sx={{
-                                                   color: "white",
-                                                   "&.Mui-checked": {
-                                                     color: "#3DBDA7",
-                                                   },
-                                                 }}
-                                               />
-                                             }
-                                             key={value}
-                                             label={key}
-                                           />
-                                         </FormGroup>
-                                       ))}
-                                        
+                                        {Object.entries(item.value).map(
+                                          ([key, value]) => (
+                                            <FormGroup>
+                                              <FormControlLabel
+                                                onChange={() =>
+                                                  addOrRemove({
+                                                    type: item.key,
+                                                    value: key,
+                                                  })
+                                                }
+                                                control={
+                                                  <Checkbox
+                                                    checked={checkIfExists({
+                                                      type: item.key,
+                                                      value: key,
+                                                    })}
+                                                    size="small"
+                                                    sx={{
+                                                      color: "white",
+                                                      "&.Mui-checked": {
+                                                        color: "#3DBDA7",
+                                                      },
+                                                    }}
+                                                  />
+                                                }
+                                                key={value}
+                                                label={key}
+                                              />
+                                            </FormGroup>
+                                          )
+                                        )}
                                       </div>
-                                    
                                     </div>
-                                   
                                   </div>
                                 );
                               })}
@@ -1055,6 +1073,14 @@ const CollectionList = ({
               loading === false && (
                 <span className="text-white d-flex w-100 justify-content-center mt-5">
                   This collection doesn't have any NFTs.
+                </span>
+              )}
+
+            {(isSearch === true &&
+              nftArrayFilteredBySearch.length === 0 &&
+              loading === false) && (
+                <span className="text-white d-flex w-100 justify-content-center mt-5">
+                  There are no NFTs with this filter.
                 </span>
               )}
 
@@ -1854,13 +1880,17 @@ const CollectionList = ({
                 )}
             </div>
 
-            {(collectionLoading === true ||
-              loading === true ||
-              (collectionLoading === false &&
-                loading === false &&
-                allNftArray.length === 0)) &&
+            {(!isSearch
+              ? collectionLoading === true ||
+                loading === true ||
+                (collectionLoading === false &&
+                  loading === false &&
+                  allNftArray.length === 0)
+              : loading === true &&
+                (nftArrayFilteredBySearch.length === 0 ||
+                  nftArrayFilteredBySearch.length > 0) &&
+                allNftArray.length === 0) &&
             listType !== "collectionoffers" &&
-            // totalSupplyPerCollection > 0 &&
             allNftArray &&
             (gridView === "small-grid" || gridView === "big-grid") ? (
               <div
@@ -2083,7 +2113,9 @@ const CollectionList = ({
                 </div>
               </div>
             </div>
-            {collectionJson && collectionJson.traits && collectionJson.traits.length > 0 && (
+            {collectionJson &&
+              collectionJson.traits &&
+              collectionJson.traits.length > 0 && (
                 <div className="accordion-item">
                   <h2 className="accordion-header" id="headingThree">
                     <button
@@ -2099,82 +2131,95 @@ const CollectionList = ({
                     </button>
                   </h2>
                   <div
-                        id="collapseThree"
-                        className="accordion-collapse collapse"
-                        aria-labelledby="headingThree"
-                        data-bs-parent="#accordionExample"
-                      >
-                        <div className="accordion-body">
-                          <div className="" id="accordionExample2">
-                            {collectionJson.traits && collectionJson.traits.length>0 && collectionJson.traits.map((item, index) => {
-                                return (
-                                  <div className="accordion-item" key={index}>
-                                    <h2
-                                      className="accordion-header"
-                                      id={`headingOne${item.key.replace(/\s+/g, '')
-                                      }`}
-                                    >
-                                      <button
-                                        className="accordion-button collection-filter px-2 py-2 d-flex align-items-center gap-2 collapsed"
-                                        type="button"
-                                        data-bs-toggle="collapse"
-                                        data-bs-target={`#collapseOne${item.key.replace(/\s+/g, '')
-                                        }`}
-                                        aria-expanded="false"
-                                        aria-controls={`collapseOne${item.key.replace(/\s+/g, '')
-                                        }`}
-                                        style={{ fontSize: "10px" }}
-                                      >
-                                        {item.key}
-                                      </button>
-                                    </h2>
-                                     <div
-                                      id={`collapseOne${item.key.replace(/\s+/g, '')}`}
-                                      className="accordion-collapse collapse"
-                                      aria-labelledby={`headingOne${item.key.replace(/\s+/g, '')}`}
-                                      data-bs-parent="#accordionExample2"
-                                    >
-                                      <div className="accordion-body px-2">
-                                       {Object.entries(item.value).map(([key, value]) => (
-                                           <FormGroup>
-                                           <FormControlLabel
-                                             onChange={() =>
-                                               addOrRemove({
-                                                 type: item.key,
-                                                 value: key,
-                                               })
-                                             }
-                                             control={
-                                               <Checkbox
-                                                 checked={checkIfExists({
-                                                   type: item.key,
-                                                   value: key,
-                                                 })}
-                                                 size="small"
-                                                 sx={{
-                                                   color: "white",
-                                                   "&.Mui-checked": {
-                                                     color: "#3DBDA7",
-                                                   },
-                                                 }}
-                                               />
-                                             }
-                                             key={value}
-                                             label={key}
-                                           />
-                                         </FormGroup>
-                                       ))}
-                                        
-                                      </div>
-                                    
-                                    </div>
-                                   
+                    id="collapseThree"
+                    className="accordion-collapse collapse"
+                    aria-labelledby="headingThree"
+                    data-bs-parent="#accordionExample"
+                  >
+                    <div className="accordion-body">
+                      <div className="" id="accordionExample2">
+                        {collectionJson.traits &&
+                          collectionJson.traits.length > 0 &&
+                          collectionJson.traits.map((item, index) => {
+                            return (
+                              <div className="accordion-item" key={index}>
+                                <h2
+                                  className="accordion-header"
+                                  id={`headingOne${item.key.replace(
+                                    /\s+/g,
+                                    ""
+                                  )}`}
+                                >
+                                  <button
+                                    className="accordion-button collection-filter px-2 py-2 d-flex align-items-center gap-2 collapsed"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target={`#collapseOne${item.key.replace(
+                                      /\s+/g,
+                                      ""
+                                    )}`}
+                                    aria-expanded="false"
+                                    aria-controls={`collapseOne${item.key.replace(
+                                      /\s+/g,
+                                      ""
+                                    )}`}
+                                    style={{ fontSize: "10px" }}
+                                  >
+                                    {item.key}
+                                  </button>
+                                </h2>
+                                <div
+                                  id={`collapseOne${item.key.replace(
+                                    /\s+/g,
+                                    ""
+                                  )}`}
+                                  className="accordion-collapse collapse"
+                                  aria-labelledby={`headingOne${item.key.replace(
+                                    /\s+/g,
+                                    ""
+                                  )}`}
+                                  data-bs-parent="#accordionExample2"
+                                >
+                                  <div className="accordion-body px-2">
+                                    {Object.entries(item.value).map(
+                                      ([key, value]) => (
+                                        <FormGroup>
+                                          <FormControlLabel
+                                            onChange={() =>
+                                              addOrRemove({
+                                                type: item.key,
+                                                value: key,
+                                              })
+                                            }
+                                            control={
+                                              <Checkbox
+                                                checked={checkIfExists({
+                                                  type: item.key,
+                                                  value: key,
+                                                })}
+                                                size="small"
+                                                sx={{
+                                                  color: "white",
+                                                  "&.Mui-checked": {
+                                                    color: "#3DBDA7",
+                                                  },
+                                                }}
+                                              />
+                                            }
+                                            key={value}
+                                            label={key}
+                                          />
+                                        </FormGroup>
+                                      )
+                                    )}
                                   </div>
-                                );
-                              })}
-                          </div>
-                        </div>
+                                </div>
+                              </div>
+                            );
+                          })}
                       </div>
+                    </div>
+                  </div>
                 </div>
               )}
           </div>

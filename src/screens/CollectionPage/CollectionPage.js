@@ -47,8 +47,10 @@ const CollectionPage = ({
   const [recentlySoldNfts, setRecentlySoldNfts] = useState([]);
   const [filter, setFilter] = useState(null);
   const [next, setnext] = useState(0);
-  const [nextSearch, setnextSearch] = useState(100);
+  const [nextSearch, setnextSearch] = useState(40);
   const [isSearch, setisSearch] = useState(false);
+  const [tokenToSearch, settokenToSearch] = useState('');
+
   const [nftArrayFilteredBySearch, setnftArrayFilteredBySearch] = useState([]);
 
 
@@ -475,7 +477,7 @@ const CollectionPage = ({
     } else {
       setnftArrayFilteredBySearch([])
       setLoading(false);
-      setAllNftArray([]);
+      // setAllNftArray([]);
     }
   };
 
@@ -1536,6 +1538,12 @@ const CollectionPage = ({
   }, [next]);
 
   useEffect(() => {
+    if (nextSearch !== 40) {
+      fetchSearchNftsPerCollection(tokenToSearch);
+    }
+  }, [nextSearch]);
+
+  useEffect(() => {
     checkifFavorite();
   }, [collectionAddress, userCollectionFavs]);
 
@@ -1620,7 +1628,7 @@ const CollectionPage = ({
           totalSupplyPerCollection={totalSupplyPerCollection}
           hasListedNfts={hasListedNfts}
           getFilter={getFilter}
-          fetchSearchNftsPerCollection={fetchSearchNftsPerCollection}
+          fetchSearchNftsPerCollection={(value)=>{fetchSearchNftsPerCollection(value); settokenToSearch(value)}}
           onClearAll={() => {
             setAllNftArray([]);
             setLoading(true);
@@ -1658,8 +1666,7 @@ const CollectionPage = ({
 {nftArrayFilteredBySearch &&
           nextSearch < nftArrayFilteredBySearch.length &&
           loading === false &&
-          totalSupplyPerCollection > 12 && isSearch === true &&
-          showBtn && (
+          totalSupplyPerCollection > 12 && isSearch === true && (
             <div className="d-flex justify-content-center mt-5">
               <button className="buy-btn px-5 m-auto" onClick={loadMoreSearch}>
                 Load more

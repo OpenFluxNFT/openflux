@@ -62,6 +62,7 @@ const CollectionPage = ({
   const [offerData, setofferData] = useState([]);
   const [bestOffer, setbestOffer] = useState([]);
   const [showBtn, setshowBtn] = useState(true);
+  const [collectionJson, setcollectionJson] = useState([]);
 
   const [userownedNftFilteredArray, setuserownedNftFilteredArray] = useState(
     []
@@ -109,6 +110,49 @@ const CollectionPage = ({
       valueType: `${getFormattedNumber(uniqueOwnersPercentage ?? 0, 0)}%`,
     },
   ];
+
+  const isEmptyObject = (obj) => {
+    return obj && Object.keys(obj).length === 0 && obj.constructor === Object;
+  };
+
+
+  const transformData = (data) => {
+    const hasValidTraits = data.traits && !isEmptyObject(data.traits) && !(data.traits.undefined && data.traits.undefined.undefined !== undefined);
+    const hasValidSingleTokenTraits = data.singleTokenTraits && !isEmptyObject(data.singleTokenTraits);
+    const transformedSingleTokenTraits = hasValidSingleTokenTraits 
+    ? Object.entries(data.singleTokenTraits).map(([key, value]) => ({ key, value }))
+    : [];
+
+    const transformedTraits = hasValidTraits 
+    ? Object.entries(data.traits).map(([key, value]) => ({ key, value }))
+    : [];
+
+    return {
+      tokenIDs: data.tokenIDs || [],
+      traits: transformedTraits,
+      singleTokenTraits: transformedSingleTokenTraits
+    };
+  };
+
+  const fetchCollectionJson = async()=>{
+  
+    const collection_data = await fetch(
+      `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress.toLowerCase()}/main/main.json`
+    ).then((res) => res.json())
+      .then((data) => {
+        return data;
+      })
+      .catch((err) => {
+        console.error(err.message);
+      });
+    
+      if(collection_data && collection_data.tokenIDs) {
+       const transformedData = transformData(collection_data);
+        console.log(transformedData)
+       setcollectionJson(transformedData)
+      }
+  }
+
   const filterUserArray = () => {
     const final = userNftsOwnedArray.filter((obj) => {
       return obj.nftAddress.toLowerCase() === collectionAddress.toLowerCase();
@@ -1482,6 +1526,7 @@ const CollectionPage = ({
     if (dataFetchedRef.current) return;
     dataFetchedRef.current = true;
     getCollectionFloorPrice();
+    fetchCollectionJson();
     getCollectionTotalSupply();
     getCollectionInfo();
     getCollectionUniqueOwners();
@@ -1496,6 +1541,7 @@ const CollectionPage = ({
         onNewCollectionFetched();
       });
       getCollectionInfo();
+      fetchCollectionJson();
       getCollectionTotalVolume();
       getUserOffersForCollection();
       getCollectionUniqueOwners();
@@ -1539,7 +1585,7 @@ const CollectionPage = ({
   // return () => window.removeEventListener("scroll", onScroll);
   // }
   // });
-
+ 
   return (
     <>
       <div
@@ -1573,6 +1619,7 @@ const CollectionPage = ({
         />
         <CollectionList
           offerData={offerData}
+          collectionJson={collectionJson}
           currentCollection={currentCollection}
           getRecentlySold={handleGetRecentlySoldNfts}
           allNftArray={allNftArray}

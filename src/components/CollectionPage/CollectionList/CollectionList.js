@@ -47,7 +47,7 @@ const CollectionList = ({
   allOffers,
   bestOffer,
   isVerified,
-  onSelectCollecitonOffers,
+  onSelectCollecitonOffers,collectionJson
 }) => {
   const windowSize = useWindowSize();
   const [openFilters, setOpenFilters] = useState(false);
@@ -536,7 +536,7 @@ const CollectionList = ({
   //     }, 1500);
   //   }
   // }, [queryItems]);
- 
+
   return (
     <>
       <div className="container-lg">
@@ -721,9 +721,7 @@ const CollectionList = ({
                     </div>
                   </div>
                 </div>
-                {allNftArray.length > 0 &&
-                  allNftArray[0]?.metadatas !== false &&
-                  allNftArray[0]?.attributes !== "false" && (
+                {collectionJson && collectionJson.traits && collectionJson.traits.length > 0 && (
                     <div className="accordion-item">
                       <h2 className="accordion-header" id="headingThree">
                         <button
@@ -746,33 +744,34 @@ const CollectionList = ({
                       >
                         <div className="accordion-body">
                           <div className="" id="accordionExample2">
-                            {allNftArray.length > 0 &&
-                              allNftArray[0]?.attributes &&
-                              allNftArray[0]?.metadatas !== false &&
-                              allNftArray[0]?.attributes !== "false" &&
-                              allNftArray[0]?.attributes.map((item, index) => {
+                            {collectionJson.traits && collectionJson.traits.length>0 && collectionJson.traits.map((item, index) => {
                                 return (
                                   <div className="accordion-item" key={index}>
                                     <h2
                                       className="accordion-header"
-                                      id={`headingOne${item.trait_type}`}
+                                      id={`headingOne${item.key
+                                      }`}
                                     >
                                       <button
                                         className="accordion-button collection-filter px-2 py-2 d-flex align-items-center gap-2 collapsed"
                                         type="button"
                                         data-bs-toggle="collapse"
-                                        data-bs-target={`#collapseOne${item.trait_type}`}
+                                        data-bs-target={`#collapseOne${item.key
+                                        }`}
                                         aria-expanded="false"
-                                        aria-controls={`collapseOne${item.trait_type}`}
+                                        aria-controls={`collapseOne${item.key
+                                        }`}
                                         style={{ fontSize: "10px" }}
                                       >
-                                        {item.trait_type}
+                                        {item.key}
                                       </button>
                                     </h2>
-                                    <div
-                                      id={`collapseOne${item.trait_type}`}
+                                    {Object.keys(item.value).map((item2, index2)=>{
+                                      return( <div
+                                      key={index2}
+                                      id={`collapseOne${item2}`}
                                       className="accordion-collapse collapse"
-                                      aria-labelledby={`headingOne${item.trait_type}`}
+                                      aria-labelledby={`headingOne${item2}`}
                                       data-bs-parent="#accordionExample2"
                                     >
                                       <div className="accordion-body px-2">
@@ -780,15 +779,15 @@ const CollectionList = ({
                                             <FormControlLabel
                                               onChange={() =>
                                                 addOrRemove({
-                                                  type: item.trait_type,
-                                                  value: item.value,
+                                                  type: item2,
+                                                  value: item2,
                                                 })
                                               }
                                               control={
                                                 <Checkbox
                                                   checked={checkIfExists({
-                                                    type: item.trait_type,
-                                                    value: item.value,
+                                                    type: item2,
+                                                    value: item2,
                                                   })}
                                                   size="small"
                                                   sx={{
@@ -799,44 +798,16 @@ const CollectionList = ({
                                                   }}
                                                 />
                                               }
-                                              key={index}
-                                              label={item.value}
+                                              key={index2}
+                                              label={item2}
                                             />
                                           </FormGroup>
                                         
                                       </div>
-                                      {/* <div className="accordion-body px-2">
-                                        {allNftArray[0]?.attributes.map((trait, index) => (
-                                          <FormGroup>
-                                            <FormControlLabel
-                                              onChange={() =>
-                                                addOrRemove({
-                                                  type: item.trait_type,
-                                                  value: trait.value,
-                                                })
-                                              }
-                                              control={
-                                                <Checkbox
-                                                  checked={checkIfExists({
-                                                    type: item.trait_type,
-                                                    value: trait.value,
-                                                  })}
-                                                  size="small"
-                                                  sx={{
-                                                    color: "white",
-                                                    "&.Mui-checked": {
-                                                      color: "#3DBDA7",
-                                                    },
-                                                  }}
-                                                />
-                                              }
-                                              key={index}
-                                              label={trait.value}
-                                            />
-                                          </FormGroup>
-                                        ))}
-                                      </div> */}
-                                    </div>
+                                    
+                                    </div>)
+                                    })}
+                                   
                                   </div>
                                 );
                               })}
@@ -2109,9 +2080,7 @@ const CollectionList = ({
                 </div>
               </div>
             </div>
-            {allNftArray.length > 0 &&
-              allNftArray[0]?.metadatas !== false &&
-              allNftArray[0]?.attributes !== "false" && (
+            {collectionJson && collectionJson.traits && collectionJson.traits.length > 0 && (
                 <div className="accordion-item">
                   <h2 className="accordion-header" id="headingThree">
                     <button
@@ -2126,7 +2095,7 @@ const CollectionList = ({
                       Traits
                     </button>
                   </h2>
-                  <div
+                  {/* <div
                     id="collapseThree"
                     className="accordion-collapse collapse"
                     aria-labelledby="headingThree"
@@ -2134,11 +2103,7 @@ const CollectionList = ({
                   >
                     <div className="accordion-body">
                       <div className="" id="accordionExample2">
-                        {allNftArray.length > 0 &&
-                          allNftArray[0]?.attributes &&
-                          allNftArray[0]?.attributes !== "false" &&
-                          allNftArray[0]?.attributes !== false &&
-                          allNftArray[0]?.attributes.map((item, index) => (
+                        {collectionJson.traits && collectionJson.traits.length>0 && collectionJson.traits.map((item, index) => (
                             <div className="accordion-item" key={index}>
                               <h2
                                 className="accordion-header"
@@ -2186,7 +2151,7 @@ const CollectionList = ({
                           ))}
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               )}
           </div>

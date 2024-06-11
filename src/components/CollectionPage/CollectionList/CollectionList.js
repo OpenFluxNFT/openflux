@@ -52,7 +52,7 @@ const CollectionList = ({
   onClearAll,
   nftArrayFilteredBySearch,
   isSearch,
-  onFilterTraits
+  onFilterTraits,ntftArrayFilteredByTraits,isSearchTrait
 }) => {
   const windowSize = useWindowSize();
   const [openFilters, setOpenFilters] = useState(false);
@@ -168,7 +168,7 @@ const CollectionList = ({
     );
   };
 
-  console.log(queryItems);
+  
 
   const handleKeyPress = (val) => (event) => {
     if (event.key === "Enter") {
@@ -208,14 +208,23 @@ const CollectionList = ({
       );
 
       if (itemExists) {
-        // Remove the item if it exists
+        // Remove the item if it exists 
+        
+        onFilterTraits(prevItems.filter(
+          (item) =>
+            String(item.type).toLowerCase() !== targetType ||
+            String(item.value).toLowerCase() !== targetValue
+        ));
         return prevItems.filter(
           (item) =>
             String(item.type).toLowerCase() !== targetType ||
             String(item.value).toLowerCase() !== targetValue
         );
+      
+
       } else {
         // Add the item if it doesn't exist
+        onFilterTraits([...prevItems, { type: targetType, value: targetValue }]);
         return [...prevItems, { type: targetType, value: targetValue }];
       }
     });
@@ -482,6 +491,7 @@ const CollectionList = ({
         console.error(e);
       });
   };
+  
 
   const handleBuyNft = async (nft) => {
     setSelectedNftId(nft.tokenId);
@@ -810,7 +820,6 @@ const CollectionList = ({
                                                     type: item.key,
                                                   value: key,
                                                   });
-                                                  onFilterTraits(queryItems)
                                                 }
                                                 }
                                                 control={
@@ -1092,6 +1101,15 @@ const CollectionList = ({
                   There are no NFTs with this filter.
                 </span>
               )}
+
+{(isSearchTrait === true &&
+              ntftArrayFilteredByTraits.length === 0 &&
+              loading === false) && (
+                <span className="text-white d-flex w-100 justify-content-center mt-5">
+                  There are no NFTs with this trait type.
+                </span>
+              )}
+
 
             <div
               className={`${
@@ -1894,7 +1912,10 @@ const CollectionList = ({
                 loading === true ||
                 (collectionLoading === false &&
                   loading === false &&
-                  allNftArray.length === 0)
+                  allNftArray.length === 0) || loading === true &&
+                  (ntftArrayFilteredByTraits.length === 0 ||
+                    ntftArrayFilteredByTraits.length > 0) &&
+                  allNftArray.length === 0 && isSearchTrait
               : loading === true &&
                 (nftArrayFilteredBySearch.length === 0 ||
                   nftArrayFilteredBySearch.length > 0) &&

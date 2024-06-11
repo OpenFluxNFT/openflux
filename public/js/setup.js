@@ -210,11 +210,12 @@ window.isApprovedBuy = async (amount) => {
   );
 
   const coinbase = await getCoinbase();
-
+if(coinbase){
   const allowance = await contract.methods
     .allowance(coinbase, window.config.nft_marketplace_address)
     .call({ from: await getCoinbase() });
-  return Number(allowance) >= Number(amount);
+  return Number(allowance) >= Number(amount);}
+  else return false;
 };
 
 window.isApprovedNFT = async (token, collectionAddress, address) => {

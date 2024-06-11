@@ -359,12 +359,7 @@ const SingleNft = ({
         nftAddress.toLowerCase()
       );
 
-      const nftSymbol = await collection_contract.methods
-        .symbol()
-        .call()
-        .catch((e) => {
-          console.log(e);
-        });
+      const nftSymbol = currentCollection?.symbol;
 
       const owner = await collection_contract.methods
         .ownerOf(nftID)
@@ -390,12 +385,8 @@ const SingleNft = ({
         favoriteCount = fav_count.data.count;
       }
 
-      const collectionName = await collection_contract.methods
-        .name()
-        .call()
-        .catch((e) => {
-          console.log(e);
-        });
+      const collectionName = currentCollection?.collectionName;
+
       let isListed = false;
       let price = 0;
       let expiresAt = 0;
@@ -561,12 +552,7 @@ const SingleNft = ({
           : window.BACKUP_ABI;
         const collection_contract = new web3.eth.Contract(abi, nftAddress);
 
-        const nftSymbol = await collection_contract.methods
-          .symbol()
-          .call()
-          .catch((e) => {
-            console.log(e);
-          });
+        const nftSymbol = currentCollection?.symbol;
 
         const owner = await collection_contract.methods
           .ownerOf(nftId)
@@ -593,12 +579,7 @@ const SingleNft = ({
           favoriteCount = fav_count.data.count;
         }
 
-        const collectionName = await collection_contract.methods
-          .name()
-          .call()
-          .catch((e) => {
-            console.log(e);
-          });
+        const collectionName =  currentCollection?.collectionName;
         let isListed = false;
         let price = 0;
         let expiresAt = 0;
@@ -775,12 +756,7 @@ const SingleNft = ({
       const web3 = window.confluxWeb3;
       const collection_contract = new web3.eth.Contract(abi, nftAddress);
 
-      const nftSymbol = await collection_contract.methods
-        .symbol()
-        .call()
-        .catch((e) => {
-          console.log(e);
-        });
+      const nftSymbol = currentCollection?.symbol;
         
       if (totalSupply && totalSupply > 0) {
         const limit = totalSupply >= 12 ? 12 : totalSupply;

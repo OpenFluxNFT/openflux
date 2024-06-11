@@ -89,12 +89,12 @@ const FAQ = () => {
         <h6 className="info-title my-4">
           Frequently Asked <span style={{ color: "#2F80ED" }}>Questions</span>
         </h6>
-        <div class="accordion" id="accordionExample">
+        <div className="accordion" id="accordionExample">
           {faqs.map((faq, index) => (
-            <div key={index} class="accordion-item">
-              <h2 class="accordion-header" id="headingOne">
+            <div key={index} className="accordion-item">
+              <h2 className="accordion-header" id="headingOne">
                 <button
-                  class="accordion-button faq-button collapsed"
+                  className="accordion-button faq-button collapsed"
                   type="button"
                   data-bs-toggle="collapse"
                   data-bs-target={`#collapse${faq.id}`}
@@ -106,12 +106,12 @@ const FAQ = () => {
               </h2>
               <div
                 id={`collapse${faq.id}`}
-                class="accordion-collapse collapse"
+                className="accordion-collapse collapse"
                 aria-labelledby={`heading${faq.id}`}
                 data-bs-parent="#accordionExample"
               >
                 <div
-                  class="accordion-body"
+                  className="accordion-body"
                   dangerouslySetInnerHTML={{ __html: faq.content }}
                 ></div>
               </div>

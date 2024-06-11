@@ -47,7 +47,7 @@ const SignModal = ({
                   <>
                     Confirming{" "}
                     <div
-                      class="spinner-border spinner-border-sm text-light"
+                      className="spinner-border spinner-border-sm text-light"
                       role="status"
                     ></div>
                   </>

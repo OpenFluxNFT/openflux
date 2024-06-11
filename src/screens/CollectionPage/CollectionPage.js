@@ -52,6 +52,7 @@ const CollectionPage = ({
   const [tokenToSearch, settokenToSearch] = useState('');
 
   const [nftArrayFilteredBySearch, setnftArrayFilteredBySearch] = useState([]);
+  const [ntftArrayFilteredByTraits, setNtftArrayFilteredByTraits] = useState([])
 
 
   const [showOfferPopup, setshowOfferPopup] = useState(false);
@@ -476,6 +477,221 @@ const CollectionPage = ({
       }
     } else {
       setnftArrayFilteredBySearch([])
+      setLoading(false);
+      // setAllNftArray([]);
+    }
+  };
+
+
+
+const filterItemsByTraits = (selectedTraits) => {
+  return collectionJson.singleTokenTraits.filter((item) => {
+    return selectedTraits.every((selectedTrait) => {
+      const { type, value } = selectedTrait;
+      console.log(item.value[type], type, value, "ca esht kjo");
+      return item.value[type] && item.value[type][value] === 1;
+    });
+  });
+  };
+
+  
+
+  const fetchTraitsNftsPerCollection = async (selectedTraits) => {
+    setLoading(true);
+    setAllNftArray([]);
+    setisSearch(true);
+    if (collectionJson.tokenIDs && collectionJson.singleTokenTraits.length > 0) {
+      const allNftsArrayFiltered = collectionJson.singleTokenTraits.filter((item) => {
+        return selectedTraits.every((selectedTrait) => {
+          return item.attributes.some((attribute) => attribute.trait_Type === selectedTrait.type && attribute.value === selectedTrait.value)
+        })
+      });
+
+      if (allNftsArrayFiltered && allNftsArrayFiltered.length > 0) {
+        setNtftArrayFilteredByTraits(allNftsArrayFiltered)
+        const result = await axios
+          .get(
+            `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress}`
+          )
+          .catch((e) => {
+            console.error(e);
+          });
+        const listednfts = await axios
+          .get(`${baseURL}/api/collections/${collectionAddress}/listings`, {
+            headers: {
+              cascadestyling:
+                "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+            },
+          })
+          .catch((e) => {
+            console.error(e);
+          });
+
+        if (
+          result &&
+          result.status === 200 &&
+          listednfts &&
+          listednfts.status === 200
+        ) {
+          let nftArray = [];
+          let nftListedArray = [];
+
+          const abi = result.data.result
+            ? JSON.parse(result.data.result)
+            : window.BACKUP_ABI;
+          const listednftsArray = listednfts.data.listings;
+          const web3 = window.confluxWeb3;
+          const collection_contract = new web3.eth.Contract(
+            abi,
+            collectionAddress
+          );
+
+          const limit =
+            allNftsArrayFiltered.length > nextSearch
+              ? nextSearch
+              : allNftsArrayFiltered.length;
+          console.log("limit", limit, allNftsArrayFiltered.length);
+          if (
+            listednftsArray !== "none" &&
+            listednftsArray &&
+            listednftsArray.length > 0
+          ) {
+            // settotalListedNfts(listednftsArray.length);
+
+            sethasListedNfts(true);
+            await Promise.all(
+              window.range(0, listednftsArray.length - 1).map(async (j) => {
+                const nft_data_listed = await fetch(
+                  `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress.toLowerCase()}/${
+                    listednftsArray[j].tokenId
+                  }/metadata.json`
+                )
+                  .then((res) => res.json())
+                  .then((data) => {
+                    return data;
+                  })
+                  .catch((err) => {
+                    console.log(err.message);
+                  });
+
+                const listingIndex = listednftsArray.findIndex(
+                  (object) =>
+                    object.nftAddress.toLowerCase() ===
+                      collectionAddress.toLowerCase() &&
+                    object.tokenId === listednftsArray[j].tokenId
+                );
+                const isApprovedresult = await window
+                  .isApprovedBuy(listednftsArray[j].price)
+                  .catch((e) => {
+                    console.error(e);
+                  });
+                const tokenName = currentCollection.symbol;
+
+                const owner = await collection_contract.methods
+                  .ownerOf(listednftsArray[j].tokenId)
+                  .call()
+                  .catch((e) => {
+                    console.log(e);
+                  });
+
+                const hasExpired = moment
+                  .duration(listednftsArray[j].expiresAt * 1000 - Date.now())
+                  .humanize(true)
+                  .includes("ago");
+
+                if (
+                  !hasExpired &&
+                  owner?.toLowerCase() ===
+                    listednftsArray[j].seller.toLowerCase()
+                ) {
+                  if (
+                    nft_data_listed &&
+                    nft_data_listed.code !== 404 &&
+                    typeof nft_data_listed !== "string"
+                  ) {
+                    nftListedArray.push({
+                      ...nft_data_listed,
+                      ...listednftsArray[j],
+                      listingIndex: listingIndex,
+                      isApproved: isApprovedresult,
+                      tokenName: tokenName,
+                    });
+                  }
+                }
+              })
+            );
+          }
+
+          await Promise.all(
+            window.range(0, limit - 1).map(async (i) => {
+              const owner = await collection_contract.methods
+                .ownerOf(allNftsArrayFiltered[i])
+                .call()
+                .catch((e) => {
+                  console.error(e);
+                });
+
+              const tokenName = currentCollection?.symbol;
+
+              const nft_data = await fetch(
+                `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress.toLowerCase()}/${
+                  allNftsArrayFiltered[i]
+                }/metadata.json`
+              )
+                .then((res) => res.json())
+                .then((data) => {
+                  return data;
+                })
+                .catch((err) => {
+                  console.log(err.message);
+                });
+              if (
+                nft_data &&
+                nft_data.code !== 404 &&
+                typeof nft_data !== "string"
+              ) {
+                // console.log('nft_data', nft_data);
+                nftArray.push({
+                  ...nft_data,
+                  tokenId: allNftsArrayFiltered[i],
+                  owner: owner,
+                  tokenName: tokenName,
+                });
+              } else {
+                nftArray.push({
+                  tokenId: allNftsArrayFiltered[i],
+                  name: `#${allNftsArrayFiltered[i]}`,
+                  owner: owner,
+                  tokenName: tokenName,
+                  metadatas: false,
+                });
+              }
+            })
+          );
+
+          const finalArray_sorted = nftArray.sort((a, b) => {
+            return a.tokenId - b.tokenId;
+          });
+
+          const uniqueArray = finalArray_sorted.filter(
+            ({ tokenId: id1 }) =>
+              !nftListedArray.some(({ tokenId: id2 }) => id2 === id1.toString())
+          );
+
+          const finalArray = [...nftListedArray, ...uniqueArray];
+          setAllNftArray(finalArray);
+          setLoading(false);
+        } else {
+          setLoading(false);
+          setAllNftArray([]);
+        }
+      } else {
+        setNtftArrayFilteredByTraits([])
+        setLoading(false);
+        setAllNftArray([]);
+      }
+    } else {
+      setNtftArrayFilteredByTraits([])
       setLoading(false);
       // setAllNftArray([]);
     }
@@ -1574,6 +1790,7 @@ const CollectionPage = ({
   // return () => window.removeEventListener("scroll", onScroll);
   // }
   // });
+  console.log(ntftArrayFilteredByTraits, "please work");
 
   return (
     <>
@@ -1607,6 +1824,7 @@ const CollectionPage = ({
           collectionFeeRate={collectionFeeRate}
         />
         <CollectionList
+        onFilterTraits={(val) => setNtftArrayFilteredByTraits(filterItemsByTraits(val))}
           offerData={offerData}
           collectionJson={collectionJson}
           currentCollection={currentCollection}

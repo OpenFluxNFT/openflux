@@ -52,6 +52,7 @@ const CollectionList = ({
   onClearAll,
   nftArrayFilteredBySearch,
   isSearch,
+  onFilterTraits
 }) => {
   const windowSize = useWindowSize();
   const [openFilters, setOpenFilters] = useState(false);
@@ -167,6 +168,8 @@ const CollectionList = ({
     );
   };
 
+  console.log(queryItems);
+
   const handleKeyPress = (val) => (event) => {
     if (event.key === "Enter") {
       fetchSearchNftsPerCollection(val.value);
@@ -217,6 +220,8 @@ const CollectionList = ({
       }
     });
   };
+
+  
 
   const fetchFavoriteCounts = async () => {
     if (allNftArray && allNftArray.length > 0) {
@@ -542,6 +547,7 @@ const CollectionList = ({
   // }, [queryItems]);
 
 
+
   return (
     <>
       <div className="container-lg">
@@ -798,11 +804,14 @@ const CollectionList = ({
                                           ([key, value]) => (
                                             <FormGroup>
                                               <FormControlLabel
-                                                onChange={() =>
+                                                onChange={() =>{
+
                                                   addOrRemove({
                                                     type: item.key,
-                                                    value: key,
-                                                  })
+                                                  value: key,
+                                                  });
+                                                  onFilterTraits(queryItems)
+                                                }
                                                 }
                                                 control={
                                                   <Checkbox

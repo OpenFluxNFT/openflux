@@ -365,8 +365,6 @@ const CollectionList = ({
     }, 1500);
   };
 
-
-  console.log(allNftArray);
   const filterByPrice = (filter) => {
     setCollectionLoading(true);
     if (filter === "lth") {

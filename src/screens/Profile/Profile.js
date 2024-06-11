@@ -687,10 +687,11 @@ const Profile = ({
   }, []);
 
   useEffect(() => {
-    fetchUserOffersMadeForNft();
+    if(coinbase && allCollections.length>0)
+    {fetchUserOffersMadeForNft();
     fetchUserSaleHistory();
-    fetchUserOffersMadeForCollection();
-  }, [coinbase]);
+    fetchUserOffersMadeForCollection();}
+  }, [coinbase,allCollections]);
 
   // useEffect(() => {
   //   fetchCollectionOffers();

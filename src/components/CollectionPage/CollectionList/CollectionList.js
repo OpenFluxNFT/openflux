@@ -47,8 +47,7 @@ const CollectionList = ({
   allOffers,
   bestOffer,
   isVerified,
-  onSelectCollecitonOffers,
-  collectionJson
+  onSelectCollecitonOffers,collectionJson,onClearAll
 }) => {
   const windowSize = useWindowSize();
   const [openFilters, setOpenFilters] = useState(false);
@@ -177,17 +176,17 @@ const CollectionList = ({
         setQueryItems(queryItems.splice(index, 1));
       }
 
-      if (val.value.length > 0) {
-        setCollectionLoading(true);
-        const searchItems = allNftArray.filter((item) => {
-          return item?.name.includes(val.value);
-        });
+      // if (val.value.length > 0) {
+      //   setCollectionLoading(true);
+      //   const searchItems = allNftArray.filter((item) => {
+      //     return item?.name.includes(val.value);
+      //   });
 
-        setNftList(searchItems);
-        setTimeout(() => {
-          setCollectionLoading(false);
-        }, 1500);
-      }
+      //   setNftList(searchItems);
+      //   setTimeout(() => {
+      //     setCollectionLoading(false);
+      //   }, 1500);
+      // }
     }
   };
 
@@ -849,7 +848,7 @@ const CollectionList = ({
                   <input
                     type="text"
                     className="search-input w-100"
-                    placeholder="Search anything"
+                    placeholder="Search by token"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     onKeyDown={handleKeyPress({
@@ -1033,6 +1032,8 @@ const CollectionList = ({
                     setQueryItems([]);
                     setPrices(0, 0);
                     setGeneralFilter(null);
+                    onClearAll();
+                    setSearch("");
                     setTimeout(() => {
                       setCollectionLoading(false);
                     }, 1500);

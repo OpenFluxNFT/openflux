@@ -4,6 +4,7 @@ import confluxLogo from "./confluxLogo.svg";
 import checkIcon from "../Collections/TopCollections/assets/checkIcon.svg";
 import collectionCardPlaceholder1 from "../../components/Collections/CollectionCategories/assets/collectionCardPlaceholder1.png";
 import getFormattedNumber from "../../hooks/get-formatted-number";
+import noImageCollection from './noImageCollection.png'
 
 const CollectionCard = ({ data }) => {
   return (
@@ -12,7 +13,7 @@ const CollectionCard = ({ data }) => {
         src={
           data.featuredBannerPicture
             ? `https://confluxapi.worldofdypians.com/${data.featuredBannerPicture}`
-            : collectionCardPlaceholder1
+            : noImageCollection
         }
         className="w-100 featured-collection-pic"
         alt=""

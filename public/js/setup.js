@@ -175,18 +175,33 @@ class CONFLUX_NFT {
 
 window.conflux_nft = new CONFLUX_NFT();
 
+
 window.buyNFT = async (nft_address, listingIndex, amount) => {
-  const marketplace = new window.web3.eth.Contract(
-    window.MARKETPLACE_ABI,
-    window.config.nft_marketplace_address
-  );
 
-  console.log(nft_address, listingIndex, amount);
+  const coinbase = await getCoinbase()
+  
+    const marketplace = new window.web3.eth.Contract(
+      window.MARKETPLACE_ABI,
+      window.config.nft_marketplace_address
+    );
+  
+  const transactionParameters = {
+      to: window.config.nft_marketplace_address,
+      from: coinbase,
+      data:  await marketplace.methods.buyNFT(nft_address, listingIndex, amount).encodeABI(),
+    };
+  
+  try {
+      const txHash = await window.ethereum.request({
+        method: "eth_sendTransaction",
+        params: [transactionParameters],
+      });
+      }
+      catch(error){
+        console.log(error);
+  };
+}
 
-  await marketplace.methods
-    .buyNFT(nft_address, listingIndex, amount)
-    .send({ from: await getCoinbase(), value: 0 });
-};
 
 window.approveBuy = async (amount) => {
   window.web3 = new Web3(window.ethereum);

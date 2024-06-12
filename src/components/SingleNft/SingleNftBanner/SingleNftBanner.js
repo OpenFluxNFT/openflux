@@ -190,11 +190,13 @@ const SingleNftBanner = ({
     const isApproved = await window
       .isApprovedNFT(nftId, nftAddress, coinbase)
       .then((data) => {
+        console.log(data, "approval");
         return data;
       });
     const newPrice = new BigNumber(nftPrice * 1e18).toFixed();
 
     if (isApproved) {
+      console.log("fucked HARD");
       setsellLoading(true);
       setsellStatus("sell");
       setPurchaseStatus("Listing NFT in progress...");
@@ -234,11 +236,12 @@ const SingleNftBanner = ({
           console.error(e);
         });
     } else {
+      console.log("god help me", nftAddress);
       setsellLoading(true);
       setsellStatus("approve");
       setPurchaseStatus("Approving NFT for listing in progress..");
       setPurchaseColor("#00FECF");
-
+      
       await window
         .approveNFT(nftAddress)
         .then((result) => {

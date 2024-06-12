@@ -19,27 +19,38 @@ const RecentlySoldNftsBanner = ({ recentlySoldNfts, allCollections }) => {
                   style={{ textDecoration: "none" }}
                   className={"position-relative"}
                 >
-                  {item.image && !item.isVideo ? (
-                    <img
-                      src={`https://cdnflux.dypius.com/${item.image170}`}
-                      className="card-img"
-                      alt=""
-                    />
-                  ) : item.image && item.isVideo ? (
-                    <video
-                      preload="auto"
-                      className="card-img"
-                      src={`https://cdnflux.dypius.com/${item.image}`}
-                      autoPlay={true}
-                      loop={true}
-                      muted="muted"
-                      playsInline={true}
-                      // onClick={player}
-                      controlsList="nodownload"
-                    ></video>
-                  ) : (
-                    <></>
-                  )}
+                    {item.collectionName === "WODConfluxPass" && item.image === "undefined" ?
+                  <img
+                  src={'https://cdnflux.dypius.com/collectionsmetadatas/0x2deecf2a05f735890eb3ea085d55cec8f1a93895/0/0.avif'}
+                  className="card-img"
+                  style={{width: "135px"}}
+                  alt=""
+                />
+                : 
+                item.image && !item.isVideo ? (
+                  <img
+                    src={`https://cdnflux.dypius.com/${item.image170}`}
+                    className="card-img"
+                    alt=""
+                  />
+                ) : item.image && item.isVideo ? (
+                  <video
+                    preload="auto"
+                    className="card-img"
+                    src={`https://cdnflux.dypius.com/${item.image}`}
+                    autoPlay={true}
+                    loop={true}
+                    muted="muted"
+                    playsInline={true}
+                    // onClick={player}
+                    controlsList="nodownload"
+                  ></video>
+                ) : (
+                  <></>
+                )
+                }
+               
+                
                   {!item.image && (
                     <img
                       src={require(`../RecentlyListed/assets/collectionCardPlaceholder2.png`)}
@@ -77,27 +88,36 @@ const RecentlySoldNftsBanner = ({ recentlySoldNfts, allCollections }) => {
                   style={{ textDecoration: "none" }}
                   className={"position-relative"}
                 >
-                  {item.image && !item.isVideo ? (
-                    <img
-                      src={`https://cdnflux.dypius.com/${item.image170}`}
-                      className="card-img"
-                      alt=""
-                    />
-                  ) : item.image && item.isVideo ? (
-                    <video
-                      preload="auto"
-                      className="card-img"
-                      src={`https://cdnflux.dypius.com/${item.image}`}
-                      autoPlay={true}
-                      loop={true}
-                      muted="muted"
-                      playsInline={true}
-                      // onClick={player}
-                      controlsList="nodownload"
-                    ></video>
-                  ) : (
-                    <></>
-                  )}
+                  {item.collectionName === "WODConfluxPass" && item.image === "undefined" ?
+                  <img
+                  src={'https://cdnflux.dypius.com/collectionsmetadatas/0x2deecf2a05f735890eb3ea085d55cec8f1a93895/0/0.avif'}
+                  className="card-img"
+                  style={{width: "135px"}}
+                  alt=""
+                />
+                : 
+                item.image && !item.isVideo ? (
+                  <img
+                    src={`https://cdnflux.dypius.com/${item.image170}`}
+                    className="card-img"
+                    alt=""
+                  />
+                ) : item.image && item.isVideo ? (
+                  <video
+                    preload="auto"
+                    className="card-img"
+                    src={`https://cdnflux.dypius.com/${item.image}`}
+                    autoPlay={true}
+                    loop={true}
+                    muted="muted"
+                    playsInline={true}
+                    // onClick={player}
+                    controlsList="nodownload"
+                  ></video>
+                ) : (
+                  <></>
+                )
+                }
                   {!item.image && (
                     <img
                       src={require(`../RecentlyListed/assets/collectionCardPlaceholder2.png`)}
@@ -134,27 +154,36 @@ const RecentlySoldNftsBanner = ({ recentlySoldNfts, allCollections }) => {
                   style={{ textDecoration: "none" }}
                   className={"position-relative"}
                 >
-                  {item.image && !item.isVideo ? (
-                    <img
-                      src={`https://cdnflux.dypius.com/${item.image170}`}
-                      className="card-img"
-                      alt=""
-                    />
-                  ) : item.image && item.isVideo ? (
-                    <video
-                      preload="auto"
-                      className="card-img"
-                      src={`https://cdnflux.dypius.com/${item.image}`}
-                      autoPlay={true}
-                      loop={true}
-                      muted="muted"
-                      playsInline={true}
-                      // onClick={player}
-                      controlsList="nodownload"
-                    ></video>
-                  ) : (
-                    <></>
-                  )}
+                    {item.collectionName === "WODConfluxPass" && item.image === "undefined" ?
+                  <img
+                  src={'https://cdnflux.dypius.com/collectionsmetadatas/0x2deecf2a05f735890eb3ea085d55cec8f1a93895/0/0.avif'}
+                  className="card-img"
+                  style={{width: "135px"}}
+                  alt=""
+                />
+                : 
+                item.image && !item.isVideo ? (
+                  <img
+                    src={`https://cdnflux.dypius.com/${item.image170}`}
+                    className="card-img"
+                    alt=""
+                  />
+                ) : item.image && item.isVideo ? (
+                  <video
+                    preload="auto"
+                    className="card-img"
+                    src={`https://cdnflux.dypius.com/${item.image}`}
+                    autoPlay={true}
+                    loop={true}
+                    muted="muted"
+                    playsInline={true}
+                    // onClick={player}
+                    controlsList="nodownload"
+                  ></video>
+                ) : (
+                  <></>
+                )
+                }
                   {!item.image && (
                     <img
                       src={require(`../RecentlyListed/assets/collectionCardPlaceholder2.png`)}

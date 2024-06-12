@@ -404,6 +404,7 @@ const CollectionList = ({
     }
   };
 
+
   const handleRefreshData = async (nft) => {
     const listednfts = await axios
       .get(

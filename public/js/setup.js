@@ -210,12 +210,12 @@ window.isApprovedBuy = async (amount) => {
   );
 
   const coinbase = await getCoinbase();
-if(coinbase){
-  const allowance = await contract.methods
-    .allowance(coinbase, window.config.nft_marketplace_address)
-    .call({ from: await getCoinbase() });
-  return Number(allowance) >= Number(amount);}
-  else return false;
+  if (coinbase) {
+    const allowance = await contract.methods
+      .allowance(coinbase, window.config.nft_marketplace_address)
+      .call({ from: await getCoinbase() });
+    return Number(allowance) >= Number(amount);
+  } else return false;
 };
 
 window.isApprovedNFT = async (token, collectionAddress, address) => {
@@ -264,9 +264,10 @@ window.approveNFT = async (collectionAddress) => {
     .catch((e) => {
       console.error(e);
     });
-  if (abi_result && abi_result.status === 200) {
-    const abi = abi_result.data.result
-      ? JSON.parse(abi_result.data.result)
+
+  if (abi_result) {
+    const abi = abi_result.result
+      ? JSON.parse(abi_result.result)
       : window.BACKUP_ABI;
     JSON.parse(abi_result.result);
 

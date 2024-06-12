@@ -9,9 +9,9 @@ const NftTraits = ({ nftData, onRefreshNftTraits }) => {
         <div className="traits-wrapper p-3">
           <div className="d-flex align-items-center gap-2 justify-content-between">
             <h6 className="traits-title">Traits</h6>
-            <button className="btn connect-btn2" onClick={onRefreshNftTraits}>
+            {/* <button className="btn connect-btn2" onClick={onRefreshNftTraits}>
               Refresh Traits
-            </button>
+            </button> */}
           </div>
           <div className="row">
             {nftData &&

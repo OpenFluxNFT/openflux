@@ -154,6 +154,8 @@ const CollectionPage = ({
     };
   };
 
+  console.log(collectionAddress.toLowerCase(), "......");
+
   const fetchCollectionJson = async () => {
     const collection_data = await fetch(
       `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress.toLowerCase()}/main/main.json`

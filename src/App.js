@@ -218,23 +218,23 @@ function App() {
       const finalResult = await Promise.all(
         window.range(0, newestCollections.length - 1).map(async (i) => {
           let floorprice = 0;
-          // const result = await axios
-          //   .get(
-          //     `${baseURL}/api/floor-price/${newestCollections[i].contractAddress}`,
-          //     {
-          //       headers: {
-          //         cascadestyling:
-          //           "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-          //       },
-          //     }
-          //   )
-          //   .catch((e) => {
-          //     console.error(e);
-          //   });
+          const result = await axios
+            .get(
+              `${baseURL}/api/floor-price/${newestCollections[i].contractAddress}`,
+              {
+                headers: {
+                  cascadestyling:
+                    "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+                },
+              }
+            )
+            .catch((e) => {
+              console.error(e);
+            });
 
-          // if (result && result.status === 200) {
-          //   floorprice = result.data.floorPrice / 1e18;
-          // }
+          if (result && result.status === 200) {
+            floorprice = result.data.floorPrice / 1e18;
+          }
 
           return {
             ...newestCollections[i],
@@ -263,23 +263,23 @@ function App() {
       const finalResult = await Promise.all(
         window.range(0, regularCollection.length - 1).map(async (i) => {
           let floorprice = 0;
-          // const result = await axios
-          //   .get(
-          //     `${baseURL}/api/floor-price/${regularCollection[i].contractAddress}`,
-          //     {
-          //       headers: {
-          //         cascadestyling:
-          //           "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-          //       },
-          //     }
-          //   )
-          //   .catch((e) => {
-          //     console.error(e);
-          //   });
+          const result = await axios
+            .get(
+              `${baseURL}/api/floor-price/${regularCollection[i].contractAddress}`,
+              {
+                headers: {
+                  cascadestyling:
+                    "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+                },
+              }
+            )
+            .catch((e) => {
+              console.error(e);
+            });
 
-          // if (result && result.status === 200) {
-          //   floorprice = result.data.floorPrice / 1e18;
-          // }
+          if (result && result.status === 200) {
+            floorprice = result.data.floorPrice / 1e18;
+          }
 
           return {
             ...regularCollection[i],
@@ -848,20 +848,20 @@ if(currentCollection && currentCollection.length >0)
         const finalResult = await Promise.all(
           result.data.ownedCollections.map(async (item) => {
             let floorprice = 0;
-            // const result = await axios
-            //   .get(`${baseURL}/api/floor-price/${item.contractAddress}`, {
-            //     headers: {
-            //       cascadestyling:
-            //         "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-            //     },
-            //   })
-            //   .catch((e) => {
-            //     console.error(e);
-            //   });
+            const result = await axios
+              .get(`${baseURL}/api/floor-price/${item.contractAddress}`, {
+                headers: {
+                  cascadestyling:
+                    "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+                },
+              })
+              .catch((e) => {
+                console.error(e);
+              });
 
-            // if (result && result.status === 200) {
-            //   floorprice = result.data.floorPrice;
-            // }
+            if (result && result.status === 200) {
+              floorprice = result.data.floorPrice;
+            }
 
             return {
               ...item,

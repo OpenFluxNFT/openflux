@@ -231,9 +231,9 @@ window.isApprovedNFT = async (token, collectionAddress, address) => {
       console.error(e);
     });
 
-  if (abi_result && abi_result.status === 200) {
-    const abi = abi_result.data.result
-      ? JSON.parse(abi_result.data.result)
+  if (abi_result) {
+    const abi = abi_result.result
+      ? JSON.parse(abi_result.result)
       : window.BACKUP_ABI;
     window.web3 = new Web3(window.ethereum);
     let contract = new window.web3.eth.Contract(abi, collectionAddress);

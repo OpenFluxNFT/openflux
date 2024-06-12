@@ -436,7 +436,7 @@ const ProfileNFTList = ({
   const testFuncOffersMadeNft = () => {
     let uniqueObjects = [];
     let seenNames = new Set();
-    console.log(usersNftOffers);
+    
     if (usersNftOffers && usersNftOffers.length > 0) {
       usersNftOffers.forEach((obj) => {
         let lowercaseName = obj.nftAddress?.toLowerCase();
@@ -454,6 +454,7 @@ const ProfileNFTList = ({
     let uniqueObjects = [];
     let seenNames = new Set();
     if (usersCollectionOffers && usersCollectionOffers.length > 0) {
+      console.log('usersCollectionOffers',usersCollectionOffers)
       usersCollectionOffers.forEach((obj) => {
         let lowercaseName = obj.nftAddress?.toLowerCase();
         if (!seenNames.has(lowercaseName)) {
@@ -1523,13 +1524,13 @@ const ProfileNFTList = ({
                           allCollections.find((obj) => {
                             return (
                               obj.contractAddress.toLowerCase() ===
-                              item.contractAddress.toLowerCase()
+                              item.toLowerCase()
                             );
                           }) ? (
                             allCollections.find((obj) => {
                               return (
                                 obj.contractAddress.toLowerCase() ===
-                                item.contractAddress.toLowerCase()
+                                item.toLowerCase()
                               );
                             }).verified === "yes" ? (
                               <img src={checkIcon} alt="" className="ms-2" />
@@ -1622,7 +1623,7 @@ const ProfileNFTList = ({
                   ))
               ) : (
                 <span className="text-white">
-                  You haven't marked any NFT collection as a favorite
+                  This user hasn't marked any NFT collection as a favorite
                 </span>
               )}
             </div>
@@ -4697,7 +4698,7 @@ const ProfileNFTList = ({
             userNftsOwnedArray &&
             userNftsOwnedArray.length === 0 && (
               <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
-                You currently do not have any NFTs in your wallet
+                There are currently no NFTs in your wallet
               </span>
             )}
           {option === "collected" &&
@@ -4720,7 +4721,7 @@ const ProfileNFTList = ({
               return obj.price !== undefined;
             }) && (
               <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
-                You currently do not have any NFTs listed
+                There are currently no listed NFTs
               </span>
             )}
           {option === "listed" &&
@@ -4744,7 +4745,7 @@ const ProfileNFTList = ({
               )) ||
               (allOffers && allOffers.length === 0)) && (
               <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
-                You do not have any offers for your NFTs at the moment
+                There are currently no offers for your NFTs at the moment
               </span>
             )}
           {option === "hasOffers" &&
@@ -4771,7 +4772,7 @@ const ProfileNFTList = ({
             usersNftOffers &&
             usersNftOffers.length === 0 && (
               <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
-                You have not made any offers for any NFTs
+                This user has not made any offers for any NFTs
               </span>
             )}
           {option === "offersMade" &&
@@ -4799,7 +4800,7 @@ const ProfileNFTList = ({
             usersCollectionOffers &&
             usersCollectionOffers.length === 0 && (
               <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
-                You have not made any collection offers
+                This user has not made any collection offers
               </span>
             )}
           {option === "offersMade" &&

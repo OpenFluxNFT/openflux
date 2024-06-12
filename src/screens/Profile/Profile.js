@@ -6,6 +6,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import moment from "moment";
 import getFormattedNumber from "../../hooks/get-formatted-number";
+import dummyProfileIcon from "./assets/dummyProfileIcon.png";
 
 const Profile = ({
   coinbase,
@@ -68,11 +69,7 @@ const Profile = ({
           .catch((e) => {
             console.log(e);
           });
-        const abiresult = await axios.get(
-          `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${userNftsOwnedArray[i].nftAddress}`
-        );
-        if (abiresult && abiresult.status === 200) {
-        }
+
         if (result) {
           const finalResult = result[1];
           if (finalResult && finalResult.length > 0) {
@@ -278,67 +275,48 @@ const Profile = ({
               .humanize(true)
               .includes("ago");
             if (!hasExpired) {
-              const abiresult = await axios.get(
-                `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${result[i].nftAddress}`
-              );
-              if (
-                abiresult &&
-                abiresult.status === 200 &&
-                abiresult.data.message === "OK"
-              ) {
-                const abi = JSON.parse(abiresult.data.result);
-                const collection_contract = new web3.eth.Contract(
-                  abi,
-                  result[i].nftAddress
+              const currentCollection = allCollections.filter((obj) => {
+                return (
+                  obj.contractAddress.toLowerCase() ===
+                  result[i].nftAddress.toLowerCase()
                 );
-                const tokenName = await collection_contract.methods
-                  .symbol()
-                  .call()
-                  .catch((e) => {
-                    console.error(e);
-                  });
+              });
 
-                const collectionName = await collection_contract.methods
-                  .name()
-                  .call()
-                  .catch((e) => {
-                    console.error(e);
-                  });
+              const tokenName = currentCollection?.symbol;
 
-                const nft_data = await fetch(
-                  `https://cdnflux.dypius.com/collectionsmetadatas/${result[
-                    i
-                  ].nftAddress.toLowerCase()}/${
-                    result[i].tokenId
-                  }/metadata.json`
-                )
-                  .then((res) => res.json())
-                  .then((data) => {
-                    return data;
-                  })
-                  .catch((err) => {
-                    console.log(err.message);
-                  });
-                if (
-                  nft_data &&
-                  nft_data.code !== 404 &&
-                  typeof nft_data !== "string"
-                ) {
-                  return {
-                    ...result[i],
-                    ...nft_data,
-                    image: `${nft_data.image}`,
-                    tokenName: tokenName,
-                    collectionName: collectionName,
-                  };
-                } else
-                  return {
-                    ...result[i],
-                    image: undefined,
-                    tokenName: tokenName,
-                    collectionName: collectionName,
-                  };
-              }
+              const collectionName = currentCollection?.collectionName;
+
+              const nft_data = await fetch(
+                `https://cdnflux.dypius.com/collectionsmetadatas/${result[
+                  i
+                ].nftAddress.toLowerCase()}/${result[i].tokenId}/metadata.json`
+              )
+                .then((res) => res.json())
+                .then((data) => {
+                  return data;
+                })
+                .catch((err) => {
+                  console.log(err.message);
+                });
+              if (
+                nft_data &&
+                nft_data.code !== 404 &&
+                typeof nft_data !== "string"
+              ) {
+                return {
+                  ...result[i],
+                  ...nft_data,
+                  image: `${nft_data.image}`,
+                  tokenName: tokenName,
+                  collectionName: collectionName,
+                };
+              } else
+                return {
+                  ...result[i],
+                  image: undefined,
+                  tokenName: tokenName,
+                  collectionName: collectionName,
+                };
             } else return null;
           })
         );
@@ -352,45 +330,38 @@ const Profile = ({
 
   const fetchUserOffersMadeForCollection = async () => {
     if (coinbase) {
+      let final = [];
       const result = await window.getAllOffersMadeForCollection(coinbase);
+      final.map((i) => {
+        return result.push({
+          ...i,
+        });
+      });
 
       const web3 = window.confluxWeb3;
-      if (result && result.length > 0) {
-        const maxPrice = Math.max(...result.map((o) => o.amount));
+      if (final && final.length > 0) {
+        const maxPrice = Math.max(...final.map((o) => o.amount));
 
         const allOffers = await Promise.all(
-          window.range(0, result.length - 1).map(async (i) => {
+          window.range(0, final.length - 1).map(async (i) => {
             let symbol = "";
-            const abiresult = await axios.get(
-              `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${result[i].nftAddress}`
-            );
 
-            if (
-              abiresult &&
-              abiresult.status === 200 &&
-              abiresult.data.message === "OK"
-            ) {
-              const abiresult1 = JSON.parse(abiresult.data.result);
-              const collection_contract = new web3.eth.Contract(
-                abiresult1,
-                result[i].nftAddress
+            const currentCollection = allCollections.filter((obj) => {
+              return (
+                obj.contractAddress.toLowerCase() ===
+                final[i].nftAddress.toLowerCase()
               );
+            });
 
-              symbol = await collection_contract.methods
-                .symbol()
-                .call()
-                .catch((e) => {
-                  console.error(e);
-                });
-            }
+            symbol = currentCollection?.symbol;
 
             const hasExpired = moment
-              .duration(result[i].expiresAt * 1000 - Date.now())
+              .duration(final[i].expiresAt * 1000 - Date.now())
               .humanize(true)
               .includes("ago");
 
             if (!hasExpired) {
-              return { ...result[i], bestOffer: maxPrice, symbol: symbol };
+              return { ...final[i], bestOffer: maxPrice, symbol: symbol };
             }
           })
         );
@@ -424,11 +395,17 @@ const Profile = ({
                   return Promise.all(
                     window.range(0, finalResult.length - 1).map(async (k) => {
                       if (userCollection[i].contractAddress) {
-                        const abiresult = await axios.get(
-                          `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${userCollection[i].contractAddress}`
-                        );
+                        const abiresult = await axios
+                          .get(
+                            `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${userCollection[i].contractAddress}`
+                          )
+                          .catch((e) => {
+                            console.error(e);
+                          });
                         if (abiresult && abiresult.status === 200) {
-                          const abi = JSON.parse(abiresult.data.result);
+                          const abi = abiresult.data.result
+                            ? JSON.parse(abiresult.data.result)
+                            : window.BACKUP_ABI;
                           const collection_contract = new web3.eth.Contract(
                             abi,
                             userCollection[i].contractAddress
@@ -534,32 +511,31 @@ const Profile = ({
       if (result && result.status === 200) {
         const saleHistory = await Promise.all(
           result.data.map(async (item) => {
-            const abiresult = await axios.get(
-              `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
-            );
-            if (
-              abiresult &&
-              abiresult.status === 200 &&
-              abiresult.data.message === "OK"
-            ) {
-              const abi = JSON.parse(abiresult.data.result);
+            const abiresult = await axios
+              .get(
+                `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
+              )
+              .catch((e) => {
+                console.error(e);
+              });
+            if (abiresult && abiresult.status === 200) {
+              const abi = abiresult.data.result
+                ? JSON.parse(abiresult.data.result)
+                : window.BACKUP_ABI;
+              const currentCollection = allCollections.filter((obj) => {
+                return (
+                  obj.contractAddress.toLowerCase() ===
+                  item.nftAddress.toLowerCase()
+                );
+              });
+
               const collection_contract = new web3.eth.Contract(
                 abi,
                 item.nftAddress
               );
-              const tokenName = await collection_contract.methods
-                .symbol()
-                .call()
-                .catch((e) => {
-                  console.error(e);
-                });
+              const tokenName = currentCollection?.symbol;
 
-              const collectionName = await collection_contract.methods
-                .name()
-                .call()
-                .catch((e) => {
-                  console.error(e);
-                });
+              const collectionName = currentCollection?.collectionName;
 
               const owner = await collection_contract.methods
                 .ownerOf(item.tokenId)
@@ -612,16 +588,18 @@ const Profile = ({
           let lowercaseName = obj.tokenId;
           if (type === "sale") {
             if (!seenNames.has(lowercaseName)) {
-            seenNames.add(lowercaseName);
-            uniqueObjects.push(obj);
+              seenNames.add(lowercaseName);
+              uniqueObjects.push(obj);
             }
           }
         });
 
         settotalSoldNfts(uniqueObjects.length);
-        setsaleHistory(saleHistory.sort((a, b) => {
-          return b.blockTimestamp - a.blockTimestamp;
-        }));
+        setsaleHistory(
+          saleHistory.sort((a, b) => {
+            return b.blockTimestamp - a.blockTimestamp;
+          })
+        );
         // console.log("saleHistory", saleHistory);
       }
     }
@@ -636,9 +614,11 @@ const Profile = ({
       if (id.toLowerCase() !== userData.walletAddress?.toLowerCase()) {
         onViewShared(id);
       }
+    } else {
+      onViewShared(id);
     }
   };
-  // console.log(collectionOffers);
+
   useEffect(() => {
     checkIfSameAccount();
   }, [userData, id]);
@@ -707,10 +687,11 @@ const Profile = ({
   }, []);
 
   useEffect(() => {
-    fetchUserOffersMadeForNft();
+    if(coinbase && allCollections.length>0)
+    {fetchUserOffersMadeForNft();
     fetchUserSaleHistory();
-    fetchUserOffersMadeForCollection();
-  }, [coinbase]);
+    fetchUserOffersMadeForCollection();}
+  }, [coinbase,allCollections]);
 
   // useEffect(() => {
   //   fetchCollectionOffers();
@@ -719,6 +700,7 @@ const Profile = ({
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
       <ProfileBanner
+        coinbase={coinbase}
         title={userName}
         logo={profilePicture}
         banner={bannerPicture}
@@ -729,6 +711,8 @@ const Profile = ({
         info={profileInfo}
         updateUserData={updateUserData}
         successUpdateProfile={successUpdateProfile}
+        profileIcon={dummyProfileIcon}
+        id={id}
       />
       <div className="container-lg py-5">
         <div className="row mx-0">

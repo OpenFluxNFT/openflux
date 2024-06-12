@@ -46,7 +46,13 @@ const CollectionList = ({
   onShowAcceptPopup,
   allOffers,
   bestOffer,
-  isVerified, onSelectCollecitonOffers
+  isVerified,
+  onSelectCollecitonOffers,
+  collectionJson,
+  onClearAll,
+  nftArrayFilteredBySearch,
+  isSearch,
+  onFilterTraits,ntftArrayFilteredByTraits,isSearchTrait
 }) => {
   const windowSize = useWindowSize();
   const [openFilters, setOpenFilters] = useState(false);
@@ -162,6 +168,8 @@ const CollectionList = ({
     );
   };
 
+  
+
   const handleKeyPress = (val) => (event) => {
     if (event.key === "Enter") {
       fetchSearchNftsPerCollection(val.value);
@@ -174,17 +182,17 @@ const CollectionList = ({
         setQueryItems(queryItems.splice(index, 1));
       }
 
-      if (val.value.length > 0) {
-        setCollectionLoading(true);
-        const searchItems = allNftArray.filter((item) => {
-          return item?.name.includes(val.value);
-        });
+      // if (val.value.length > 0) {
+      //   setCollectionLoading(true);
+      //   const searchItems = allNftArray.filter((item) => {
+      //     return item?.name.includes(val.value);
+      //   });
 
-        setNftList(searchItems);
-        setTimeout(() => {
-          setCollectionLoading(false);
-        }, 1500);
-      }
+      //   setNftList(searchItems);
+      //   setTimeout(() => {
+      //     setCollectionLoading(false);
+      //   }, 1500);
+      // }
     }
   };
 
@@ -200,18 +208,29 @@ const CollectionList = ({
       );
 
       if (itemExists) {
-        // Remove the item if it exists
+        // Remove the item if it exists 
+        
+        onFilterTraits(prevItems.filter(
+          (item) =>
+            String(item.type).toLowerCase() !== targetType ||
+            String(item.value).toLowerCase() !== targetValue
+        ));
         return prevItems.filter(
           (item) =>
             String(item.type).toLowerCase() !== targetType ||
             String(item.value).toLowerCase() !== targetValue
         );
+      
+
       } else {
         // Add the item if it doesn't exist
+        onFilterTraits([...prevItems, { type: targetType, value: targetValue }]);
         return [...prevItems, { type: targetType, value: targetValue }];
       }
     });
   };
+
+  
 
   const fetchFavoriteCounts = async () => {
     if (allNftArray && allNftArray.length > 0) {
@@ -385,6 +404,7 @@ const CollectionList = ({
     }
   };
 
+
   const handleRefreshData = async (nft) => {
     const listednfts = await axios
       .get(
@@ -449,29 +469,30 @@ const CollectionList = ({
       });
   };
 
-  const buyFunc = async(nft)=>{
+  const buyFunc = async (nft) => {
     await window
-    .buyNFT(nft.nftAddress, nft.listingIndex, nft.price)
-    .then((result) => {
-      setbuyLoading(false);
-      refreshUserHistory(coinbase);
-      refreshUserHistory(nft.owner);
-      handleGetRecentlySoldNftsCache();
-      setbuyStatus("success");
-      handleRefreshData(nft);
-      setTimeout(() => {
-        setbuyStatus("");
-      }, 2000);
-    })
-    .catch((e) => {
-      setbuyStatus("failed");
-      setbuyLoading(false);
-      setTimeout(() => {
-        setbuyStatus("buy");
-      }, 3000);
-      console.error(e);
-    });
-  }
+      .buyNFT(nft.nftAddress, nft.listingIndex, nft.price)
+      .then((result) => {
+        setbuyLoading(false);
+        refreshUserHistory(coinbase);
+        refreshUserHistory(nft.owner);
+        handleGetRecentlySoldNftsCache();
+        setbuyStatus("success");
+        handleRefreshData(nft);
+        setTimeout(() => {
+          setbuyStatus("");
+        }, 2000);
+      })
+      .catch((e) => {
+        setbuyStatus("failed");
+        setbuyLoading(false);
+        setTimeout(() => {
+          setbuyStatus("buy");
+        }, 3000);
+        console.error(e);
+      });
+  };
+  
 
   const handleBuyNft = async (nft) => {
     setSelectedNftId(nft.tokenId);
@@ -486,8 +507,7 @@ const CollectionList = ({
       if (isApproved) {
         setbuyLoading(true);
         setbuyStatus("buy");
-        buyFunc(nft)
-
+        buyFunc(nft);
       } else {
         setbuyStatus("approve");
         setbuyLoading(true);
@@ -497,7 +517,7 @@ const CollectionList = ({
           .then(() => {
             setTimeout(() => {
               setbuyStatus("buy");
-              buyFunc(nft)
+              buyFunc(nft);
             }, 1000);
             setbuyStatus("success");
             setbuyLoading(false);
@@ -536,7 +556,9 @@ const CollectionList = ({
   //     }, 1500);
   //   }
   // }, [queryItems]);
- 
+
+
+
   return (
     <>
       <div className="container-lg">
@@ -646,7 +668,9 @@ const CollectionList = ({
                         <FormControlLabel
                           onChange={() => {
                             setListed("collectionoffers");
-                            onSelectCollecitonOffers(listType === "collectionoffers" ? true : false)
+                            onSelectCollecitonOffers(
+                              listType === "collectionoffers" ? true : false
+                            );
                           }}
                           control={
                             <Checkbox
@@ -719,9 +743,9 @@ const CollectionList = ({
                     </div>
                   </div>
                 </div>
-                {allNftArray.length > 0 &&
-                  allNftArray[0]?.metadatas !== false &&
-                  allNftArray[0]?.attributes !== "false" && (
+                {collectionJson &&
+                  collectionJson.traits &&
+                  collectionJson.traits.length > 0 && (
                     <div className="accordion-item">
                       <h2 className="accordion-header" id="headingThree">
                         <button
@@ -744,68 +768,87 @@ const CollectionList = ({
                       >
                         <div className="accordion-body">
                           <div className="" id="accordionExample2">
-                            {allNftArray.length > 0 &&
-                              allNftArray[0]?.attributes &&
-                              allNftArray[0]?.metadatas !== false &&
-                              allNftArray[0]?.attributes !== "false" &&
-                              allNftArray[0]?.attributes.map((item, index) => (
-                                <div className="accordion-item" key={index}>
-                                  <h2
-                                    className="accordion-header"
-                                    id={`headingOne${item.trait_type}`}
-                                  >
-                                    <button
-                                      className="accordion-button collection-filter px-2 py-2 d-flex align-items-center gap-2 collapsed"
-                                      type="button"
-                                      data-bs-toggle="collapse"
-                                      data-bs-target={`#collapseOne${item.trait_type}`}
-                                      aria-expanded="false"
-                                      aria-controls={`collapseOne${item.trait_type}`}
-                                      style={{ fontSize: "10px" }}
+                            {collectionJson.traits &&
+                              collectionJson.traits.length > 0 &&
+                              collectionJson.traits.map((item, index) => {
+                                return (
+                                  <div className="accordion-item" key={index}>
+                                    <h2
+                                      className="accordion-header"
+                                      id={`headingOne${item.key.replace(
+                                        /\s+/g,
+                                        ""
+                                      )}`}
                                     >
-                                      {item.trait_type}
-                                    </button>
-                                  </h2>
-                                  <div
-                                    id={`collapseOne${item.trait_type}`}
-                                    className="accordion-collapse collapse"
-                                    aria-labelledby={`headingOne${item.trait_type}`}
-                                    data-bs-parent="#accordionExample2"
-                                  >
-                                    <div className="accordion-body px-2">
-                                      {dummyTraits.map((trait, index) => (
-                                        <FormGroup>
-                                          <FormControlLabel
-                                            onChange={() =>
-                                              addOrRemove({
-                                                type: item.trait_type,
-                                                value: trait,
-                                              })
-                                            }
-                                            control={
-                                              <Checkbox
-                                                checked={checkIfExists({
-                                                  type: item.trait_type,
-                                                  value: trait,
-                                                })}
-                                                size="small"
-                                                sx={{
-                                                  color: "white",
-                                                  "&.Mui-checked": {
-                                                    color: "#3DBDA7",
-                                                  },
-                                                }}
+                                      <button
+                                        className="accordion-button collection-filter px-2 py-2 d-flex align-items-center gap-2 collapsed"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target={`#collapseOne${item.key.replace(
+                                          /\s+/g,
+                                          ""
+                                        )}`}
+                                        aria-expanded="false"
+                                        aria-controls={`collapseOne${item.key.replace(
+                                          /\s+/g,
+                                          ""
+                                        )}`}
+                                        style={{ fontSize: "10px" }}
+                                      >
+                                        {item.key}
+                                      </button>
+                                    </h2>
+                                    <div
+                                      id={`collapseOne${item.key.replace(
+                                        /\s+/g,
+                                        ""
+                                      )}`}
+                                      className="accordion-collapse collapse"
+                                      aria-labelledby={`headingOne${item.key.replace(
+                                        /\s+/g,
+                                        ""
+                                      )}`}
+                                      data-bs-parent="#accordionExample2"
+                                    >
+                                      <div className="accordion-body px-2">
+                                        {Object.entries(item.value).map(
+                                          ([key, value]) => (
+                                            <FormGroup>
+                                              <FormControlLabel
+                                                onChange={() =>{
+
+                                                  addOrRemove({
+                                                    type: item.key,
+                                                  value: key,
+                                                  });
+                                                }
+                                                }
+                                                control={
+                                                  <Checkbox
+                                                    checked={checkIfExists({
+                                                      type: item.key,
+                                                      value: key,
+                                                    })}
+                                                    size="small"
+                                                    sx={{
+                                                      color: "white",
+                                                      "&.Mui-checked": {
+                                                        color: "#3DBDA7",
+                                                      },
+                                                    }}
+                                                  />
+                                                }
+                                                key={value}
+                                                label={key}
                                               />
-                                            }
-                                            key={index}
-                                            label={trait}
-                                          />
-                                        </FormGroup>
-                                      ))}
+                                            </FormGroup>
+                                          )
+                                        )}
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
-                              ))}
+                                );
+                              })}
                           </div>
                         </div>
                       </div>
@@ -827,11 +870,12 @@ const CollectionList = ({
               </div>
               <div
                 className={
-                 ( currentCollection &&
-                  currentCollection.owner &&
-                  coinbase &&
-                  currentCollection.owner.toLowerCase() ===
-                    coinbase.toLowerCase()) || totalSupplyPerCollection === 0
+                  (currentCollection &&
+                    currentCollection.owner &&
+                    coinbase &&
+                    currentCollection.owner.toLowerCase() ===
+                      coinbase.toLowerCase()) ||
+                  totalSupplyPerCollection === 0
                     ? "col-8 col-lg-7"
                     : "col-6 col-lg-5"
                 }
@@ -841,7 +885,7 @@ const CollectionList = ({
                   <input
                     type="text"
                     className="search-input w-100"
-                    placeholder="Search anything"
+                    placeholder="Search by token"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     onKeyDown={handleKeyPress({
@@ -936,10 +980,11 @@ const CollectionList = ({
                 </div>
               </div>
               {(currentCollection &&
-              currentCollection.owner &&
-              coinbase  &&
-              currentCollection.owner.toLowerCase() ===
-                coinbase.toLowerCase()) || totalSupplyPerCollection ===0 ? (
+                currentCollection.owner &&
+                coinbase &&
+                currentCollection.owner.toLowerCase() ===
+                  coinbase.toLowerCase()) ||
+              totalSupplyPerCollection === 0 ? (
                 <></>
               ) : (
                 <div className="col-lg-2">
@@ -1024,6 +1069,8 @@ const CollectionList = ({
                     setQueryItems([]);
                     setPrices(0, 0);
                     setGeneralFilter(null);
+                    onClearAll();
+                    setSearch("");
                     setTimeout(() => {
                       setCollectionLoading(false);
                     }, 1500);
@@ -1040,11 +1087,30 @@ const CollectionList = ({
             {nftList &&
               nftList.length === 0 &&
               collectionLoading === false &&
+              (totalSupplyPerCollection === 0 ||
+                isNaN(totalSupplyPerCollection)) &&
               loading === false && (
                 <span className="text-white d-flex w-100 justify-content-center mt-5">
                   This collection doesn't have any NFTs.
                 </span>
               )}
+
+            {(isSearch === true &&
+              nftArrayFilteredBySearch.length === 0 &&
+              loading === false) && (
+                <span className="text-white d-flex w-100 justify-content-center mt-5">
+                  There are no NFTs with this filter.
+                </span>
+              )}
+
+{(isSearchTrait === true &&
+              ntftArrayFilteredByTraits.length === 0 &&
+              loading === false) && (
+                <span className="text-white d-flex w-100 justify-content-center mt-5">
+                  There are no NFTs with this trait type.
+                </span>
+              )}
+
 
             <div
               className={`${
@@ -1125,7 +1191,7 @@ const CollectionList = ({
                                   ></video>
                                 ) : (
                                   <img
-                                    src={require(`./assets/collectionCardPlaceholder2.png`)}
+                                    src={require(`./assets/noImageNftCard.png`)}
                                     className="table-img nftimg2"
                                     alt=""
                                     height={36}
@@ -1368,7 +1434,7 @@ const CollectionList = ({
                       )}
                       {!item.image && (
                         <img
-                          src={require(`./assets/collectionCardPlaceholder2.png`)}
+                          src={require(`./assets/noImageNftCard.png`)}
                           className="card-img"
                           alt=""
                         />
@@ -1493,7 +1559,7 @@ const CollectionList = ({
                               handleBuyNft(item);
                             }}
                           >
-                          Buy
+                            Buy
                             {buyloading && selectedNftId === item.tokenId && (
                               <div
                                 className="spinner-border spinner-border-sm text-light ms-1"
@@ -1559,7 +1625,7 @@ const CollectionList = ({
                               src={
                                 currentCollection.collectionProfilePic
                                   ? `https://confluxapi.worldofdypians.com/${currentCollection.collectionProfilePic}`
-                                  : require(`./assets/collectionCardPlaceholder2.png`)
+                                  : require(`./assets/noImageNftCard.png`)
                               }
                               className="table-img nftimg2"
                               height={36}
@@ -1842,10 +1908,22 @@ const CollectionList = ({
                 )}
             </div>
 
-            {(collectionLoading === true || loading === true) &&
+            {(!isSearch
+              ? collectionLoading === true ||
+                loading === true ||
+                (collectionLoading === false &&
+                  loading === false &&
+                  allNftArray.length === 0) || loading === true &&
+                  (ntftArrayFilteredByTraits.length === 0 ||
+                    ntftArrayFilteredByTraits.length > 0) &&
+                  allNftArray.length === 0 && isSearchTrait
+              : loading === true &&
+                (nftArrayFilteredBySearch.length === 0 ||
+                  nftArrayFilteredBySearch.length > 0) &&
+                allNftArray.length === 0) &&
             listType !== "collectionoffers" &&
-            totalSupplyPerCollection > 0 &&
-            allNftArray && (gridView === "small-grid" || gridView === "big-grid") ? (
+            allNftArray &&
+            (gridView === "small-grid" || gridView === "big-grid") ? (
               <div
                 className={`${
                   gridView === "list"
@@ -1993,8 +2071,9 @@ const CollectionList = ({
                     <FormControlLabel
                       onChange={() => {
                         setListed("collectionoffers");
-                        onSelectCollecitonOffers(listType === "collectionoffers" ? true : false)
-
+                        onSelectCollecitonOffers(
+                          listType === "collectionoffers" ? true : false
+                        );
                       }}
                       control={
                         <Checkbox
@@ -2065,9 +2144,9 @@ const CollectionList = ({
                 </div>
               </div>
             </div>
-            {allNftArray.length > 0 &&
-              allNftArray[0]?.metadatas !== false &&
-              allNftArray[0]?.attributes !== "false" && (
+            {collectionJson &&
+              collectionJson.traits &&
+              collectionJson.traits.length > 0 && (
                 <div className="accordion-item">
                   <h2 className="accordion-header" id="headingThree">
                     <button
@@ -2090,56 +2169,85 @@ const CollectionList = ({
                   >
                     <div className="accordion-body">
                       <div className="" id="accordionExample2">
-                        {allNftArray.length > 0 &&
-                          allNftArray[0]?.attributes &&
-                          allNftArray[0]?.attributes !== "false" &&
-                          allNftArray[0]?.attributes !== false &&
-                          allNftArray[0]?.attributes.map((item, index) => (
-                            <div className="accordion-item" key={index}>
-                              <h2
-                                className="accordion-header"
-                                id={`headingOne${item.trait_type}`}
-                              >
-                                <button
-                                  className="accordion-button collection-filter px-2 py-2 d-flex align-items-center gap-2 collapsed"
-                                  type="button"
-                                  data-bs-toggle="collapse"
-                                  data-bs-target={`#collapseOne${item.trait_type}`}
-                                  aria-expanded="false"
-                                  aria-controls={`collapseOne${item.trait_type}`}
-                                  style={{ fontSize: "10px" }}
+                        {collectionJson.traits &&
+                          collectionJson.traits.length > 0 &&
+                          collectionJson.traits.map((item, index) => {
+                            return (
+                              <div className="accordion-item" key={index}>
+                                <h2
+                                  className="accordion-header"
+                                  id={`headingOne${item.key.replace(
+                                    /\s+/g,
+                                    ""
+                                  )}`}
                                 >
-                                  {item.trait_type}
-                                </button>
-                              </h2>
-                              <div
-                                id={`collapseOne${item.trait_type}`}
-                                className="accordion-collapse collapse"
-                                aria-labelledby={`headingOne${item.trait_type}`}
-                                data-bs-parent="#accordionExample2"
-                              >
-                                <div className="accordion-body px-2">
-                                  <FormGroup>
-                                    <FormControlLabel
-                                      control={
-                                        <Checkbox
-                                          size="small"
-                                          sx={{
-                                            color: "white",
-                                            "&.Mui-checked": {
-                                              color: "#3DBDA7",
-                                            },
-                                          }}
-                                        />
-                                      }
-                                      key={index}
-                                      label={item.value}
-                                    />
-                                  </FormGroup>
+                                  <button
+                                    className="accordion-button collection-filter px-2 py-2 d-flex align-items-center gap-2 collapsed"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target={`#collapseOne${item.key.replace(
+                                      /\s+/g,
+                                      ""
+                                    )}`}
+                                    aria-expanded="false"
+                                    aria-controls={`collapseOne${item.key.replace(
+                                      /\s+/g,
+                                      ""
+                                    )}`}
+                                    style={{ fontSize: "10px" }}
+                                  >
+                                    {item.key}
+                                  </button>
+                                </h2>
+                                <div
+                                  id={`collapseOne${item.key.replace(
+                                    /\s+/g,
+                                    ""
+                                  )}`}
+                                  className="accordion-collapse collapse"
+                                  aria-labelledby={`headingOne${item.key.replace(
+                                    /\s+/g,
+                                    ""
+                                  )}`}
+                                  data-bs-parent="#accordionExample2"
+                                >
+                                  <div className="accordion-body px-2">
+                                    {Object.entries(item.value).map(
+                                      ([key, value]) => (
+                                        <FormGroup>
+                                          <FormControlLabel
+                                            onChange={() =>
+                                              addOrRemove({
+                                                type: item.key,
+                                                value: key,
+                                              })
+                                            }
+                                            control={
+                                              <Checkbox
+                                                checked={checkIfExists({
+                                                  type: item.key,
+                                                  value: key,
+                                                })}
+                                                size="small"
+                                                sx={{
+                                                  color: "white",
+                                                  "&.Mui-checked": {
+                                                    color: "#3DBDA7",
+                                                  },
+                                                }}
+                                              />
+                                            }
+                                            key={value}
+                                            label={key}
+                                          />
+                                        </FormGroup>
+                                      )
+                                    )}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                       </div>
                     </div>
                   </div>

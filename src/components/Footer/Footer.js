@@ -4,8 +4,8 @@ import footerLogo from "./assets/footerLogo.svg";
 import twitterLogo from "./assets/twitterLogo.svg";
 import telegramLogo from "./assets/telegramLogo.svg";
 import discordLogo from "./assets/discordLogo.svg";
-import instagramLogo from "./assets/instagramLogo.svg";
-import copyrightIcon from "./assets/copyrightIcon.svg";
+import mediumLogo from "./assets/mediumLogo.svg";
+import githubLogo from "./assets/githubLogo.svg";
 import { NavLink } from "react-router-dom";
 
 const Footer = () => {
@@ -43,23 +43,26 @@ const Footer = () => {
                   >
                     <img src={twitterLogo} alt="" />
                   </a>
-                  <a
+                  {/* <a
                     href="https://t.me/OpenFlux"
                     target="_blank"
                     rel="noreferrer"
                   >
                     <img src={telegramLogo} alt="" />
-                  </a>
+                  </a> */}
                   <a
-                    href="https://discord.com/invite/openflux"
+                    href="https://discord.gg/openflux"
                     target="_blank"
                     rel="noreferrer"
                   >
                     <img src={discordLogo} alt="" />
                   </a>
-                  {/* <a href="#" target="_blank" rel='noreferrer'>
-                    <img src={instagramLogo} alt="" />
-                  </a> */}
+                  <a href="https://medium.com/@openflux" target="_blank" rel='noreferrer'>
+                    <img src={mediumLogo} alt="" />
+                  </a>
+                  <a href="https://github.com/OpenFluxNFT" target="_blank" rel='noreferrer'>
+                    <img src={githubLogo} alt="" />
+                  </a>
                 </div>
               </div>
               <div className="d-flex flex-column align-items-start gap-4">

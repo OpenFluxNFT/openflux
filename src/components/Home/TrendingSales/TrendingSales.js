@@ -3,6 +3,7 @@ import "./_trendingsales.scss";
 import cawsPlaceholder from "./assets/cawsPlaceholder.png";
 import timepiecePlaceholder from "./assets/timepiecePlaceholder.png";
 import collectionCardPlaceholder1 from "../../Collections/CollectionCategories/assets/collectionCardPlaceholder1.png";
+import noImage from "../../Collections/CollectionCategories/assets/noImage2.png";
 import wodPlaceholder from "./assets/wodPlaceholder.png";
 import checkIcon from "./assets/checkIcon.svg";
 import fireIcon from "./assets/fireIcon.svg";
@@ -31,6 +32,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
   const [loading, setLoading] = useState(true);
   const [topSales, setTopSales] = useState([]);
   const [topSales2, setTopSales2] = useState([]);
+
 
   const [trendingCollections, setTrendingCollections] = useState([]);
   const baseURL = "https://confluxapi.worldofdypians.com";
@@ -169,6 +171,8 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
           currentTime - parseInt(item.blockTimestamp, 10) <= thirtyDaysInSeconds
       );
 
+
+
       if (val === "24h") {
         setRecents(items24HoursAgo);
       } else if (val === "7d") {
@@ -233,24 +237,23 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
           let isApproved = false;
           const abiresult = await axios.get(
             `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
-          );
+          ).catch((e) => {
+            console.error(e);
+          });
           if (
             abiresult &&
-            abiresult.status === 200 &&
-            abiresult.data.message === "OK"
+            abiresult.status === 200  
           ) {
             let lastSale = 0;
-            const abi = JSON.parse(abiresult.data.result);
+            const abi = abiresult.data.result
+      ? JSON.parse(abiresult.data.result)
+      : window.BACKUP_ABI;
+      const currentCollection = allCollections.filter((obj)=>{return obj.contractAddress.toLowerCase() === item.nftAddress.toLowerCase()})
             const collection_contract = new web3.eth.Contract(
               abi,
               item.nftAddress
             );
-            const tokenName = await collection_contract.methods
-              .symbol()
-              .call()
-              .catch((e) => {
-                console.error(e);
-              });
+            const tokenName = currentCollection?.symbol;
 
             const seller = await collection_contract.methods
               .ownerOf(item.tokenId)
@@ -259,12 +262,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                 console.error(e);
               });
 
-            const collectionName = await collection_contract.methods
-              .name()
-              .call()
-              .catch((e) => {
-                console.error(e);
-              });
+            const collectionName = currentCollection?.collectionName;
 
             const isApprovedresult = await window
               .isApprovedBuy(item.price)
@@ -355,7 +353,9 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
     let initialArr;
     const response = await axios.get(
       "https://confluxapi.worldofdypians.com/api/top-collections/lifetime-volume"
-    );
+    ).catch((e) => {
+      console.error(e);
+    });
 
     if (time === "24h") {
       initialArr = response.data.sort((a, b) => {
@@ -388,6 +388,8 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
     categorizeItems("30d");
     setLoading(false);
   }, [recentlySoldNfts, option]);
+
+
 
   return (
     <>
@@ -521,7 +523,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                               src={
                                 item.image
                                   ? `https://cdnflux.dypius.com/${item.image}`
-                                  : require(`../RecentlyListed/assets/nftPlaceholder1.png`)
+                                  : require(`../RecentlyListed/assets/noImageHomeCard.png`)
                               }
                               className="card-img2"
                               width={100}
@@ -600,7 +602,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                               src={
                                 item.image
                                   ? `https://cdnflux.dypius.com/${item.image}`
-                                  : require(`../RecentlyListed/assets/nftPlaceholder1.png`)
+                                  : require(`../RecentlyListed/assets/noImageHomeCard.png`)
                               }
                               className="card-img2"
                               width={100}
@@ -680,7 +682,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                             src={
                               item.collectionProfilePic
                                 ? `https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`
-                                : collectionCardPlaceholder1
+                                : noImage
                             }
                             style={{
                               height: "120px",
@@ -744,7 +746,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                     );
                   })
                 ) : option === "recentSales" &&
-                  recentlySoldNfts.length === 0 ? (
+                  recents.length === 0 ? (
                   <>
                     <div></div>
                     <div
@@ -824,7 +826,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                               src={
                                 item.image
                                   ? `https://cdnflux.dypius.com/${item.image}`
-                                  : require(`../RecentlyListed/assets/nftPlaceholder1.png`)
+                                  : require(`../RecentlyListed/assets/noImageHomeCard.png`)
                               }
                               className="card-img2"
                               width={100}
@@ -902,7 +904,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                               src={
                                 item.image
                                   ? `https://cdnflux.dypius.com/${item.image}`
-                                  : require(`../RecentlyListed/assets/nftPlaceholder1.png`)
+                                  : require(`../RecentlyListed/assets/noImageHomeCard.png`)
                               }
                               className="card-img2"
                               width={100}
@@ -980,7 +982,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                               src={
                                 item.image
                                   ? `https://cdnflux.dypius.com/${item.image}`
-                                  : require(`../RecentlyListed/assets/nftPlaceholder1.png`)
+                                  : require(`../RecentlyListed/assets/noImageHomeCard.png`)
                               }
                               className="card-img2"
                               width={100}
@@ -1061,7 +1063,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                             src={
                               item.collectionProfilePic
                                 ? `https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`
-                                : collectionCardPlaceholder1
+                                : noImage
                             }
                             style={{
                               height: "120px",
@@ -1137,7 +1139,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                             src={
                               item.collectionProfilePic
                                 ? `https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`
-                                : collectionCardPlaceholder1
+                                : noImage
                             }
                             style={{
                               height: "120px",
@@ -1213,7 +1215,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                             src={
                               item.collectionProfilePic
                                 ? `https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`
-                                : collectionCardPlaceholder1
+                                : noImage
                             }
                             style={{
                               height: "120px",
@@ -1292,7 +1294,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                               src={
                                 item.image
                                   ? `https://cdnflux.dypius.com/${item.image}`
-                                  : require(`../RecentlyListed/assets/nftPlaceholder1.png`)
+                                  : require(`../RecentlyListed/assets/noImageHomeCard.png`)
                               }
                               className="card-img2"
                               width={100}
@@ -1372,7 +1374,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                               src={
                                 item.image
                                   ? `https://cdnflux.dypius.com/${item.image}`
-                                  : require(`../RecentlyListed/assets/nftPlaceholder1.png`)
+                                  : require(`../RecentlyListed/assets/noImageHomeCard.png`)
                               }
                               className="card-img2"
                               width={100}
@@ -1452,7 +1454,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                               src={
                                 item.image
                                   ? `https://cdnflux.dypius.com/${item.image}`
-                                  : require(`../RecentlyListed/assets/nftPlaceholder1.png`)
+                                  : require(`../RecentlyListed/assets/noImageHomeCard.png`)
                               }
                               className="card-img2"
                               width={100}

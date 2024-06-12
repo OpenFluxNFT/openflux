@@ -13,11 +13,12 @@ import telegramIcon from "./assets/telegramIcon.svg";
 import uploadIcon from "./assets/uploadIcon.svg";
 import settingsIcon from "./assets/settingsIcon.svg";
 import checkIcon from "../../Collections/TopCollections/assets/checkIcon.svg";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation, useParams } from "react-router-dom";
 import { shortAddress } from "../../../hooks/shortAddress";
 import editIcon from "../../SettingsPage/assets/editIcon.svg";
 import Toast from "../../Toast/Toast";
 import OutsideClickHandler from "react-outside-click-handler";
+import Success from "./Success";
 
 const ProfileBanner = ({
   title,
@@ -30,20 +31,37 @@ const ProfileBanner = ({
   info,
   updateUserData,
   successUpdateProfile,
-  website
+  website,
+  coinbase,
+  profileIcon,
+  id,
 }) => {
   const [profileImage, setProfileImage] = useState(null);
   const [bannerImage, setBannerImage] = useState(null);
-  const [uploadDropdown, setUploadDropdown] = useState(false)
-
+  const [uploadDropdown, setUploadDropdown] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const [userInfo, setUserInfo] = useState({
     profilePicture: "",
     bannerPicture: "",
   });
- 
 
- 
+  const handleCopy = () => {
+    const userWallet = credentials.filter((item) => {
+      return item.key === "Wallet";
+    });
+    if (userWallet) {
+      const walletValue = userWallet[0].value;
+      navigator.clipboard.writeText(
+        `https://www.openflux.com/profile/${walletValue}`
+      );
+      setCopied(true);
+
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+    }
+  };
 
   const isImage = async (file) => {
     const acceptedImageTypes = ["image/png"];
@@ -157,173 +175,230 @@ const ProfileBanner = ({
     if (banner) {
       setBannerImage(`https://confluxapi.worldofdypians.com/${banner}`);
     } else {
-      setBannerImage()
+      setBannerImage();
     }
 
     if (logo) {
       setProfileImage(`https://confluxapi.worldofdypians.com/${logo}`);
-    }
-    else {
-      setProfileImage()
+    } else {
+      setProfileImage();
     }
   }, [banner, logo]);
 
   return (
     <>
-    <div className="container-lg py-0 py-lg-5">
-      <div className="row px-0">
-        <div className="collection-banner d-flex flex-column px-0">
-          <div className="collection-banner-up position-relative">
-            <div className="collection-banner-empty position-relative">
-              <input
-                type="file"
-                accept=".png"
-                onChange={uploadBannerImage}
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
-                  opacity: 0,
-                  cursor: "pointer",
-                }}
-              />
-              {bannerImage && (
-                <img
-                  src={bannerImage}
-                  className="w-100 d-flex user-banner-img "
-                  alt=""
-                />
-              )}
-              <img
-                src={editIcon}
-                alt=""
-                className="edit-image"
-                style={{ cursor: "pointer" }}
-              />
-            </div>
+      <div className="container-lg py-0 py-lg-5">
+        <div className="row px-0">
+          <div className="collection-banner d-flex flex-column px-0">
+            <div className="collection-banner-up position-relative">
+              <div className="collection-banner-empty position-relative">
+                {coinbase && coinbase === id ? (
+                  <input
+                    type="file"
+                    accept=".png"
+                    onChange={uploadBannerImage}
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: "100%",
+                      opacity: 0,
+                      cursor: "pointer",
+                    }}
+                  />
+                ) : (
+                  <></>
+                )}
+                {bannerImage && (
+                  <img
+                    src={bannerImage}
+                    className="w-100 d-flex user-banner-img "
+                    alt=""
+                  />
+                )}
+                {coinbase && coinbase === id ? (
+                  <img
+                    src={editIcon}
+                    alt=""
+                    className="edit-image"
+                    style={{ cursor: "pointer" }}
+                  />
+                ) : (
+                  <></>
+                )}
+              </div>
 
-            <div className="ps-0 ps-lg-5 collection-position">
-              <div className="collection-banner-main-info d-flex flex-column flex-lg-row gap-3 gap-lg-0 align-items-start ps-3 ps-lg-5 pe-3 py-3 justify-content-between">
-                <div className="d-flex flex-column gap-3">
-                  <div className="d-flex align-items-center gap-2 position-relative">
-                    <div
-                      className="profile-image-placeholder-small position-relative"
-                      style={{ cursor: "pointer" }}
-                    >
-                      {profileImage && (
-                        <img
-                          src={profileImage}
-                          className="collection-logo"
-                          alt=""
-                        />
-                      )}
-                      <input
-                        type="file"
-                        accept=".png"
-                        onChange={uploadProfileImage}
-                        style={{
-                          position: "absolute",
-                          top: 0,
-                          left: 0,
-                          width: "100%",
-                          height: "100%",
-                          opacity: 0,
-                          cursor: "pointer",
-                        }}
-                      />
-                      <img
-                        src={editIcon}
-                        alt=""
-                        className="edit-image"
-                        style={{ cursor: "pointer" }}
-                      />
-                    </div>
-
-                    <h6 className="collection-title mb-0">{title}</h6>
-                    {title !== "Unnamed" && <img src={checkIcon} alt="" />}
-                  </div>
-                  <div className="d-flex align-items-center gap-3 flex-wrap">
-                    {credentials.map((item, index) => (
+              <div className="ps-0 ps-lg-5 collection-position">
+                <div className="collection-banner-main-info d-flex flex-column flex-lg-row gap-3 gap-lg-0 align-items-start ps-3 ps-lg-5 pe-3 py-3 justify-content-between">
+                  <div className="d-flex flex-column gap-3">
+                    <div className="d-flex align-items-center gap-2 position-relative">
                       <div
-                        className="d-flex align-items-center gap-1"
-                        key={index}
+                        className="profile-image-placeholder-small position-relative"
+                        style={{ cursor: "pointer" }}
                       >
-                        <span className="collection-info-span mb-0">
-                          {item.key}
-                        </span>
-
-                        {item.key === "Wallet" && item.value !== "-" ? (
-                          <a
-                            href={`https://evm.confluxscan.net/address/${item.value}`}
-                            className="collection-info mb-0"
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            {shortAddress(item.value)}
-                          </a>
+                        {profileImage ? (
+                          <img
+                            src={profileImage}
+                            className="collection-logo"
+                            alt=""
+                          />
                         ) : (
-                          <span className="collection-info mb-0">
-                            {item.value}
-                          </span>
+                          <img
+                            src={profileIcon}
+                            className="collection-logo"
+                            alt=""
+                          />
+                        )}
+                        {coinbase && coinbase === id ? (
+                          <>
+                            <input
+                              type="file"
+                              accept=".png"
+                              onChange={uploadProfileImage}
+                              style={{
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                width: "100%",
+                                height: "100%",
+                                opacity: 0,
+                                cursor: "pointer",
+                              }}
+                            />
+                            <img
+                              src={editIcon}
+                              alt=""
+                              className="edit-image"
+                              style={{ cursor: "pointer" }}
+                            />
+                          </>
+                        ) : (
+                          <></>
                         )}
                       </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="d-flex align-items-center gap-2">
-                    {website?.length > 0 &&
-                    <a href={website} target="_blank" >
-                    <img src={require(`./assets/websiteIcon.svg`).default} alt="" />
-                  </a>
-                    }
-                  <div
-                    className="info-divider"
-                    style={{ height: "25px" }}
-                  ></div>
-                  <div className="position-relative">
-                  <img src={uploadIcon} style={{cursor: "pointer"}} onClick={() => setUploadDropdown(true)} alt="" />
-                    {uploadDropdown &&
-                    <OutsideClickHandler onOutsideClick={() => setUploadDropdown(false)}>
-                        <div className="upload-dropdown p-3 d-flex flex-column gap-2">
-                          <div className="d-flex align-items-center gap-2" style={{cursor: "pointer"}}>
-                            <img src={uploadIcon} alt="" />
-                            <h6 className="collection-info mb-0">Copy Link</h6>
-                          </div>
+
+                      <h6 className="collection-title mb-0">{title}</h6>
+                      {title !== "Unnamed" && <img src={checkIcon} alt="" />}
+                    </div>
+                    <div className="d-flex align-items-center gap-3 flex-wrap">
+                      {credentials.map((item, index) => (
+                        <div
+                          className="d-flex align-items-center gap-1"
+                          key={index}
+                        >
+                          <span className="collection-info-span mb-0">
+                            {item.key}
+                          </span>
+
+                          {item.key === "Wallet" && item.value !== "-" ? (
+                            <a
+                              href={`https://evm.confluxscan.net/address/${item.value}`}
+                              className="collection-info mb-0"
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              {shortAddress(item.value)}
+                            </a>
+                          ) : (
+                            <span className="collection-info mb-0">
+                              {item.value}
+                            </span>
+                          )}
                         </div>
-                    </OutsideClickHandler>
-                    }
+                      ))}
+                    </div>
                   </div>
-                  <NavLink to="/settings/profile">
-                    <img src={settingsIcon} alt="" />
-                  </NavLink>
+                  <div className="d-flex align-items-center gap-2">
+                    {website?.length > 0 && (
+                      <a href={website} target="_blank">
+                        <img
+                          src={require(`./assets/websiteIcon.svg`).default}
+                          alt=""
+                        />
+                      </a>
+                    )}
+                    <div
+                      className="info-divider"
+                      style={{ height: "25px" }}
+                    ></div>
+                    <div className="position-relative">
+                      <img
+                        src={uploadIcon}
+                        style={{ cursor: "pointer" }}
+                        onClick={() => setUploadDropdown(true)}
+                        alt=""
+                      />
+                      {uploadDropdown && (
+                        <OutsideClickHandler
+                          onOutsideClick={() => setUploadDropdown(false)}
+                        >
+                          <div
+                            className="upload-dropdown p-3 d-flex flex-column gap-2"
+                            onClick={handleCopy}
+                          >
+                            <div
+                              className="d-flex align-items-center gap-2"
+                              style={{ cursor: "pointer" }}
+                            >
+                              <h6 className="collection-info mb-0">
+                                {copied === true ? "Copied" : "Copy"} Link
+                              </h6>{" "}
+                              {copied === false && (
+                                <img src={uploadIcon} alt="" />
+                              )}
+                              {copied === true && (
+                                <span
+                                  className="d-inline-block"
+                                  tabindex="0"
+                                  data-toggle="tooltip"
+                                  title="Copied"
+                                  data-placement="top"
+                                >
+                                  <Success
+                                    svgColor={"#544ED5"}
+                                    bgColor={"#FFF"}
+                                  />
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </OutsideClickHandler>
+                      )}
+                    </div>
+                    {coinbase && coinbase === id ? (
+                      <NavLink to="/settings/profile">
+                        <img src={settingsIcon} alt="" />
+                      </NavLink>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="collection-banner-down py-3 ps-0 ps-lg-5">
-            <div className="d-flex align-items-start flex-column flex-lg-row gap-3 gap-lg-0 justify-content-between ps-3 ps-lg-5 pe-3">
-              <p className="collection-desc mb-0">{desc}</p>
-              <div className="collection-amounts-grid">
-                {info.map((item, index) => (
-                  <div className="d-flex flex-column gap-1" key={index}>
-                    <span className="collection-amount-span mb-0">
-                      {item.title}
-                    </span>
-                    <div className="collection-amount-wrapper p-2 d-flex align-items-center justify-content-between">
-                      <h6 className="collection-amount">{item.value}</h6>
-                      <h6 className="collection-amount">{item.valueType}</h6>
+            <div className="collection-banner-down py-3 ps-0 ps-lg-5">
+              <div className="d-flex align-items-start flex-column flex-lg-row gap-3 gap-lg-0 justify-content-between ps-3 ps-lg-5 pe-3">
+                <p className="collection-desc mb-0">{desc}</p>
+                <div className="collection-amounts-grid">
+                  {info.map((item, index) => (
+                    <div className="d-flex flex-column gap-1" key={index}>
+                      <span className="collection-amount-span mb-0">
+                        {item.title}
+                      </span>
+                      <div className="collection-amount-wrapper p-2 d-flex align-items-center justify-content-between">
+                        <h6 className="collection-amount">{item.value}</h6>
+                        <h6 className="collection-amount">{item.valueType}</h6>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <Toast
+      <Toast
         isSuccess={successUpdateProfile.success ? true : false}
         isError={successUpdateProfile.success === false ? true : false}
         message={successUpdateProfile.message}

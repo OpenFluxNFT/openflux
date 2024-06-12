@@ -9,25 +9,36 @@ const HomeStats = ({ cfxPrice }) => {
   const [totalTxs, setTotalTxs] = useState(0);
 
   const fetchSoldNfts = async () => {
-    const response = await axios.get(
-      "https://confluxapi.worldofdypians.com/api/total-nfts-sold"
-    );
-
-    setSoldNfts(response.data.totalNFTsSold);
+    const response = await axios
+      .get("https://confluxapi.worldofdypians.com/api/total-nfts-sold")
+      .catch((e) => {
+        console.error(e);
+      });
+    if (response.status === 200) {
+      setSoldNfts(response.data.totalNFTsSold);
+    }
   };
   const fetchTotalTxs = async () => {
-    const response = await axios.get(
-      "https://confluxapi.worldofdypians.com/api/total-txs"
-    );
+    const response = await axios
+      .get("https://confluxapi.worldofdypians.com/api/total-txs")
+      .catch((e) => {
+        console.error(e);
+      });
 
-    setTotalTxs(response.data.totalTXs);
+    if (response.status === 200) {
+      setTotalTxs(response.data.totalTXs);
+    }
   };
 
   const fetchTotalVolume = async () => {
-    const response = await axios.get(
-      "https://confluxapi.worldofdypians.com/api/total-volume"
-    );
-    setTotalVolume((response.data.totalVolume / 1e18) * cfxPrice);
+    const response = await axios
+      .get("https://confluxapi.worldofdypians.com/api/total-volume")
+      .catch((e) => {
+        console.error(e);
+      });
+    if (response.status === 200) {
+      setTotalVolume((response.data.totalVolume / 1e18) * cfxPrice);
+    }
   };
 
   useEffect(() => {

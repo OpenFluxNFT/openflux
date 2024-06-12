@@ -16,6 +16,7 @@ import websiteIcon from "./assets/websiteIcon.svg";
 import telegramIcon from "./assets/telegramIcon.svg";
 import checkIcon from "../../Collections/TopCollections/assets/checkIcon.svg";
 import getFormattedNumber from "../../../hooks/get-formatted-number";
+import dummyCollectionIcon from './assets/dummyCollectionIcon.png'
 
 const CollectionBanner = ({
   title,

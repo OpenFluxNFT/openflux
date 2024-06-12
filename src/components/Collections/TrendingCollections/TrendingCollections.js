@@ -18,6 +18,7 @@ import { NavLink } from "react-router-dom";
 import getFormattedNumber from "../../../hooks/get-formatted-number";
 import { Skeleton } from "@mui/material";
 import collectionCardPlaceholder1 from "../CollectionCategories/assets/collectionCardPlaceholder1.png";
+import noImage from "../CollectionCategories/assets/noImage.png";
 import moment from "moment";
 
 import axios from "axios";
@@ -54,7 +55,9 @@ const TrendingCollections = ({
     let initialArr;
     const response = await axios.get(
       "https://confluxapi.worldofdypians.com/api/newest-collections"
-    );
+    ).catch((e) => {
+      console.error(e);
+    });
 
     if (time === "24h") {
       initialArr = response.data.sort((a, b) => {
@@ -82,7 +85,9 @@ const TrendingCollections = ({
     let initialArr;
     const response = await axios.get(
       "https://confluxapi.worldofdypians.com/api/top-collections/lifetime-volume"
-    );
+    ).catch((e) => {
+      console.error(e);
+    });;
 
     if (time === "24h") {
       initialArr = response.data.sort((a, b) => {
@@ -109,7 +114,9 @@ const TrendingCollections = ({
     setLoading(true);
     const response = await axios.get(
       "https://confluxapi.worldofdypians.com/api/top-collections/24h-volume"
-    );
+    ).catch((e) => {
+            console.error(e);
+          });
     setTopCollections(response.data);
     setTimeout(() => {
       setLoading(false);
@@ -119,7 +126,9 @@ const TrendingCollections = ({
     setLoading(true);
     const response = await axios.get(
       "https://confluxapi.worldofdypians.com/api/top-collections/7d-volume"
-    );
+    ).catch((e) => {
+      console.error(e);
+    });
     setTopCollections(response.data);
     setTimeout(() => {
       setLoading(false);
@@ -129,7 +138,9 @@ const TrendingCollections = ({
     setLoading(true);
     const response = await axios.get(
       "https://confluxapi.worldofdypians.com/api/top-collections/30d-volume"
-    );
+    ).catch((e) => {
+      console.error(e);
+    });
     setTopCollections(response.data);
     setTimeout(() => {
       setLoading(false);
@@ -445,7 +456,7 @@ const TrendingCollections = ({
                         src={
                           item.collectionProfilePic
                             ? `https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`
-                            : collectionCardPlaceholder1
+                            : noImage
                         }
                         style={{
                           height: "120px",
@@ -529,7 +540,7 @@ const TrendingCollections = ({
                         src={
                           item.collectionProfilePic
                             ? `https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`
-                            : collectionCardPlaceholder1
+                            : noImage
                         }
                         style={{
                           height: "120px",
@@ -613,7 +624,7 @@ const TrendingCollections = ({
                         src={
                           item.collectionProfilePic
                             ? `https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`
-                            : collectionCardPlaceholder1
+                            : noImage
                         }
                         style={{
                           height: "120px",

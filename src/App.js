@@ -33,6 +33,8 @@ function App() {
   const [userCollection, setuserCollection] = useState([]);
 
   const [allCollections, setAllCollections] = useState([]);
+  const [newestCollections, setnewestCollections] = useState([]);
+
   const [recentlyListedNfts, setrecentlyListedNfts] = useState([]);
   const [recentlySoldNfts, setrecentlySoldNfts] = useState([]);
 
@@ -55,6 +57,7 @@ function App() {
   const [userNftsOwned, setUserNftsOwned] = useState(0);
   const [userNftsOwnedArray, setUserNftsOwnedArray] = useState([]);
   const [userCollectionArray, setuserCollectionArray] = useState([]);
+  const [isOtherUser, setisOtherUser] = useState(false);
 
   const [cfxPrice, setCfxPrice] = useState(0);
   const [favoriteNft, setFavoriteNft] = useState(false);
@@ -192,6 +195,8 @@ function App() {
     }
   };
 
+  // console.log(window.location)
+
   const handleSetOrderedCollection = async () => {
     const result = await axios
       .get(`${baseURL}/api/collections`, {
@@ -287,6 +292,18 @@ function App() {
     }
   };
 
+  const fetchNewestCollections = async () => {
+    const response = await axios
+      .get("https://confluxapi.worldofdypians.com/api/newest-collections")
+      .catch((e) => {
+        console.error(e);
+      });
+
+    if (response && response.status === 200) {
+      setnewestCollections(response.data);
+    }
+  };
+
   const handleGetRecentlyListedNfts = async () => {
     const result = await axios
       .get(`${baseURL}/api/recent-active-listings`, {
@@ -298,33 +315,54 @@ function App() {
       .catch((e) => {
         console.error(e);
       });
+
+    const allCollections = await axios
+      .get(`${baseURL}/api/collections`, {
+        headers: {
+          cascadestyling:
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+
     const web3 = window.confluxWeb3;
-    if (result && result.status === 200) {
-      // console.log(result.data);
+    if (
+      result &&
+      result.status === 200 &&
+      allCollections &&
+      allCollections.status === 200
+    ) {
+      const regularCollection = allCollections.data;
       const recentlyListed = await Promise.all(
         result.data.map(async (item) => {
           let isApproved = false;
-          const abiresult = await axios.get(
-            `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
-          );
-          if (
-            abiresult &&
-            abiresult.status === 200 &&
-            abiresult.data.message === "OK"
-          ) {
+          const abiresult = await axios
+            .get(
+              `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
+            )
+            .catch((e) => {
+              console.error(e);
+            });
+          if (abiresult && abiresult.status === 200) {
             let lastSale = 0;
-            const abi = JSON.parse(abiresult.data.result);
+            const abi = abiresult.data.result
+              ? JSON.parse(abiresult.data.result)
+              : window.BACKUP_ABI;
+            const currentCollection = regularCollection.filter((obj) => {
+              return (
+                obj.contractAddress.toLowerCase() ===
+                item.nftAddress.toLowerCase()
+              );
+            });
             const collection_contract = new web3.eth.Contract(
               abi,
               item.nftAddress
             );
-            const tokenName = await collection_contract.methods
-              .symbol()
-              .call()
-              .catch((e) => {
-                console.error(e);
-              });
-
+            
+            const tokenName = currentCollection[0]?.symbol;
+ 
             const seller = await collection_contract.methods
               .ownerOf(item.tokenId)
               .call()
@@ -332,12 +370,7 @@ function App() {
                 console.error(e);
               });
 
-            const collectionName = await collection_contract.methods
-              .name()
-              .call()
-              .catch((e) => {
-                console.error(e);
-              });
+            const collectionName = await currentCollection[0]?.collectionName;
 
             const isApprovedresult = await window
               .isApprovedBuy(item.price)
@@ -432,9 +465,9 @@ function App() {
         console.error(e);
       });
 
-    if (result && result.status === 200) {
+    if (result && result.status === 200 && coinbase) {
       handleGetRecentlyListedNfts();
-      handleMapUserNftsOwned(coinbase);
+      handleMapUserNftsOwned(coinbase, allCollections);
     }
   };
 
@@ -449,31 +482,54 @@ function App() {
       .catch((e) => {
         console.error(e);
       });
+
+    const allCollections = await axios
+      .get(`${baseURL}/api/collections`, {
+        headers: {
+          cascadestyling:
+            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+        },
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+
     const web3 = window.confluxWeb3;
-    if (result && result.status === 200) {
+    if (
+      result &&
+      result.status === 200 &&
+      allCollections &&
+      allCollections.status === 200
+    ) {
       const recentlySold = await Promise.all(
         result.data.map(async (item) => {
           let isApproved = false;
-          const abiresult = await axios.get(
-            `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
-          );
+          const abiresult = await axios
+            .get(
+              `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
+            )
+            .catch((e) => {
+              console.error(e);
+            });
 
-          if (
-            abiresult &&
-            abiresult.status === 200 &&
-            abiresult.data.message === "OK"
-          ) {
-            const abi = JSON.parse(abiresult.data.result);
-            const collection_contract = new web3.eth.Contract(
+          if (abiresult && abiresult.status === 200) {
+            const abi = abiresult.data.result
+              ? JSON.parse(abiresult.data.result)
+              : window.BACKUP_ABI;
+            const regularCollection = allCollections.data;
+
+            const currentCollection = regularCollection.filter((obj) => {
+              return (
+                obj.contractAddress.toLowerCase() ===
+                item.nftAddress.toLowerCase()
+              );
+            });
+if(currentCollection && currentCollection.length >0)
+           { const collection_contract = new web3.eth.Contract(
               abi,
               item.nftAddress
             );
-            const tokenName = await collection_contract.methods
-              .symbol()
-              .call()
-              .catch((e) => {
-                console.error(e);
-              });
+            const tokenName = currentCollection[0]?.symbol;
 
             const seller = await collection_contract.methods
               .ownerOf(item.tokenId)
@@ -482,12 +538,7 @@ function App() {
                 console.error(e);
               });
 
-            const collectionName = await collection_contract.methods
-              .name()
-              .call()
-              .catch((e) => {
-                console.error(e);
-              });
+            const collectionName = currentCollection[0]?.collectionName;
 
             const isApprovedresult = await window
               .isApprovedBuy(item.price)
@@ -516,6 +567,7 @@ function App() {
               nft_data.code !== 404 &&
               typeof nft_data !== "string"
             ) {
+              
               return {
                 ...item,
                 ...nft_data,
@@ -533,7 +585,7 @@ function App() {
                 seller: seller,
                 collectionName: collectionName,
               };
-          }
+          }}
         })
       );
 
@@ -555,7 +607,7 @@ function App() {
 
     if (result && result.status === 200) {
       handleGetRecentlySoldNfts();
-      handleMapUserNftsOwned(coinbase);
+      handleMapUserNftsOwned(coinbase, allCollections);
     }
   };
 
@@ -570,24 +622,26 @@ function App() {
   };
 
   const fetchTotalNftOwned = async (walletAddr) => {
-    const result = await axios
-      .get(`${baseURL}/api/nft-amount/${walletAddr}`, {
-        headers: {
-          cascadestyling:
-            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-        },
-      })
-      .catch((e) => {
-        console.error(e);
-      });
+    if (walletAddr) {
+      const result = await axios
+        .get(`${baseURL}/api/nft-amount/${walletAddr}`, {
+          headers: {
+            cascadestyling:
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
+        })
+        .catch((e) => {
+          console.error(e);
+        });
 
-    if (result && result.status === 200) {
-      setUserNftsOwned(result.data.nftList);
-      setUserTotalNftsOwned(result.data.totalAmount);
+      if (result && result.status === 200) {
+        setUserNftsOwned(result.data.nftList);
+        setUserTotalNftsOwned(result.data.totalAmount);
+      }
     }
   };
 
-  const handleMapUserNftsOwned = async (wallet) => {
+  const handleMapUserNftsOwned = async (wallet,allCollectionsobj) => {
     let nftsOwned = [];
     let nftsOwnedAmount = 0;
 
@@ -608,10 +662,12 @@ function App() {
       nftsOwned = userNftsOwnedresult.data.nftList;
     }
 
-    if (nftsOwned && nftsOwned.length > 0) {
+    if (nftsOwned && nftsOwned.length > 0 && allCollectionsobj && allCollectionsobj.length>0) {
       await Promise.all(
         window.range(0, nftsOwned.length - 1).map(async (i) => {
           nftsOwnedAmount = nftsOwned[i].amount;
+        
+          const currentCollection = allCollectionsobj.filter((obj)=>{return obj.contractAddress.toLowerCase() === nftsOwned[i].contract.toLowerCase()})
           const result = await axios
             .get(
               `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${nftsOwned[i].contract}`
@@ -624,8 +680,10 @@ function App() {
             nftAddress: nftsOwned[i].contract,
           });
 
-          if (result && result.status === 200 && result.data.message === "OK") {
-            const abi = JSON.parse(result.data.result);
+          if (result && result.status === 200) {
+            const abi = result.data.result
+              ? JSON.parse(result.data.result)
+              : window.BACKUP_ABI;
             const web3 = window.confluxWeb3;
             const collection_contract = new web3.eth.Contract(
               abi,
@@ -646,7 +704,7 @@ function App() {
 
             if (
               tokens &&
-              tokens.length > 0 &&
+              tokens.length > 0 && currentCollection && currentCollection.length>0 &&
               tokens.find((obj) => {
                 return obj !== undefined;
               })
@@ -662,20 +720,12 @@ function App() {
                       .catch((e) => {
                         console.error(e);
                       });
-                    const tokenName = await collection_contract.methods
-                      .symbol()
-                      .call()
-                      .catch((e) => {
-                        console.error(e);
-                      });
+                    const tokenName = currentCollection[0].symbol;
+              
 
-                    const collectionName = await collection_contract.methods
-                      .name()
-                      .call()
-                      .catch((e) => {
-                        console.error(e);
-                      });
-
+                    const collectionName = currentCollection[0].collectionName;
+                   
+                    
                     const lastSaleResult = await axios
                       .get(
                         `${baseURL}/api/nft-sale-history/${nftsOwned[
@@ -782,45 +832,47 @@ function App() {
   };
 
   const fetchuserCollection = async (walletAddr) => {
-    const result = await axios
-      .get(`${baseURL}/api/users/checkCollections/${walletAddr}`, {
-        headers: {
-          cascadestyling:
-            "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-        },
-      })
-      .catch((e) => {
-        console.error(e);
-      });
-
-    if (result && result.status === 200) {
-      const finalResult = await Promise.all(
-        result.data.ownedCollections.map(async (item) => {
-          let floorprice = 0;
-          const result = await axios
-            .get(`${baseURL}/api/floor-price/${item.contractAddress}`, {
-              headers: {
-                cascadestyling:
-                  "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-              },
-            })
-            .catch((e) => {
-              console.error(e);
-            });
-
-          if (result && result.status === 200) {
-            floorprice = result.data.floorPrice;
-          }
-
-          return {
-            ...item,
-            floorPrice: floorprice,
-          };
+    if (walletAddr) {
+      const result = await axios
+        .get(`${baseURL}/api/users/checkCollections/${walletAddr}`, {
+          headers: {
+            cascadestyling:
+              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+          },
         })
-      );
+        .catch((e) => {
+          console.error(e);
+        });
 
-      if (finalResult) {
-        setuserCollection(finalResult);
+      if (result && result.status === 200) {
+        const finalResult = await Promise.all(
+          result.data.ownedCollections.map(async (item) => {
+            let floorprice = 0;
+            const result = await axios
+              .get(`${baseURL}/api/floor-price/${item.contractAddress}`, {
+                headers: {
+                  cascadestyling:
+                    "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+                },
+              })
+              .catch((e) => {
+                console.error(e);
+              });
+
+            if (result && result.status === 200) {
+              floorprice = result.data.floorPrice;
+            }
+
+            return {
+              ...item,
+              floorPrice: floorprice,
+            };
+          })
+        );
+
+        if (finalResult) {
+          setuserCollection(finalResult);
+        }
       }
     }
   };
@@ -834,6 +886,9 @@ function App() {
         if (obj.data["conflux-token"] && obj.data["conflux-token"] !== NaN) {
           setCfxPrice(obj.data["conflux-token"].usd);
         }
+      })
+      .catch((e) => {
+        console.error(e);
       });
   };
 
@@ -894,7 +949,7 @@ function App() {
   };
 
   const getFavNftsPerUser = async (walletAddr) => {
-    if (walletAddr && isConnected) {
+    if (walletAddr) {
       const result = await axios
         .get(`${baseURL}/api/users/${walletAddr}`, {
           headers: {
@@ -931,18 +986,20 @@ function App() {
                         console.log(err.message);
                       });
 
-                    const abiresult = await axios.get(
-                      `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${favData[item1].contractAddress}`
-                    );
+                    const abiresult = await axios
+                      .get(
+                        `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${favData[item1].contractAddress}`
+                      )
+                      .catch((e) => {
+                        console.error(e);
+                      });
 
-                    if (
-                      abiresult &&
-                      abiresult.status === 200 &&
-                      abiresult.data.message === "OK"
-                    ) {
+                    if (abiresult && abiresult.status === 200) {
                       const web3 = window.confluxWeb3;
 
-                      const abi = JSON.parse(abiresult.data.result);
+                      const abi = abiresult.data.result
+                        ? JSON.parse(abiresult.data.result)
+                        : window.BACKUP_ABI;
                       const collection_contract = new web3.eth.Contract(
                         abi,
                         favData[item1].contractAddress
@@ -1483,18 +1540,21 @@ function App() {
     handleGetRecentlySoldNfts();
     getAllCollections();
     handleSetOrderedCollection();
+    fetchNewestCollections();
     fetchCFXPrice();
   }, []);
 
   useEffect(() => {
-    getFavNftsPerUser(coinbase);
+    if (isOtherUser === false) {
+      getFavNftsPerUser(coinbase);
+    }
   }, [coinbase, isConnected]);
 
   useEffect(() => {
     if (coinbase) {
-      handleMapUserNftsOwned(coinbase, recentlyListedNfts);
+      handleMapUserNftsOwned(coinbase, allCollections);
     }
-  }, [recentlyListedNfts, coinbase]);
+  }, [allCollections, coinbase]);
 
   return (
     <div
@@ -1547,6 +1607,7 @@ function App() {
           element={
             <Home
               allCollections={allCollections}
+              newestCollections={newestCollections}
               recentlyListedNfts={recentlyListedNfts}
               recentlySoldNfts={recentlySoldNfts}
               cfxPrice={cfxPrice}
@@ -1628,7 +1689,13 @@ function App() {
               updateUserData={updateUserData}
               successUpdateProfile={successUpdateProfile}
               onViewShared={(value) => {
+                setisOtherUser(true);
                 getOtherUserData(value);
+                getFavNftsPerUser(value);
+                getUserData(value);
+                fetchuserCollection(value);
+                handleMapUserNftsOwned(value, allCollections);
+                fetchTotalNftOwned(value);
               }}
               userCollection={userCollection}
               userCollectionFavs={userCollectionFavs}

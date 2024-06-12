@@ -7,6 +7,7 @@ import TrendingSales from "../../components/Home/TrendingSales/TrendingSales";
 import RecentlyListed from "../../components/Home/RecentlyListed/RecentlyListed";
 import TrendingCollections from "../../components/Home/TrendingCollections/TrendingCollections";
 import CollectionCategories from "../../components/Collections/CollectionCategories/CollectionCategories";
+import FAQ from "../../components/Home/FAQ/FAQ";
 
 const Home = ({
   allCollections,
@@ -18,7 +19,7 @@ const Home = ({
   userNftFavsInitial,
   coinbase,
   onRefreshListings,
-  recentlySoldNfts,chainId
+  recentlySoldNfts,chainId,newestCollections
 }) => {
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -26,8 +27,8 @@ const Home = ({
 
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
-      <MainHero allCollections={allCollections} />
-      <HomeStats cfxPrice={cfxPrice} />
+      <MainHero allCollections={allCollections} recentlySoldNfts={recentlySoldNfts} newestCollections={newestCollections}/>
+      {/* <HomeStats cfxPrice={cfxPrice} /> */}
       <HomeInfo />
       <TrendingSales
         recentlySoldNfts={recentlySoldNfts}
@@ -47,6 +48,7 @@ const Home = ({
         allCollections={allCollections}
       />
       <CollectionCategories allCollections={allCollections} />
+      <FAQ />
     </div>
   );
 };

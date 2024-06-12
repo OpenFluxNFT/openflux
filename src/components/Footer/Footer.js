@@ -86,7 +86,7 @@ const Footer = () => {
                   </a>
                   <a
                     className={"footer-link mb-0"}
-                    href="mailto:someone@support.com"
+                    href="mailto:contact@openflux.com"
                   >
                     Support
                   </a>

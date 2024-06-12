@@ -18,6 +18,7 @@ import { NavLink } from "react-router-dom";
 import getFormattedNumber from "../../../hooks/get-formatted-number";
 import { Skeleton } from "@mui/material";
 import collectionCardPlaceholder1 from "../CollectionCategories/assets/collectionCardPlaceholder1.png";
+import noImage from "../CollectionCategories/assets/noImage.png";
 import moment from "moment";
 
 import axios from "axios";
@@ -455,7 +456,7 @@ const TrendingCollections = ({
                         src={
                           item.collectionProfilePic
                             ? `https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`
-                            : collectionCardPlaceholder1
+                            : noImage
                         }
                         style={{
                           height: "120px",
@@ -539,7 +540,7 @@ const TrendingCollections = ({
                         src={
                           item.collectionProfilePic
                             ? `https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`
-                            : collectionCardPlaceholder1
+                            : noImage
                         }
                         style={{
                           height: "120px",
@@ -623,7 +624,7 @@ const TrendingCollections = ({
                         src={
                           item.collectionProfilePic
                             ? `https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`
-                            : collectionCardPlaceholder1
+                            : noImage
                         }
                         style={{
                           height: "120px",

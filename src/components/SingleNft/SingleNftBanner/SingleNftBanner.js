@@ -114,17 +114,14 @@ const SingleNftBanner = ({
         return data;
       }
     );
-
-    console.log(isApproved);
     if (isApproved) {
       setPurchaseColor("#00FECF");
       setbuyLoading(true);
       setbuyStatus("buy");
       setPurchaseStatus("Buying NFT in progress..");
-
       await window
-        .buyNFT(nftAddress, nftData.listingIndex, nftData.price)
-        .then((result) => {
+      .buyNFT(nftAddress, nftData.listingIndex, nftData.price)
+      .then((result) => {
           setbuyLoading(false);
           setbuyStatus("success");
           setPurchaseStatus("Successfully purchased!");
@@ -196,7 +193,6 @@ const SingleNftBanner = ({
     const newPrice = new BigNumber(nftPrice * 1e18).toFixed();
 
     if (isApproved) {
-      console.log("fucked HARD");
       setsellLoading(true);
       setsellStatus("sell");
       setPurchaseStatus("Listing NFT in progress...");
@@ -386,7 +382,6 @@ const SingleNftBanner = ({
       } else setIsListed(false);
     }
   }, [nftData, nftId, coinbase, chainId]);
-  // console.log(offerData)
   return (
     <div className="container-lg">
       <div className="nft-banner-wrapper p-3">

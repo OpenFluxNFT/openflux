@@ -43,13 +43,13 @@ const Footer = () => {
                   >
                     <img src={twitterLogo} alt="" />
                   </a>
-                  <a
+                  {/* <a
                     href="https://t.me/OpenFlux"
                     target="_blank"
                     rel="noreferrer"
                   >
                     <img src={telegramLogo} alt="" />
-                  </a>
+                  </a> */}
                   <a
                     href="https://discord.gg/openflux"
                     target="_blank"

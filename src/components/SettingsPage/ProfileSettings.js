@@ -134,7 +134,6 @@ const ProfileSettings = ({
         }
       )
       .then((res) => {
-        console.log(res.data, "available");
         if (res.data.message === "Available") {
           setUserInfo((userInfo) => ({
             ...userInfo,
@@ -193,7 +192,6 @@ const ProfileSettings = ({
     return new Promise((resolve) => {
       const img = new Image();
       img.onload = () => {
-        console.log(img.width <= targetWidth && img.height <= targetHeight);
         resolve(img.width <= targetWidth && img.height <= targetHeight);
       };
       img.src = URL.createObjectURL(file);
@@ -314,7 +312,6 @@ const ProfileSettings = ({
     display();
   }, [userData]);
 
-  // console.log(errorMessage);
 
   return (
     <>

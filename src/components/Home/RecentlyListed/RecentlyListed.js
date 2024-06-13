@@ -43,6 +43,7 @@ const RecentlyListed = ({
 
   const windowSize = useWindowSize();
 
+ 
   const fetchFavoriteCounts = async () => {
     if (recentlyListedNfts && recentlyListedNfts.length > 0) {
       let favoriteCount = 0;
@@ -162,29 +163,29 @@ const RecentlyListed = ({
       });
   };
 
-  const buyFunc = async(nft, index)=>{
+  const buyFunc = async (nft, index) => {
     await window
-    .buyNFT(nft.nftAddress, index, nft.price)
-    .then((result) => {
-      setbuyLoading(false);
-      refreshUserHistory(coinbase);
-      refreshUserHistory(nft.seller);
-      handleGetRecentlySoldNftsCache();
-      setbuyStatus("success");
-      handleRefreshData(nft);
-      setTimeout(() => {
-        setbuyStatus("");
-      }, 2000);
-    })
-    .catch((e) => {
-      setbuyStatus("failed");
-      setbuyLoading(false);
-      setTimeout(() => {
-        setbuyStatus("buy");
-      }, 3000);
-      console.error(e);
-    });
-  }
+      .buyNFT(nft.nftAddress, index, nft.price)
+      .then((result) => {
+        setbuyLoading(false);
+        refreshUserHistory(coinbase);
+        refreshUserHistory(nft.seller);
+        handleGetRecentlySoldNftsCache();
+        setbuyStatus("success");
+        handleRefreshData(nft);
+        setTimeout(() => {
+          setbuyStatus("");
+        }, 2000);
+      })
+      .catch((e) => {
+        setbuyStatus("failed");
+        setbuyLoading(false);
+        setTimeout(() => {
+          setbuyStatus("buy");
+        }, 3000);
+        console.error(e);
+      });
+  };
 
   const handleBuyNft = async (nft) => {
     setSelectedNftId(nft.tokenId);
@@ -225,8 +226,7 @@ const RecentlyListed = ({
       if (isApproved) {
         setbuyLoading(true);
         setbuyStatus("buy");
-        buyFunc(nft,listingIndex)
-      
+        buyFunc(nft, listingIndex);
       } else {
         setbuyStatus("approve");
         setbuyLoading(true);
@@ -236,7 +236,7 @@ const RecentlyListed = ({
           .then(() => {
             setTimeout(() => {
               setbuyStatus("buy");
-              buyFunc(nft,listingIndex)
+              buyFunc(nft, listingIndex);
             }, 1000);
             setbuyStatus("success");
             setbuyLoading(false);
@@ -281,10 +281,9 @@ const RecentlyListed = ({
                       src={
                         item.image && item.image !== "undefined"
                           ? `https://cdnflux.dypius.com/${item.image}`
-                          : item.image === "undefined" ?
-                           require(`./assets/noImage2.png`)
-                           : 
-                           require(`./assets/nftPlaceholder${index + 1}.png`)
+                          : item.image === "undefined"
+                          ? require(`./assets/noImage2.png`)
+                          : require(`./assets/nftPlaceholder${index + 1}.png`)
                       }
                       className="card-img"
                       alt=""
@@ -401,13 +400,13 @@ const RecentlyListed = ({
                             handleBuyNft(item);
                           }}
                         >
-                           Buy
-                            {buyloading && selectedNftId === item.tokenId && (
-                              <div
-                                className="spinner-border spinner-border-sm text-light ms-1"
-                                role="status"
-                              ></div>
-                            )}
+                          Buy
+                          {buyloading && selectedNftId === item.tokenId && (
+                            <div
+                              className="spinner-border spinner-border-sm text-light ms-1"
+                              role="status"
+                            ></div>
+                          )}
                         </button>
                       )}
                     </div>
@@ -439,20 +438,7 @@ const RecentlyListed = ({
                   style={{ textDecoration: "none" }}
                   className={"position-relative"}
                 >
-                  {!item.isVideo ? (
-                      <img
-                      src={
-                        item.image && item.image !== "undefined"
-                          ? `https://cdnflux.dypius.com/${item.image}`
-                          : item.image === "undefined" ?
-                           require(`./assets/noImage2.png`)
-                           : 
-                           require(`./assets/nftPlaceholder${index + 1}.png`)
-                      }
-                      className="card-img"
-                      alt=""
-                    />
-                  ) : (
+                  {item.isVideo ? (
                     <video
                       preload="auto"
                       className="card-img"
@@ -464,7 +450,33 @@ const RecentlyListed = ({
                       // onClick={player}
                       controlsList="nodownload"
                     ></video>
-                  )}
+                  ) : item.image.substring(item.image.length - 3) === "mp4" ? (
+
+                    <video
+                    preload="auto"
+                    className="card-img"
+                    src={`https://cdnflux.dypius.com/${item.image}`}
+                    autoPlay={true}
+                    loop={true}
+                    muted="muted"
+                    playsInline={true}
+                    // onClick={player}
+                    controlsList="nodownload"
+                  ></video>
+                  
+                  ) : 
+                  <img
+                  src={
+                    item.image && item.image !== "undefined"
+                      ? `https://cdnflux.dypius.com/${item.image}`
+                      : item.image === "undefined"
+                      ? require(`./assets/noImage2.png`)
+                      : require(`./assets/nftPlaceholder${index + 1}.png`)
+                  }
+                  className="card-img"
+                  alt=""
+                />
+                  }
 
                   <div
                     className="position-absolute favorite-container"
@@ -575,13 +587,13 @@ const RecentlyListed = ({
                           handleBuyNft(item);
                         }}
                       >
-                       Buy
-                            {buyloading && selectedNftId === item.tokenId && (
-                              <div
-                                className="spinner-border spinner-border-sm text-light ms-1"
-                                role="status"
-                              ></div>
-                            )}
+                        Buy
+                        {buyloading && selectedNftId === item.tokenId && (
+                          <div
+                            className="spinner-border spinner-border-sm text-light ms-1"
+                            role="status"
+                          ></div>
+                        )}
                       </button>
                     )}
                   </div>

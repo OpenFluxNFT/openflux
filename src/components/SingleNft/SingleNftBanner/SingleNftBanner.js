@@ -232,7 +232,6 @@ const SingleNftBanner = ({
           console.error(e);
         });
     } else {
-      console.log("god help me", nftAddress);
       setsellLoading(true);
       setsellStatus("approve");
       setPurchaseStatus("Approving NFT for listing in progress..");

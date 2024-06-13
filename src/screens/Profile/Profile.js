@@ -77,7 +77,6 @@ const Profile = ({
               finalArray = finalResult.filter((object) => {
                 return object.offeror.toLowerCase() === coinbase.toLowerCase();
               });
-              // console.log(finalResult);
               let finalArrayIndex = finalResult.findIndex((object) => {
                 return object.offeror.toLowerCase() === coinbase.toLowerCase();
               });
@@ -215,7 +214,6 @@ const Profile = ({
             )
               .then((res) => res.json())
               .then((data) => {
-                // console.log(data);
                 return data;
               })
               .catch((err) => {
@@ -600,7 +598,6 @@ const Profile = ({
             return b.blockTimestamp - a.blockTimestamp;
           })
         );
-        // console.log("saleHistory", saleHistory);
       }
     }
   };

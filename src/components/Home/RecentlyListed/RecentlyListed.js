@@ -428,7 +428,7 @@ const RecentlyListed = ({
           )
         ) : recentlyListedNfts && recentlyListedNfts.length > 0 ? (
           <div className="recently-listed-grid mt-4">
-            {recentlyListedNfts.map((item, index) => (
+            {recentlyListedNfts.slice(0,8).map((item, index) => (
               <div
                 className="recently-listed-card p-3 d-flex flex-column"
                 key={index}

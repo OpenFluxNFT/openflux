@@ -764,11 +764,11 @@ const SingleNftBanner = ({
                 !isListed &&
                 loading === false ? (
                   <>
-                    <div className="nft-price-wrapper px-3 py-1 d-flex align-items-center justify-content-between">
+                    <div className="nft-price-wrapper px-3 py-1 d-flex flex-column flex-lg-row gap-3 gap-lg-0 align-items-center justify-content-between">
                       <span className="current-price-text">
                         Listing Duration
                       </span>
-                      <div className="d-flex align-items-center gap-1">
+                      <div className="d-flex align-items-center flex-wrap justify-content-center gap-1">
                         <div
                           className={`duration-tab ${
                             duration === 0 && "duration-tab-active"

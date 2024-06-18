@@ -175,33 +175,31 @@ class CONFLUX_NFT {
 
 window.conflux_nft = new CONFLUX_NFT();
 
-
 window.buyNFT = async (nft_address, listingIndex, amount) => {
+  const coinbase = await getCoinbase();
 
-  const coinbase = await getCoinbase()
-  
-    const marketplace = new window.web3.eth.Contract(
-      window.MARKETPLACE_ABI,
-      window.config.nft_marketplace_address
-    );
-  
+  const marketplace = new window.web3.eth.Contract(
+    window.MARKETPLACE_ABI,
+    window.config.nft_marketplace_address
+  );
+
   const transactionParameters = {
-      to: window.config.nft_marketplace_address,
-      from: coinbase,
-      data:  await marketplace.methods.buyNFT(nft_address, listingIndex, amount).encodeABI(),
-    };
-  
-  try {
-      const txHash = await window.ethereum.request({
-        method: "eth_sendTransaction",
-        params: [transactionParameters],
-      });
-      }
-      catch(error){
-        console.log(error);
+    to: window.config.nft_marketplace_address,
+    from: coinbase,
+    data: await marketplace.methods
+      .buyNFT(nft_address, listingIndex, amount)
+      .encodeABI(),
   };
-}
 
+  try {
+    const txHash = await window.ethereum.request({
+      method: "eth_sendTransaction",
+      params: [transactionParameters],
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 window.approveBuy = async (amount) => {
   window.web3 = new Web3(window.ethereum);
@@ -942,7 +940,12 @@ window.BACKUP_ABI = [
   {
     inputs: [
       { internalType: "address", name: "account", type: "address" },
-      { internalType: "uint256[]", name: "_caps", type: "uint256[]" },
+      {
+        internalType: "uint256[]",
+
+        name: "_caps",
+        type: "uint256[]",
+      },
       { internalType: "uint256[]", name: "_amounts", type: "uint256[]" },
       { internalType: "bytes", name: "data", type: "bytes" },
     ],
@@ -952,9 +955,26 @@ window.BACKUP_ABI = [
     type: "function",
   },
   {
+    inputs: [
+      { internalType: "address", name: "owner", type: "address" },
+      { internalType: "uint256", name: "index", type: "uint256" },
+    ],
+    name: "tokenOfOwnerByIndex",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "nextTokenIdToMint",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
+    name: "tokenURI",
+    outputs: [{ internalType: "string", name: "", type: "string" }],
     stateMutability: "view",
     type: "function",
   },
@@ -1065,6 +1085,7 @@ window.BACKUP_ABI = [
       { internalType: "address", name: "operator", type: "address" },
       { internalType: "bool", name: "approved", type: "bool" },
     ],
+
     name: "setApprovalForAll",
     outputs: [],
     stateMutability: "nonpayable",

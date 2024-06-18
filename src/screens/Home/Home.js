@@ -19,7 +19,7 @@ const Home = ({
   userNftFavsInitial,
   coinbase,
   onRefreshListings,
-  recentlySoldNfts,chainId,newestCollections
+  recentlySoldNfts,chainId,newestCollections,loading
 }) => {
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -46,6 +46,7 @@ const Home = ({
         onRefreshListings={onRefreshListings}
         chainId={chainId}
         allCollections={allCollections}
+        loading={loading}
       />
       <CollectionCategories allCollections={allCollections} />
       <FAQ />

@@ -8,6 +8,7 @@ import emptyFavorite from "./assets/emptyFavorite.svg";
 import redFavorite from "./assets/redFavorite.svg";
 import axios from "axios";
 import getFormattedNumber from "../../../hooks/get-formatted-number";
+import { Skeleton } from "@mui/material";
 
 const RecentlyListed = ({
   onFavoriteNft,
@@ -21,6 +22,7 @@ const RecentlyListed = ({
   onRefreshListings,
   chainId,
   allCollections,
+  loading,
 }) => {
   const settings = {
     // dots: true,
@@ -43,7 +45,6 @@ const RecentlyListed = ({
 
   const windowSize = useWindowSize();
 
- 
   const fetchFavoriteCounts = async () => {
     if (recentlyListedNfts && recentlyListedNfts.length > 0) {
       let favoriteCount = 0;
@@ -414,6 +415,11 @@ const RecentlyListed = ({
                 </div>
               ))}
             </Slider>
+          ) : loading === true ? (
+            <div className="recently-listed-grid mt-4">
+            <Skeleton variant="rounded" width={"100%"} height={235} />
+            <Skeleton variant="rounded" width={"100%"} height={235} />
+          </div>
           ) : (
             <>
               <div></div>
@@ -428,7 +434,7 @@ const RecentlyListed = ({
           )
         ) : recentlyListedNfts && recentlyListedNfts.length > 0 ? (
           <div className="recently-listed-grid mt-4">
-            {recentlyListedNfts.slice(0,8).map((item, index) => (
+            {recentlyListedNfts.slice(0, 8).map((item, index) => (
               <div
                 className="recently-listed-card p-3 d-flex flex-column"
                 key={index}
@@ -451,32 +457,30 @@ const RecentlyListed = ({
                       controlsList="nodownload"
                     ></video>
                   ) : item.image.substring(item.image.length - 3) === "mp4" ? (
-
                     <video
-                    preload="auto"
-                    className="card-img"
-                    src={`https://cdnflux.dypius.com/${item.image}`}
-                    autoPlay={true}
-                    loop={true}
-                    muted="muted"
-                    playsInline={true}
-                    // onClick={player}
-                    controlsList="nodownload"
-                  ></video>
-                  
-                  ) : 
-                  <img
-                  src={
-                    item.image && item.image !== "undefined"
-                      ? `https://cdnflux.dypius.com/${item.image}`
-                      : item.image === "undefined"
-                      ? require(`./assets/noImage2.png`)
-                      : require(`./assets/nftPlaceholder${index + 1}.png`)
-                  }
-                  className="card-img"
-                  alt=""
-                />
-                  }
+                      preload="auto"
+                      className="card-img"
+                      src={`https://cdnflux.dypius.com/${item.image}`}
+                      autoPlay={true}
+                      loop={true}
+                      muted="muted"
+                      playsInline={true}
+                      // onClick={player}
+                      controlsList="nodownload"
+                    ></video>
+                  ) : (
+                    <img
+                      src={
+                        item.image && item.image !== "undefined"
+                          ? `https://cdnflux.dypius.com/${item.image}`
+                          : item.image === "undefined"
+                          ? require(`./assets/noImage2.png`)
+                          : require(`./assets/nftPlaceholder${index + 1}.png`)
+                      }
+                      className="card-img"
+                      alt=""
+                    />
+                  )}
 
                   <div
                     className="position-absolute favorite-container"
@@ -600,6 +604,18 @@ const RecentlyListed = ({
                 </NavLink>
               </div>
             ))}
+          </div>
+        ) : loading === true ? (
+          <div className="recently-listed-grid mt-4">
+            <Skeleton variant="rounded" width={"100%"} height={235} />
+            <Skeleton variant="rounded" width={"100%"} height={235} />
+            <Skeleton variant="rounded" width={"100%"} height={235} />
+            <Skeleton variant="rounded" width={"100%"} height={235} />
+            <Skeleton variant="rounded" width={"100%"} height={235} />
+            <Skeleton variant="rounded" width={"100%"} height={235} />
+            <Skeleton variant="rounded" width={"100%"} height={235} />
+            <Skeleton variant="rounded" width={"100%"} height={235} />
+
           </div>
         ) : (
           <>

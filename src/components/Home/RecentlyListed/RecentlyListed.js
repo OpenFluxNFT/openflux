@@ -8,6 +8,7 @@ import emptyFavorite from "./assets/emptyFavorite.svg";
 import redFavorite from "./assets/redFavorite.svg";
 import axios from "axios";
 import getFormattedNumber from "../../../hooks/get-formatted-number";
+import { Skeleton } from "@mui/material";
 
 const RecentlyListed = ({
   onFavoriteNft,
@@ -21,6 +22,7 @@ const RecentlyListed = ({
   onRefreshListings,
   chainId,
   allCollections,
+  loading,
 }) => {
   const settings = {
     // dots: true,
@@ -162,29 +164,29 @@ const RecentlyListed = ({
       });
   };
 
-  const buyFunc = async(nft, index)=>{
+  const buyFunc = async (nft, index) => {
     await window
-    .buyNFT(nft.nftAddress, index, nft.price)
-    .then((result) => {
-      setbuyLoading(false);
-      refreshUserHistory(coinbase);
-      refreshUserHistory(nft.seller);
-      handleGetRecentlySoldNftsCache();
-      setbuyStatus("success");
-      handleRefreshData(nft);
-      setTimeout(() => {
-        setbuyStatus("");
-      }, 2000);
-    })
-    .catch((e) => {
-      setbuyStatus("failed");
-      setbuyLoading(false);
-      setTimeout(() => {
-        setbuyStatus("buy");
-      }, 3000);
-      console.error(e);
-    });
-  }
+      .buyNFT(nft.nftAddress, index, nft.price)
+      .then((result) => {
+        setbuyLoading(false);
+        refreshUserHistory(coinbase);
+        refreshUserHistory(nft.seller);
+        handleGetRecentlySoldNftsCache();
+        setbuyStatus("success");
+        handleRefreshData(nft);
+        setTimeout(() => {
+          setbuyStatus("");
+        }, 2000);
+      })
+      .catch((e) => {
+        setbuyStatus("failed");
+        setbuyLoading(false);
+        setTimeout(() => {
+          setbuyStatus("buy");
+        }, 3000);
+        console.error(e);
+      });
+  };
 
   const handleBuyNft = async (nft) => {
     setSelectedNftId(nft.tokenId);
@@ -225,8 +227,7 @@ const RecentlyListed = ({
       if (isApproved) {
         setbuyLoading(true);
         setbuyStatus("buy");
-        buyFunc(nft,listingIndex)
-      
+        buyFunc(nft, listingIndex);
       } else {
         setbuyStatus("approve");
         setbuyLoading(true);
@@ -236,7 +237,7 @@ const RecentlyListed = ({
           .then(() => {
             setTimeout(() => {
               setbuyStatus("buy");
-              buyFunc(nft,listingIndex)
+              buyFunc(nft, listingIndex);
             }, 1000);
             setbuyStatus("success");
             setbuyLoading(false);
@@ -281,10 +282,9 @@ const RecentlyListed = ({
                       src={
                         item.image && item.image !== "undefined"
                           ? `https://cdnflux.dypius.com/${item.image}`
-                          : item.image === "undefined" ?
-                           require(`./assets/noImage2.png`)
-                           : 
-                           require(`./assets/nftPlaceholder${index + 1}.png`)
+                          : item.image === "undefined"
+                          ? require(`./assets/noImage2.png`)
+                          : require(`./assets/nftPlaceholder${index + 1}.png`)
                       }
                       className="card-img"
                       alt=""
@@ -401,13 +401,13 @@ const RecentlyListed = ({
                             handleBuyNft(item);
                           }}
                         >
-                           Buy
-                            {buyloading && selectedNftId === item.tokenId && (
-                              <div
-                                className="spinner-border spinner-border-sm text-light ms-1"
-                                role="status"
-                              ></div>
-                            )}
+                          Buy
+                          {buyloading && selectedNftId === item.tokenId && (
+                            <div
+                              className="spinner-border spinner-border-sm text-light ms-1"
+                              role="status"
+                            ></div>
+                          )}
                         </button>
                       )}
                     </div>
@@ -415,6 +415,11 @@ const RecentlyListed = ({
                 </div>
               ))}
             </Slider>
+          ) : loading === true ? (
+            <div className="recently-listed-grid mt-4">
+            <Skeleton variant="rounded" width={"100%"} height={235} />
+            <Skeleton variant="rounded" width={"100%"} height={235} />
+          </div>
           ) : (
             <>
               <div></div>
@@ -429,7 +434,7 @@ const RecentlyListed = ({
           )
         ) : recentlyListedNfts && recentlyListedNfts.length > 0 ? (
           <div className="recently-listed-grid mt-4">
-            {recentlyListedNfts.map((item, index) => (
+            {recentlyListedNfts.slice(0, 8).map((item, index) => (
               <div
                 className="recently-listed-card p-3 d-flex flex-column"
                 key={index}
@@ -439,20 +444,7 @@ const RecentlyListed = ({
                   style={{ textDecoration: "none" }}
                   className={"position-relative"}
                 >
-                  {!item.isVideo ? (
-                      <img
-                      src={
-                        item.image && item.image !== "undefined"
-                          ? `https://cdnflux.dypius.com/${item.image}`
-                          : item.image === "undefined" ?
-                           require(`./assets/noImage2.png`)
-                           : 
-                           require(`./assets/nftPlaceholder${index + 1}.png`)
-                      }
-                      className="card-img"
-                      alt=""
-                    />
-                  ) : (
+                  {item.isVideo ? (
                     <video
                       preload="auto"
                       className="card-img"
@@ -464,6 +456,30 @@ const RecentlyListed = ({
                       // onClick={player}
                       controlsList="nodownload"
                     ></video>
+                  ) : item.image.substring(item.image.length - 3) === "mp4" ? (
+                    <video
+                      preload="auto"
+                      className="card-img"
+                      src={`https://cdnflux.dypius.com/${item.image}`}
+                      autoPlay={true}
+                      loop={true}
+                      muted="muted"
+                      playsInline={true}
+                      // onClick={player}
+                      controlsList="nodownload"
+                    ></video>
+                  ) : (
+                    <img
+                      src={
+                        item.image && item.image !== "undefined"
+                          ? `https://cdnflux.dypius.com/${item.image}`
+                          : item.image === "undefined"
+                          ? require(`./assets/noImage2.png`)
+                          : require(`./assets/nftPlaceholder${index + 1}.png`)
+                      }
+                      className="card-img"
+                      alt=""
+                    />
                   )}
 
                   <div
@@ -575,19 +591,31 @@ const RecentlyListed = ({
                           handleBuyNft(item);
                         }}
                       >
-                       Buy
-                            {buyloading && selectedNftId === item.tokenId && (
-                              <div
-                                className="spinner-border spinner-border-sm text-light ms-1"
-                                role="status"
-                              ></div>
-                            )}
+                        Buy
+                        {buyloading && selectedNftId === item.tokenId && (
+                          <div
+                            className="spinner-border spinner-border-sm text-light ms-1"
+                            role="status"
+                          ></div>
+                        )}
                       </button>
                     )}
                   </div>
                 </NavLink>
               </div>
             ))}
+          </div>
+        ) : loading === true ? (
+          <div className="recently-listed-grid mt-4">
+            <Skeleton variant="rounded" width={"100%"} height={235} />
+            <Skeleton variant="rounded" width={"100%"} height={235} />
+            <Skeleton variant="rounded" width={"100%"} height={235} />
+            <Skeleton variant="rounded" width={"100%"} height={235} />
+            <Skeleton variant="rounded" width={"100%"} height={235} />
+            <Skeleton variant="rounded" width={"100%"} height={235} />
+            <Skeleton variant="rounded" width={"100%"} height={235} />
+            <Skeleton variant="rounded" width={"100%"} height={235} />
+
           </div>
         ) : (
           <>

@@ -79,6 +79,7 @@ const ProfileNFTList = ({
 
   const [selectedNftId, setSelectedNftId] = useState(""); //buy
 
+
   const handleKeyPress = (val) => (event) => {
     if (option !== "favorites") {
       if (event.key === "Enter") {
@@ -118,7 +119,6 @@ const ProfileNFTList = ({
     }
   };
 
-  // console.log(userNftsOwnedArray)
   const navigate = useNavigate();
 
   const dummyCards = [

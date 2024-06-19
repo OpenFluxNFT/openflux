@@ -154,7 +154,6 @@ const CollectionPage = ({
     };
   };
 
-  console.log(collectionAddress.toLowerCase(), "......");
 
   const fetchCollectionJson = async () => {
     const collection_data = await fetch(
@@ -444,7 +443,6 @@ const CollectionPage = ({
                 nft_data.code !== 404 &&
                 typeof nft_data !== "string"
               ) {
-                // console.log('nft_data', nft_data);
                 nftArray.push({
                   ...nft_data,
                   tokenId: allNftsArrayFiltered[i],
@@ -655,7 +653,6 @@ const CollectionPage = ({
               nft_data.code !== 404 &&
               typeof nft_data !== "string"
             ) {
-              // console.log('nft_data', nft_data);
               nftArray.push({
                 ...nft_data,
                 tokenId: tokenIds[i],
@@ -1171,7 +1168,6 @@ const CollectionPage = ({
               nft_data.code !== 404 &&
               typeof nft_data !== "string"
             ) {
-              // console.log(nft_data);
               nftArray.push({
                 ...nft_data,
                 tokenId: Number(tokenByIndex),
@@ -1455,12 +1451,10 @@ const CollectionPage = ({
       }
     }
   };
-  // console.log('alloffers', allOffers)
   const handleMakeOffer = async (price, duration) => {
     if (price !== "" && price !== 0) {
       setOfferStatus("loading");
       const newPrice = new BigNumber(price * 1e18).toFixed();
-      console.log(collectionAddress, newPrice, duration);
       await window
         .makeCollectionOffer(collectionAddress, newPrice, duration)
         .then(() => {
@@ -1732,7 +1726,6 @@ const CollectionPage = ({
     getCollectionUniqueOwners();
     getCollectionTotalVolume();
   }, []);
-  // console.log(userNftsOwnedArray)
   useEffect(() => {
     if (isNewCollection) {
       dataFetchedRef.current = false;

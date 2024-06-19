@@ -1087,11 +1087,19 @@ const CollectionSettings = ({
                       className="collection-card d-flex flex-column"
                       key={index}
                     >
-                      <img
-                        src={`https://confluxapi.worldofdypians.com/${item.featuredBannerPicture}`}
-                        className="w-100 featured-collection-pic"
-                        alt=""
-                      />
+                     {item.featuredBannerPicture ?
+                     <img
+                     src={`https://confluxapi.worldofdypians.com/${item.featuredBannerPicture}`}
+                     className="w-100 featured-collection-pic"
+                     alt=""
+                   />
+                   :
+                   <img
+                   src={require('../../components/CollectionCard/noImageCollection.png')}
+                   className="w-100 featured-collection-pic"
+                   alt=""
+                 /> 
+                    }
                       <div className="p-3 collection-lower d-flex align-items-center justify-content-between">
                         <div className="d-flex align-items-center gap-2">
                           <h6 className="mb-0">{item.collectionName}</h6>

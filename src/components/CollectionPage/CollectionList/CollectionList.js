@@ -254,7 +254,6 @@ const CollectionList = ({
 
           if (fav_count_listed && fav_count_listed.status === 200) {
             favoriteCount = fav_count_listed.data;
-            // console.log(favoriteCount);
             nftArray.push({
               ...favoriteCount,
             });

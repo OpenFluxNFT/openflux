@@ -231,7 +231,6 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
 
     const web3 = window.confluxWeb3;
     if (result && result.status === 200) {
-      // console.log(result.data);
       const topSold = await Promise.all(
         result.data.map(async (item) => {
           let isApproved = false;

@@ -15,13 +15,10 @@ const SupportSettings = ({ coinbase }) => {
 
   const uploadImages = (e) => {
     const files = e.target.files;
-    console.log(files, "Files");
     if (files.length > 0) {
       const file = files[0];
-      console.log(file.name);
       setImages((prevArr) => [...prevArr, file.name]);
     }
-    console.log(images, "images");
   };
 
   return (

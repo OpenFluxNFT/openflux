@@ -234,19 +234,43 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
       const topSold = await Promise.all(
         result.data.map(async (item) => {
           let isApproved = false;
-          const abiresult = await axios.get(
-            `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
-          ).catch((e) => {
-            console.error(e);
-          });
+       
+
+          const abi_1155 = new window.confluxWeb3.eth.Contract(
+            window.BACKUP_ABI,
+            item.nftAddress
+          );
+          const abi_721 = new window.confluxWeb3.eth.Contract(
+            window.ERC721_ABI,
+            item.nftAddress
+          );
+        
+          const is721 = await abi_721.methods
+            .supportsInterface(window.config.erc721_id)
+            .call()
+            .catch((e) => {
+              console.error(e);
+              return false;
+            });
+          const is1155 = await abi_1155.methods
+            .supportsInterface(window.config.erc1155_id)
+            .call()
+            .catch((e) => {
+              console.error(e);
+              return false;
+            });
+        
+          const abi_final = is1155
+            ? window.BACKUP_ABI
+            : is721
+            ? window.ERC721_ABI
+            : window.ERC721_ABI;
+
           if (
-            abiresult &&
-            abiresult.status === 200  
+            abi_final
           ) {
             let lastSale = 0;
-            const abi = abiresult.data.result
-      ? JSON.parse(abiresult.data.result)
-      : window.BACKUP_ABI;
+            const abi = abi_final;
       const currentCollection = allCollections.filter((obj)=>{return obj.contractAddress.toLowerCase() === item.nftAddress.toLowerCase()})
             const collection_contract = new web3.eth.Contract(
               abi,

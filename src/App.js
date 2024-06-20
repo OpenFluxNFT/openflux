@@ -340,18 +340,40 @@ function App() {
       const recentlyListed = await Promise.all(
         result.data.map(async (item) => {
           let isApproved = false;
-          const abiresult = await axios
-            .get(
-              `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
-            )
-            .catch((e) => {
-              console.error(e);
-            });
-          if (abiresult && abiresult.status === 200) {
+         
+            const abi_1155 = new window.confluxWeb3.eth.Contract(
+              window.BACKUP_ABI,
+              item.nftAddress
+            );
+            const abi_721 = new window.confluxWeb3.eth.Contract(
+              window.ERC721_ABI,
+              item.nftAddress
+            );
+          
+            const is721 = await abi_721.methods
+              .supportsInterface(window.config.erc721_id)
+              .call()
+              .catch((e) => {
+                console.error(e);
+                return false;
+              });
+            const is1155 = await abi_1155.methods
+              .supportsInterface(window.config.erc1155_id)
+              .call()
+              .catch((e) => {
+                console.error(e);
+                return false;
+              });
+          
+            const abi_final = is1155
+              ? window.BACKUP_ABI
+              : is721
+              ? window.ERC721_ABI
+              : window.ERC721_ABI;
+
+          if (abi_final) {
             let lastSale = 0;
-            const abi = abiresult.data.result
-              ? JSON.parse(abiresult.data.result)
-              : window.BACKUP_ABI;
+            const abi = abi_final;
             const currentCollection = regularCollection.filter((obj) => {
               return (
                 obj.contractAddress.toLowerCase() ===
@@ -507,18 +529,39 @@ function App() {
       const recentlySold = await Promise.all(
         result.data.map(async (item) => {
           let isApproved = false;
-          const abiresult = await axios
-            .get(
-              `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
-            )
-            .catch((e) => {
-              console.error(e);
-            });
+          
+            const abi_1155 = new window.confluxWeb3.eth.Contract(
+              window.BACKUP_ABI,
+              item.nftAddress
+            );
+            const abi_721 = new window.confluxWeb3.eth.Contract(
+              window.ERC721_ABI,
+              item.nftAddress
+            );
+          
+            const is721 = await abi_721.methods
+              .supportsInterface(window.config.erc721_id)
+              .call()
+              .catch((e) => {
+                console.error(e);
+                return false;
+              });
+            const is1155 = await abi_1155.methods
+              .supportsInterface(window.config.erc1155_id)
+              .call()
+              .catch((e) => {
+                console.error(e);
+                return false;
+              });
+          
+            const abi_final = is1155
+              ? window.BACKUP_ABI
+              : is721
+              ? window.ERC721_ABI
+              : window.ERC721_ABI;
 
-          if (abiresult && abiresult.status === 200) {
-            const abi = abiresult.data.result
-              ? JSON.parse(abiresult.data.result)
-              : window.BACKUP_ABI;
+          if (abi_final) {
+            const abi = abi_final;
             const regularCollection = allCollections.data;
 
             const currentCollection = regularCollection.filter((obj) => {
@@ -680,23 +723,46 @@ function App() {
               obj.contractAddress.toLowerCase() ===
               nftsOwned[i].contract.toLowerCase()
             );
-          });
-          const result = await axios
-            .get(
-              `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${nftsOwned[i].contract}`
-            )
-            .catch((e) => {
-              console.log(e);
-            });
+          }); 
+            
+            const abi_1155 = new window.confluxWeb3.eth.Contract(
+              window.BACKUP_ABI,
+              nftsOwned[i].contract
+            );
+            const abi_721 = new window.confluxWeb3.eth.Contract(
+              window.ERC721_ABI,
+              nftsOwned[i].contract
+            );
+          
+            const is721 = await abi_721.methods
+              .supportsInterface(window.config.erc721_id)
+              .call()
+              .catch((e) => {
+                console.error(e);
+                return false;
+              });
+            const is1155 = await abi_1155.methods
+              .supportsInterface(window.config.erc1155_id)
+              .call()
+              .catch((e) => {
+                console.error(e);
+                return false;
+              });
+          
+            const abi_final = is1155
+              ? window.BACKUP_ABI
+              : is721
+              ? window.ERC721_ABI
+              : window.ERC721_ABI;
+
+
           allUserCollections.push({
             collectionName: nftsOwned[i].name,
             nftAddress: nftsOwned[i].contract,
           });
 
-          if (result && result.status === 200) {
-            const abi = result.data.result
-              ? JSON.parse(result.data.result)
-              : window.BACKUP_ABI;
+          if (abi_final) {
+            const abi = abi_final;
             const web3 = window.confluxWeb3;
             const collection_contract = new web3.eth.Contract(
               abi,
@@ -1004,20 +1070,44 @@ function App() {
                         console.log(err.message);
                       });
 
-                    const abiresult = await axios
-                      .get(
-                        `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${favData[item1].contractAddress}`
-                      )
-                      .catch((e) => {
-                        console.error(e);
-                      });
+                  
 
-                    if (abiresult && abiresult.status === 200) {
+                      const abi_1155 = new window.confluxWeb3.eth.Contract(
+                        window.BACKUP_ABI,
+                        favData[item1].contractAddress
+                      );
+                      const abi_721 = new window.confluxWeb3.eth.Contract(
+                        window.ERC721_ABI,
+                        favData[item1].contractAddress
+                      );
+                    
+                      const is721 = await abi_721.methods
+                        .supportsInterface(window.config.erc721_id)
+                        .call()
+                        .catch((e) => {
+                          console.error(e);
+                          return false;
+                        });
+                      const is1155 = await abi_1155.methods
+                        .supportsInterface(window.config.erc1155_id)
+                        .call()
+                        .catch((e) => {
+                          console.error(e);
+                          return false;
+                        });
+                    
+                      const abi_final = is1155
+                        ? window.BACKUP_ABI
+                        : is721
+                        ? window.ERC721_ABI
+                        : window.ERC721_ABI;
+
+                        
+
+                    if (abi_final) {
                       const web3 = window.confluxWeb3;
 
-                      const abi = abiresult.data.result
-                        ? JSON.parse(abiresult.data.result)
-                        : window.BACKUP_ABI;
+                      const abi = abi_final;
                       const collection_contract = new web3.eth.Contract(
                         abi,
                         favData[item1].contractAddress

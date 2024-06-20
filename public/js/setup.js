@@ -74,9 +74,11 @@ class TOKEN {
 
 // ALL THE ADDRESSES IN CONFIG MUST BE LOWERCASE
 window.config = {
-  nft_marketplace_address: "0x891633c8b567e4f06952f64a33f655e9ed053e7c",
+  nft_marketplace_address: "0xc7b22183d305164f643a63d8da9567e28d743c01",
   wcfx_address: "0x14b2d3bc65e74dae1030eafd8ac30c533c976a9b",
   conflux_endpoint: "https://evm.confluxrpc.com/",
+  erc721_id: "0x80ac58cd",
+  erc1155_id: "0xd9b67a26",
 };
 
 window.confluxWeb3 = new Web3(window.config.conflux_endpoint);
@@ -232,60 +234,99 @@ window.isApprovedBuy = async (amount) => {
 };
 
 window.isApprovedNFT = async (token, collectionAddress, address) => {
-  let abi_result = await fetch(
-    `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress}`,
-    { method: "GET" }
-  )
-    .then((res) => res.json())
-    .then((data) => {
-      return data;
-    })
+  const abi_1155 = new window.confluxWeb3.eth.Contract(
+    window.BACKUP_ABI,
+    collectionAddress
+  );
+  const abi_721 = new window.confluxWeb3.eth.Contract(
+    window.ERC721_ABI,
+    collectionAddress
+  );
+
+  const is721 = await abi_721.methods
+    .supportsInterface(window.config.erc721_id)
+    .call()
     .catch((e) => {
       console.error(e);
+      return false;
+    });
+  const is1155 = await abi_1155.methods
+    .supportsInterface(window.config.erc1155_id)
+    .call()
+    .catch((e) => {
+      console.error(e);
+      return false;
     });
 
-  if (abi_result) {
-    const abi = abi_result.result
-      ? JSON.parse(abi_result.result)
-      : window.BACKUP_ABI;
+  const abi_final = is1155
+    ? window.BACKUP_ABI
+    : is721
+    ? window.ERC721_ABI
+    : window.ERC721_ABI;
+
+  if (abi_final) {
+    const abi = abi_final;
     window.web3 = new Web3(window.ethereum);
     let contract = new window.web3.eth.Contract(abi, collectionAddress);
+    if (is721) {
+      let approved = await contract.methods.getApproved(token).call();
+      let approvedAll = await contract.methods
+        .isApprovedForAll(address, window.config.nft_marketplace_address)
+        .call();
 
-    let approved = await contract.methods.getApproved(token).call();
-    let approvedAll = await contract.methods
-      .isApprovedForAll(address, window.config.nft_marketplace_address)
-      .call();
+      approved = approved.toLowerCase();
+      if (approved === window.config.nft_marketplace_address || approvedAll) {
+        return true;
+      } else return false;
+    } else if (is1155) {
+      let approvedAll = await contract.methods
+        .isApprovedForAll(address, window.config.nft_marketplace_address)
+        .call();
 
-    approved = approved.toLowerCase();
-    if (approved === window.config.nft_marketplace_address || approvedAll) {
-      return true;
-    } else return false;
+      if (approvedAll) {
+        return true;
+      } else return false;
+    }
   } else return false;
 };
 
 window.approveNFT = async (collectionAddress) => {
   const coinbase = await getCoinbase();
   window.web3 = new Web3(window.ethereum);
-  let abi_result = await fetch(
-    `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress}`,
-    { method: "GET" }
-  )
-    .then((res) => res.json())
-    .then((data) => {
-      return data;
-    })
-    .catch((e) => {
-      console.error(e);
-    });
+    const abi_1155 = new window.confluxWeb3.eth.Contract(
+      window.BACKUP_ABI,
+      collectionAddress
+    );
+    const abi_721 = new window.confluxWeb3.eth.Contract(
+      window.ERC721_ABI,
+      collectionAddress
+    );
+  
+    const is721 = await abi_721.methods
+      .supportsInterface(window.config.erc721_id)
+      .call()
+      .catch((e) => {
+        console.error(e);
+        return false;
+      });
+    const is1155 = await abi_1155.methods
+      .supportsInterface(window.config.erc1155_id)
+      .call()
+      .catch((e) => {
+        console.error(e);
+        return false;
+      });
+  
+    const abi_final = is1155
+      ? window.BACKUP_ABI
+      : is721
+      ? window.ERC721_ABI
+      : window.ERC721_ABI;
+  
 
-  if (abi_result) {
-    const abi = abi_result.result
-      ? JSON.parse(abi_result.result)
-      : window.BACKUP_ABI;
-    JSON.parse(abi_result.result);
-
+  if (abi_final) {
+    const abi = abi_final;
     let contract = new window.web3.eth.Contract(abi, collectionAddress);
-
     await contract.methods
       .setApprovalForAll(window.config.nft_marketplace_address, true)
       .send({ from: coinbase });
@@ -940,12 +981,7 @@ window.BACKUP_ABI = [
   {
     inputs: [
       { internalType: "address", name: "account", type: "address" },
-      {
-        internalType: "uint256[]",
-
-        name: "_caps",
-        type: "uint256[]",
-      },
+      { internalType: "uint256[]", name: "_caps", type: "uint256[]" },
       { internalType: "uint256[]", name: "_amounts", type: "uint256[]" },
       { internalType: "bytes", name: "data", type: "bytes" },
     ],
@@ -955,26 +991,9 @@ window.BACKUP_ABI = [
     type: "function",
   },
   {
-    inputs: [
-      { internalType: "address", name: "owner", type: "address" },
-      { internalType: "uint256", name: "index", type: "uint256" },
-    ],
-    name: "tokenOfOwnerByIndex",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [],
-    name: "nextTokenIdToMint",
+    name: "getNextTokenID",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
-    name: "tokenURI",
-    outputs: [{ internalType: "string", name: "", type: "string" }],
     stateMutability: "view",
     type: "function",
   },
@@ -1081,11 +1100,17 @@ window.BACKUP_ABI = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "nextTokenIdToMint",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       { internalType: "address", name: "operator", type: "address" },
       { internalType: "bool", name: "approved", type: "bool" },
     ],
-
     name: "setApprovalForAll",
     outputs: [],
     stateMutability: "nonpayable",
@@ -1130,10 +1155,423 @@ window.BACKUP_ABI = [
     type: "function",
   },
   {
+    inputs: [{ internalType: "uint256", name: "owner", type: "uint256" }],
+    name: "tokenByIndex",
+    outputs: [{ internalType: "address[]", name: "", type: "address[]" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "owner", type: "address" },
+      { internalType: "uint256", name: "owner", type: "uint256" },
+    ],
+    name: "tokenOfOwnerByIndex",
+    outputs: [{ internalType: "address[]", name: "", type: "address[]" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [{ internalType: "uint256", name: "_id", type: "uint256" }],
     name: "uri",
     outputs: [{ internalType: "string", name: "", type: "string" }],
     stateMutability: "view",
+    type: "function",
+  },
+];
+
+window.ERC721_ABI = [
+  {
+    inputs: [
+      { internalType: "string", name: "name", type: "string" },
+      { internalType: "string", name: "symbol", type: "string" },
+      { internalType: "uint256", name: "maxNftSupply", type: "uint256" },
+      { internalType: "uint256", name: "saleStart", type: "uint256" },
+    ],
+    stateMutability: "nonpayable",
+    type: "constructor",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "approved",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+    ],
+    name: "Approval",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "operator",
+        type: "address",
+      },
+      { indexed: false, internalType: "bool", name: "approved", type: "bool" },
+    ],
+    name: "ApprovalForAll",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "previousOwner",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
+    ],
+    name: "OwnershipTransferred",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: "address", name: "from", type: "address" },
+      { indexed: true, internalType: "address", name: "to", type: "address" },
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+    ],
+    name: "Transfer",
+    type: "event",
+  },
+  {
+    inputs: [],
+    name: "BETA_PASS_PROVENANCE",
+    outputs: [{ internalType: "string", name: "", type: "string" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "REVEAL_TIMESTAMP",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "to", type: "address" },
+      { internalType: "uint256", name: "tokenId", type: "uint256" },
+    ],
+    name: "approve",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "owner", type: "address" }],
+    name: "balanceOf",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "baseURI",
+    outputs: [{ internalType: "string", name: "", type: "string" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "betaPassPrice",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "costSaleIsActive",
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "costSaleState",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "flipSaleState",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
+    name: "getApproved",
+    outputs: [{ internalType: "address", name: "", type: "address" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "owner", type: "address" },
+      { internalType: "address", name: "operator", type: "address" },
+    ],
+    name: "isApprovedForAll",
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "maxBetaPassPurchase",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "mintBetaPass",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "numberOfTokens", type: "uint256" },
+    ],
+    name: "mintBetaPassCost",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "name",
+    outputs: [{ internalType: "string", name: "", type: "string" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "nextOwnerToExplicitlySet",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "owner",
+    outputs: [{ internalType: "address", name: "", type: "address" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
+    name: "ownerOf",
+    outputs: [{ internalType: "address", name: "", type: "address" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "renounceOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "reserveBetaPass",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "from", type: "address" },
+      { internalType: "address", name: "to", type: "address" },
+      { internalType: "uint256", name: "tokenId", type: "uint256" },
+    ],
+    name: "safeTransferFrom",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "from", type: "address" },
+      { internalType: "address", name: "to", type: "address" },
+      { internalType: "uint256", name: "tokenId", type: "uint256" },
+      { internalType: "bytes", name: "_data", type: "bytes" },
+    ],
+    name: "safeTransferFrom",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "saleIsActive",
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "operator", type: "address" },
+      { internalType: "bool", name: "approved", type: "bool" },
+    ],
+    name: "setApprovalForAll",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "string", name: "tokenURI", type: "string" }],
+    name: "setBaseURI",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "newPrice", type: "uint256" }],
+    name: "setBetaPassPrice",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "string", name: "provenanceHash", type: "string" },
+    ],
+    name: "setProvenanceHash",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "revealTimeStamp", type: "uint256" },
+    ],
+    name: "setRevealTimestamp",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "startingIndex",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "startingIndexBlock",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "bytes4", name: "interfaceId", type: "bytes4" }],
+    name: "supportsInterface",
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "symbol",
+    outputs: [{ internalType: "string", name: "", type: "string" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "index", type: "uint256" }],
+    name: "tokenByIndex",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "owner", type: "address" },
+      { internalType: "uint256", name: "index", type: "uint256" },
+    ],
+    name: "tokenOfOwnerByIndex",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
+    name: "tokenURI",
+    outputs: [{ internalType: "string", name: "", type: "string" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "totalSupply",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "from", type: "address" },
+      { internalType: "address", name: "to", type: "address" },
+      { internalType: "uint256", name: "tokenId", type: "uint256" },
+    ],
+    name: "transferFrom",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "newOwner", type: "address" }],
+    name: "transferOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "withdraw",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
 ];

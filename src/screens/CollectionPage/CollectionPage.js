@@ -56,7 +56,6 @@ const CollectionPage = ({
   const [tokenToSearch, settokenToSearch] = useState("");
   const [traitToSearch, settraitToSearch] = useState([]);
 
-
   const [nftArrayFilteredBySearch, setnftArrayFilteredBySearch] = useState([]);
   const [ntftArrayFilteredByTraits, setNtftArrayFilteredByTraits] = useState(
     []
@@ -154,7 +153,6 @@ const CollectionPage = ({
     };
   };
 
-
   const fetchCollectionJson = async () => {
     const collection_data = await fetch(
       `https://cdnflux.dypius.com/collectionsmetadatas/${collectionAddress.toLowerCase()}/main/main.json`
@@ -206,17 +204,39 @@ const CollectionPage = ({
           })
           .map(async (item) => {
             let isApproved = false;
-            const abiresult = await axios
-              .get(
-                `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
-              )
+
+            const abi_1155 = new window.confluxWeb3.eth.Contract(
+              window.BACKUP_ABI,
+              item.nftAddress
+            );
+            const abi_721 = new window.confluxWeb3.eth.Contract(
+              window.ERC721_ABI,
+              item.nftAddress
+            );
+
+            const is721 = await abi_721.methods
+              .supportsInterface(window.config.erc721_id)
+              .call()
               .catch((e) => {
                 console.error(e);
+                return false;
               });
-            if (abiresult && abiresult.status === 200) {
-              const abi = abiresult.data.result
-                ? JSON.parse(abiresult.data.result)
-                : window.BACKUP_ABI;
+            const is1155 = await abi_1155.methods
+              .supportsInterface(window.config.erc1155_id)
+              .call()
+              .catch((e) => {
+                console.error(e);
+                return false;
+              });
+
+            const abi_final = is1155
+              ? window.BACKUP_ABI
+              : is721
+              ? window.ERC721_ABI
+              : window.ERC721_ABI;
+
+            if (abi_final) {
+              const abi = abi_final;
               const collection_contract = new web3.eth.Contract(
                 abi,
                 item.nftAddress
@@ -302,13 +322,37 @@ const CollectionPage = ({
 
       if (allNftsArrayFiltered && allNftsArrayFiltered.length > 0) {
         setnftArrayFilteredBySearch(allNftsArrayFiltered);
-        const result = await axios
-          .get(
-            `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress}`
-          )
+
+        const abi_1155 = new window.confluxWeb3.eth.Contract(
+          window.BACKUP_ABI,
+          collectionAddress
+        );
+        const abi_721 = new window.confluxWeb3.eth.Contract(
+          window.ERC721_ABI,
+          collectionAddress
+        );
+
+        const is721 = await abi_721.methods
+          .supportsInterface(window.config.erc721_id)
+          .call()
           .catch((e) => {
             console.error(e);
+            return false;
           });
+        const is1155 = await abi_1155.methods
+          .supportsInterface(window.config.erc1155_id)
+          .call()
+          .catch((e) => {
+            console.error(e);
+            return false;
+          });
+
+        const abi_final = is1155
+          ? window.BACKUP_ABI
+          : is721
+          ? window.ERC721_ABI
+          : window.ERC721_ABI;
+
         const listednfts = await axios
           .get(`${baseURL}/api/collections/${collectionAddress}/listings`, {
             headers: {
@@ -320,18 +364,11 @@ const CollectionPage = ({
             console.error(e);
           });
 
-        if (
-          result &&
-          result.status === 200 &&
-          listednfts &&
-          listednfts.status === 200
-        ) {
+        if (abi_final && listednfts && listednfts.status === 200) {
           let nftArray = [];
           let nftListedArray = [];
 
-          const abi = result.data.result
-            ? JSON.parse(result.data.result)
-            : window.BACKUP_ABI;
+          const abi = abi_final;
           const listednftsArray = listednfts.data.listings;
           const web3 = window.confluxWeb3;
           const collection_contract = new web3.eth.Contract(
@@ -492,7 +529,7 @@ const CollectionPage = ({
   const filterItemsByTraits = async (selectedTraits) => {
     setLoading(true);
     setisSearchTrait(true);
-    setAllNftArray([])
+    setAllNftArray([]);
     const tokenIds = [];
     for (const tokenId in collectionJson.singleTokenTraits) {
       for (const type in selectedTraits) {
@@ -510,16 +547,40 @@ const CollectionPage = ({
         }
       }
     }
-    
+
     if (tokenIds && tokenIds.length > 0) {
       setNtftArrayFilteredByTraits(tokenIds);
-      const result = await axios
-        .get(
-          `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress}`
-        )
+
+      const abi_1155 = new window.confluxWeb3.eth.Contract(
+        window.BACKUP_ABI,
+        collectionAddress
+      );
+      const abi_721 = new window.confluxWeb3.eth.Contract(
+        window.ERC721_ABI,
+        collectionAddress
+      );
+
+      const is721 = await abi_721.methods
+        .supportsInterface(window.config.erc721_id)
+        .call()
         .catch((e) => {
           console.error(e);
+          return false;
         });
+      const is1155 = await abi_1155.methods
+        .supportsInterface(window.config.erc1155_id)
+        .call()
+        .catch((e) => {
+          console.error(e);
+          return false;
+        });
+
+      const abi_final = is1155
+        ? window.BACKUP_ABI
+        : is721
+        ? window.ERC721_ABI
+        : window.ERC721_ABI;
+
       const listednfts = await axios
         .get(`${baseURL}/api/collections/${collectionAddress}/listings`, {
           headers: {
@@ -531,18 +592,11 @@ const CollectionPage = ({
           console.error(e);
         });
 
-      if (
-        result &&
-        result.status === 200 &&
-        listednfts &&
-        listednfts.status === 200
-      ) {
+      if (abi_final && listednfts && listednfts.status === 200) {
         let nftArray = [];
         let nftListedArray = [];
 
-        const abi = result.data.result
-          ? JSON.parse(result.data.result)
-          : window.BACKUP_ABI;
+        const abi = abi_final;
         const listednftsArray = listednfts.data.listings;
         const web3 = window.confluxWeb3;
         const collection_contract = new web3.eth.Contract(
@@ -690,17 +744,40 @@ const CollectionPage = ({
       setAllNftArray([]);
     }
   };
-  
+
   const fetchInitialNftsPerCollection = async () => {
     setLoading(true);
 
-    const result = await axios
-      .get(
-        `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress}`
-      )
+    const abi_1155 = new window.confluxWeb3.eth.Contract(
+      window.BACKUP_ABI,
+      collectionAddress
+    );
+    const abi_721 = new window.confluxWeb3.eth.Contract(
+      window.ERC721_ABI,
+      collectionAddress
+    );
+
+    const is721 = await abi_721.methods
+      .supportsInterface(window.config.erc721_id)
+      .call()
       .catch((e) => {
         console.error(e);
+        return false;
       });
+    const is1155 = await abi_1155.methods
+      .supportsInterface(window.config.erc1155_id)
+      .call()
+      .catch((e) => {
+        console.error(e);
+        return false;
+      });
+
+    const abi_final = is1155
+      ? window.BACKUP_ABI
+      : is721
+      ? window.ERC721_ABI
+      : window.ERC721_ABI;
+
     const listednfts = await axios
       .get(`${baseURL}/api/collections/${collectionAddress}/listings`, {
         headers: {
@@ -712,19 +789,12 @@ const CollectionPage = ({
         console.error(e);
       });
 
-    if (
-      result &&
-      result.status === 200 &&
-      listednfts &&
-      listednfts.status === 200
-    ) {
+    if (abi_final && listednfts && listednfts.status === 200) {
       let nftArray = [];
       let nftListedArray = [];
       let totalSupply = parseInt(currentCollection.totalSupply);
 
-      const abi = result.data.result
-        ? JSON.parse(result.data.result)
-        : window.BACKUP_ABI;
+      const abi = abi_final;
       const listednftsArray = listednfts.data.listings;
       const web3 = window.confluxWeb3;
       const collection_contract = new web3.eth.Contract(abi, collectionAddress);
@@ -1028,17 +1098,38 @@ const CollectionPage = ({
     let totalSupply = parseInt(currentCollection.totalSupply);
     setLoading(true);
 
-    const result = await axios
-      .get(
-        `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${collectionAddress}`
-      )
+    const abi_1155 = new window.confluxWeb3.eth.Contract(
+      window.BACKUP_ABI,
+      collectionAddress
+    );
+    const abi_721 = new window.confluxWeb3.eth.Contract(
+      window.ERC721_ABI,
+      collectionAddress
+    );
+
+    const is721 = await abi_721.methods
+      .supportsInterface(window.config.erc721_id)
+      .call()
       .catch((e) => {
         console.error(e);
+        return false;
       });
-    if (result && result.status === 200) {
-      const abi = result.data.result
-        ? JSON.parse(result.data.result)
-        : window.BACKUP_ABI;
+    const is1155 = await abi_1155.methods
+      .supportsInterface(window.config.erc1155_id)
+      .call()
+      .catch((e) => {
+        console.error(e);
+        return false;
+      });
+
+    const abi_final = is1155
+      ? window.BACKUP_ABI
+      : is721
+      ? window.ERC721_ABI
+      : window.ERC721_ABI;
+
+    if (abi_final) {
+      const abi = abi_final;
       const web3 = window.confluxWeb3;
       const collection_contract = new web3.eth.Contract(abi, collectionAddress);
 
@@ -1753,7 +1844,6 @@ const CollectionPage = ({
     }
   }, [nextSearch]);
 
-
   useEffect(() => {
     if (nextSearchTraits !== 40) {
       filterItemsByTraits(traitToSearch);
@@ -1826,7 +1916,7 @@ const CollectionPage = ({
         <CollectionList
           onFilterTraits={(val) => {
             filterItemsByTraits(val);
-            settraitToSearch(val)
+            settraitToSearch(val);
           }}
           offerData={offerData}
           collectionJson={collectionJson}
@@ -1882,7 +1972,8 @@ const CollectionPage = ({
           totalSupplyPerCollection > 0 &&
           loading === false &&
           totalSupplyPerCollection > 12 &&
-          isSearch === false && isSearchTrait === false &&
+          isSearch === false &&
+          isSearchTrait === false &&
           showBtn && (
             <div className="d-flex justify-content-center mt-5">
               <button className="buy-btn px-5 m-auto" onClick={loadMore}>
@@ -1903,7 +1994,7 @@ const CollectionPage = ({
             </div>
           )}
 
-{ntftArrayFilteredByTraits &&
+        {ntftArrayFilteredByTraits &&
           nextSearchTraits < ntftArrayFilteredByTraits.length &&
           loading === false &&
           totalSupplyPerCollection > 12 &&

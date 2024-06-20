@@ -196,6 +196,8 @@ const CollectionPage = ({
         console.error(e);
       });
     const web3 = window.confluxWeb3;
+    const wallet =  await window.getCoinbase().then((data) => {return data});
+
     if (result && result.status === 200) {
       const recentlySold = await Promise.all(
         result.data
@@ -243,13 +245,30 @@ const CollectionPage = ({
               );
               const tokenName = currentCollection.symbol;
 
-              const seller = await collection_contract.methods
-                .ownerOf(item.tokenId)
-                .call()
-                .catch((e) => {
-                  console.error(e);
-                });
+              let seller;
+              let userBalance = 0;
+             
 
+              if (is721) {
+                seller = await collection_contract.methods
+                  .ownerOf(item.tokenId)
+                  .call()
+                  .catch((e) => {
+                    console.log(e);
+                  });
+                 
+              } else if (is1155) {
+                userBalance = await collection_contract.methods
+                  .balanceOf(wallet, item.tokenId)
+                  .call()
+                  .catch((e) => {
+                    console.log(e);
+                  });
+        
+                if (userBalance > 0) {
+                  seller = wallet;
+                } 
+              }
               const collectionName = await currentCollection.collectionName;
 
               const isApprovedresult = await window
@@ -315,6 +334,8 @@ const CollectionPage = ({
     setLoading(true);
     setAllNftArray([]);
     setisSearch(true);
+    const wallet =  await window.getCoinbase().then((data) => {return data})
+
     if (collectionJson.tokenIDs && collectionJson.tokenIDs.length > 0) {
       const allNftsArrayFiltered = collectionJson.tokenIDs.filter((item) => {
         return item.toString().includes(tokenIdBySearch);
@@ -417,12 +438,31 @@ const CollectionPage = ({
                   });
                 const tokenName = currentCollection.symbol;
 
-                const owner = await collection_contract.methods
-                  .ownerOf(listednftsArray[j].tokenId)
-                  .call()
-                  .catch((e) => {
-                    console.log(e);
-                  });
+         
+
+                  let owner;
+                  let userBalance = 0;
+             
+                  if (is721) {
+                    owner = await collection_contract.methods
+                      .ownerOf(listednftsArray[j].tokenId)
+                      .call()
+                      .catch((e) => {
+                        console.log(e);
+                      });
+                     
+                  } else if (is1155) {
+                    userBalance = await collection_contract.methods
+                      .balanceOf(wallet, listednftsArray[j].tokenId)
+                      .call()
+                      .catch((e) => {
+                        console.log(e);
+                      });
+            
+                    if (userBalance > 0) {
+                      owner = wallet;
+                    } 
+                  }
 
                 const hasExpired = moment
                   .duration(listednftsArray[j].expiresAt * 1000 - Date.now())
@@ -454,12 +494,32 @@ const CollectionPage = ({
 
           await Promise.all(
             window.range(0, limit - 1).map(async (i) => {
-              const owner = await collection_contract.methods
-                .ownerOf(allNftsArrayFiltered[i])
-                .call()
-                .catch((e) => {
-                  console.error(e);
-                });
+           
+
+                let owner;
+                let userBalance = 0;
+           
+                if (is721) {
+                  owner = await collection_contract.methods
+                    .ownerOf(allNftsArrayFiltered[i])
+                    .call()
+                    .catch((e) => {
+                      console.log(e);
+                    });
+                   
+                } else if (is1155) {
+                  owner = await collection_contract.methods
+                    .balanceOf(wallet, allNftsArrayFiltered[i])
+                    .call()
+                    .catch((e) => {
+                      console.log(e);
+                    });
+          
+                  if (userBalance > 0) {
+                    owner = wallet;
+                  } 
+                }
+
 
               const tokenName = currentCollection?.symbol;
 
@@ -608,14 +668,14 @@ const CollectionPage = ({
           tokenIds.length > nextSearchTraits
             ? nextSearchTraits
             : tokenIds.length;
-
+         const wallet =  await window.getCoinbase().then((data) => {return data})
         if (
           listednftsArray !== "none" &&
           listednftsArray &&
           listednftsArray.length > 0
         ) {
           // settotalListedNfts(listednftsArray.length);
-
+ 
           sethasListedNfts(true);
           await Promise.all(
             window.range(0, listednftsArray.length - 1).map(async (j) => {
@@ -645,12 +705,32 @@ const CollectionPage = ({
                 });
               const tokenName = currentCollection.symbol;
 
-              const owner = await collection_contract.methods
-                .ownerOf(listednftsArray[j].tokenId)
-                .call()
-                .catch((e) => {
-                  console.log(e);
-                });
+           
+
+                let owner;
+                let userBalance = 0;
+           
+                if (is721) {
+                  owner = await collection_contract.methods
+                    .ownerOf(listednftsArray[j].tokenId)
+                    .call()
+                    .catch((e) => {
+                      console.log(e);
+                    });
+                   
+                } else if (is1155) {
+                  userBalance = await collection_contract.methods
+                    .balanceOf(wallet, listednftsArray[j].tokenId)
+                    .call()
+                    .catch((e) => {
+                      console.log(e);
+                    });
+          
+                  if (userBalance > 0) {
+                    owner = wallet;
+                  } 
+                }
+
 
               const hasExpired = moment
                 .duration(listednftsArray[j].expiresAt * 1000 - Date.now())
@@ -681,12 +761,30 @@ const CollectionPage = ({
 
         await Promise.all(
           window.range(0, limit - 1).map(async (i) => {
-            const owner = await collection_contract.methods
-              .ownerOf(tokenIds[i])
-              .call()
-              .catch((e) => {
-                console.error(e);
-              });
+           
+              let owner;
+              let userBalance = 0;
+         
+              if (is721) {
+                owner = await collection_contract.methods
+                  .ownerOf(tokenIds[i])
+                  .call()
+                  .catch((e) => {
+                    console.log(e);
+                  });
+                 
+              } else if (is1155) {
+                userBalance = await collection_contract.methods
+                  .balanceOf(wallet, tokenIds[i])
+                  .call()
+                  .catch((e) => {
+                    console.log(e);
+                  });
+        
+                if (userBalance > 0) {
+                  owner = wallet;
+                } 
+              }
 
             const tokenName = currentCollection?.symbol;
 
@@ -798,6 +896,7 @@ const CollectionPage = ({
       const listednftsArray = listednfts.data.listings;
       const web3 = window.confluxWeb3;
       const collection_contract = new web3.eth.Contract(abi, collectionAddress);
+      const wallet =  await window.getCoinbase().then((data) => {return data})
 
       if (totalSupply && totalSupply > 0) {
         const limit = totalSupply >= 12 ? 12 : totalSupply;
@@ -898,12 +997,33 @@ const CollectionPage = ({
                 }
               }
 
-              const owner = await collection_contract.methods
-                .ownerOf(listednftsArray[j].tokenId)
-                .call()
-                .catch((e) => {
-                  console.log(e);
-                });
+      
+
+
+                let owner;
+                let userBalance = 0;
+           
+                if (is721) {
+                  owner = await collection_contract.methods
+                    .ownerOf(listednftsArray[j].tokenId)
+                    .call()
+                    .catch((e) => {
+                      console.log(e);
+                    });
+                   
+                } else if (is1155) {
+                  userBalance = await collection_contract.methods
+                    .balanceOf(wallet, listednftsArray[j].tokenId)
+                    .call()
+                    .catch((e) => {
+                      console.log(e);
+                    });
+          
+                  if (userBalance > 0) {
+                    owner = wallet;
+                  } 
+                }
+
 
               const hasExpired = moment
                 .duration(listednftsArray[j].expiresAt * 1000 - Date.now())
@@ -1026,13 +1146,31 @@ const CollectionPage = ({
                 lastSale = 0;
               }
             }
+ 
+              let owner;
+              let userBalance = 0;
+         
+              if (is721) {
+                owner = await collection_contract.methods
+                  .ownerOf(tokenByIndex)
+                  .call()
+                  .catch((e) => {
+                    console.log(e);
+                  });
+                 
+              } else if (is1155) {
+                userBalance = await collection_contract.methods
+                  .balanceOf(wallet, tokenByIndex)
+                  .call()
+                  .catch((e) => {
+                    console.log(e);
+                  });
+        
+                if (userBalance > 0) {
+                  owner = wallet;
+                } 
+              }
 
-            const owner = await collection_contract.methods
-              .ownerOf(tokenByIndex)
-              .call()
-              .catch((e) => {
-                console.error(e);
-              });
 
             const tokenName = currentCollection.symbol;
 
@@ -1140,7 +1278,8 @@ const CollectionPage = ({
         Number(totalSupply) >= 12
       ) {
         const limit = totalSupply >= next ? next : totalSupply;
-
+        const wallet =  await window.getCoinbase().then((data) => {return data})
+        
         await Promise.all(
           window.range(next, limit + nftPerRow - 1).map(async (i) => {
             let tokenByIndex = 0;
@@ -1233,13 +1372,32 @@ const CollectionPage = ({
                 lastSale = 0;
               }
             }
+ 
 
-            const owner = await collection_contract.methods
-              .ownerOf(tokenByIndex)
-              .call()
-              .catch((e) => {
-                console.error(e);
-              });
+              let owner;
+              let userBalance = 0;
+         
+              if (is721) {
+                owner = await collection_contract.methods
+                  .ownerOf(tokenByIndex)
+                  .call()
+                  .catch((e) => {
+                    console.log(e);
+                  });
+                 
+              } else if (is1155) {
+                userBalance = await collection_contract.methods
+                  .balanceOf(wallet, tokenByIndex)
+                  .call()
+                  .catch((e) => {
+                    console.log(e);
+                  });
+        
+                if (userBalance > 0) {
+                  owner = wallet;
+                } 
+              }
+
 
             const tokenName = currentCollection.symbol;
 

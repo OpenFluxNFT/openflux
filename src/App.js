@@ -307,6 +307,7 @@ function App() {
 
   const handleGetRecentlyListedNfts = async () => {
     setloadingListed(true)
+    const wallet =  await window.getCoinbase().then((data) => {return data})
     const result = await axios
       .get(`${baseURL}/api/recent-active-listings`, {
         headers: {
@@ -386,13 +387,32 @@ function App() {
             );
    
             const tokenName = currentCollection[0]?.symbol;
- 
-            const seller = await collection_contract.methods
-              .ownerOf(item.tokenId)
-              .call()
-              .catch((e) => {
-                console.error(e);
-              });
+            let seller;
+            let userBalance = 0;
+       
+            if (is721) {
+              seller = await collection_contract.methods
+                .ownerOf(item.tokenId)
+                .call()
+                .catch((e) => {
+                  console.log(e);
+                });
+               
+            } else if (is1155) {
+              userBalance = await collection_contract.methods
+                .balanceOf(wallet, item.tokenId)
+                .call()
+                .catch((e) => {
+                  console.log(e);
+                });
+      
+              if (userBalance > 0) {
+                seller = wallet;
+              }
+              console.log("userBalance", userBalance);
+            }
+
+          
 
             const collectionName = await currentCollection[0]?.collectionName;
 
@@ -518,7 +538,7 @@ function App() {
       .catch((e) => {
         console.error(e);
       });
-
+      const wallet =  await window.getCoinbase().then((data) => {return data})
     const web3 = window.confluxWeb3;
     if (
       result &&
@@ -577,12 +597,29 @@ function App() {
               );
               const tokenName = currentCollection[0]?.symbol;
 
-              const seller = await collection_contract.methods
-                .ownerOf(item.tokenId)
-                .call()
-                .catch((e) => {
-                  console.error(e);
-                });
+              let seller;
+              let userBalance = 0;
+         
+              if (is721) {
+                seller = await collection_contract.methods
+                  .ownerOf(item.tokenId)
+                  .call()
+                  .catch((e) => {
+                    console.log(e);
+                  });
+                 
+              } else if (is1155) {
+                userBalance = await collection_contract.methods
+                  .balanceOf(wallet, item.tokenId)
+                  .call()
+                  .catch((e) => {
+                    console.log(e);
+                  });
+        
+                if (userBalance > 0) {
+                  seller = wallet;
+                } 
+              }
 
               const collectionName = currentCollection[0]?.collectionName;
 
@@ -796,12 +833,29 @@ function App() {
                     if (tokens[k]) {
                       let tokenByIndex = tokens[k];
 
-                      const owner = await collection_contract.methods
-                        .ownerOf(tokenByIndex)
-                        .call()
-                        .catch((e) => {
-                          console.error(e);
-                        });
+                      let owner;
+                      let userBalance = 0;
+                 
+                      if (is721) {
+                        owner = await collection_contract.methods
+                          .ownerOf(tokenByIndex)
+                          .call()
+                          .catch((e) => {
+                            console.log(e);
+                          });
+                         
+                      } else if (is1155) {
+                        userBalance = await collection_contract.methods
+                          .balanceOf(wallet, tokenByIndex)
+                          .call()
+                          .catch((e) => {
+                            console.log(e);
+                          });
+                
+                        if (userBalance > 0) {
+                          owner = wallet;
+                        } 
+                      }
                       const tokenName = currentCollection[0].symbol;
 
                       const collectionName =

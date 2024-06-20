@@ -228,6 +228,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
       .catch((e) => {
         console.error(e);
       });
+      const wallet =  await window.getCoinbase().then((data) => {return data})
 
     const web3 = window.confluxWeb3;
     if (result && result.status === 200) {
@@ -278,13 +279,29 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
             );
             const tokenName = currentCollection?.symbol;
 
-            const seller = await collection_contract.methods
-              .ownerOf(item.tokenId)
-              .call()
-              .catch((e) => {
-                console.error(e);
-              });
-
+    let seller;
+              let userBalance = 0;
+         
+              if (is721) {
+                seller = await collection_contract.methods
+                  .ownerOf(item.tokenId)
+                  .call()
+                  .catch((e) => {
+                    console.log(e);
+                  });
+                 
+              } else if (is1155) {
+                userBalance = await collection_contract.methods
+                  .balanceOf(wallet, item.tokenId)
+                  .call()
+                  .catch((e) => {
+                    console.log(e);
+                  });
+        
+                if (userBalance > 0) {
+                  seller = wallet;
+                } 
+              }
             const collectionName = currentCollection?.collectionName;
 
             const isApprovedresult = await window

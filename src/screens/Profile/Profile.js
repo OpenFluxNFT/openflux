@@ -529,6 +529,7 @@ const Profile = ({
           console.log(e);
         });
       const web3 = window.confluxWeb3;
+      const wallet =  await window.getCoinbase().then((data) => {return data})
       if (result && result.status === 200) {
         const saleHistory = await Promise.all(
           result.data.map(async (item) => {
@@ -580,12 +581,31 @@ const Profile = ({
 
               const collectionName = currentCollection?.collectionName;
 
-              const owner = await collection_contract.methods
-                .ownerOf(item.tokenId)
-                .call()
-                .catch((e) => {
-                  console.error(e);
-                });
+             
+
+                let owner;
+                let userBalance = 0;
+           
+                if (is721) {
+                  owner = await collection_contract.methods
+                    .ownerOf(item.tokenId)
+                    .call()
+                    .catch((e) => {
+                      console.log(e);
+                    });
+                   
+                } else if (is1155) {
+                  userBalance = await collection_contract.methods
+                    .balanceOf(wallet, item.tokenId)
+                    .call()
+                    .catch((e) => {
+                      console.log(e);
+                    });
+          
+                  if (userBalance > 0) {
+                    owner = wallet;
+                  } 
+                }
 
               const nft_data = await fetch(
                 `https://cdnflux.dypius.com/collectionsmetadatas/${item.nftAddress.toLowerCase()}/${

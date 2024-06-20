@@ -377,7 +377,7 @@ const SingleNft = ({
       const nftSymbol = currentCollection?.symbol;
       let owner;
       let userBalance = 0;
-console.log('collection_contract.methods',collection_contract.methods)
+ 
       if (is721) {
         owner = await collection_contract.methods
           .ownerOf(nftID)

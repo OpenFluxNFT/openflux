@@ -120,8 +120,8 @@ const SingleNftBanner = ({
       setbuyStatus("buy");
       setPurchaseStatus("Buying NFT in progress..");
       await window
-      .buyNFT(nftAddress, nftData.listingIndex, nftData.price)
-      .then((result) => {
+        .buyNFT(nftAddress, nftData.listingIndex, nftData.price)
+        .then((result) => {
           setbuyLoading(false);
           setbuyStatus("success");
           setPurchaseStatus("Successfully purchased!");
@@ -197,7 +197,13 @@ const SingleNftBanner = ({
       setsellStatus("sell");
       setPurchaseStatus("Listing NFT in progress...");
       setPurchaseColor("#00FECF");
-
+      console.log(
+        nftAddress,
+        nftId,
+        newPrice,
+        window.config.wcfx_address,
+        duration
+      );
       await window
         .listNFT(
           nftAddress,
@@ -236,7 +242,7 @@ const SingleNftBanner = ({
       setsellStatus("approve");
       setPurchaseStatus("Approving NFT for listing in progress..");
       setPurchaseColor("#00FECF");
-      
+
       await window
         .approveNFT(nftAddress)
         .then((result) => {
@@ -410,66 +416,10 @@ const SingleNftBanner = ({
                 </div>
               ) : (
                 <div className="col-12 col-lg-6 mb-3 position-relative">
-                  <Box sx={{ width: 290, position: "absolute" }}>
-                    <Skeleton
-                      animation="wave"
-                      sx={{
-                        bgcolor: "rgba(255, 255, 255, 0.11)",
-                        left: "15px",
-                        top: "10px",
-                      }}
-                      width={250}
-                    />
-                    <Skeleton
-                      animation="wave"
-                      sx={{
-                        bgcolor: "rgba(255, 255, 255, 0.11)",
-                        left: "15px",
-                        top: "10px",
-                      }}
-                      width={200}
-                    />
-                    <Skeleton
-                      animation="wave"
-                      sx={{
-                        bgcolor: "rgba(255, 255, 255, 0.11)",
-                        left: "15px",
-                        top: "10px",
-                      }}
-                      width={120}
-                    />
-                  </Box>
-                  <Box sx={{ width: 290, position: "absolute", top: "120px" }}>
-                    <Skeleton
-                      animation="wave"
-                      sx={{
-                        bgcolor: "rgba(255, 255, 255, 0.11)",
-                        left: "15px",
-                        top: "10px",
-                      }}
-                      width={150}
-                    />
-                  </Box>
-                  <Box sx={{ width: 290, position: "absolute", top: "220px" }}>
-                    <Skeleton
-                      animation="wave"
-                      sx={{
-                        bgcolor: "rgba(255, 255, 255, 0.11)",
-                        left: "15px",
-                        top: "10px",
-                      }}
-                      width={240}
-                    />
-                  </Box>
-                  <Skeleton
-                    variant="rounded"
-                    width={"100%"}
-                    height={290}
-                    animation="wave"
-                    sx={{
-                      bgcolor: "rgba(47, 128, 237, 0.05)",
-                      border: "1px solid rgba(47, 128, 237, 0.2)",
-                    }}
+                  <img
+                    src={require(`../../CollectionPage/CollectionList/assets/noImageNftCard.png`)}
+                    className="nft-image"
+                    alt=""
                   />
                 </div>
               )}
@@ -596,7 +546,9 @@ const SingleNftBanner = ({
                     )}
                   </div>
                   <div className="d-flex align-items-center gap-2 position-relative">
-                    {currentCollection && currentCollection.websiteLink && currentCollection.websiteLink !== "" ? (
+                    {currentCollection &&
+                    currentCollection.websiteLink &&
+                    currentCollection.websiteLink !== "" ? (
                       <a
                         href={currentCollection.websiteLink}
                         target="_blank"

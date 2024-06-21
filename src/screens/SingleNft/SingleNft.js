@@ -156,7 +156,7 @@ const SingleNft = ({
         refreshUserHistory(coinbase);
         getUpdatedNftData(coinbase).then(() => {
           refreshMetadata(nftId);
-          fetchInitialNftsPerCollection(nftId, coinbase);
+          fetchInitialNftsPerCollection(nftId);
           fetchNftSaleHistoryCache(nftAddress, nftId);
           getCollectionFloorPriceCache();
           onRefreshListings();
@@ -317,12 +317,14 @@ const SingleNft = ({
     }
   };
 
-  const getNftData = async (nftID, wallet) => {
+  const getNftData = async (nftID) => {
     const web3 = window.confluxWeb3;
     setLoading(true);
     let finalArray = [];
     let favoriteCount = 0;
-
+    const userwallet = await window.getCoinbase().then((data) => {
+      return data;
+    });
     const abi_1155 = new window.confluxWeb3.eth.Contract(
       window.BACKUP_ABI,
       nftAddress.toLowerCase()
@@ -377,7 +379,7 @@ const SingleNft = ({
       const nftSymbol = currentCollection?.symbol;
       let owner;
       let userBalance = 0;
- 
+
       if (is721) {
         owner = await collection_contract.methods
           .ownerOf(nftID)
@@ -386,23 +388,23 @@ const SingleNft = ({
             console.log(e);
           });
         userBalance = await collection_contract.methods
-          .balanceOf(wallet)
+          .balanceOf(userwallet)
           .call()
           .catch((e) => {
             console.log(e);
           });
-      } else if (is1155) {
+      }
+      if (is1155) {
         userBalance = await collection_contract.methods
-          .balanceOf(wallet, nftID)
+          .balanceOf(userwallet, nftID)
           .call()
           .catch((e) => {
             console.log(e);
           });
-
+       
         if (userBalance > 0) {
-          owner = wallet;
+          owner = userwallet;
         }
-        console.log("userBalance", userBalance);
       }
 
       const fav_count = await axios
@@ -634,7 +636,6 @@ const SingleNft = ({
           if (userBalance > 0) {
             owner = wallet;
           }
-          console.log("userBalance", userBalance);
         }
 
         const fav_count = await axios
@@ -794,9 +795,11 @@ const SingleNft = ({
     }
   };
 
-  const fetchInitialNftsPerCollection = async (nftID, wallet) => {
+  const fetchInitialNftsPerCollection = async (nftID) => {
     setLoading(true);
-
+    const wallet = await window.getCoinbase().then((data) => {
+      return data;
+    });
     const abi_1155 = new window.confluxWeb3.eth.Contract(
       window.BACKUP_ABI,
       nftAddress.toLowerCase()
@@ -914,7 +917,6 @@ const SingleNft = ({
                 if (userBalance > 0) {
                   owner = wallet;
                 }
-                console.log("userBalance", userBalance);
               }
 
               const hasExpired = moment
@@ -957,9 +959,29 @@ const SingleNft = ({
 
             if (collection_contract.methods.tokenByIndex) {
               try {
-                tokenByIndex = await collection_contract.methods
-                  .tokenByIndex(i)
-                  .call();
+                if (is1155) {
+                  const bal = await collection_contract.methods
+                    .balanceOf(wallet, i)
+                    .call()
+                    .catch((e) => {
+                      console.log(e);
+                    });
+                  if (bal && bal > 0) {
+                    tokenByIndex = i;
+                  }
+                } else if (is721){
+                  
+                  tokenByIndex = await collection_contract.methods
+                    .tokenByIndex(i)
+                    .call()
+                    .catch((e) => {
+                      console.error(e, i);
+                    });
+                }
+
+                // tokenByIndex = await collection_contract.methods
+                //   .tokenByIndex(i)
+                //   .call();
               } catch (e) {
                 console.error(e);
                 tokenByIndex = i;
@@ -998,7 +1020,6 @@ const SingleNft = ({
               if (userBalance > 0) {
                 owner = wallet;
               }
-              console.log("userBalance", userBalance);
             }
 
             const nft_data = await fetch(
@@ -1145,7 +1166,7 @@ const SingleNft = ({
 
   const handleRefreshNftTraits = () => {
     refreshSingleMetadata(nftAddress, nftId);
-    getNftData(nftId, coinbase);
+    getNftData(nftId);
   };
 
   const refreshSingleMetadata = async (nftAddress, nftID) => {
@@ -1213,9 +1234,9 @@ const SingleNft = ({
 
   useEffect(() => {
     if (totalSupplyPerCollection > 0) {
-      fetchInitialNftsPerCollection(nftId, coinbase);
+      fetchInitialNftsPerCollection(nftId);
       fetchNftSaleHistory(nftAddress, nftId);
-      getNftData(nftId, coinbase);
+      getNftData(nftId);
     }
   }, [totalSupplyPerCollection]);
   return (
@@ -1235,7 +1256,7 @@ const SingleNft = ({
         handleRefreshData={() => {
           getUpdatedNftData(coinbase).then(() => {
             refreshMetadata(nftId);
-            fetchInitialNftsPerCollection(nftId, coinbase);
+            fetchInitialNftsPerCollection(nftId);
             fetchNftSaleHistoryCache(nftAddress, nftId);
             refreshUserHistory(coinbase);
             getCollectionFloorPriceCache();
@@ -1273,9 +1294,9 @@ const SingleNft = ({
           cfxPrice={cfxPrice}
           allNftArray={allNftArray}
           onNftClick={(value) => {
-            getNftData(value, coinbase);
+            getNftData(value);
             getOffer(nftAddress, value);
-            fetchInitialNftsPerCollection(value, coinbase);
+            fetchInitialNftsPerCollection(value);
             fetchNftSaleHistory(nftAddress, value);
             refreshMetadata(value);
           }}

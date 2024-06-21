@@ -51,6 +51,7 @@ const ProfileNFTList = ({
   userCollection,
   usersNftOffers,
   usersCollectionOffers,
+  userNftsOwned
 }) => {
   const [favoritesOption, setfavoritesOption] = useState("items");
   const [gridView, setGridView] = useState("small-grid");
@@ -1183,7 +1184,7 @@ const ProfileNFTList = ({
                           ></video>
                         ) : (
                           <img
-                            src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                            src={require(`../CollectionPage/CollectionList/assets/noImageNftCard.png`)}
                             className="card-img"
                             alt=""
                           />
@@ -1343,7 +1344,7 @@ const ProfileNFTList = ({
                             ></video>
                           ) : (
                             <img
-                              src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                              src={require(`../CollectionPage/CollectionList/assets/noImageNftCard.png`)}
                               className="card-img"
                               alt=""
                             />
@@ -1697,7 +1698,7 @@ const ProfileNFTList = ({
                                       />
                                     ) : (
                                       <img
-                                        src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                                        src={require(`../CollectionPage/CollectionList/assets/noImageNftCard.png`)}
                                         className="table-img nftimg2"
                                         alt=""
                                         height={36}
@@ -1822,7 +1823,7 @@ const ProfileNFTList = ({
                                       />
                                     ) : (
                                       <img
-                                        src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                                        src={require(`../CollectionPage/CollectionList/assets/noImageNftCard.png`)}
                                         className="table-img nftimg2"
                                         alt=""
                                         height={36}
@@ -1992,7 +1993,7 @@ const ProfileNFTList = ({
                                       />
                                     ) : (
                                       <img
-                                        src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                                        src={require(`../CollectionPage/CollectionList/assets/noImageNftCard.png`)}
                                         className="table-img nftimg2"
                                         alt=""
                                         height={36}
@@ -2123,7 +2124,7 @@ const ProfileNFTList = ({
                                       />
                                     ) : (
                                       <img
-                                        src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                                        src={require(`../CollectionPage/CollectionList/assets/noImageNftCard.png`)}
                                         className="table-img nftimg2"
                                         alt=""
                                         height={36}
@@ -2289,7 +2290,7 @@ const ProfileNFTList = ({
                                     />
                                   ) : (
                                     <img
-                                      src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                                      src={require(`../CollectionPage/CollectionList/assets/noImageNftCard.png`)}
                                       className="table-img nftimg2"
                                       alt=""
                                       height={36}
@@ -2410,7 +2411,7 @@ const ProfileNFTList = ({
                                     />
                                   ) : (
                                     <img
-                                      src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                                      src={require(`../CollectionPage/CollectionList/assets/noImageNftCard.png`)}
                                       className="table-img nftimg2"
                                       alt=""
                                       height={36}
@@ -2893,7 +2894,7 @@ const ProfileNFTList = ({
                               />
                             ) : (
                               <img
-                                src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                                src={require(`../CollectionPage/CollectionList/assets/noImageNftCard.png`)}
                                 className="table-img nftimg2"
                                 alt=""
                                 height={36}
@@ -3028,7 +3029,7 @@ const ProfileNFTList = ({
                                 />
                               ) : (
                                 <img
-                                  src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                                  src={require(`../CollectionPage/CollectionList/assets/noImageNftCard.png`)}
                                   className="table-img nftimg2"
                                   alt=""
                                   height={36}
@@ -3174,7 +3175,7 @@ const ProfileNFTList = ({
                                 />
                               ) : (
                                 <img
-                                  src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                                  src={require(`../CollectionPage/CollectionList/assets/noImageNftCard.png`)}
                                   className="table-img nftimg2"
                                   width={36}
                                   height={36}
@@ -3313,7 +3314,7 @@ const ProfileNFTList = ({
                                 />
                               ) : (
                                 <img
-                                  src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                                  src={require(`../CollectionPage/CollectionList/assets/noImageNftCard.png`)}
                                   className="table-img nftimg2"
                                   width={36}
                                   height={36}
@@ -3453,7 +3454,7 @@ const ProfileNFTList = ({
                                 />
                               ) : (
                                 <img
-                                  src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                                  src={require(`../CollectionPage/CollectionList/assets/noImageNftCard.png`)}
                                   className="table-img nftimg2"
                                   width={36}
                                   height={36}
@@ -3584,7 +3585,7 @@ const ProfileNFTList = ({
                                 />
                               ) : (
                                 <img
-                                  src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                                  src={require(`../CollectionPage/CollectionList/assets/noImageNftCard.png`)}
                                   className="table-img nftimg2"
                                   width={36}
                                   height={36}
@@ -3693,7 +3694,7 @@ const ProfileNFTList = ({
                         />
                       ) : (
                         <img
-                          src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                          src={require(`../CollectionPage/CollectionList/assets/noImageNftCard.png`)}
                           className="card-img card-img2"
                           alt=""
                         />
@@ -3811,7 +3812,7 @@ const ProfileNFTList = ({
                           />
                         ) : (
                           <img
-                            src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                            src={require(`../CollectionPage/CollectionList/assets/noImageNftCard.png`)}
                             className="card-img card-img2"
                             alt=""
                           />
@@ -3938,7 +3939,7 @@ const ProfileNFTList = ({
                           />
                         ) : (
                           <img
-                            src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                            src={require(`../CollectionPage/CollectionList/assets/noImageNftCard.png`)}
                             className="card-img card-img2"
                             alt=""
                           />
@@ -4070,7 +4071,7 @@ const ProfileNFTList = ({
                           />
                         ) : (
                           <img
-                            src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                            src={require(`../CollectionPage/CollectionList/assets/noImageNftCard.png`)}
                             className="card-img card-img2"
                             alt=""
                           />
@@ -4196,7 +4197,7 @@ const ProfileNFTList = ({
                           />
                         ) : (
                           <img
-                            src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                            src={require(`../CollectionPage/CollectionList/assets/noImageNftCard.png`)}
                             className="card-img card-img2"
                             alt=""
                           />
@@ -4327,7 +4328,7 @@ const ProfileNFTList = ({
                           />
                         ) : (
                           <img
-                            src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                            src={require(`../CollectionPage/CollectionList/assets/noImageNftCard.png`)}
                             className="card-img card-img2"
                             alt=""
                           />
@@ -4446,7 +4447,7 @@ const ProfileNFTList = ({
                         />
                       ) : (
                         <img
-                          src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                          src={require(`../CollectionPage/CollectionList/assets/noImageNftCard.png`)}
                           className="card-img card-img2"
                           alt=""
                         />
@@ -4548,7 +4549,7 @@ const ProfileNFTList = ({
                           />
                         ) : (
                           <img
-                            src={require(`../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
+                            src={require(`../CollectionPage/CollectionList/assets/noImageNftCard.png`)}
                             className="card-img card-img2"
                             alt=""
                           />
@@ -4709,11 +4710,11 @@ const ProfileNFTList = ({
                 There are no items avaliable with this filter
               </span>
             )}
-          {option === "collected" && nftList && nftList.length === 0 && (
+          {/* {option === "collected" && nftList && nftList.length === 0 && (
             <span className="text-white d-flex w-100 align-items-center justify-content-center h-100">
               There are no items avaliable with this filter
             </span>
-          )}
+          )} */}
 
           {option === "listed" &&
             userNftsOwnedArray &&

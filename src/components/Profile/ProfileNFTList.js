@@ -80,7 +80,7 @@ const ProfileNFTList = ({
 
   const [selectedNftId, setSelectedNftId] = useState(""); //buy
 
-  console.log(userNftsOwned);
+  
   const handleKeyPress = (val) => (event) => {
     if (option !== "favorites") {
       if (event.key === "Enter") {

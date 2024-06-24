@@ -373,7 +373,7 @@ const SingleNftBanner = ({
         if (coinbase.toLowerCase() === nftData.owner.toLowerCase()) {
           setIsOwner(true);
           checkNftApprovalForListing();
-          if (nftData.isListed === true) {
+          if (nftData.isListed === true && nftData.listingsLeft === 0) {
             setNftPrice(nftData.price / 1e18);
           }
         } else {
@@ -387,6 +387,8 @@ const SingleNftBanner = ({
       } else setIsListed(false);
     }
   }, [nftData, nftId, coinbase, chainId]);
+
+  console.log("nftData", nftData);
   return (
     <div className="container-lg">
       <div className="nft-banner-wrapper p-3">
@@ -460,7 +462,9 @@ const SingleNftBanner = ({
                       <div className="d-flex align-items-center gap-2">
                         <span className="nft-info-left">Owner</span>
                         <span className="nft-info-right">
-                          {nftData && nftData.owner ? (
+                          {nftData &&
+                          nftData.owner &&
+                          nftData.owner !== "multiple" ? (
                             <a
                               href={`https://evm.confluxscan.net/address/${nftData.owner}`}
                               target="_blank"
@@ -469,6 +473,10 @@ const SingleNftBanner = ({
                             >
                               {shortAddress(nftData.owner) ?? "..."}
                             </a>
+                          ) : nftData &&
+                            nftData.owner &&
+                            nftData.owner === "multiple" ? (
+                            <span className="text-white">{nftData.owner}</span>
                           ) : (
                             "Not Available"
                           )}
@@ -650,7 +658,7 @@ const SingleNftBanner = ({
                       </button>
                     )}
                   </div>
-                ) : !isListed &&
+                ) : (!isListed || nftData.listingsLeft > 0) &&
                   nftData.collectionName &&
                   isOwner &&
                   loading === false ? (
@@ -676,6 +684,9 @@ const SingleNftBanner = ({
                   </div>
                 ) : ((isListed && !isOwner) ||
                     (isListed && isOwner && nftData.collectionName)) &&
+                  (!nftData.is1155 ||
+                    (nftData.listingsLeft === 0 &&
+                      nftData.userBalance === 1)) &&
                   loading === false ? (
                   <div className="nft-price-wrapper p-3">
                     <div className="d-flex flex-column gap-2">
@@ -713,7 +724,7 @@ const SingleNftBanner = ({
                 )}
                 {isOwner &&
                 nftData.collectionName &&
-                !isListed &&
+                (!isListed || nftData.listingsLeft > 0) &&
                 loading === false ? (
                   <>
                     <div className="nft-price-wrapper px-3 py-1 d-flex flex-column flex-lg-row gap-3 gap-lg-0 align-items-center justify-content-between">
@@ -778,7 +789,12 @@ const SingleNftBanner = ({
                       There is a listing fee of 0.1% for the selected duration
                     </span> */}
                   </>
-                ) : nftData.collectionName && isListed && loading === false ? (
+                ) : nftData.collectionName &&
+                  isListed &&
+                  loading === false &&
+                  (!nftData.is1155 ||
+                    (nftData.listingsLeft === 0 &&
+                      nftData.userBalance === 1)) ? (
                   <div className="nft-price-wrapper px-3 py-1 d-flex align-items-center justify-content-between">
                     <span className="current-price-text">Listing ends</span>
                     <div className="duration-tab d-flex align-items-center justify-content-center">
@@ -806,7 +822,11 @@ const SingleNftBanner = ({
                 nftData.collectionName &&
                 loading === false ? (
                   <></>
-                ) : !isOwner && isListed ? (
+                ) : !isOwner &&
+                  isListed &&
+                  (!nftData.is1155 ||
+                    (nftData.listingsLeft === 0 &&
+                      nftData.userBalance === 1)) ? (
                   <div className="d-flex align-items-center gap-2 justify-content-center mt-4">
                     {isConnected && chainId === 1030 ? (
                       <>
@@ -860,7 +880,9 @@ const SingleNftBanner = ({
                       </button>
                     )}
                   </div>
-                ) : isOwner && !isListed && loading === false ? (
+                ) : isOwner &&
+                  (!isListed || nftData.listingsLeft > 0) &&
+                  loading === false ? (
                   <div className="d-flex align-items-center gap-2 justify-content-center mt-4">
                     {isConnected ? (
                       <button
@@ -899,7 +921,12 @@ const SingleNftBanner = ({
                       </button>
                     )}
                   </div>
-                ) : isOwner && isListed && loading === false ? (
+                ) : isOwner &&
+                  isListed &&
+                  loading === false &&
+                  (!nftData.is1155 ||
+                    (nftData.listingsLeft === 0 &&
+                      nftData.userBalance === 1)) ? (
                   <div className="d-flex align-items-center gap-2 justify-content-center mt-4">
                     {isConnected ? (
                       <>
@@ -962,7 +989,13 @@ const SingleNftBanner = ({
                     )}
                   </div>
                 ) : (
-                  <></>
+                  <div className="nft-price-wrapper w-100 p-3">
+                    <div className="d-flex flex-column gap-2">
+                      <span className="current-price-text text-center">
+                      {isOwner ? 'You have listed all the NFTs owned from this collection.' : 'Check below listings'}  
+                      </span>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>

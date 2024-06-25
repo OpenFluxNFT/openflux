@@ -35,7 +35,7 @@ const MakeOffer = ({
   offerData,
   bestOffer,
   nftAddress,
-  floorPrice,
+  floorPrice,selectedIndex
 }) => {
   const windowSize = useWindowSize();
   const [filter1, setFilter1] = useState("1 day");
@@ -49,7 +49,7 @@ const MakeOffer = ({
   const [lowestPriceNftListedDYP, setlowestPriceNftListedDYP] = useState([]);
 
   const { BigNumber } = window;
-
+ 
   const style = {
     position: "absolute",
     top: "50%",
@@ -182,10 +182,10 @@ const MakeOffer = ({
 
               <div className="d-flex flex-row flex-lg-column flex-xxl-column gap-2 gap-lg-0 gap-xxl-0 align-items-xxl-end align-items-lg-end align-items-center">
                 <span className="itemname" style={{ whiteSpace: "nowrap" }}>
-                  {getFormattedNumber(nftData.price / 10 ** 18)} WCFX
+                  {getFormattedNumber(nftData.listedObject[selectedIndex].price / 10 ** 18)} WCFX
                 </span>
                 <span className="itemcollectionName">
-                  ($ {getFormattedNumber((nftData.price / 10 ** 18) * cfxPrice)}
+                  ($ {getFormattedNumber((nftData.listedObject[selectedIndex].price / 10 ** 18) * cfxPrice)}
                   )
                 </span>
               </div>

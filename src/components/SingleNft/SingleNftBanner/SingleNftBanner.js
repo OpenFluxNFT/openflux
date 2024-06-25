@@ -388,7 +388,8 @@ const SingleNftBanner = ({
     }
   }, [nftData, nftId, coinbase, chainId]);
 
-  console.log("nftData", nftData);
+  console.log(nftData)
+  
   return (
     <div className="container-lg">
       <div className="nft-banner-wrapper p-3">
@@ -636,7 +637,7 @@ const SingleNftBanner = ({
                     {isConnected && chainId === 1030 ? (
                       <button
                         className="btn make-offer-btn px-3 py-1 col-lg-3 col-5"
-                        onClick={onShowMakeOfferPopup}
+                        onClick={()=>{onShowMakeOfferPopup(0)}}
                       >
                         {offerData && offerData.amount
                           ? "Update Offer"
@@ -684,7 +685,7 @@ const SingleNftBanner = ({
                   </div>
                 ) : ((isListed && !isOwner) ||
                     (isListed && isOwner && nftData.collectionName)) &&
-                  (!nftData.is1155 ||
+                  (!nftData.is1155 &&
                     (nftData.listingsLeft === 0 &&
                       nftData.userBalance === 1)) &&
                   loading === false ? (
@@ -792,7 +793,7 @@ const SingleNftBanner = ({
                 ) : nftData.collectionName &&
                   isListed &&
                   loading === false &&
-                  (!nftData.is1155 ||
+                  (!nftData.is1155 &&
                     (nftData.listingsLeft === 0 &&
                       nftData.userBalance === 1)) ? (
                   <div className="nft-price-wrapper px-3 py-1 d-flex align-items-center justify-content-between">
@@ -824,7 +825,7 @@ const SingleNftBanner = ({
                   <></>
                 ) : !isOwner &&
                   isListed &&
-                  (!nftData.is1155 ||
+                  (!nftData.is1155 &&
                     (nftData.listingsLeft === 0 &&
                       nftData.userBalance === 1)) ? (
                   <div className="d-flex align-items-center gap-2 justify-content-center mt-4">
@@ -832,7 +833,7 @@ const SingleNftBanner = ({
                       <>
                         <button
                           className="btn make-offer-btn px-3 py-1 col-lg-3 col-5"
-                          onClick={onShowMakeOfferPopup}
+                          onClick={()=>{onShowMakeOfferPopup(0)}}
                         >
                           {offerData && offerData.amount
                             ? "Update Offer"
@@ -924,7 +925,7 @@ const SingleNftBanner = ({
                 ) : isOwner &&
                   isListed &&
                   loading === false &&
-                  (!nftData.is1155 ||
+                  (!nftData.is1155 &&
                     (nftData.listingsLeft === 0 &&
                       nftData.userBalance === 1)) ? (
                   <div className="d-flex align-items-center gap-2 justify-content-center mt-4">

@@ -223,7 +223,7 @@ const ListingsTable = ({
                               <div className="d-flex align-items-center justify-content-center gap-3">
                                 <button
                                   className="btn buy-btn2 w-100 py-1"
-                                  onClick={onShowMakeOfferPopup}
+                                  onClick={()=>{onShowMakeOfferPopup(index)}}
                                 >
                                   {offerData && offerData.amount
                                     ? "Update Offer"

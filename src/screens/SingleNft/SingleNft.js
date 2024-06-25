@@ -34,6 +34,7 @@ const SingleNft = ({
   const [loading, setLoading] = useState(false);
   const [totalSupplyPerCollection, settotalSupplyPerCollection] = useState(0);
   const [currentCollection, setcurrentCollection] = useState([]);
+  const [selectedIndex, setselectedIndex] = useState(0);
 
   const [offerStatus, setOfferStatus] = useState("initial");
   const [offerdeleteStatus, setOfferdeleteStatus] = useState("initial");
@@ -83,6 +84,7 @@ const SingleNft = ({
     if (price !== "" && price !== 0) {
       setOfferStatus("loading");
       const newPrice = new BigNumber(price * 1e18).toFixed();
+      console.log(nftAddress, tokenId, newPrice, duration);
       await window
         .makeOffer(nftAddress, tokenId, newPrice, duration)
         .then(() => {
@@ -446,7 +448,7 @@ const SingleNft = ({
     }
   };
 
-  const handleCancelSeparateListNft = async (nftAddress,listingIndex) => {
+  const handleCancelSeparateListNft = async (nftAddress, listingIndex) => {
     setcancelLoading(true);
     setcancelStatus("cancel");
     return window
@@ -547,25 +549,29 @@ const SingleNft = ({
           .catch((e) => {
             console.log(e);
           });
-        userBalance = await collection_contract.methods
-          .balanceOf(userwallet)
-          .call()
-          .catch((e) => {
-            console.log(e);
-          });
+        if (userwallet) {
+          userBalance = await collection_contract.methods
+            .balanceOf(userwallet)
+            .call()
+            .catch((e) => {
+              console.log(e);
+            });
+        }
       }
       if (is1155) {
-        userBalance = await collection_contract.methods
-          .balanceOf(userwallet, nftID)
-          .call()
-          .catch((e) => {
-            console.log(e);
-          });
-        setuserNftBalance(userBalance);
-        if (userBalance > 0) {
-          owner = userwallet;
-        } else {
-          owner = "Multiple";
+        if (userwallet) {
+          userBalance = await collection_contract.methods
+            .balanceOf(userwallet, nftID)
+            .call()
+            .catch((e) => {
+              console.log(e);
+            });
+          setuserNftBalance(userBalance);
+          if (userBalance > 0) {
+            owner = userwallet;
+          } else {
+            owner = "Multiple";
+          }
         }
       }
 
@@ -786,180 +792,220 @@ const SingleNft = ({
       .catch((e) => {
         console.log(e);
       });
+
     if (listednfts && listednfts.status === 200) {
-      if (listednfts && listednfts.status === 200) {
-        const listednftsArray = listednfts.data.listings;
-        const abi = abi_final;
-        const collection_contract = new web3.eth.Contract(abi, nftAddress);
+      const listednftsArray = listednfts.data.listings;
+      const abi = abi_final;
+      const collection_contract = new web3.eth.Contract(abi, nftAddress);
 
-        const nftSymbol = currentCollection?.symbol;
+      const nftSymbol = currentCollection?.symbol;
 
-        let owner;
-        let userBalance = 0;
+      let owner;
+      let userBalance = 0;
 
-        if (is721) {
-          owner = await collection_contract.methods
-            .ownerOf(nftId)
-            .call()
-            .catch((e) => {
-              console.log(e);
-            });
+      if (is721) {
+        owner = await collection_contract.methods
+          .ownerOf(nftId)
+          .call()
+          .catch((e) => {
+            console.log(e);
+          });
+        if (wallet) {
           userBalance = await collection_contract.methods
             .balanceOf(wallet)
             .call()
             .catch((e) => {
               console.log(e);
             });
-        } else if (is1155) {
-          userBalance = await collection_contract.methods
-            .balanceOf(wallet, nftId)
-            .call()
-            .catch((e) => {
-              console.log(e);
-            });
-
-          if (userBalance > 0) {
-            owner = wallet;
-          }
         }
-
-        const fav_count = await axios
-          .get(
-            `${baseURL}/api/nftFavoritesCount/${nftAddress.toLowerCase()}/${nftId}`,
-            {
-              headers: {
-                cascadestyling:
-                  "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-              },
-            }
-          )
+      } else if (is1155) {
+        if (wallet) {
+          userBalance = await collection_contract.methods
+          .balanceOf(wallet, nftId)
+          .call()
           .catch((e) => {
             console.log(e);
           });
 
-        if (fav_count && fav_count.status === 200) {
-          favoriteCount = fav_count.data.count;
+
+          setuserNftBalance(userBalance);
+          if (userBalance > 0) {
+            owner = wallet;
+          } else {
+            owner = "Multiple";
+          }
+
         }
+      }
 
-        const collectionName = currentCollection?.collectionName;
-        let isListed = false;
-        let price = 0;
-        let expiresAt = 0;
-        if (listednftsArray !== "none" && listednftsArray.length > 0) {
-          const filteredResult = listednftsArray.find((item) => {
-            return (
-              item.tokenId === nftId &&
-              item.nftAddress.toLowerCase() === nftAddress.toLowerCase()
-            );
-          });
+      const fav_count = await axios
+        .get(
+          `${baseURL}/api/nftFavoritesCount/${nftAddress.toLowerCase()}/${nftId}`,
+          {
+            headers: {
+              cascadestyling:
+                "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+            },
+          }
+        )
+        .catch((e) => {
+          console.log(e);
+        });
 
-          if (filteredResult) {
+      if (fav_count && fav_count.status === 200) {
+        favoriteCount = fav_count.data.count;
+      }
+
+      const collectionName = currentCollection?.collectionName;
+      let isListed = false;
+      let price = 0;
+      let expiresAt = 0;
+      let totalfilteredResult = [];
+      let totalfilteredResultOwner = [];
+
+      if (listednftsArray !== "none" && listednftsArray.length > 0) {
+        totalfilteredResult = listednftsArray.filter((item) => {
+          return (
+            item.tokenId === nftId &&
+            item.nftAddress.toLowerCase() === nftAddress.toLowerCase()
+          );
+        });
+
+        totalfilteredResultOwner = listednftsArray.filter((item) => {
+          return (
+            item.tokenId === nftId &&
+            item.nftAddress.toLowerCase() === nftAddress.toLowerCase() &&
+            item.seller.toLowerCase() === wallet.toLowerCase()
+          );
+        });
+
+
+        if (totalfilteredResult) {
+          totalfilteredResult.forEach((result, index) => {
             const hasExpired = moment
-              .duration(filteredResult.expiresAt * 1000 - Date.now())
+              .duration(result.expiresAt * 1000 - Date.now())
               .humanize(true)
               .includes("ago");
             if (
               hasExpired ||
-              filteredResult.seller.toLowerCase() !== owner.toLowerCase()
+              (result.seller.toLowerCase() !== owner.toLowerCase() &&
+                owner !== "Multiple")
             ) {
               isListed = false;
-              price = filteredResult.price;
-              expiresAt = filteredResult.expiresAt;
+              price = result.price;
+              expiresAt = result.expiresAt;
             } else {
+              result.listingIndex = index;
+              // listingIndex = index;
               isListed = true;
-              price = filteredResult.price;
-              expiresAt = filteredResult.expiresAt;
+              price = result.price;
+              expiresAt = result.expiresAt;
             }
-          } else {
-            isListed = false;
-            price = 0;
-            expiresAt = 0;
-          }
-          const listingIndex = listednftsArray.findIndex(
-            (object) =>
-              object.nftAddress.toLowerCase() === nftAddress.toLowerCase() &&
-              object.tokenId === nftId
-          );
-          const nftdata = await fetch(
-            `https://cdnflux.dypius.com/collectionsmetadatas/${nftAddress.toLowerCase()}/${nftId}/metadata.json`
-          )
-            .then((res) => res.json())
-            .then((data) => {
-              return data;
-            })
-            .catch((err) => {
-              console.log(err.message);
-            });
-          if (nftdata && nftdata.code !== 404 && typeof nftdata !== "string") {
-            finalArray.push({
-              ...nftdata,
-              ...filteredResult,
-              owner: owner,
-              collectionName: collectionName,
-              isListed: isListed,
-              price: price,
-              listingIndex: listingIndex,
-              expiresAt: expiresAt,
-              nftSymbol: nftSymbol,
-              favoriteCount: favoriteCount,
-            });
-
-            setNftData(...finalArray);
-          } else {
-            finalArray.push({
-              ...filteredResult,
-              owner: owner.toLowerCase(),
-              collectionName: collectionName,
-              isListed: isListed,
-              price: price,
-              listingIndex: listingIndex,
-              expiresAt: expiresAt,
-              favoriteCount: favoriteCount,
-              nftSymbol: nftSymbol,
-              attributes: "false",
-            });
-            setNftData(...finalArray);
-            setLoading(false);
-          }
+          });
         } else {
-          const nftdata = await fetch(
-            `https://cdnflux.dypius.com/collectionsmetadatas/${nftAddress.toLowerCase()}/${nftId}/metadata.json`
-          )
-            .then((res) => res.json())
-            .then((data) => {
-              return data;
-            })
-            .catch((err) => {
-              console.log(err.message);
-            });
-          if (nftdata && nftdata.code !== 404 && typeof nftdata !== "string") {
-            finalArray.push({
-              ...nftdata,
-              owner: owner,
-              collectionName: collectionName,
-              isListed: isListed,
-              price: price,
-              listingIndex: undefined,
-              expiresAt: expiresAt,
-              nftSymbol: nftSymbol,
-            });
+          isListed = false;
+          price = 0;
+          expiresAt = 0;
+        }
 
-            setNftData(...finalArray);
-          } else {
-            finalArray.push({
-              owner: owner.toLowerCase(),
-              collectionName: collectionName,
-              isListed: isListed,
-              price: price,
-              listingIndex: 0,
-              expiresAt: expiresAt,
-              favoriteCount: favoriteCount,
-              nftSymbol: nftSymbol,
-              attributes: "false",
-            });
-            setNftData(...finalArray);
-            setLoading(false);
-          }
+     
+        const nftdata = await fetch(
+          `https://cdnflux.dypius.com/collectionsmetadatas/${nftAddress.toLowerCase()}/${nftId}/metadata.json`
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            return data;
+          })
+          .catch((err) => {
+            console.log(err.message);
+          });
+        if (nftdata && nftdata.code !== 404 && typeof nftdata !== "string") {
+          finalArray.push({
+            ...nftdata,
+            listedObject: totalfilteredResult,
+            owner: owner ? owner.toLowerCase() : undefined,
+            collectionName: collectionName,
+            isListed: isListed,
+            price: price,
+            // listingIndex: listingIndex,
+            expiresAt: expiresAt,
+            nftSymbol: nftSymbol,
+            favoriteCount: favoriteCount,
+            userBalance: Number(userBalance),
+            listingsLeft: Number(userBalance) - totalfilteredResultOwner.length,
+            is1155: is1155,
+
+          });
+
+          setNftData(...finalArray);
+          setLoading(false);
+
+        } else {
+          finalArray.push({
+            listedObject: totalfilteredResult,
+            owner: owner ? owner.toLowerCase() : undefined,
+            collectionName: collectionName,
+            isListed: isListed,
+            price: price,
+            // listingIndex: listingIndex,
+            expiresAt: expiresAt,
+            favoriteCount: favoriteCount,
+            nftSymbol: nftSymbol,
+            attributes: "false",
+            userBalance: Number(userBalance),
+            listingsLeft: Number(userBalance) - totalfilteredResultOwner.length,
+            is1155: is1155,
+
+          });
+          setNftData(...finalArray);
+          setLoading(false);
+        }
+      } else {
+        const nftdata = await fetch(
+          `https://cdnflux.dypius.com/collectionsmetadatas/${nftAddress.toLowerCase()}/${nftId}/metadata.json`
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            return data;
+          })
+          .catch((err) => {
+            console.log(err.message);
+          });
+        if (nftdata && nftdata.code !== 404 && typeof nftdata !== "string") {
+          finalArray.push({
+            ...nftdata,
+            owner: owner,
+            collectionName: collectionName,
+            isListed: isListed,
+            price: price,
+            listingIndex: undefined,
+            expiresAt: expiresAt,
+            nftSymbol: nftSymbol,
+            userBalance: Number(userBalance),
+            listingsLeft: Number(userBalance) - totalfilteredResultOwner.length,
+            is1155: is1155,
+
+          });
+
+          setNftData(...finalArray);
+        } else {
+          finalArray.push({
+            owner: owner.toLowerCase(),
+            collectionName: collectionName,
+            isListed: isListed,
+            price: price,
+            listingIndex: 0,
+            expiresAt: expiresAt,
+            favoriteCount: favoriteCount,
+            nftSymbol: nftSymbol,
+            attributes: "false",
+            userBalance: Number(userBalance),
+            listingsLeft: Number(userBalance) - totalfilteredResultOwner.length,
+            is1155: is1155,
+
+          });
+          setNftData(...finalArray);
+          setLoading(false);
         }
       }
     }
@@ -1085,22 +1131,26 @@ const SingleNft = ({
                   .catch((e) => {
                     console.log(e);
                   });
-                userBalance = await collection_contract.methods
-                  .balanceOf(wallet)
-                  .call()
-                  .catch((e) => {
-                    console.log(e);
-                  });
+                if (wallet) {
+                  userBalance = await collection_contract.methods
+                    .balanceOf(wallet)
+                    .call()
+                    .catch((e) => {
+                      console.log(e);
+                    });
+                }
               } else if (is1155) {
-                userBalance = await collection_contract.methods
-                  .balanceOf(wallet, listednftsArray[j].tokenId)
-                  .call()
-                  .catch((e) => {
-                    console.log(e);
-                  });
+                if (wallet) {
+                  userBalance = await collection_contract.methods
+                    .balanceOf(wallet, listednftsArray[j].tokenId)
+                    .call()
+                    .catch((e) => {
+                      console.log(e);
+                    });
 
-                if (userBalance > 0) {
-                  owner = wallet;
+                  if (userBalance > 0) {
+                    owner = wallet;
+                  }
                 }
               }
 
@@ -1187,22 +1237,26 @@ const SingleNft = ({
                 .catch((e) => {
                   console.log(e);
                 });
-              userBalance = await collection_contract.methods
-                .balanceOf(wallet)
-                .call()
-                .catch((e) => {
-                  console.log(e);
-                });
+              if (wallet) {
+                userBalance = await collection_contract.methods
+                  .balanceOf(wallet)
+                  .call()
+                  .catch((e) => {
+                    console.log(e);
+                  });
+              }
             } else if (is1155) {
-              userBalance = await collection_contract.methods
-                .balanceOf(wallet, tokenByIndex)
-                .call()
-                .catch((e) => {
-                  console.log(e);
-                });
+              if (wallet) {
+                userBalance = await collection_contract.methods
+                  .balanceOf(wallet, tokenByIndex)
+                  .call()
+                  .catch((e) => {
+                    console.log(e);
+                  });
 
-              if (userBalance > 0) {
-                owner = wallet;
+                if (userBalance > 0) {
+                  owner = wallet;
+                }
               }
             }
 
@@ -1422,14 +1476,15 @@ const SingleNft = ({
       fetchNftSaleHistory(nftAddress, nftId);
       getNftData(nftId);
     }
-  }, [totalSupplyPerCollection]);
+  }, [totalSupplyPerCollection, coinbase]);
 
   return (
     <div className="container-fluid py-4 home-wrapper px-0">
       <SingleNftBanner
         chainId={chainId}
-        onShowMakeOfferPopup={() => {
+        onShowMakeOfferPopup={(value) => {
           setShowOfferPopup(true);
+          setselectedIndex(value);
         }}
         currentCollection={currentCollection}
         views={nftView?.view_count}
@@ -1478,8 +1533,9 @@ const SingleNft = ({
             updateLoading={updateLoading}
             updateStatus={updateStatus}
             handleUpdateListing={handleUpdateSeparateListing}
-            onShowMakeOfferPopup={() => {
+            onShowMakeOfferPopup={(value) => {
               setShowOfferPopup(true);
+              setselectedIndex(value);
             }}
             handleBuyNft={handleBuySeparateNft}
             handlecancelListNft={handleCancelSeparateListNft}
@@ -1540,6 +1596,7 @@ const SingleNft = ({
           nftAddress={nftAddress}
           nftId={nftId}
           floorPrice={floorPrice}
+          selectedIndex={selectedIndex}
         />
       )}
     </div>

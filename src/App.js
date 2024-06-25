@@ -393,25 +393,26 @@ function App() {
             let seller;
             let userBalance = 0;
 
-            if (is721) {
-              seller = await collection_contract.methods
-                .ownerOf(item.tokenId)
-                .call()
-                .catch((e) => {
-                  console.log(e);
-                });
-            } else if (is1155) {
-              userBalance = await collection_contract.methods
-                .balanceOf(wallet, item.tokenId)
-                .call()
-                .catch((e) => {
-                  console.log(e);
-                });
+            //   if (is721) {
+            //     seller = await collection_contract.methods
+            //       .ownerOf(item.tokenId)
+            //       .call()
+            //       .catch((e) => {
+            //         console.log(e);
+            //       });
+            //   } else if (is1155) {
+            //     if(wallet)
+            //  {   userBalance = await collection_contract.methods
+            //       .balanceOf(wallet, item.tokenId)
+            //       .call()
+            //       .catch((e) => {
+            //         console.log(e);
+            //       });
 
-              if (userBalance > 0) {
-                seller = wallet;
-              }
-            }
+            //     if (userBalance > 0) {
+            //       seller = wallet;
+            //     }}
+            //   }
 
             const collectionName = await currentCollection[0]?.collectionName;
 
@@ -474,7 +475,7 @@ function App() {
                 image: `${nft_data.image}`,
                 tokenName: tokenName,
                 isApproved: isApproved,
-                seller: seller,
+                // seller: seller,
                 collectionName: collectionName,
                 lastSale: lastSale,
               };
@@ -483,7 +484,7 @@ function App() {
                 ...item,
                 image: undefined,
                 tokenName: tokenName,
-                seller: seller,
+                // seller: seller,
                 collectionName: collectionName,
                 lastSale: lastSale,
                 isApproved: isApproved,
@@ -511,7 +512,7 @@ function App() {
 
     if (result && result.status === 200 && coinbase) {
       handleGetRecentlyListedNfts();
-      handleMapUserNftsOwned(coinbase, allCollections);
+      handleMapUserNftsOwned(coinbase, allCollections, recentlyListedNfts);
     }
   };
 
@@ -609,15 +610,17 @@ function App() {
                     console.log(e);
                   });
               } else if (is1155) {
-                userBalance = await collection_contract.methods
-                  .balanceOf(wallet, item.tokenId)
-                  .call()
-                  .catch((e) => {
-                    console.log(e);
-                  });
+                if (wallet) {
+                  userBalance = await collection_contract.methods
+                    .balanceOf(wallet, item.tokenId)
+                    .call()
+                    .catch((e) => {
+                      console.log(e);
+                    });
 
-                if (userBalance > 0) {
-                  seller = wallet;
+                  if (userBalance > 0) {
+                    seller = wallet;
+                  }
                 }
               }
 
@@ -690,7 +693,7 @@ function App() {
 
     if (result && result.status === 200) {
       handleGetRecentlySoldNfts();
-      handleMapUserNftsOwned(coinbase, allCollections);
+      handleMapUserNftsOwned(coinbase, allCollections, recentlyListedNfts);
     }
   };
 
@@ -725,7 +728,11 @@ function App() {
     }
   };
 
-  const handleMapUserNftsOwned = async (wallet, allCollectionsobj) => {
+  const handleMapUserNftsOwned = async (
+    wallet,
+    allCollectionsobj,
+    recentlyListedNfts
+  ) => {
     let nftsOwned = [];
     let nftsOwnedAmount = 0;
 
@@ -750,11 +757,14 @@ function App() {
       nftsOwned &&
       nftsOwned.length > 0 &&
       allCollectionsobj &&
-      allCollectionsobj.length > 0
+      allCollectionsobj.length > 0 &&
+      recentlyListedNfts
     ) {
       let nextTokenIdToMint = 0;
       let othertokensArray = [];
       let tokens = [];
+
+      const recentlylisted = recentlyListedNfts;
 
       await Promise.all(
         window.range(0, nftsOwned.length - 1).map(async (i) => {
@@ -890,15 +900,17 @@ function App() {
                             console.log(e);
                           });
                       } else if (is1155) {
-                        userBalance = await collection_contract.methods
-                          .balanceOf(wallet, tokenByIndex)
-                          .call()
-                          .catch((e) => {
-                            console.log(e);
-                          });
+                        if (wallet) {
+                          userBalance = await collection_contract.methods
+                            .balanceOf(wallet, tokenByIndex)
+                            .call()
+                            .catch((e) => {
+                              console.log(e);
+                            });
 
-                        if (userBalance > 0) {
-                          owner = wallet;
+                          if (userBalance > 0) {
+                            owner = wallet;
+                          }
                         }
                       }
                       const tokenName = currentCollection[0].symbol;
@@ -1110,7 +1122,7 @@ function App() {
               }
 
               if (nftArray.length > 0) {
-                const uniqueArray_listed = recentlyListedNfts.filter(
+                const uniqueArray_listed = recentlylisted.filter(
                   ({ tokenId: id1, nftAddress: nftAddr1 }) =>
                     nftArray.some(
                       ({ tokenId: id2, nftAddress: nftAddr2 }) =>
@@ -1119,9 +1131,15 @@ function App() {
                     )
                 );
 
+                const uniqueArray_listed_owner = uniqueArray_listed.filter(
+                  (obj) => {
+                    return obj.seller.toLowerCase() === wallet.toLowerCase();
+                  }
+                );
+
                 const uniqueArray_regular = nftArray.filter(
                   ({ tokenId: id1, nftAddress: nftAddr1 }) =>
-                    !recentlyListedNfts.some(
+                    !recentlylisted.some(
                       ({ tokenId: id2, nftAddress: nftAddr2 }) =>
                         id1.toString() === id2.toString() &&
                         nftAddr1.toLowerCase() === nftAddr2.toLowerCase()
@@ -1129,9 +1147,10 @@ function App() {
                 );
 
                 const finalArray = [
-                  ...uniqueArray_listed,
+                  ...uniqueArray_listed_owner,
                   ...uniqueArray_regular,
                 ];
+
                 setUserNftsOwnedArray(finalArray);
               }
             }
@@ -1883,9 +1902,9 @@ function App() {
 
   useEffect(() => {
     if (coinbase) {
-      handleMapUserNftsOwned(coinbase, allCollections);
+      handleMapUserNftsOwned(coinbase, allCollections, recentlyListedNfts);
     }
-  }, [allCollections, coinbase]);
+  }, [allCollections, coinbase, recentlyListedNfts]);
 
   return (
     <div
@@ -2027,7 +2046,11 @@ function App() {
                 getFavNftsPerUser(value);
                 getUserData(value);
                 fetchuserCollection(value);
-                handleMapUserNftsOwned(value, allCollections);
+                handleMapUserNftsOwned(
+                  value,
+                  allCollections,
+                  recentlyListedNfts
+                );
                 fetchTotalNftOwned(value);
               }}
               userCollection={userCollection}

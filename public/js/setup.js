@@ -74,7 +74,7 @@ class TOKEN {
 
 // ALL THE ADDRESSES IN CONFIG MUST BE LOWERCASE
 window.config = {
-  nft_marketplace_address: "0xc7b22183d305164f643a63d8da9567e28d743c01",
+  nft_marketplace_address: "0xd3224654015cf6394121f8e6524f252fdc95d4c3",
   wcfx_address: "0x14b2d3bc65e74dae1030eafd8ac30c533c976a9b",
   conflux_endpoint: "https://evm.confluxrpc.com/",
   erc721_id: "0x80ac58cd",
@@ -293,36 +293,35 @@ window.isApprovedNFT = async (token, collectionAddress, address) => {
 window.approveNFT = async (collectionAddress) => {
   const coinbase = await getCoinbase();
   window.web3 = new Web3(window.ethereum);
-    const abi_1155 = new window.confluxWeb3.eth.Contract(
-      window.BACKUP_ABI,
-      collectionAddress
-    );
-    const abi_721 = new window.confluxWeb3.eth.Contract(
-      window.ERC721_ABI,
-      collectionAddress
-    );
-  
-    const is721 = await abi_721.methods
-      .supportsInterface(window.config.erc721_id)
-      .call()
-      .catch((e) => {
-        console.error(e);
-        return false;
-      });
-    const is1155 = await abi_1155.methods
-      .supportsInterface(window.config.erc1155_id)
-      .call()
-      .catch((e) => {
-        console.error(e);
-        return false;
-      });
-  
-    const abi_final = is1155
-      ? window.BACKUP_ABI
-      : is721
-      ? window.ERC721_ABI
-      : window.ERC721_ABI;
-  
+  const abi_1155 = new window.confluxWeb3.eth.Contract(
+    window.BACKUP_ABI,
+    collectionAddress
+  );
+  const abi_721 = new window.confluxWeb3.eth.Contract(
+    window.ERC721_ABI,
+    collectionAddress
+  );
+
+  const is721 = await abi_721.methods
+    .supportsInterface(window.config.erc721_id)
+    .call()
+    .catch((e) => {
+      console.error(e);
+      return false;
+    });
+  const is1155 = await abi_1155.methods
+    .supportsInterface(window.config.erc1155_id)
+    .call()
+    .catch((e) => {
+      console.error(e);
+      return false;
+    });
+
+  const abi_final = is1155
+    ? window.BACKUP_ABI
+    : is721
+    ? window.ERC721_ABI
+    : window.ERC721_ABI;
 
   if (abi_final) {
     const abi = abi_final;

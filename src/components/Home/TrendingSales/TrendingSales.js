@@ -291,7 +291,8 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                   });
                  
               } else if (is1155) {
-                userBalance = await collection_contract.methods
+                if(wallet)
+              {  userBalance = await collection_contract.methods
                   .balanceOf(wallet, item.tokenId)
                   .call()
                   .catch((e) => {
@@ -300,7 +301,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
         
                 if (userBalance > 0) {
                   seller = wallet;
-                } 
+                } }
               }
             const collectionName = currentCollection?.collectionName;
 

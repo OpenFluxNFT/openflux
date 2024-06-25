@@ -592,7 +592,8 @@ const Profile = ({
                     console.log(e);
                   });
               } else if (is1155) {
-                userBalance = await collection_contract.methods
+                if(wallet)
+              {  userBalance = await collection_contract.methods
                   .balanceOf(wallet, item.tokenId)
                   .call()
                   .catch((e) => {
@@ -601,7 +602,7 @@ const Profile = ({
 
                 if (userBalance > 0) {
                   owner = wallet;
-                }
+                }}
               }
 
               const nft_data = await fetch(

@@ -258,7 +258,8 @@ const CollectionPage = ({
                   });
                  
               } else if (is1155) {
-                userBalance = await collection_contract.methods
+                if(wallet)
+               { userBalance = await collection_contract.methods
                   .balanceOf(wallet, item.tokenId)
                   .call()
                   .catch((e) => {
@@ -267,7 +268,7 @@ const CollectionPage = ({
         
                 if (userBalance > 0) {
                   seller = wallet;
-                } 
+                } }
               }
               const collectionName = await currentCollection.collectionName;
 
@@ -452,7 +453,8 @@ const CollectionPage = ({
                       });
                      
                   } else if (is1155) {
-                    userBalance = await collection_contract.methods
+                    if(wallet)
+                   { userBalance = await collection_contract.methods
                       .balanceOf(wallet, listednftsArray[j].tokenId)
                       .call()
                       .catch((e) => {
@@ -461,7 +463,7 @@ const CollectionPage = ({
             
                     if (userBalance > 0) {
                       owner = wallet;
-                    } 
+                    } }
                   }
 
                 const hasExpired = moment
@@ -719,7 +721,8 @@ const CollectionPage = ({
                     });
                    
                 } else if (is1155) {
-                  userBalance = await collection_contract.methods
+                  if(wallet)
+                {  userBalance = await collection_contract.methods
                     .balanceOf(wallet, listednftsArray[j].tokenId)
                     .call()
                     .catch((e) => {
@@ -728,7 +731,7 @@ const CollectionPage = ({
           
                   if (userBalance > 0) {
                     owner = wallet;
-                  } 
+                  } }
                 }
 
 
@@ -774,7 +777,8 @@ const CollectionPage = ({
                   });
                  
               } else if (is1155) {
-                userBalance = await collection_contract.methods
+                if(wallet)
+               { userBalance = await collection_contract.methods
                   .balanceOf(wallet, tokenIds[i])
                   .call()
                   .catch((e) => {
@@ -783,7 +787,7 @@ const CollectionPage = ({
         
                 if (userBalance > 0) {
                   owner = wallet;
-                } 
+                } }
               }
 
             const tokenName = currentCollection?.symbol;
@@ -1012,7 +1016,8 @@ const CollectionPage = ({
                     });
                    
                 } else if (is1155) {
-                  userBalance = await collection_contract.methods
+                  if(wallet)
+                 { userBalance = await collection_contract.methods
                     .balanceOf(wallet, listednftsArray[j].tokenId)
                     .call()
                     .catch((e) => {
@@ -1021,7 +1026,7 @@ const CollectionPage = ({
           
                   if (userBalance > 0) {
                     owner = wallet;
-                  } 
+                  } }
                 }
 
 
@@ -1159,7 +1164,8 @@ const CollectionPage = ({
                   });
                  
               } else if (is1155) {
-                userBalance = await collection_contract.methods
+                if(wallet)
+              {  userBalance = await collection_contract.methods
                   .balanceOf(wallet, tokenByIndex)
                   .call()
                   .catch((e) => {
@@ -1168,7 +1174,7 @@ const CollectionPage = ({
         
                 if (userBalance > 0) {
                   owner = wallet;
-                } 
+                } }
               }
 
 
@@ -1386,7 +1392,8 @@ const CollectionPage = ({
                   });
                  
               } else if (is1155) {
-                userBalance = await collection_contract.methods
+                if(wallet)
+              {  userBalance = await collection_contract.methods
                   .balanceOf(wallet, tokenByIndex)
                   .call()
                   .catch((e) => {
@@ -1395,7 +1402,7 @@ const CollectionPage = ({
         
                 if (userBalance > 0) {
                   owner = wallet;
-                } 
+                } }
               }
 
 

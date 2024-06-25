@@ -1122,21 +1122,29 @@ function App() {
               }
 
               if (nftArray.length > 0) {
-                const uniqueArray_listed = recentlylisted.filter(
-                  ({ tokenId: id1, nftAddress: nftAddr1 }) =>
-                    nftArray.some(
-                      ({ tokenId: id2, nftAddress: nftAddr2 }) =>
-                        id1.toString() == id2.toString() &&
-                        nftAddr1.toLowerCase() === nftAddr2.toLowerCase()
-                    )
-                );
+                let uniqueArray_listed = [];
+                let uniqueArray_listed_owner = [];
+                if (recentlylisted && recentlylisted.length > 0) {
+                  uniqueArray_listed = recentlylisted.filter(
+                    ({ tokenId: id1, nftAddress: nftAddr1 }) =>
+                      nftArray.some(
+                        ({ tokenId: id2, nftAddress: nftAddr2 }) =>
+                          id1.toString() == id2.toString() &&
+                          nftAddr1.toLowerCase() === nftAddr2.toLowerCase()
+                      )
+                  );
 
-                const uniqueArray_listed_owner = uniqueArray_listed.filter(
-                  (obj) => {
-                    return obj.seller.toLowerCase() === wallet.toLowerCase();
-                  }
-                );
+                  uniqueArray_listed_owner = uniqueArray_listed.filter(
+                    (obj) => {
+                      return obj.seller.toLowerCase() === wallet.toLowerCase();
+                    }
+                  );
 
+                  let uniqueArray_listed_owner2 = uniqueArray_listed_owner.filter((value, index, self) => 
+                    self.findIndex(v => v.tokenId === value.tokenId) === index
+                  );
+                
+             
                 const uniqueArray_regular = nftArray.filter(
                   ({ tokenId: id1, nftAddress: nftAddr1 }) =>
                     !recentlylisted.some(
@@ -1147,11 +1155,12 @@ function App() {
                 );
 
                 const finalArray = [
-                  ...uniqueArray_listed_owner,
+                  ...uniqueArray_listed_owner2,
                   ...uniqueArray_regular,
                 ];
 
                 setUserNftsOwnedArray(finalArray);
+              }
               }
             }
           }

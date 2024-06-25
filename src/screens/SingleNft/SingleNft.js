@@ -248,6 +248,7 @@ const SingleNft = ({
     });
     if (result) {
       const finalResult = result[1];
+      console.log(finalResult,'finalResult')
       if (finalResult && finalResult.length > 0) {
         if (coinbase) {
           finalArray = finalResult.filter((object) => {
@@ -1542,6 +1543,8 @@ const SingleNft = ({
             }}
             handleBuyNft={handleBuySeparateNft}
             handlecancelListNft={handleCancelSeparateListNft}
+        offerData={offerData}
+
           />
         )}
       <SingleNftHistory

@@ -46,6 +46,8 @@ const ListingsTable = ({
     }
   };
 
+  console.log(offerData)
+
   return (
     <div className="container-lg my-4">
       <div className="row mx-0 justify-content-between gap-lg-0 gap-3">
@@ -225,7 +227,7 @@ const ListingsTable = ({
                                   className="btn buy-btn2 w-100 py-1"
                                   onClick={()=>{onShowMakeOfferPopup(index)}}
                                 >
-                                  {offerData && offerData.amount
+                                  {offerData && offerData.amount && offerData.index === index
                                     ? "Update Offer"
                                     : "Make Offer"}
                                 </button>

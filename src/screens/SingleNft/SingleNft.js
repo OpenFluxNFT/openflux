@@ -451,6 +451,7 @@ const SingleNft = ({
   const handleCancelSeparateListNft = async (nftAddress, listingIndex) => {
     setcancelLoading(true);
     setcancelStatus("cancel");
+    console.log('in',nftAddress, listingIndex)
     return window
       .cancelListNFT(nftAddress, listingIndex)
       .then(() => {
@@ -566,7 +567,8 @@ const SingleNft = ({
             .catch((e) => {
               console.log(e);
             });
-          setuserNftBalance(userBalance);
+            console.log('userBalance',userBalance)
+          // setuserNftBalance(userBalance);
           if (userBalance > 0) {
             owner = userwallet;
           } else {
@@ -624,9 +626,10 @@ const SingleNft = ({
               .humanize(true)
               .includes("ago");
             if (
-              hasExpired ||
-              (result.seller.toLowerCase() !== owner.toLowerCase() &&
-                owner !== "Multiple")
+              hasExpired 
+              // || (result.seller.toLowerCase() !== owner.toLowerCase() &&
+              //   owner !== "Multiple"
+              // )
             ) {
               isListed = false;
               price = result.price;
@@ -828,7 +831,7 @@ const SingleNft = ({
           });
 
 
-          setuserNftBalance(userBalance);
+          // setuserNftBalance(userBalance);
           if (userBalance > 0) {
             owner = wallet;
           } else {

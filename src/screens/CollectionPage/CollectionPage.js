@@ -27,7 +27,7 @@ const CollectionPage = ({
   isNewCollection,
   onNewCollectionFetched,
   wcfxBalance,
-  userNftsOwnedArray,
+  userNftsOwnedArray,userNftsOwned
 }) => {
   const [favorite, setFavorite] = useState(false);
 
@@ -89,7 +89,7 @@ const CollectionPage = ({
   const nftPerRow = 12;
 
   const { collectionAddress } = useParams();
-  const location = useLocation();
+  
 
   const collectionInfo = [
     {
@@ -2154,6 +2154,7 @@ const CollectionPage = ({
           onSelectCollecitonOffers={(value) => {
             setshowBtn(value);
           }}
+          userNftsOwned={userNftsOwned}
         />
 
         {totalSupplyPerCollection &&

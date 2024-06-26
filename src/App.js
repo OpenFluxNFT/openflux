@@ -2031,6 +2031,7 @@ function App() {
               }}
               wcfxBalance={wcfxBalance}
               userNftsOwnedArray={userNftsOwnedArray}
+              userNftsOwned={userNftsOwned}
             />
           }
         />

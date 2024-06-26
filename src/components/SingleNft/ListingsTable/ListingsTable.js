@@ -46,7 +46,7 @@ const ListingsTable = ({
     }
   };
 
-  console.log(offerData)
+  
 
   return (
     <div className="container-lg my-4">
@@ -223,14 +223,18 @@ const ListingsTable = ({
                               item.seller.toLowerCase() !==
                                 coinbase?.toLowerCase() ? (
                               <div className="d-flex align-items-center justify-content-center gap-3">
-                                <button
-                                  className="btn buy-btn2 w-100 py-1"
-                                  onClick={()=>{onShowMakeOfferPopup(index)}}
-                                >
-                                  {offerData && offerData.amount && offerData.index === index
-                                    ? "Update Offer"
-                                    : "Make Offer"}
-                                </button>
+                                {nftData.userBalance === 0 && (
+                                  <button
+                                    className="btn buy-btn2 w-100 py-1"
+                                    onClick={() => {
+                                      onShowMakeOfferPopup(index);
+                                    }}
+                                  >
+                                    {offerData && offerData.amount
+                                      ? "Update Offer"
+                                      : "Make Offer"}
+                                  </button>
+                                )}
                                 <button
                                   className="btn buy-btn2 w-100 py-1"
                                   onClick={() => {

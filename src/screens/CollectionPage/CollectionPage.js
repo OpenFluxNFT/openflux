@@ -1224,13 +1224,19 @@ const CollectionPage = ({
         const finalArray_sorted = nftArray.sort((a, b) => {
           return a.tokenId - b.tokenId;
         });
+        const uniqueArrayListed = nftListedArray.filter(
+          (value, index, self) =>
+            self.findIndex((v) => v.tokenId === value.tokenId) === index
+        );
 
         const uniqueArray = finalArray_sorted.filter(
           ({ tokenId: id1 }) =>
-            !nftListedArray.some(({ tokenId: id2 }) => id2 === id1.toString())
+            !uniqueArrayListed.some(
+              ({ tokenId: id2 }) => id2.toString() === id1.toString()
+            )
         );
 
-        const finalArray = [...nftListedArray, ...uniqueArray];
+        const finalArray = [...uniqueArrayListed, ...uniqueArray];
         setAllNftArray(finalArray);
         setLoading(false);
       } else {

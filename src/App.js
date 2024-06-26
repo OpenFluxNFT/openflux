@@ -60,6 +60,7 @@ function App() {
   const [userNftsOwnedArray, setUserNftsOwnedArray] = useState([]);
   const [userCollectionArray, setuserCollectionArray] = useState([]);
   const [isOtherUser, setisOtherUser] = useState(false);
+  const [otheruserWallet, setotheruserWallet] = useState("");
 
   const [cfxPrice, setCfxPrice] = useState(0);
   const [favoriteNft, setFavoriteNft] = useState(false);
@@ -510,7 +511,7 @@ function App() {
         console.error(e);
       });
 
-    if (result && result.status === 200 && coinbase) {
+    if (result && result.status === 200 && coinbase && isOtherUser === false) {
       handleGetRecentlyListedNfts();
       handleMapUserNftsOwned(coinbase, allCollections, recentlyListedNfts);
     }
@@ -691,7 +692,7 @@ function App() {
         console.error(e);
       });
 
-    if (result && result.status === 200) {
+    if (result && result.status === 200 && isOtherUser === false) {
       handleGetRecentlySoldNfts();
       handleMapUserNftsOwned(coinbase, allCollections, recentlyListedNfts);
     }
@@ -758,7 +759,7 @@ function App() {
       nftsOwned.length > 0 &&
       allCollectionsobj &&
       allCollectionsobj.length > 0 &&
-      recentlyListedNfts
+      recentlyListedNfts !== undefined
     ) {
       let nextTokenIdToMint = 0;
       let othertokensArray = [];
@@ -822,205 +823,81 @@ function App() {
 
             let lastSale = 0;
 
-            if (collection_contract.methods.tokenOfOwnerByIndex) {
-              if (is1155) {
-                othertokensArray = await Promise.all(
-                  window.range(0, nftsOwned[i].amount - 1).map(async (j) => {
-                    nextTokenIdToMint = await collection_contract.methods
-                      .nextTokenIdToMint()
-                      .call()
-                      .catch((e) => {
-                        console.error(e);
-                        return 0;
-                      });
+            // if (collection_contract.methods.tokenOfOwnerByIndex) {
+            if (is1155) {
+              othertokensArray = await Promise.all(
+                window.range(0, nftsOwned[i].amount - 1).map(async (j) => {
+                  nextTokenIdToMint = await collection_contract.methods
+                    .nextTokenIdToMint()
+                    .call()
+                    .catch((e) => {
+                      console.error(e);
+                      return 0;
+                    });
 
-                    return await Promise.all(
-                      window.range(0, nextTokenIdToMint - 1).map((k) => {
-                        return collection_contract.methods
-                          .balanceOf(wallet, k)
-                          .call()
-                          .then((data) => {
-                            if (data && data > 0) {
-                              return k;
-                            }
-                            return null; // Return null if data is not greater than 0
-                          })
-                          .catch((e) => {
-                            console.log(e);
-                            return null; // Return null if there's an error
-                          });
-                      })
-                    );
-                  })
-                );
-
-                othertokensArray = othertokensArray.filter(
-                  (value) => value !== null
-                );
-              }
-              if (is721) {
-                tokens = await Promise.all(
-                  window.range(0, nftsOwned[i].amount - 1).map(async (j) => {
-                    return collection_contract.methods
-                      .tokenOfOwnerByIndex(wallet, j)
-                      .call()
-                      .catch((e) => {
-                        console.error(e);
-                      });
-                  })
-                );
-              }
-              // if()
-
-              const allTokens = [...othertokensArray.flat()];
-
-              if (
-                tokens &&
-                tokens.length > 0 &&
-                currentCollection &&
-                is721 &&
-                currentCollection.length > 0 &&
-                tokens.find((obj) => {
-                  return obj !== undefined;
-                }) !== undefined
-              ) {
-                await Promise.all(
-                  window.range(0, tokens.length - 1).map(async (l) => {
-                    if (tokens[l]) {
-                      let tokenByIndex = tokens[l];
-
-                      let owner;
-                      let userBalance = 0;
-
-                      if (is721) {
-                        owner = await collection_contract.methods
-                          .ownerOf(tokenByIndex)
-                          .call()
-                          .catch((e) => {
-                            console.log(e);
-                          });
-                      } else if (is1155) {
-                        if (wallet) {
-                          userBalance = await collection_contract.methods
-                            .balanceOf(wallet, tokenByIndex)
-                            .call()
-                            .catch((e) => {
-                              console.log(e);
-                            });
-
-                          if (userBalance > 0) {
-                            owner = wallet;
-                          }
-                        }
-                      }
-                      const tokenName = currentCollection[0].symbol;
-
-                      const collectionName =
-                        currentCollection[0].collectionName;
-
-                      const lastSaleResult = await axios
-                        .get(
-                          `${baseURL}/api/nft-sale-history/${nftsOwned[
-                            i
-                          ].contract.toLowerCase()}/${tokenByIndex}`,
-                          {
-                            headers: {
-                              cascadestyling:
-                                "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-                            },
-                          }
-                        )
-                        .catch((e) => {
-                          console.error(e);
-                        });
-
-                      if (lastSaleResult && lastSaleResult.status === 200) {
-                        const historyArray = lastSaleResult.data;
-                        if (historyArray && historyArray.length > 0) {
-                          const finalArray_sorted = historyArray.sort(
-                            (a, b) => {
-                              return b.blockTimestamp - a.blockTimestamp;
-                            }
-                          );
-                          lastSale = finalArray_sorted[0];
-                        }
-                      }
-
-                      const nft_data = await fetch(
-                        `https://cdnflux.dypius.com/collectionsmetadatas/${nftsOwned[
-                          i
-                        ].contract.toLowerCase()}/${tokenByIndex}/metadata.json`
-                      )
-                        .then((res) => res.json())
+                  return await Promise.all(
+                    window.range(0, nextTokenIdToMint - 1).map((k) => {
+                      return collection_contract.methods
+                        .balanceOf(wallet, k)
+                        .call()
                         .then((data) => {
-                          return data;
+                          if (data && data > 0) {
+                            return k;
+                          }
+                          return null; // Return null if data is not greater than 0
                         })
-                        .catch((err) => {
-                          console.error(err.message);
+                        .catch((e) => {
+                          console.log(e);
+                          return null; // Return null if there's an error
                         });
+                    })
+                  );
+                })
+              );
 
-                      if (
-                        nft_data &&
-                        nft_data.code !== 404 &&
-                        typeof nft_data !== "string"
-                      ) {
-                        nftArray.push({
-                          ...nft_data,
-                          tokenId: tokenByIndex,
-                          owner: owner,
-                          nftAddress: nftsOwned[i].contract,
-                          tokenName: tokenName,
-                          collectionName: collectionName,
-                          lastSale: lastSale,
-                        });
-                      } else if (
-                        (nft_data && nft_data.code == 404) ||
-                        typeof nft_data === "string"
-                      ) {
-                        // console.log('nft_data', nft_data);
-                        nftArray.push({
-                          tokenId: tokenByIndex,
-                          owner: owner,
-                          nftAddress: nftsOwned[i].contract,
-                          tokenName: tokenName,
-                          collectionName: collectionName,
-                          lastSale: lastSale,
-                        });
-                      } else {
-                        // console.log('nft_data', nft_data);
-                        nftArray.push({
-                          tokenId: tokenByIndex,
-                          owner: owner,
-                          nftAddress: nftsOwned[i].contract,
-                          tokenName: tokenName,
-                          collectionName: collectionName,
-                          lastSale: lastSale,
-                        });
-                      }
-                    }
-                  })
-                );
-              }
+              othertokensArray = othertokensArray.filter(
+                (value) => value !== null
+              );
+            }
+            if (is721) {
+              tokens = await Promise.all(
+                window.range(0, nftsOwned[i].amount - 1).map(async (j) => {
+                  return collection_contract.methods
+                    .tokenOfOwnerByIndex(wallet, j)
+                    .call()
+                    .catch((e) => {
+                      console.error(e);
+                      return j;
+                    });
+                })
+              );
+            }
+            // if()
 
-              if (
-                allTokens &&
-                allTokens.length > 0 &&
-                currentCollection &&
-                is1155 &&
-                currentCollection.length > 0 &&
-                allTokens.find((obj) => {
-                  return obj !== undefined;
-                }) !== undefined
-              ) {
-                await Promise.all(
-                  window.range(0, allTokens.length - 1).map(async (m) => {
-                    if (allTokens[m] != undefined) {
-                      let tokenByIndex = allTokens[m];
+            const allTokens = [...othertokensArray.flat()];
 
-                      let owner;
-                      let userBalance = 0;
+            if (
+              tokens &&
+              tokens.length > 0 &&
+              currentCollection &&
+              is721 &&
+              currentCollection.length > 0 &&
+              tokens.find((obj) => {
+                return obj !== undefined;
+              }) !== undefined
+            ) {
+              await Promise.all(
+                window.range(0, tokens.length - 1).map(async (l) => {
+                  if (tokens[l]) {
+                    let tokenByIndex = tokens[l];
 
-                      if (is1155) {
+                    let owner;
+                    let userBalance = 0;
+
+                    if (is721) {
+                      owner = wallet;
+                    } else if (is1155) {
+                      if (wallet) {
                         userBalance = await collection_contract.methods
                           .balanceOf(wallet, tokenByIndex)
                           .call()
@@ -1032,119 +909,229 @@ function App() {
                           owner = wallet;
                         }
                       }
-                      const tokenName = currentCollection[0].symbol;
+                    }
+                    const tokenName = currentCollection[0].symbol;
 
-                      const collectionName =
-                        currentCollection[0].collectionName;
+                    const collectionName = currentCollection[0].collectionName;
 
-                      const lastSaleResult = await axios
-                        .get(
-                          `${baseURL}/api/nft-sale-history/${nftsOwned[
-                            i
-                          ].contract.toLowerCase()}/${tokenByIndex}`,
-                          {
-                            headers: {
-                              cascadestyling:
-                                "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
-                            },
-                          }
-                        )
-                        .catch((e) => {
-                          console.error(e);
-                        });
-
-                      if (lastSaleResult && lastSaleResult.status === 200) {
-                        const historyArray = lastSaleResult.data;
-                        if (historyArray && historyArray.length > 0) {
-                          const finalArray_sorted = historyArray.sort(
-                            (a, b) => {
-                              return b.blockTimestamp - a.blockTimestamp;
-                            }
-                          );
-                          lastSale = finalArray_sorted[0];
-                        }
-                      }
-
-                      const nft_data = await fetch(
-                        `https://cdnflux.dypius.com/collectionsmetadatas/${nftsOwned[
+                    const lastSaleResult = await axios
+                      .get(
+                        `${baseURL}/api/nft-sale-history/${nftsOwned[
                           i
-                        ].contract.toLowerCase()}/${tokenByIndex}/metadata.json`
+                        ].contract.toLowerCase()}/${tokenByIndex}`,
+                        {
+                          headers: {
+                            cascadestyling:
+                              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+                          },
+                        }
                       )
-                        .then((res) => res.json())
-                        .then((data) => {
-                          return data;
-                        })
-                        .catch((err) => {
-                          console.error(err.message);
-                        });
+                      .catch((e) => {
+                        console.error(e);
+                      });
 
-                      if (
-                        nft_data &&
-                        nft_data.code !== 404 &&
-                        typeof nft_data !== "string"
-                      ) {
-                        nftArray.push({
-                          ...nft_data,
-                          tokenId: tokenByIndex,
-                          owner: owner,
-                          nftAddress: nftsOwned[i].contract,
-                          tokenName: tokenName,
-                          collectionName: collectionName,
-                          lastSale: lastSale,
+                    if (lastSaleResult && lastSaleResult.status === 200) {
+                      const historyArray = lastSaleResult.data;
+                      if (historyArray && historyArray.length > 0) {
+                        const finalArray_sorted = historyArray.sort((a, b) => {
+                          return b.blockTimestamp - a.blockTimestamp;
                         });
-                      } else if (
-                        (nft_data && nft_data.code == 404) ||
-                        typeof nft_data === "string"
-                      ) {
-                        // console.log('nft_data', nft_data);
-                        nftArray.push({
-                          tokenId: tokenByIndex,
-                          owner: owner,
-                          nftAddress: nftsOwned[i].contract,
-                          tokenName: tokenName,
-                          collectionName: collectionName,
-                          lastSale: lastSale,
-                        });
-                      } else {
-                        // console.log('nft_data', nft_data);
-                        nftArray.push({
-                          tokenId: tokenByIndex,
-                          owner: owner,
-                          nftAddress: nftsOwned[i].contract,
-                          tokenName: tokenName,
-                          collectionName: collectionName,
-                          lastSale: lastSale,
-                        });
+                        lastSale = finalArray_sorted[0];
                       }
                     }
-                  })
-                );
-              }
 
-              if (nftArray.length > 0) {
-                let uniqueArray_listed = [];
-                let uniqueArray_listed_owner = [];
-                if (recentlylisted && recentlylisted.length > 0) {
-                  uniqueArray_listed = recentlylisted.filter(
-                    ({ tokenId: id1, nftAddress: nftAddr1 }) =>
-                      nftArray.some(
-                        ({ tokenId: id2, nftAddress: nftAddr2 }) =>
-                          id1.toString() == id2.toString() &&
-                          nftAddr1.toLowerCase() === nftAddr2.toLowerCase()
-                      )
-                  );
+                    const nft_data = await fetch(
+                      `https://cdnflux.dypius.com/collectionsmetadatas/${nftsOwned[
+                        i
+                      ].contract.toLowerCase()}/${tokenByIndex}/metadata.json`
+                    )
+                      .then((res) => res.json())
+                      .then((data) => {
+                        return data;
+                      })
+                      .catch((err) => {
+                        console.error(err.message);
+                      });
 
-                  uniqueArray_listed_owner = uniqueArray_listed.filter(
-                    (obj) => {
-                      return obj.seller.toLowerCase() === wallet.toLowerCase();
+                    if (
+                      nft_data &&
+                      nft_data.code !== 404 &&
+                      typeof nft_data !== "string"
+                    ) {
+                      nftArray.push({
+                        ...nft_data,
+                        tokenId: tokenByIndex,
+                        owner: owner,
+                        nftAddress: nftsOwned[i].contract,
+                        tokenName: tokenName,
+                        collectionName: collectionName,
+                        lastSale: lastSale,
+                      });
+                    } else if (
+                      (nft_data && nft_data.code == 404) ||
+                      typeof nft_data === "string"
+                    ) {
+                      // console.log('nft_data', nft_data);
+                      nftArray.push({
+                        tokenId: tokenByIndex,
+                        owner: owner,
+                        nftAddress: nftsOwned[i].contract,
+                        tokenName: tokenName,
+                        collectionName: collectionName,
+                        lastSale: lastSale,
+                      });
+                    } else {
+                      // console.log('nft_data', nft_data);
+                      nftArray.push({
+                        tokenId: tokenByIndex,
+                        owner: owner,
+                        nftAddress: nftsOwned[i].contract,
+                        tokenName: tokenName,
+                        collectionName: collectionName,
+                        lastSale: lastSale,
+                      });
                     }
-                  );
+                  }
+                })
+              );
+            }
 
-                  let uniqueArray_listed_owner2 = uniqueArray_listed_owner.filter((value, index, self) => 
-                    self.findIndex(v => v.tokenId === value.tokenId) === index
-                  );
-                
-             
+            if (
+              allTokens &&
+              allTokens.length > 0 &&
+              currentCollection &&
+              is1155 &&
+              currentCollection.length > 0 &&
+              allTokens.find((obj) => {
+                return obj !== undefined;
+              }) !== undefined
+            ) {
+              await Promise.all(
+                window.range(0, allTokens.length - 1).map(async (m) => {
+                  if (allTokens[m] != undefined) {
+                    let tokenByIndex = allTokens[m];
+                    let owner;
+                    let userBalance = 0;
+
+                    if (is1155) {
+                      userBalance = await collection_contract.methods
+                        .balanceOf(wallet, tokenByIndex)
+                        .call()
+                        .catch((e) => {
+                          console.log(e);
+                        });
+
+                      if (userBalance > 0) {
+                        owner = wallet;
+                      }
+                    }
+                    const tokenName = currentCollection[0].symbol;
+
+                    const collectionName = currentCollection[0].collectionName;
+
+                    const lastSaleResult = await axios
+                      .get(
+                        `${baseURL}/api/nft-sale-history/${nftsOwned[
+                          i
+                        ].contract.toLowerCase()}/${tokenByIndex}`,
+                        {
+                          headers: {
+                            cascadestyling:
+                              "SBpioT4Pd7R9981xl5CQ5bA91B3Gu2qLRRzfZcB5KLi5AbTxDM76FsvqMsEZLwMk--KfAjSBuk3O3FFRJTa-mw",
+                          },
+                        }
+                      )
+                      .catch((e) => {
+                        console.error(e);
+                      });
+
+                    if (lastSaleResult && lastSaleResult.status === 200) {
+                      const historyArray = lastSaleResult.data;
+                      if (historyArray && historyArray.length > 0) {
+                        const finalArray_sorted = historyArray.sort((a, b) => {
+                          return b.blockTimestamp - a.blockTimestamp;
+                        });
+                        lastSale = finalArray_sorted[0];
+                      }
+                    }
+
+                    const nft_data = await fetch(
+                      `https://cdnflux.dypius.com/collectionsmetadatas/${nftsOwned[
+                        i
+                      ].contract.toLowerCase()}/${tokenByIndex}/metadata.json`
+                    )
+                      .then((res) => res.json())
+                      .then((data) => {
+                        return data;
+                      })
+                      .catch((err) => {
+                        console.error(err.message);
+                      });
+
+                    if (
+                      nft_data &&
+                      nft_data.code !== 404 &&
+                      typeof nft_data !== "string"
+                    ) {
+                      nftArray.push({
+                        ...nft_data,
+                        tokenId: tokenByIndex,
+                        owner: owner,
+                        nftAddress: nftsOwned[i].contract,
+                        tokenName: tokenName,
+                        collectionName: collectionName,
+                        lastSale: lastSale,
+                      });
+                    } else if (
+                      (nft_data && nft_data.code == 404) ||
+                      typeof nft_data === "string"
+                    ) {
+                      // console.log('nft_data', nft_data);
+                      nftArray.push({
+                        tokenId: tokenByIndex,
+                        owner: owner,
+                        nftAddress: nftsOwned[i].contract,
+                        tokenName: tokenName,
+                        collectionName: collectionName,
+                        lastSale: lastSale,
+                      });
+                    } else {
+                      // console.log('nft_data', nft_data);
+                      nftArray.push({
+                        tokenId: tokenByIndex,
+                        owner: owner,
+                        nftAddress: nftsOwned[i].contract,
+                        tokenName: tokenName,
+                        collectionName: collectionName,
+                        lastSale: lastSale,
+                      });
+                    }
+                  }
+                })
+              );
+            } 
+            if (nftArray.length > 0) {
+              let uniqueArray_listed = [];
+              let uniqueArray_listed_owner = [];
+              if (recentlylisted && recentlylisted.length > 0) {
+                uniqueArray_listed = recentlylisted.filter(
+                  ({ tokenId: id1, nftAddress: nftAddr1 }) =>
+                    nftArray.some(
+                      ({ tokenId: id2, nftAddress: nftAddr2 }) =>
+                        id1.toString() == id2.toString() &&
+                        nftAddr1.toLowerCase() === nftAddr2.toLowerCase()
+                    )
+                );
+
+                uniqueArray_listed_owner = uniqueArray_listed.filter((obj) => {
+                  return obj.seller.toLowerCase() === wallet.toLowerCase();
+                });
+
+                let uniqueArray_listed_owner2 = uniqueArray_listed_owner.filter(
+                  (value, index, self) =>
+                    self.findIndex((v) => v.tokenId === value.tokenId) === index
+                );
+
                 const uniqueArray_regular = nftArray.filter(
                   ({ tokenId: id1, nftAddress: nftAddr1 }) =>
                     !recentlylisted.some(
@@ -1154,14 +1141,16 @@ function App() {
                     )
                 );
 
-                const finalArray = [
-                  ...uniqueArray_listed_owner2,
-                  ...uniqueArray_regular,
-                ];
+                const final =
+                  uniqueArray_listed_owner2.length == 0 &&
+                  uniqueArray_regular.length === 0
+                    ? nftArray
+                    : [...uniqueArray_listed_owner2, ...uniqueArray_regular];
+                const finalArray = [...final];
 
                 setUserNftsOwnedArray(finalArray);
               }
-              }
+              // }
             }
           }
         })
@@ -1539,13 +1528,6 @@ function App() {
         )
       );
 
-      console.log(
-        Object.fromEntries(
-          Object.entries(collectionInfo).filter(
-            ([key, value]) => value !== "" && value !== undefined
-          )
-        )
-      );
 
       const formData = new FormData();
       for (const [key, value] of Object.entries(filteredInfo)) {
@@ -1910,10 +1892,24 @@ function App() {
   }, [coinbase, isConnected]);
 
   useEffect(() => {
-    if (coinbase) {
+    if (coinbase && isOtherUser === false) {
       handleMapUserNftsOwned(coinbase, allCollections, recentlyListedNfts);
     }
-  }, [allCollections, coinbase, recentlyListedNfts]);
+  }, [allCollections, coinbase, recentlyListedNfts, isOtherUser]);
+
+  useEffect(() => {
+    if (
+      isOtherUser === true &&
+      recentlyListedNfts.length > 0 &&
+      allCollections.length > 0
+    ) {
+      handleMapUserNftsOwned(
+        otheruserWallet,
+        allCollections,
+        recentlyListedNfts
+      );
+    }
+  }, [allCollections, otheruserWallet, recentlyListedNfts, isOtherUser]);
 
   return (
     <div
@@ -2051,6 +2047,7 @@ function App() {
               successUpdateProfile={successUpdateProfile}
               onViewShared={(value) => {
                 setisOtherUser(true);
+                setotheruserWallet(value);
                 getOtherUserData(value);
                 getFavNftsPerUser(value);
                 getUserData(value);

@@ -248,7 +248,7 @@ const SingleNft = ({
     });
     if (result) {
       const finalResult = result[1];
-      console.log(finalResult,'finalResult')
+      
       if (finalResult && finalResult.length > 0) {
         if (coinbase) {
           finalArray = finalResult.filter((object) => {
@@ -322,6 +322,10 @@ const SingleNft = ({
         );
 
         setallOffers(allOffersArray);
+      } else {
+        setbestOffer([]);
+        setofferData([]);
+        setallOffers([]);
       }
     } else {
       setbestOffer([]);
@@ -452,7 +456,7 @@ const SingleNft = ({
   const handleCancelSeparateListNft = async (nftAddress, listingIndex) => {
     setcancelLoading(true);
     setcancelStatus("cancel");
-    console.log('in',nftAddress, listingIndex)
+    console.log("in", nftAddress, listingIndex);
     return window
       .cancelListNFT(nftAddress, listingIndex)
       .then(() => {
@@ -568,7 +572,7 @@ const SingleNft = ({
             .catch((e) => {
               console.log(e);
             });
-            console.log('userBalance',userBalance)
+          console.log("userBalance", userBalance);
           // setuserNftBalance(userBalance);
           if (userBalance > 0) {
             owner = userwallet;
@@ -627,7 +631,7 @@ const SingleNft = ({
               .humanize(true)
               .includes("ago");
             if (
-              hasExpired 
+              hasExpired
               // || (result.seller.toLowerCase() !== owner.toLowerCase() &&
               //   owner !== "Multiple"
               // )
@@ -825,12 +829,11 @@ const SingleNft = ({
       } else if (is1155) {
         if (wallet) {
           userBalance = await collection_contract.methods
-          .balanceOf(wallet, nftId)
-          .call()
-          .catch((e) => {
-            console.log(e);
-          });
-
+            .balanceOf(wallet, nftId)
+            .call()
+            .catch((e) => {
+              console.log(e);
+            });
 
           // setuserNftBalance(userBalance);
           if (userBalance > 0) {
@@ -838,7 +841,6 @@ const SingleNft = ({
           } else {
             owner = "Multiple";
           }
-
         }
       }
 
@@ -883,7 +885,6 @@ const SingleNft = ({
           );
         });
 
-
         if (totalfilteredResult) {
           totalfilteredResult.forEach((result, index) => {
             const hasExpired = moment
@@ -912,7 +913,6 @@ const SingleNft = ({
           expiresAt = 0;
         }
 
-     
         const nftdata = await fetch(
           `https://cdnflux.dypius.com/collectionsmetadatas/${nftAddress.toLowerCase()}/${nftId}/metadata.json`
         )
@@ -938,12 +938,10 @@ const SingleNft = ({
             userBalance: Number(userBalance),
             listingsLeft: Number(userBalance) - totalfilteredResultOwner.length,
             is1155: is1155,
-
           });
 
           setNftData(...finalArray);
           setLoading(false);
-
         } else {
           finalArray.push({
             listedObject: totalfilteredResult,
@@ -959,7 +957,6 @@ const SingleNft = ({
             userBalance: Number(userBalance),
             listingsLeft: Number(userBalance) - totalfilteredResultOwner.length,
             is1155: is1155,
-
           });
           setNftData(...finalArray);
           setLoading(false);
@@ -988,7 +985,6 @@ const SingleNft = ({
             userBalance: Number(userBalance),
             listingsLeft: Number(userBalance) - totalfilteredResultOwner.length,
             is1155: is1155,
-
           });
 
           setNftData(...finalArray);
@@ -1006,7 +1002,6 @@ const SingleNft = ({
             userBalance: Number(userBalance),
             listingsLeft: Number(userBalance) - totalfilteredResultOwner.length,
             is1155: is1155,
-
           });
           setNftData(...finalArray);
           setLoading(false);
@@ -1543,8 +1538,7 @@ const SingleNft = ({
             }}
             handleBuyNft={handleBuySeparateNft}
             handlecancelListNft={handleCancelSeparateListNft}
-        offerData={offerData}
-
+            offerData={offerData}
           />
         )}
       <SingleNftHistory

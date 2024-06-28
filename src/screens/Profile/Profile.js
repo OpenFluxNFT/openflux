@@ -28,6 +28,7 @@ const Profile = ({
   userCollectionArray,
   recentlyListedNfts,
   onRefreshListings,
+  loadMore,handleLoadMore
 }) => {
   const [option, setOption] = useState("collected");
   const profileSocials = ["website", "twitter", "instagram"];
@@ -592,17 +593,18 @@ const Profile = ({
                     console.log(e);
                   });
               } else if (is1155) {
-                if(wallet)
-              {  userBalance = await collection_contract.methods
-                  .balanceOf(wallet, item.tokenId)
-                  .call()
-                  .catch((e) => {
-                    console.log(e);
-                  });
+                if (wallet) {
+                  userBalance = await collection_contract.methods
+                    .balanceOf(wallet, item.tokenId)
+                    .call()
+                    .catch((e) => {
+                      console.log(e);
+                    });
 
-                if (userBalance > 0) {
-                  owner = wallet;
-                }}
+                  if (userBalance > 0) {
+                    owner = wallet;
+                  }
+                }
               }
 
               const nft_data = await fetch(
@@ -852,7 +854,10 @@ const Profile = ({
             usersNftOffers={usersNftOffers}
             usersCollectionOffers={usersCollectionOffers}
             userNftsOwned={userNftsOwned}
+            loadMore={loadMore}
+            handleLoadMore={handleLoadMore}
           />
+          
         </div>
       </div>
     </div>

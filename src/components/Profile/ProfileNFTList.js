@@ -52,6 +52,7 @@ const ProfileNFTList = ({
   usersNftOffers,
   usersCollectionOffers,
   userNftsOwned,
+  loadMore,handleLoadMore
 }) => {
   const [favoritesOption, setfavoritesOption] = useState("items");
   const [gridView, setGridView] = useState("small-grid");
@@ -80,7 +81,6 @@ const ProfileNFTList = ({
 
   const [selectedNftId, setSelectedNftId] = useState(""); //buy
 
-  
   const handleKeyPress = (val) => (event) => {
     if (option !== "favorites") {
       if (event.key === "Enter") {
@@ -2885,7 +2885,6 @@ const ProfileNFTList = ({
                             className="table-item col-2 d-flex align-items-center gap-1 w-100"
                             // scope="row"
                           >
-                           
                             {!item.isVideo && item.image ? (
                               <img
                                 src={`https://cdnflux.dypius.com/${item.image}`}
@@ -2938,7 +2937,7 @@ const ProfileNFTList = ({
                             ) : (
                               <></>
                             )}
-                             {userNftsOwned &&
+                            {userNftsOwned &&
                             userNftsOwned.length > 0 &&
                             userNftsOwned.find((item2) => {
                               return (
@@ -3097,26 +3096,26 @@ const ProfileNFTList = ({
                               ) : (
                                 <></>
                               )}
-                               {userNftsOwned &&
-                            userNftsOwned.length > 0 &&
-                            userNftsOwned.find((item2) => {
-                              return (
-                                item2.contract.toLowerCase() ===
-                                item.nftAddress.toLowerCase()
-                              );
-                            })?.sumAmount ? (
-                              <span className="sumamount">
-                                x
-                                {
-                                  userNftsOwned.find((item2) => {
-                                    return (
-                                      item2.contract.toLowerCase() ===
-                                      item.nftAddress.toLowerCase()
-                                    );
-                                  })?.sumAmount
-                                }
-                              </span>
-                            ) : null}
+                              {userNftsOwned &&
+                              userNftsOwned.length > 0 &&
+                              userNftsOwned.find((item2) => {
+                                return (
+                                  item2.contract.toLowerCase() ===
+                                  item.nftAddress.toLowerCase()
+                                );
+                              })?.sumAmount ? (
+                                <span className="sumamount">
+                                  x
+                                  {
+                                    userNftsOwned.find((item2) => {
+                                      return (
+                                        item2.contract.toLowerCase() ===
+                                        item.nftAddress.toLowerCase()
+                                      );
+                                    })?.sumAmount
+                                  }
+                                </span>
+                              ) : null}
                             </td>
                             <td className="table-item col-2">
                               {item.price
@@ -3730,26 +3729,29 @@ const ProfileNFTList = ({
                       style={{ textDecoration: "none" }}
                       className={"position-relative"}
                     >
-                       {userNftsOwned &&
-                            userNftsOwned.length > 0 &&
+                      {userNftsOwned &&
+                      userNftsOwned.length > 0 &&
+                      userNftsOwned.find((item2) => {
+                        return (
+                          item2.contract.toLowerCase() ===
+                          item.nftAddress.toLowerCase()
+                        );
+                      })?.sumAmount ? (
+                        <span
+                          className="sumamount position-absolute"
+                          style={{ right: "-20px", top: "-20px" }}
+                        >
+                          x
+                          {
                             userNftsOwned.find((item2) => {
                               return (
                                 item2.contract.toLowerCase() ===
                                 item.nftAddress.toLowerCase()
                               );
-                            })?.sumAmount ? (
-                              <span className="sumamount position-absolute" style={{right: '-20px', top: '-20px'}}>
-                                x
-                                {
-                                  userNftsOwned.find((item2) => {
-                                    return (
-                                      item2.contract.toLowerCase() ===
-                                      item.nftAddress.toLowerCase()
-                                    );
-                                  })?.sumAmount
-                                }
-                              </span>
-                            ) : null}
+                            })?.sumAmount
+                          }
+                        </span>
+                      ) : null}
                       {!item.isVideo && item.image ? (
                         <img
                           src={`https://cdnflux.dypius.com/${item.image}`}
@@ -3869,25 +3871,28 @@ const ProfileNFTList = ({
                         className={"position-relative"}
                       >
                         {userNftsOwned &&
-                            userNftsOwned.length > 0 &&
-                            userNftsOwned.find((item2) => {
-                              return (
-                                item2.contract.toLowerCase() ===
-                                item.nftAddress.toLowerCase()
-                              );
-                            })?.sumAmount ? (
-                              <span className="sumamount position-absolute" style={{right: '-20px', top: '-20px'}}>
-                                x
-                                {
-                                  userNftsOwned.find((item2) => {
-                                    return (
-                                      item2.contract.toLowerCase() ===
-                                      item.nftAddress.toLowerCase()
-                                    );
-                                  })?.sumAmount
-                                }
-                              </span>
-                            ) : null}
+                        userNftsOwned.length > 0 &&
+                        userNftsOwned.find((item2) => {
+                          return (
+                            item2.contract.toLowerCase() ===
+                            item.nftAddress.toLowerCase()
+                          );
+                        })?.sumAmount ? (
+                          <span
+                            className="sumamount position-absolute"
+                            style={{ right: "-20px", top: "-20px" }}
+                          >
+                            x
+                            {
+                              userNftsOwned.find((item2) => {
+                                return (
+                                  item2.contract.toLowerCase() ===
+                                  item.nftAddress.toLowerCase()
+                                );
+                              })?.sumAmount
+                            }
+                          </span>
+                        ) : null}
                         {!item.isVideo && item.image ? (
                           <img
                             src={`https://cdnflux.dypius.com/${item.image}`}
@@ -4909,7 +4914,13 @@ const ProfileNFTList = ({
               </span>
             )}
         </div>
+        {loadMore && (
+        <div className="d-flex justify-content-center mt-5">
+          <button className="buy-btn px-5 m-auto" onClick={handleLoadMore}>Load more</button>
+        </div>
+      )}
       </div>
+      
     </div>
   );
 };

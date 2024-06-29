@@ -974,6 +974,11 @@ function App() {
       const checkLoadmore = nftsOwned.filter((collection) => {
         return collection.amount > 50;
       });
+
+      const collections_ordered = nftsOwned.sort((a, b) => {
+        return a.amount - b.amount;
+      });
+      
       if (checkLoadmore !== undefined) {
         setloadMore(true);
         setobjectsToLoad(checkLoadmore);
@@ -982,23 +987,23 @@ function App() {
         setobjectsToLoad([]);
       }
       await Promise.all(
-        window.range(0, nftsOwned.length - 1).map(async (i) => {
-          nftsOwnedAmount = nftsOwned[i].amount;
+        window.range(0, collections_ordered.length - 1).map(async (i) => {
+          nftsOwnedAmount = collections_ordered[i].amount;
 
           const currentCollection = allCollectionsobj.filter((obj) => {
             return (
               obj.contractAddress.toLowerCase() ===
-              nftsOwned[i].contract.toLowerCase()
+              collections_ordered[i].contract.toLowerCase()
             );
           });
 
           const abi_1155 = new window.confluxWeb3.eth.Contract(
             window.BACKUP_ABI,
-            nftsOwned[i].contract
+            collections_ordered[i].contract
           );
           const abi_721 = new window.confluxWeb3.eth.Contract(
             window.ERC721_ABI,
-            nftsOwned[i].contract
+            collections_ordered[i].contract
           );
 
           const is721 = await abi_721.methods
@@ -1023,8 +1028,8 @@ function App() {
             : window.ERC721_ABI;
 
           allUserCollections.push({
-            collectionName: nftsOwned[i].name,
-            nftAddress: nftsOwned[i].contract,
+            collectionName: collections_ordered[i].name,
+            nftAddress: collections_ordered[i].contract,
           });
 
           if (abi_final) {
@@ -1032,14 +1037,14 @@ function App() {
             const web3 = window.confluxWeb3;
             const collection_contract = new web3.eth.Contract(
               abi,
-              nftsOwned[i].contract
+              collections_ordered[i].contract
             );
 
             let lastSale = 0;
             let limit =
-              Number(nftsOwned[i].amount) > 50
+              Number(collections_ordered[i].amount) > 50
                 ? nftSlice
-                : Number(nftsOwned[i].amount);
+                : Number(collections_ordered[i].amount);
 
             // if (collection_contract.methods.tokenOfOwnerByIndex) {
             if (is1155) {
@@ -1049,7 +1054,7 @@ function App() {
                     .nextTokenIdToMint()
                     .call()
                     .catch((e) => {
-                      console.error(e);
+                      console.error(e); 
                       return 0;
                     });
 
@@ -1134,7 +1139,7 @@ function App() {
 
                     const lastSaleResult = await axios
                       .get(
-                        `${baseURL}/api/nft-sale-history/${nftsOwned[
+                        `${baseURL}/api/nft-sale-history/${collections_ordered[
                           i
                         ].contract.toLowerCase()}/${tokenByIndex}`,
                         {
@@ -1159,7 +1164,7 @@ function App() {
                     }
 
                     const nft_data = await fetch(
-                      `https://cdnflux.dypius.com/collectionsmetadatas/${nftsOwned[
+                      `https://cdnflux.dypius.com/collectionsmetadatas/${collections_ordered[
                         i
                       ].contract.toLowerCase()}/${tokenByIndex}/metadata.json`
                     )
@@ -1180,7 +1185,7 @@ function App() {
                         ...nft_data,
                         tokenId: tokenByIndex,
                         owner: owner,
-                        nftAddress: nftsOwned[i].contract,
+                        nftAddress: collections_ordered[i].contract,
                         tokenName: tokenName,
                         collectionName: collectionName,
                         lastSale: lastSale,
@@ -1193,7 +1198,7 @@ function App() {
                       nftArray.push({
                         tokenId: tokenByIndex,
                         owner: owner,
-                        nftAddress: nftsOwned[i].contract,
+                        nftAddress: collections_ordered[i].contract,
                         tokenName: tokenName,
                         collectionName: collectionName,
                         lastSale: lastSale,
@@ -1203,7 +1208,7 @@ function App() {
                       nftArray.push({
                         tokenId: tokenByIndex,
                         owner: owner,
-                        nftAddress: nftsOwned[i].contract,
+                        nftAddress: collections_ordered[i].contract,
                         tokenName: tokenName,
                         collectionName: collectionName,
                         lastSale: lastSale,
@@ -1249,7 +1254,7 @@ function App() {
 
                     const lastSaleResult = await axios
                       .get(
-                        `${baseURL}/api/nft-sale-history/${nftsOwned[
+                        `${baseURL}/api/nft-sale-history/${collections_ordered[
                           i
                         ].contract.toLowerCase()}/${tokenByIndex}`,
                         {
@@ -1274,7 +1279,7 @@ function App() {
                     }
 
                     const nft_data = await fetch(
-                      `https://cdnflux.dypius.com/collectionsmetadatas/${nftsOwned[
+                      `https://cdnflux.dypius.com/collectionsmetadatas/${collections_ordered[
                         i
                       ].contract.toLowerCase()}/${tokenByIndex}/metadata.json`
                     )
@@ -1295,7 +1300,7 @@ function App() {
                         ...nft_data,
                         tokenId: tokenByIndex,
                         owner: owner,
-                        nftAddress: nftsOwned[i].contract,
+                        nftAddress: collections_ordered[i].contract,
                         tokenName: tokenName,
                         collectionName: collectionName,
                         lastSale: lastSale,
@@ -1308,7 +1313,7 @@ function App() {
                       nftArray.push({
                         tokenId: tokenByIndex,
                         owner: owner,
-                        nftAddress: nftsOwned[i].contract,
+                        nftAddress: collections_ordered[i].contract,
                         tokenName: tokenName,
                         collectionName: collectionName,
                         lastSale: lastSale,
@@ -1318,7 +1323,7 @@ function App() {
                       nftArray.push({
                         tokenId: tokenByIndex,
                         owner: owner,
-                        nftAddress: nftsOwned[i].contract,
+                        nftAddress: collections_ordered[i].contract,
                         tokenName: tokenName,
                         collectionName: collectionName,
                         lastSale: lastSale,
@@ -1328,16 +1333,17 @@ function App() {
                 })
               );
             }
+ 
             if (nftArray.length > 0) {
               let uniqueArray_listed = [];
               let uniqueArray_listed_owner = [];
               if (recentlylisted && recentlylisted.length > 0) {
                 uniqueArray_listed = recentlylisted.filter(
-                  ({ tokenId: id1, nftAddress: nftAddr1 }) =>
+                  ({ tokenId: id1, nftAddress: nftAddr1}) =>
                     nftArray.some(
                       ({ tokenId: id2, nftAddress: nftAddr2 }) =>
                         id1.toString() == id2.toString() &&
-                        nftAddr1.toLowerCase() === nftAddr2.toLowerCase()
+                        nftAddr1.toLowerCase() === nftAddr2.toLowerCase()  
                     )
                 );
 
@@ -1351,14 +1357,15 @@ function App() {
                 );
 
                 const uniqueArray_regular = nftArray.filter(
-                  ({ tokenId: id1, nftAddress: nftAddr1 }) =>
+                  ({ tokenId: id1, nftAddress: nftAddr1, owner: owner1 }) =>
                     !recentlylisted.some(
-                      ({ tokenId: id2, nftAddress: nftAddr2 }) =>
+                      ({ tokenId: id2, nftAddress: nftAddr2, seller: owner2 }) =>
                         id1.toString() === id2.toString() &&
-                        nftAddr1.toLowerCase() === nftAddr2.toLowerCase()
+                        nftAddr1.toLowerCase() === nftAddr2.toLowerCase() &&
+                        owner1.toLowerCase() === owner2.toLowerCase()
                     )
                 );
-
+                
                 const final =
                   uniqueArray_listed_owner2.length == 0 &&
                   uniqueArray_regular.length === 0
@@ -2294,7 +2301,7 @@ function App() {
                 let slice = nftSlice + nftPerRow;
                 handleLoadMore(
                   slice,
-                  coinbase,
+                  isOtherUser ? otheruserWallet : coinbase,
                   allCollections,
                   recentlyListedNfts
                 );

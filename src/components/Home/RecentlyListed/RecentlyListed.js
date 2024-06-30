@@ -165,6 +165,8 @@ const RecentlyListed = ({
   };
 
   const buyFunc = async (nft, index) => {
+    setbuyLoading(true);
+
     await window
       .buyNFT(nft.nftAddress, index, nft.price)
       .then((result) => {
@@ -187,11 +189,11 @@ const RecentlyListed = ({
         console.error(e);
       });
   };
+ 
 
   const handleBuyNft = async (nft) => {
-    setSelectedNftId(nft.tokenId);
     let listingsArray = [];
-
+ 
     const listednfts = await axios
       .get(
         `${baseURL}/api/collections/${nft.nftAddress.toLowerCase()}/listings`,
@@ -283,8 +285,8 @@ const RecentlyListed = ({
                         item.image && item.image !== "undefined"
                           ? `https://cdnflux.dypius.com/${item.image}`
                           : item.image === "undefined"
-                          ? require(`./assets/noImage2.png`)
-                          : require(`./assets/nftPlaceholder${index + 1}.png`)
+                            ? require(`./assets/noImage2.png`)
+                            : require(`./assets/nftPlaceholder${index + 1}.png`)
                       }
                       className="card-img"
                       alt=""
@@ -301,16 +303,16 @@ const RecentlyListed = ({
                         <img
                           src={
                             userNftFavsInitial &&
-                            userNftFavsInitial.length > 0 &&
-                            userNftFavsInitial.find((favitem) => {
-                              return (
-                                favitem.contractAddress === item.nftAddress &&
-                                favitem.tokenIds.find(
-                                  (itemTokenIds) =>
-                                    itemTokenIds === item.tokenId
-                                )
-                              );
-                            })
+                              userNftFavsInitial.length > 0 &&
+                              userNftFavsInitial.find((favitem) => {
+                                return (
+                                  favitem.contractAddress === item.nftAddress &&
+                                  favitem.tokenIds.find(
+                                    (itemTokenIds) =>
+                                      itemTokenIds === item.tokenId
+                                  )
+                                );
+                              })
                               ? redFavorite
                               : emptyFavorite
                           }
@@ -320,16 +322,16 @@ const RecentlyListed = ({
                         <span
                           className={
                             userNftFavsInitial &&
-                            userNftFavsInitial.length > 0 &&
-                            userNftFavsInitial.find((favitem) => {
-                              return (
-                                favitem.contractAddress === item.nftAddress &&
-                                favitem.tokenIds.find(
-                                  (itemTokenIds) =>
-                                    itemTokenIds === item.tokenId
-                                )
-                              );
-                            })
+                              userNftFavsInitial.length > 0 &&
+                              userNftFavsInitial.find((favitem) => {
+                                return (
+                                  favitem.contractAddress === item.nftAddress &&
+                                  favitem.tokenIds.find(
+                                    (itemTokenIds) =>
+                                      itemTokenIds === item.tokenId
+                                  )
+                                );
+                              })
                               ? "fav-count-active"
                               : "fav-count"
                           }
@@ -350,13 +352,13 @@ const RecentlyListed = ({
                         {item.tokenName} #{item.tokenId}
                       </h6>
                       {allCollections &&
-                      allCollections.length > 0 &&
-                      allCollections.find((obj) => {
-                        return (
-                          obj.contractAddress.toLowerCase() ===
-                          item.nftAddress.toLowerCase()
-                        );
-                      }) ? (
+                        allCollections.length > 0 &&
+                        allCollections.find((obj) => {
+                          return (
+                            obj.contractAddress.toLowerCase() ===
+                            item.nftAddress.toLowerCase()
+                          );
+                        }) ? (
                         allCollections.find((obj) => {
                           return (
                             obj.contractAddress.toLowerCase() ===
@@ -384,7 +386,7 @@ const RecentlyListed = ({
 
                     <div className="mt-3">
                       {coinbase &&
-                      coinbase.toLowerCase() === item.seller?.toLowerCase() ? (
+                        coinbase.toLowerCase() === item.seller?.toLowerCase() ? (
                         <NavLink
                           className="buy-btn w-100 d-flex justify-content-center "
                           to={`/nft/${item.tokenId}/${item.nftAddress}`}
@@ -398,11 +400,13 @@ const RecentlyListed = ({
                           onClick={(e) => {
                             e.stopPropagation();
                             e.preventDefault();
+                            setSelectedNftId(index);
+
                             handleBuyNft(item);
                           }}
                         >
                           Buy
-                          {buyloading && selectedNftId === item.tokenId && (
+                          {buyloading && selectedNftId === index && (
                             <div
                               className="spinner-border spinner-border-sm text-light ms-1"
                               role="status"
@@ -417,9 +421,9 @@ const RecentlyListed = ({
             </Slider>
           ) : loading === true ? (
             <div className="recently-listed-grid mt-4">
-            <Skeleton variant="rounded" width={"100%"} height={235} />
-            <Skeleton variant="rounded" width={"100%"} height={235} />
-          </div>
+              <Skeleton variant="rounded" width={"100%"} height={235} />
+              <Skeleton variant="rounded" width={"100%"} height={235} />
+            </div>
           ) : (
             <>
               <div></div>
@@ -474,8 +478,8 @@ const RecentlyListed = ({
                         item.image && item.image !== "undefined"
                           ? `https://cdnflux.dypius.com/${item.image}`
                           : item.image === "undefined"
-                          ? require(`./assets/noImage2.png`)
-                          : require(`./assets/nftPlaceholder${index + 1}.png`)
+                            ? require(`./assets/noImage2.png`)
+                            : require(`./assets/nftPlaceholder${index + 1}.png`)
                       }
                       className="card-img"
                       alt=""
@@ -494,15 +498,15 @@ const RecentlyListed = ({
                       <img
                         src={
                           userNftFavsInitial &&
-                          userNftFavsInitial.length > 0 &&
-                          userNftFavsInitial.find((favitem) => {
-                            return (
-                              favitem.contractAddress === item.nftAddress &&
-                              favitem.tokenIds.find(
-                                (itemTokenIds) => itemTokenIds === item.tokenId
-                              )
-                            );
-                          })
+                            userNftFavsInitial.length > 0 &&
+                            userNftFavsInitial.find((favitem) => {
+                              return (
+                                favitem.contractAddress === item.nftAddress &&
+                                favitem.tokenIds.find(
+                                  (itemTokenIds) => itemTokenIds === item.tokenId
+                                )
+                              );
+                            })
                             ? redFavorite
                             : emptyFavorite
                         }
@@ -512,15 +516,15 @@ const RecentlyListed = ({
                       <span
                         className={
                           userNftFavsInitial &&
-                          userNftFavsInitial.length > 0 &&
-                          userNftFavsInitial.find((favitem) => {
-                            return (
-                              favitem.contractAddress === item.nftAddress &&
-                              favitem.tokenIds.find(
-                                (itemTokenIds) => itemTokenIds === item.tokenId
-                              )
-                            );
-                          })
+                            userNftFavsInitial.length > 0 &&
+                            userNftFavsInitial.find((favitem) => {
+                              return (
+                                favitem.contractAddress === item.nftAddress &&
+                                favitem.tokenIds.find(
+                                  (itemTokenIds) => itemTokenIds === item.tokenId
+                                )
+                              );
+                            })
                             ? "fav-count-active"
                             : "fav-count"
                         }
@@ -541,13 +545,13 @@ const RecentlyListed = ({
                       {item.tokenName} #{item.tokenId}
                     </h6>
                     {allCollections &&
-                    allCollections.length > 0 &&
-                    allCollections.find((obj) => {
-                      return (
-                        obj.contractAddress.toLowerCase() ===
-                        item.nftAddress.toLowerCase()
-                      );
-                    }) ? (
+                      allCollections.length > 0 &&
+                      allCollections.find((obj) => {
+                        return (
+                          obj.contractAddress.toLowerCase() ===
+                          item.nftAddress.toLowerCase()
+                        );
+                      }) ? (
                       allCollections.find((obj) => {
                         return (
                           obj.contractAddress.toLowerCase() ===
@@ -574,7 +578,7 @@ const RecentlyListed = ({
                   </div>
                   <div className="mt-3">
                     {coinbase &&
-                    coinbase.toLowerCase() === item.seller?.toLowerCase() ? (
+                      coinbase.toLowerCase() === item.seller?.toLowerCase() ? (
                       <NavLink
                         className="buy-btn w-100 d-flex justify-content-center "
                         to={`/nft/${item.tokenId}/${item.nftAddress}`}
@@ -588,11 +592,12 @@ const RecentlyListed = ({
                         onClick={(e) => {
                           e.stopPropagation();
                           e.preventDefault();
+                          setSelectedNftId(index);
                           handleBuyNft(item);
                         }}
                       >
                         Buy
-                        {buyloading && selectedNftId === item.tokenId && (
+                        {buyloading && selectedNftId === index && (
                           <div
                             className="spinner-border spinner-border-sm text-light ms-1"
                             role="status"

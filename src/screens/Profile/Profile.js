@@ -12,6 +12,7 @@ const Profile = ({
   coinbase,
   userData,
   userTotalNftsOwned,
+  userNftsOwned,
   onViewShared,
   updateUserData,
   successUpdateProfile,
@@ -27,6 +28,7 @@ const Profile = ({
   userCollectionArray,
   recentlyListedNfts,
   onRefreshListings,
+  loadMore,handleLoadMore, loadStatus
 }) => {
   const [option, setOption] = useState("collected");
   const profileSocials = ["website", "twitter", "instagram"];
@@ -393,17 +395,38 @@ const Profile = ({
                   return Promise.all(
                     window.range(0, finalResult.length - 1).map(async (k) => {
                       if (userCollection[i].contractAddress) {
-                        const abiresult = await axios
-                          .get(
-                            `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${userCollection[i].contractAddress}`
-                          )
+                        const abi_1155 = new window.confluxWeb3.eth.Contract(
+                          window.BACKUP_ABI,
+                          userCollection[i].contractAddress
+                        );
+                        const abi_721 = new window.confluxWeb3.eth.Contract(
+                          window.ERC721_ABI,
+                          userCollection[i].contractAddress
+                        );
+
+                        const is721 = await abi_721.methods
+                          .supportsInterface(window.config.erc721_id)
+                          .call()
                           .catch((e) => {
                             console.error(e);
+                            return false;
                           });
-                        if (abiresult && abiresult.status === 200) {
-                          const abi = abiresult.data.result
-                            ? JSON.parse(abiresult.data.result)
-                            : window.BACKUP_ABI;
+                        const is1155 = await abi_1155.methods
+                          .supportsInterface(window.config.erc1155_id)
+                          .call()
+                          .catch((e) => {
+                            console.error(e);
+                            return false;
+                          });
+
+                        const abi_final = is1155
+                          ? window.BACKUP_ABI
+                          : is721
+                          ? window.ERC721_ABI
+                          : window.ERC721_ABI;
+
+                        if (abi_final) {
+                          const abi = abi_final;
                           const collection_contract = new web3.eth.Contract(
                             abi,
                             userCollection[i].contractAddress
@@ -506,20 +529,44 @@ const Profile = ({
           console.log(e);
         });
       const web3 = window.confluxWeb3;
+      const wallet = await window.getCoinbase().then((data) => {
+        return data;
+      });
       if (result && result.status === 200) {
         const saleHistory = await Promise.all(
           result.data.map(async (item) => {
-            const abiresult = await axios
-              .get(
-                `https://evmapi.confluxscan.io/api?module=contract&action=getabi&address=${item.nftAddress}`
-              )
+            const abi_1155 = new window.confluxWeb3.eth.Contract(
+              window.BACKUP_ABI,
+              item.nftAddress
+            );
+            const abi_721 = new window.confluxWeb3.eth.Contract(
+              window.ERC721_ABI,
+              item.nftAddress
+            );
+
+            const is721 = await abi_721.methods
+              .supportsInterface(window.config.erc721_id)
+              .call()
               .catch((e) => {
                 console.error(e);
+                return false;
               });
-            if (abiresult && abiresult.status === 200) {
-              const abi = abiresult.data.result
-                ? JSON.parse(abiresult.data.result)
-                : window.BACKUP_ABI;
+            const is1155 = await abi_1155.methods
+              .supportsInterface(window.config.erc1155_id)
+              .call()
+              .catch((e) => {
+                console.error(e);
+                return false;
+              });
+
+            const abi_final = is1155
+              ? window.BACKUP_ABI
+              : is721
+              ? window.ERC721_ABI
+              : window.ERC721_ABI;
+
+            if (abi_final) {
+              const abi = abi_final;
               const currentCollection = allCollections.filter((obj) => {
                 return (
                   obj.contractAddress.toLowerCase() ===
@@ -535,12 +582,30 @@ const Profile = ({
 
               const collectionName = currentCollection?.collectionName;
 
-              const owner = await collection_contract.methods
-                .ownerOf(item.tokenId)
-                .call()
-                .catch((e) => {
-                  console.error(e);
-                });
+              let owner;
+              let userBalance = 0;
+
+              if (is721) {
+                owner = await collection_contract.methods
+                  .ownerOf(item.tokenId)
+                  .call()
+                  .catch((e) => {
+                    console.log(e);
+                  });
+              } else if (is1155) {
+                if (wallet) {
+                  userBalance = await collection_contract.methods
+                    .balanceOf(wallet, item.tokenId)
+                    .call()
+                    .catch((e) => {
+                      console.log(e);
+                    });
+
+                  if (userBalance > 0) {
+                    owner = wallet;
+                  }
+                }
+              }
 
               const nft_data = await fetch(
                 `https://cdnflux.dypius.com/collectionsmetadatas/${item.nftAddress.toLowerCase()}/${
@@ -684,11 +749,12 @@ const Profile = ({
   }, []);
 
   useEffect(() => {
-    if(coinbase && allCollections.length>0)
-    {fetchUserOffersMadeForNft();
-    fetchUserSaleHistory();
-    fetchUserOffersMadeForCollection();}
-  }, [coinbase,allCollections]);
+    if (coinbase && allCollections.length > 0) {
+      fetchUserOffersMadeForNft();
+      fetchUserSaleHistory();
+      fetchUserOffersMadeForCollection();
+    }
+  }, [coinbase, allCollections]);
 
   // useEffect(() => {
   //   fetchCollectionOffers();
@@ -787,7 +853,12 @@ const Profile = ({
             userCollection={userCollection}
             usersNftOffers={usersNftOffers}
             usersCollectionOffers={usersCollectionOffers}
+            userNftsOwned={userNftsOwned}
+            loadMore={loadMore}
+            handleLoadMore={handleLoadMore}
+            loadStatus={loadStatus}
           />
+          
         </div>
       </div>
     </div>

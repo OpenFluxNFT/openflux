@@ -16,7 +16,11 @@ import websiteIcon from "./assets/websiteIcon.svg";
 import telegramIcon from "./assets/telegramIcon.svg";
 import checkIcon from "../../Collections/TopCollections/assets/checkIcon.svg";
 import getFormattedNumber from "../../../hooks/get-formatted-number";
-import dummyCollectionIcon from './assets/dummyCollectionIcon.png'
+import dummyCollectionIcon from "./assets/dummyCollectionIcon.png";
+import OutsideClickHandler from "react-outside-click-handler";
+import { shortAddress } from "../../../hooks/shortAddress";
+import arrowRight from "./assets/arrowRight.svg";
+import { NavLink } from "react-router-dom";
 
 const CollectionBanner = ({
   title,
@@ -33,8 +37,8 @@ const CollectionBanner = ({
   totalSupplyPerCollection,
   collectionFeeRate,
 }) => {
- 
-
+  const [showCreatorTooltip, setshowCreatorTooltip] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   return (
     <div className="container-lg py-0 py-lg-5">
@@ -63,7 +67,11 @@ const CollectionBanner = ({
                     </div>
                     <div className="d-flex align-items-center gap-1">
                       <span className="collection-info-span mb-0">Created</span>
-                      <span className="collection-info mb-0">{new Date(currentCollection.createdAt).toLocaleDateString()}</span>
+                      <span className="collection-info mb-0">
+                        {new Date(
+                          currentCollection.createdAt
+                        ).toLocaleDateString()}
+                      </span>
                     </div>
                     <div className="d-flex align-items-center gap-1">
                       <span className="collection-info-span mb-0">
@@ -82,21 +90,23 @@ const CollectionBanner = ({
                     </div>
                   </div>
                 </div>
-                <div className="d-flex align-items-center gap-2">
-                  {socials.map((item, index) => (
-                    item?.link?.length > 0 &&
-                    <a
-                      href={item.link === "" ? "#" : item.link}
-                      target="_blank"
-                      key={index}
-                    >
-                      <img
-                        src={require(`./assets/${item.title}Icon.svg`)}
-                        alt=""
-                      />
-                    </a>
-                  ))}
-               
+                <div className="d-flex align-items-center gap-2 position-relative">
+                  {socials.map(
+                    (item, index) =>
+                      item?.link?.length > 0 && (
+                        <a
+                          href={item.link === "" ? "#" : item.link}
+                          target="_blank"
+                          key={index}
+                        >
+                          <img
+                            src={require(`./assets/${item.title}Icon.svg`)}
+                            alt=""
+                          />
+                        </a>
+                      )
+                  )}
+
                   <div
                     className="info-divider"
                     style={{ height: "25px" }}
@@ -110,7 +120,50 @@ const CollectionBanner = ({
                   <img
                     src={isVerified ? followIconActive : followIcon}
                     alt=""
+                    className="favorite-icon"
+                    onClick={() => {
+                      setshowCreatorTooltip(true);
+                    }}
                   />
+                  {showCreatorTooltip && (
+                    <OutsideClickHandler
+                      onOutsideClick={() => setshowCreatorTooltip(false)}
+                    >
+                      <div className="upload-dropdown w-100 p-3 d-flex flex-column gap-2">
+                        <div className="d-flex align-items-center gap-2 position-relative">
+                          <img
+                            src={logo}
+                            className="collection-logo"
+                            alt=""
+                            style={{ width: 20, height: 20 }}
+                          />
+                          <h6 className="collection-title2 mb-0">{title}</h6>
+                          {isVerified && <img src={checkIcon} alt="" />}
+                        </div>
+                        <div className="d-flex flex-wrap align-items-center gap-2">
+                          <span className="collection-info-span mb-0">
+                            Owner
+                          </span>
+                          <a
+                            className="collection-info mb-0"
+                            href={`https://evm.confluxscan.net/address/${currentCollection.owner}`}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {shortAddress(currentCollection.owner)}
+                          </a>
+                        </div>
+                        <div className="d-flex justify-content-end mt-2">
+                          <NavLink
+                            className="view-profile-text d-flex align-items-center gap-2"
+                            to={`/profile/${currentCollection.owner}`}
+                          >
+                            View profile <img src={arrowRight} alt="" />{" "}
+                          </NavLink>
+                        </div>
+                      </div>
+                    </OutsideClickHandler>
+                  )}
                 </div>
               </div>
             </div>

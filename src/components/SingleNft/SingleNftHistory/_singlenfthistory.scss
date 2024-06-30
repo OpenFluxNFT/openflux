@@ -23,6 +23,20 @@
     overflow-y: auto;
   }
 
+  .single-nft-table-wrapper2 {
+    // display: grid;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .wcfx-wrapper {
+    right: 1px;
+    background: rgb(69 103 149);
+    padding: 7px;
+    top: 1px;
+    border-radius: 12px;
+  }
+
   .item-history-table {
     border-radius: 10px;
     max-height: 300px;

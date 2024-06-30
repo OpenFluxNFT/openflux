@@ -52,7 +52,9 @@ const CollectionList = ({
   onClearAll,
   nftArrayFilteredBySearch,
   isSearch,
-  onFilterTraits,ntftArrayFilteredByTraits,isSearchTrait
+  onFilterTraits,
+  ntftArrayFilteredByTraits,
+  isSearchTrait, userNftsOwned
 }) => {
   const windowSize = useWindowSize();
   const [openFilters, setOpenFilters] = useState(false);
@@ -168,8 +170,6 @@ const CollectionList = ({
     );
   };
 
-  
-
   const handleKeyPress = (val) => (event) => {
     if (event.key === "Enter") {
       fetchSearchNftsPerCollection(val.value);
@@ -208,29 +208,30 @@ const CollectionList = ({
       );
 
       if (itemExists) {
-        // Remove the item if it exists 
-        
-        onFilterTraits(prevItems.filter(
-          (item) =>
-            String(item.type).toLowerCase() !== targetType ||
-            String(item.value).toLowerCase() !== targetValue
-        ));
+        // Remove the item if it exists
+
+        onFilterTraits(
+          prevItems.filter(
+            (item) =>
+              String(item.type).toLowerCase() !== targetType ||
+              String(item.value).toLowerCase() !== targetValue
+          )
+        );
         return prevItems.filter(
           (item) =>
             String(item.type).toLowerCase() !== targetType ||
             String(item.value).toLowerCase() !== targetValue
         );
-      
-
       } else {
         // Add the item if it doesn't exist
-        onFilterTraits([...prevItems, { type: targetType, value: targetValue }]);
+        onFilterTraits([
+          ...prevItems,
+          { type: targetType, value: targetValue },
+        ]);
         return [...prevItems, { type: targetType, value: targetValue }];
       }
     });
   };
-
-  
 
   const fetchFavoriteCounts = async () => {
     if (allNftArray && allNftArray.length > 0) {
@@ -403,7 +404,6 @@ const CollectionList = ({
     }
   };
 
-
   const handleRefreshData = async (nft) => {
     const listednfts = await axios
       .get(
@@ -491,7 +491,6 @@ const CollectionList = ({
         console.error(e);
       });
   };
-  
 
   const handleBuyNft = async (nft) => {
     setSelectedNftId(nft.tokenId);
@@ -555,8 +554,6 @@ const CollectionList = ({
   //     }, 1500);
   //   }
   // }, [queryItems]);
-
-
 
   return (
     <>
@@ -814,14 +811,12 @@ const CollectionList = ({
                                           ([key, value]) => (
                                             <FormGroup>
                                               <FormControlLabel
-                                                onChange={() =>{
-
+                                                onChange={() => {
                                                   addOrRemove({
                                                     type: item.key,
-                                                  value: key,
+                                                    value: key,
                                                   });
-                                                }
-                                                }
+                                                }}
                                                 control={
                                                   <Checkbox
                                                     checked={checkIfExists({
@@ -873,8 +868,8 @@ const CollectionList = ({
                     currentCollection.owner &&
                     coinbase &&
                     currentCollection.owner.toLowerCase() ===
-                      coinbase.toLowerCase()) ||
-                  totalSupplyPerCollection === 0
+                    coinbase.toLowerCase())|| (userNftsOwned && userNftsOwned.length > 0 && userNftsOwned.find((nft) => { return nft.contract.toLowerCase() === collectionAddress.toLowerCase() && nft.type === 'ERC1155' })) ||
+                    totalSupplyPerCollection === 0
                     ? "col-8 col-lg-7"
                     : "col-6 col-lg-5"
                 }
@@ -942,9 +937,8 @@ const CollectionList = ({
               <div className="col-2 d-none d-lg-block">
                 <div className="grid-types-wrapper d-flex align-items-center justify-content-between">
                   <div
-                    className={`grid-icon-wrapper ${
-                      gridView === "small-grid" && "grid-icon-wrapper-active"
-                    } p-2 d-flex align-items-center justify-content-center`}
+                    className={`grid-icon-wrapper ${gridView === "small-grid" && "grid-icon-wrapper-active"
+                      } p-2 d-flex align-items-center justify-content-center`}
                     onClick={() => setGridView("small-grid")}
                   >
                     <img
@@ -955,9 +949,8 @@ const CollectionList = ({
                     />
                   </div>
                   <div
-                    className={`grid-icon-wrapper ${
-                      gridView === "big-grid" && "grid-icon-wrapper-active"
-                    } p-2 d-flex align-items-center justify-content-center`}
+                    className={`grid-icon-wrapper ${gridView === "big-grid" && "grid-icon-wrapper-active"
+                      } p-2 d-flex align-items-center justify-content-center`}
                     onClick={() => setGridView("big-grid")}
                   >
                     <img
@@ -966,9 +959,8 @@ const CollectionList = ({
                     />
                   </div>
                   <div
-                    className={`grid-icon-wrapper ${
-                      gridView === "list" && "grid-icon-wrapper-active"
-                    } p-2 d-flex align-items-center justify-content-center`}
+                    className={`grid-icon-wrapper ${gridView === "list" && "grid-icon-wrapper-active"
+                      } p-2 d-flex align-items-center justify-content-center`}
                     onClick={() => setGridView("list")}
                   >
                     <img
@@ -982,8 +974,8 @@ const CollectionList = ({
                 currentCollection.owner &&
                 coinbase &&
                 currentCollection.owner.toLowerCase() ===
-                  coinbase.toLowerCase()) ||
-              totalSupplyPerCollection === 0 ? (
+                coinbase.toLowerCase()) || (userNftsOwned && userNftsOwned.length > 0 && userNftsOwned.find((nft) => { return nft.contract.toLowerCase() === collectionAddress.toLowerCase() && nft.type === 'ERC1155' })) ||
+                totalSupplyPerCollection === 0 ? (
                 <></>
               ) : (
                 <div className="col-lg-2">
@@ -1094,31 +1086,29 @@ const CollectionList = ({
                 </span>
               )}
 
-            {(isSearch === true &&
+            {isSearch === true &&
               nftArrayFilteredBySearch.length === 0 &&
-              loading === false) && (
+              loading === false && (
                 <span className="text-white d-flex w-100 justify-content-center mt-5">
                   There are no NFTs with this filter.
                 </span>
               )}
 
-{(isSearchTrait === true &&
+            {isSearchTrait === true &&
               ntftArrayFilteredByTraits.length === 0 &&
-              loading === false) && (
+              loading === false && (
                 <span className="text-white d-flex w-100 justify-content-center mt-5">
                   There are no NFTs with this trait type.
                 </span>
               )}
 
-
             <div
-              className={`${
-                gridView === "list" || listType === "collectionoffers"
+              className={`${gridView === "list" || listType === "collectionoffers"
                   ? "list-view-grid"
                   : gridView === "big-grid"
-                  ? "big-cards-grid"
-                  : "small-cards-grid"
-              } mt-3`}
+                    ? "big-cards-grid"
+                    : "small-cards-grid"
+                } mt-3`}
             >
               {gridView === "list" && listType !== "collectionoffers" ? (
                 <table className="table nft-table">
@@ -1152,157 +1142,157 @@ const CollectionList = ({
                     <tbody>
                       {listType === ""
                         ? allNftArray.map((item, index) => (
-                            <tr
-                              className="nft-table-row p-1"
-                              key={index}
-                              onClick={() =>
-                                navigate(
-                                  `/nft/${item.tokenId}/${collectionAddress}`
-                                )
-                              }
-                              style={{ cursor: "pointer" }}
+                          <tr
+                            className="nft-table-row p-1"
+                            key={index}
+                            onClick={() =>
+                              navigate(
+                                `/nft/${item.tokenId}/${collectionAddress}`
+                              )
+                            }
+                            style={{ cursor: "pointer" }}
+                          >
+                            <td
+                              className="table-item col-2 d-flex align-items-center gap-1 w-100"
+                              scope="row"
                             >
-                              <td
-                                className="table-item col-2 d-flex align-items-center gap-1 w-100"
-                                scope="row"
-                              >
-                                {!item.isVideo && item.image ? (
-                                  <img
-                                    src={`https://cdnflux.dypius.com/${item.image50}`}
-                                    className="table-img nftimg2"
-                                    height={36}
-                                    width={36}
-                                    alt=""
-                                  />
-                                ) : item.isVideo && item.image ? (
-                                  <video
-                                    preload="auto"
-                                    height={36}
-                                    width={36}
-                                    className="card-img nftimg2"
-                                    src={`https://cdnflux.dypius.com/${item.image}`}
-                                    autoPlay={true}
-                                    loop={true}
-                                    muted="muted"
-                                    playsInline={true}
-                                    // onClick={player}
-                                    controlsList="nodownload"
-                                  ></video>
-                                ) : (
-                                  <img
-                                    src={require(`./assets/noImageNftCard.png`)}
-                                    className="table-img nftimg2"
-                                    alt=""
-                                    height={36}
-                                    width={36}
-                                  />
-                                )}
-                                {item.tokenName +
-                                  " " +
-                                  (item.name ? item.name : ` #${item.tokenId}`)}
-                              </td>
-                              <td className="table-item col-2">
-                                {item.seller
-                                  ? getFormattedNumber(item.price / 10 ** 18)
-                                  : "---"}{" "}
-                                WCFX
-                              </td>
-                              <td className="table-item col-2">
-                                {getFormattedNumber(item.bestOffer / 1e18)} WCFX
-                              </td>
-                              <td className="table-item col-2">
-                                {getFormattedNumber(item.lastSale)} WCFX
-                              </td>
-                              <td className="table-item col-2">
-                                {shortAddress(item.owner ?? item.seller)}
-                              </td>
-                              <td className="table-item col-2">
-                                {item.expiresAt
-                                  ? moment
-                                      .duration(
-                                        item.expiresAt * 1000 - Date.now()
-                                      )
-                                      .humanize(true)
-                                  : "N/A"}
-                              </td>
-                            </tr>
-                          ))
+                              {!item.isVideo && item.image ? (
+                                <img
+                                  src={`https://cdnflux.dypius.com/${item.image50}`}
+                                  className="table-img nftimg2"
+                                  height={36}
+                                  width={36}
+                                  alt=""
+                                />
+                              ) : item.isVideo && item.image ? (
+                                <video
+                                  preload="auto"
+                                  height={36}
+                                  width={36}
+                                  className="card-img nftimg2"
+                                  src={`https://cdnflux.dypius.com/${item.image}`}
+                                  autoPlay={true}
+                                  loop={true}
+                                  muted="muted"
+                                  playsInline={true}
+                                  // onClick={player}
+                                  controlsList="nodownload"
+                                ></video>
+                              ) : (
+                                <img
+                                  src={require(`./assets/noImageNftCard.png`)}
+                                  className="table-img nftimg2"
+                                  alt=""
+                                  height={36}
+                                  width={36}
+                                />
+                              )}
+                              {item.tokenName +
+                                " " +
+                                (item.name ? item.name : ` #${item.tokenId}`)}
+                            </td>
+                            <td className="table-item col-2">
+                              {item.seller
+                                ? getFormattedNumber(item.price / 10 ** 18)
+                                : "---"}{" "}
+                              WCFX
+                            </td>
+                            <td className="table-item col-2">
+                              {getFormattedNumber(item.bestOffer / 1e18)} WCFX
+                            </td>
+                            <td className="table-item col-2">
+                              {getFormattedNumber(item.lastSale)} WCFX
+                            </td>
+                            <td className="table-item col-2">
+                              {shortAddress(item.owner ?? item.seller)}
+                            </td>
+                            <td className="table-item col-2">
+                              {item.expiresAt
+                                ? moment
+                                  .duration(
+                                    item.expiresAt * 1000 - Date.now()
+                                  )
+                                  .humanize(true)
+                                : "N/A"}
+                            </td>
+                          </tr>
+                        ))
                         : nftList.map((item, index) => (
-                            <tr
-                              className="nft-table-row p-1"
-                              key={index}
-                              onClick={() =>
-                                navigate(
-                                  `/nft/${item.tokenId}/${collectionAddress}`
-                                )
-                              }
-                              style={{ cursor: "pointer" }}
+                          <tr
+                            className="nft-table-row p-1"
+                            key={index}
+                            onClick={() =>
+                              navigate(
+                                `/nft/${item.tokenId}/${collectionAddress}`
+                              )
+                            }
+                            style={{ cursor: "pointer" }}
+                          >
+                            <td
+                              className="table-item col-2 d-flex align-items-center gap-1 w-100"
+                              scope="row"
                             >
-                              <td
-                                className="table-item col-2 d-flex align-items-center gap-1 w-100"
-                                scope="row"
-                              >
-                                {!item.isVideo && item.image ? (
-                                  <img
-                                    src={`https://cdnflux.dypius.com/${item.image50}`}
-                                    className="table-img nftimg2"
-                                    height={36}
-                                    width={36}
-                                    alt=""
-                                  />
-                                ) : item.isVideo && item.image ? (
-                                  <video
-                                    preload="auto"
-                                    height={36}
-                                    width={36}
-                                    className="card-img nftimg2"
-                                    src={`https://cdnflux.dypius.com/${item.image}`}
-                                    autoPlay={true}
-                                    loop={true}
-                                    muted="muted"
-                                    playsInline={true}
-                                    // onClick={player}
-                                    controlsList="nodownload"
-                                  ></video>
-                                ) : (
-                                  <img
-                                    src={require(`./assets/collectionCardPlaceholder2.png`)}
-                                    className="table-img nftimg2"
-                                    alt=""
-                                    height={36}
-                                    width={36}
-                                  />
-                                )}
-                                {item.tokenName +
-                                  " " +
-                                  (item.name ? item.name : ` #${item.tokenId}`)}
-                              </td>
-                              <td className="table-item col-2">
-                                {item.seller
-                                  ? getFormattedNumber(item.price / 10 ** 18)
-                                  : "---"}{" "}
-                                WCFX
-                              </td>
-                              <td className="table-item col-2">
-                                {getFormattedNumber(item.bestOffer / 1e18)} WCFX
-                              </td>
-                              <td className="table-item col-2">
-                                {getFormattedNumber(item.lastSale)} WCFX
-                              </td>
-                              <td className="table-item col-2">
-                                {shortAddress(item.owner ?? item.seller)}
-                              </td>
-                              <td className="table-item col-2">
-                                {item.expiresAt
-                                  ? moment
-                                      .duration(
-                                        item.expiresAt * 1000 - Date.now()
-                                      )
-                                      .humanize(true)
-                                  : "N/A"}
-                              </td>
-                            </tr>
-                          ))}
+                              {!item.isVideo && item.image ? (
+                                <img
+                                  src={`https://cdnflux.dypius.com/${item.image50}`}
+                                  className="table-img nftimg2"
+                                  height={36}
+                                  width={36}
+                                  alt=""
+                                />
+                              ) : item.isVideo && item.image ? (
+                                <video
+                                  preload="auto"
+                                  height={36}
+                                  width={36}
+                                  className="card-img nftimg2"
+                                  src={`https://cdnflux.dypius.com/${item.image}`}
+                                  autoPlay={true}
+                                  loop={true}
+                                  muted="muted"
+                                  playsInline={true}
+                                  // onClick={player}
+                                  controlsList="nodownload"
+                                ></video>
+                              ) : (
+                                <img
+                                  src={require(`./assets/collectionCardPlaceholder2.png`)}
+                                  className="table-img nftimg2"
+                                  alt=""
+                                  height={36}
+                                  width={36}
+                                />
+                              )}
+                              {item.tokenName +
+                                " " +
+                                (item.name ? item.name : ` #${item.tokenId}`)}
+                            </td>
+                            <td className="table-item col-2">
+                              {item.seller
+                                ? getFormattedNumber(item.price / 10 ** 18)
+                                : "---"}{" "}
+                              WCFX
+                            </td>
+                            <td className="table-item col-2">
+                              {getFormattedNumber(item.bestOffer / 1e18)} WCFX
+                            </td>
+                            <td className="table-item col-2">
+                              {getFormattedNumber(item.lastSale)} WCFX
+                            </td>
+                            <td className="table-item col-2">
+                              {shortAddress(item.owner ?? item.seller)}
+                            </td>
+                            <td className="table-item col-2">
+                              {item.expiresAt
+                                ? moment
+                                  .duration(
+                                    item.expiresAt * 1000 - Date.now()
+                                  )
+                                  .humanize(true)
+                                : "N/A"}
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                   ) : (
                     dummyCards.map((item, index) => (
@@ -1382,8 +1372,8 @@ const CollectionList = ({
                       className={"position-relative"}
                     >
                       {item.image &&
-                      !item.isVideo &&
-                      gridView === "small-grid" ? (
+                        !item.isVideo &&
+                        gridView === "small-grid" ? (
                         <img
                           src={`https://cdnflux.dypius.com/${item.image}`}
                           className="card-img"
@@ -1407,8 +1397,8 @@ const CollectionList = ({
                         <></>
                       )}
                       {item.image &&
-                      !item.isVideo &&
-                      gridView === "big-grid" ? (
+                        !item.isVideo &&
+                        gridView === "big-grid" ? (
                         <img
                           src={`https://cdnflux.dypius.com/${item.image170}`}
                           className="card-img"
@@ -1450,18 +1440,18 @@ const CollectionList = ({
                           <img
                             src={
                               userNftFavs &&
-                              userNftFavs.length > 0 &&
-                              userNftFavs.find((favitem) => {
-                                return (
-                                  favitem.contractAddress ===
+                                userNftFavs.length > 0 &&
+                                userNftFavs.find((favitem) => {
+                                  return (
+                                    favitem.contractAddress ===
                                     collectionAddress &&
-                                  favitem.tokenIds.find(
-                                    (itemTokenIds) =>
-                                      Number(itemTokenIds) ===
-                                      Number(item.tokenId)
-                                  )
-                                );
-                              })
+                                    favitem.tokenIds.find(
+                                      (itemTokenIds) =>
+                                        Number(itemTokenIds) ===
+                                        Number(item.tokenId)
+                                    )
+                                  );
+                                })
                                 ? redFavorite
                                 : emptyFavorite
                             }
@@ -1471,18 +1461,18 @@ const CollectionList = ({
                           <span
                             className={
                               userNftFavs &&
-                              userNftFavs.length > 0 &&
-                              userNftFavs.find((favitem) => {
-                                return (
-                                  favitem.contractAddress ===
+                                userNftFavs.length > 0 &&
+                                userNftFavs.find((favitem) => {
+                                  return (
+                                    favitem.contractAddress ===
                                     collectionAddress &&
-                                  favitem.tokenIds.find(
-                                    (itemTokenIds) =>
-                                      Number(itemTokenIds) ===
-                                      Number(item.tokenId)
-                                  )
-                                );
-                              })
+                                    favitem.tokenIds.find(
+                                      (itemTokenIds) =>
+                                        Number(itemTokenIds) ===
+                                        Number(item.tokenId)
+                                    )
+                                  );
+                                })
                                 ? "fav-count-active"
                                 : "fav-count"
                             }
@@ -1491,9 +1481,9 @@ const CollectionList = ({
                               nftFinalArray.find((object) => {
                                 return (
                                   object.contractAddress ===
-                                    collectionAddress &&
+                                  collectionAddress &&
                                   Number(object.tokenId) ===
-                                    Number(item.tokenId)
+                                  Number(item.tokenId)
                                 );
                               })?.count
                             }
@@ -1548,7 +1538,7 @@ const CollectionList = ({
                       )}
                       <div className="mt-3">
                         {item.seller &&
-                        item.seller.toLowerCase() !==
+                          item.seller.toLowerCase() !==
                           coinbase?.toLowerCase() ? (
                           <button
                             className="buy-btn w-100"
@@ -1613,8 +1603,8 @@ const CollectionList = ({
                         <tr
                           className="nft-table-row p-1"
                           key={index}
-                          // onClick={() => onShowAcceptPopup(item)}
-                          // style={{ cursor: "pointer" }}
+                        // onClick={() => onShowAcceptPopup(item)}
+                        // style={{ cursor: "pointer" }}
                         >
                           <td
                             className="table-item col-2 d-flex align-items-center gap-1 w-100"
@@ -1663,7 +1653,7 @@ const CollectionList = ({
                               className="btn blue-btn py-2 border-0 w-100 h-auto"
                               onClick={(e) => {
                                 item.offeror.toLowerCase() !==
-                                coinbase?.toLowerCase()
+                                  coinbase?.toLowerCase()
                                   ? onShowAcceptPopup(item)
                                   : onShowPopup();
                               }}
@@ -1697,8 +1687,8 @@ const CollectionList = ({
                       className={"position-relative"}
                     >
                       {item.image &&
-                      !item.isVideo &&
-                      gridView === "small-grid" ? (
+                        !item.isVideo &&
+                        gridView === "small-grid" ? (
                         <img
                           src={`https://cdnflux.dypius.com/${item.image}`}
                           className="card-img"
@@ -1722,8 +1712,8 @@ const CollectionList = ({
                         <></>
                       )}
                       {item.image &&
-                      !item.isVideo &&
-                      gridView === "big-grid" ? (
+                        !item.isVideo &&
+                        gridView === "big-grid" ? (
                         <img
                           src={`https://cdnflux.dypius.com/${item.image170}`}
                           className="card-img"
@@ -1765,18 +1755,18 @@ const CollectionList = ({
                           <img
                             src={
                               userNftFavs &&
-                              userNftFavs.length > 0 &&
-                              userNftFavs.find((favitem) => {
-                                return (
-                                  favitem.contractAddress ===
+                                userNftFavs.length > 0 &&
+                                userNftFavs.find((favitem) => {
+                                  return (
+                                    favitem.contractAddress ===
                                     collectionAddress &&
-                                  favitem.tokenIds.find(
-                                    (itemTokenIds) =>
-                                      Number(itemTokenIds) ===
-                                      Number(item.tokenId)
-                                  )
-                                );
-                              })
+                                    favitem.tokenIds.find(
+                                      (itemTokenIds) =>
+                                        Number(itemTokenIds) ===
+                                        Number(item.tokenId)
+                                    )
+                                  );
+                                })
                                 ? redFavorite
                                 : emptyFavorite
                             }
@@ -1786,18 +1776,18 @@ const CollectionList = ({
                           <span
                             className={
                               userNftFavs &&
-                              userNftFavs.length > 0 &&
-                              userNftFavs.find((favitem) => {
-                                return (
-                                  favitem.contractAddress ===
+                                userNftFavs.length > 0 &&
+                                userNftFavs.find((favitem) => {
+                                  return (
+                                    favitem.contractAddress ===
                                     collectionAddress &&
-                                  favitem.tokenIds.find(
-                                    (itemTokenIds) =>
-                                      Number(itemTokenIds) ===
-                                      Number(item.tokenId)
-                                  )
-                                );
-                              })
+                                    favitem.tokenIds.find(
+                                      (itemTokenIds) =>
+                                        Number(itemTokenIds) ===
+                                        Number(item.tokenId)
+                                    )
+                                  );
+                                })
                                 ? "fav-count-active"
                                 : "fav-count"
                             }
@@ -1806,9 +1796,9 @@ const CollectionList = ({
                               nftFinalArray.find((object) => {
                                 return (
                                   object.contractAddress ===
-                                    collectionAddress &&
+                                  collectionAddress &&
                                   Number(object.tokenId) ===
-                                    Number(item.tokenId)
+                                  Number(item.tokenId)
                                 );
                               })?.count
                             }
@@ -1863,7 +1853,7 @@ const CollectionList = ({
                       )}
                       <div className="mt-3">
                         {item.seller &&
-                        item.seller.toLowerCase() !==
+                          item.seller.toLowerCase() !==
                           coinbase?.toLowerCase() ? (
                           <button
                             className="buy-btn w-100"
@@ -1909,28 +1899,29 @@ const CollectionList = ({
 
             {(!isSearch
               ? collectionLoading === true ||
-                loading === true ||
-                (collectionLoading === false &&
-                  loading === false &&
-                  allNftArray.length === 0) || loading === true &&
-                  (ntftArrayFilteredByTraits.length === 0 ||
-                    ntftArrayFilteredByTraits.length > 0) &&
-                  allNftArray.length === 0 && isSearchTrait
+              loading === true ||
+              (collectionLoading === false &&
+                loading === false &&
+                allNftArray.length === 0) ||
+              (loading === true &&
+                (ntftArrayFilteredByTraits.length === 0 ||
+                  ntftArrayFilteredByTraits.length > 0) &&
+                allNftArray.length === 0 &&
+                isSearchTrait)
               : loading === true &&
-                (nftArrayFilteredBySearch.length === 0 ||
-                  nftArrayFilteredBySearch.length > 0) &&
-                allNftArray.length === 0) &&
-            listType !== "collectionoffers" &&
-            allNftArray &&
-            (gridView === "small-grid" || gridView === "big-grid") ? (
+              (nftArrayFilteredBySearch.length === 0 ||
+                nftArrayFilteredBySearch.length > 0) &&
+              allNftArray.length === 0) &&
+              listType !== "collectionoffers" &&
+              allNftArray &&
+              (gridView === "small-grid" || gridView === "big-grid") ? (
               <div
-                className={`${
-                  gridView === "list"
+                className={`${gridView === "list"
                     ? "list-view-grid"
                     : gridView === "big-grid"
-                    ? "big-cards-grid"
-                    : "small-cards-grid"
-                } mt-3`}
+                      ? "big-cards-grid"
+                      : "small-cards-grid"
+                  } mt-3`}
               >
                 {dummyCards.map((item, index) => (
                   <Skeleton
@@ -1945,13 +1936,12 @@ const CollectionList = ({
               totalSupplyPerCollection > 0 &&
               gridView === "list" ? (
               <div
-                className={`${
-                  gridView === "list"
+                className={`${gridView === "list"
                     ? "list-view-grid"
                     : gridView === "big-grid"
-                    ? "big-cards-grid"
-                    : "small-cards-grid"
-                } mt-3`}
+                      ? "big-cards-grid"
+                      : "small-cards-grid"
+                  } mt-3`}
               >
                 {dummyCards.map((item, index) => (
                   <Skeleton
@@ -1969,9 +1959,8 @@ const CollectionList = ({
         </div>
       </div>
       <div
-        className={`mobile-filters-container ${
-          openFilters && "filters-container-open"
-        } d-block d-lg-none`}
+        className={`mobile-filters-container ${openFilters && "filters-container-open"
+          } d-block d-lg-none`}
       >
         <div className="filters-wrapper mt-4 p-3 h-100 d-flex flex-column gap-3">
           <div className="d-flex align-items-center justify-content-between">

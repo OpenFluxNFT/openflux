@@ -28,7 +28,7 @@ const Profile = ({
   userCollectionArray,
   recentlyListedNfts,
   onRefreshListings,
-  loadMore,handleLoadMore
+  loadMore,handleLoadMore, loadStatus
 }) => {
   const [option, setOption] = useState("collected");
   const profileSocials = ["website", "twitter", "instagram"];
@@ -856,6 +856,7 @@ const Profile = ({
             userNftsOwned={userNftsOwned}
             loadMore={loadMore}
             handleLoadMore={handleLoadMore}
+            loadStatus={loadStatus}
           />
           
         </div>

@@ -52,7 +52,9 @@ const ProfileNFTList = ({
   usersNftOffers,
   usersCollectionOffers,
   userNftsOwned,
-  loadMore,handleLoadMore
+  loadMore,
+  handleLoadMore,
+  loadStatus,
 }) => {
   const [favoritesOption, setfavoritesOption] = useState("items");
   const [gridView, setGridView] = useState("small-grid");
@@ -95,9 +97,10 @@ const ProfileNFTList = ({
 
         if (val.value.length > 0) {
           setLoading(true);
+
           const searchItems = userNftsOwnedArray.filter((item) => {
             return (
-              item?.tokenId.includes(val.value) ||
+              (item?.tokenId).toString().includes(val.value) ||
               item?.tokenName.toLowerCase().includes(val.value.toLowerCase()) ||
               item?.collectionName
                 .toLowerCase()
@@ -4914,13 +4917,30 @@ const ProfileNFTList = ({
               </span>
             )}
         </div>
-        {loadMore && (
-        <div className="d-flex justify-content-center mt-5">
-          <button className="buy-btn px-5 m-auto" onClick={handleLoadMore}>Load more</button>
-        </div>
-      )}
+        {loadMore === true &&
+          userNftsOwnedArray &&
+          userNftsOwnedArray.length >
+            0 &&(
+              <div className="d-flex justify-content-center mt-5">
+                <button
+                  className="buy-btn px-5 m-auto"
+                  onClick={handleLoadMore}
+                >
+                  {loadStatus === "loading" ? (
+                    <>
+                      Loading{" "}
+                      <div
+                        className="spinner-border spinner-border-sm text-light"
+                        role="status"
+                      ></div>
+                    </>
+                  ) : (
+                    `Load more`
+                  )}
+                </button>
+              </div>
+            )}
       </div>
-      
     </div>
   );
 };

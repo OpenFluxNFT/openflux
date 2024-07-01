@@ -460,7 +460,7 @@ const RecentlyListed = ({
                       // onClick={player}
                       controlsList="nodownload"
                     ></video>
-                  ) : item.image.substring(item.image.length - 3) === "mp4" ? (
+                  ) : item.image !== undefined && item.image.substring(item.image.length - 3) === "mp4" ? (
                     <video
                       preload="auto"
                       className="card-img"

@@ -773,7 +773,7 @@ const SingleNftBanner = ({
                           className={`duration-tab ${
                             duration === 5 && "duration-tab-active"
                           } d-flex align-items-center justify-content-center`}
-                          onClick={() => setDuration(5)}
+                          onClick={() => setDuration(4)}
                         >
                           <span>21 Days</span>
                         </div>
@@ -781,7 +781,7 @@ const SingleNftBanner = ({
                           className={`duration-tab ${
                             duration === 6 && "duration-tab-active"
                           } d-flex align-items-center justify-content-center`}
-                          onClick={() => setDuration(6)}
+                          onClick={() => setDuration(5)}
                         >
                           <span>1 Month</span>
                         </div>

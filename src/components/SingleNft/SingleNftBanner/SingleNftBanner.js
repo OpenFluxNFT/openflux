@@ -42,6 +42,8 @@ const SingleNftBanner = ({
   const [isListed, setIsListed] = useState(false);
   const [duration, setDuration] = useState(0);
   const [nftPrice, setNftPrice] = useState(1);
+  const [nftImage, setnftImage] = useState(1);
+
   const [IsApproveList, setIsApproveList] = useState(false);
   const [purchaseStatus, setPurchaseStatus] = useState("");
   const [purchaseColor, setPurchaseColor] = useState("#00FECF");
@@ -432,17 +434,17 @@ const SingleNftBanner = ({
                     <img
                       alt=""
                       src={
-                        currentCollection.collectionProfilePic
-                          ? `https://confluxapi.worldofdypians.com/${currentCollection.collectionProfilePic}`
+                        currentCollection.profilepic
+                          ? `${currentCollection.profilepic}`
                           : cawsLogo
                       }
                       className="nft-collection-logo"
                     />
                     <NavLink
                       className="collection-name"
-                      to={`/collection/${nftAddress}/${nftData.nftSymbol}`}
+                      to={`/collection/${nftAddress}/${currentCollection.nftSymbol}`}
                     >
-                      {nftData.collectionName ?? "..."}
+                      {currentCollection.collectionName ?? "..."}
                     </NavLink>
                     {currentCollection.verified === "yes" ? (
                       <img src={checkIcon} alt="" />
@@ -453,12 +455,12 @@ const SingleNftBanner = ({
                   <div className="collection-info-owner-wrapper">
                     <div className="d-flex flex-column gap-1 px-3 py-2">
                       <span className="nft-collection-name">
-                        {nftData.nftSymbol}{" "}
+                        {currentCollection.nftSymbol}{" "}
                         {nftData.name
                           ? nftData.name
                           : nftData.collectionName
                           ? nftData.collectionName
-                          : "..."}
+                          : currentCollection.collectionName}
                       </span>
                       <div className="d-flex align-items-center gap-2">
                         <span className="nft-info-left">Owner</span>
@@ -546,7 +548,7 @@ const SingleNftBanner = ({
                         ? nftData.name
                         : nftData.collectionName
                         ? nftData.collectionName
-                        : "..."}
+                        : currentCollection.collectionName}
                     </span>
                     {currentCollection.verified === "yes" ? (
                       <img src={checkIcon} alt="" />
@@ -623,7 +625,7 @@ const SingleNftBanner = ({
                   </div>
                 )}
                 {!isListed &&
-                nftData.collectionName &&
+                (nftData.collectionName || currentCollection.collectionName) &&
                 loading === false &&
                 !isOwner ? (
                   <div className="d-flex flex-column gap-2 w-100 flex-div align-items-center justify-content-between">
@@ -663,7 +665,7 @@ const SingleNftBanner = ({
                   </div>
                 ) : ((!nftData.is1155 && !isListed) ||
                     (nftData.is1155 && nftData.listingsLeft > 0)) &&
-                  nftData.collectionName !== undefined &&
+                  ((nftData.collectionName || currentCollection.collectionName)) &&
                   isOwner &&
                   loading === false ? (
                   <div className="nft-price-wrapper p-3">
@@ -689,7 +691,7 @@ const SingleNftBanner = ({
                 ) : ((isListed && !isOwner) ||
                     (isListed &&
                       isOwner &&
-                      nftData.collectionName !== undefined)) &&
+                      (nftData.collectionName || currentCollection.collectionName))) &&
                   !nftData.is1155 &&
                   loading === false ? (
                   <div className="nft-price-wrapper p-3">
@@ -727,7 +729,7 @@ const SingleNftBanner = ({
                   <></>
                 )}
                 {isOwner &&
-                nftData.collectionName &&
+               (nftData.collectionName || currentCollection.collectionName) &&
                 ((!nftData.is1155 && !isListed) ||
                   (nftData.is1155 && nftData.listingsLeft > 0)) &&
                 loading === false ? (
@@ -794,7 +796,7 @@ const SingleNftBanner = ({
                       There is a listing fee of 0.1% for the selected duration
                     </span> */}
                   </>
-                ) : nftData.collectionName &&
+                ) : (nftData.collectionName || currentCollection.collectionName) &&
                   isListed &&
                   loading === false &&
                   !nftData.is1155 ? (
@@ -813,7 +815,7 @@ const SingleNftBanner = ({
                 )}
                 {chainId !== 1030 &&
                   isConnected &&
-                  nftData.collectionName &&
+                  (nftData.collectionName || currentCollection.collectionName) &&
                   loading === false && (
                     <span className="error-status-text">
                       *Unsupported network. please change the chain on your
@@ -822,7 +824,7 @@ const SingleNftBanner = ({
                   )}
                 {!isOwner &&
                 !isListed &&
-                nftData.collectionName &&
+                (nftData.collectionName || currentCollection.collectionName) &&
                 loading === false ? (
                   <></>
                 ) : !isOwner && isListed && !nftData.is1155 ? (

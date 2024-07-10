@@ -1510,7 +1510,7 @@ const CollectionPage = ({
         item.contractAddress.toLowerCase() === collectionAddr.toLowerCase()
       );
     });
-    console.log("result", result);
+    
     if (result && result.length > 0) {
       const result2 = await Promise.all(
         result.map(async (item) => {

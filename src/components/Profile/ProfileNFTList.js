@@ -81,7 +81,7 @@ const ProfileNFTList = ({
   const [search, setSearch] = useState("");
   const [queryItems, setQueryItems] = useState([]);
 
-  const [selectedNftId, setSelectedNftId] = useState(""); //buy
+  const [userCollectionFavsUpdated, setuserCollectionFavsUpdated] = useState([]); //buy
 
   const handleKeyPress = (val) => (event) => {
     if (option !== "favorites") {
@@ -199,6 +199,40 @@ const ProfileNFTList = ({
       timeListed: "11d Ago",
     },
   ];
+
+  const checkIfImageisValid = async (image) => {
+    const result = await fetch(
+      `https://confluxapi.worldofdypians.com/${image}`
+    ).catch((e) => {
+      console.error(e);
+    });
+    if (result && result.status === 200) {
+      return `https://confluxapi.worldofdypians.com/${image}`;
+    } else return undefined;
+  };
+
+  const updateUserCollectionFavs = async () => {
+    if (
+      userCollectionFavs &&
+      userCollectionFavs.length > 0 &&
+      allCollections &&
+      allCollections.length > 0
+    ) {
+      const final = await Promise.all(
+        userCollectionFavs.map(async (item) => {
+          return {
+            item,
+            image: await checkIfImageisValid(
+              allCollections.find((obj) => {
+                return obj.contractAddress.toLowerCase() === item.toLowerCase();
+              }).featuredBannerPicture
+            ),
+          };
+        })
+      );
+      setuserCollectionFavsUpdated(final) 
+    }
+  };
 
   const setPrices = (min, max) => {
     setGeneralFilter(min, max);
@@ -503,6 +537,10 @@ const ProfileNFTList = ({
       setfavoritesOption("listings");
     }
   }, [option]);
+
+  useEffect(() => {
+    updateUserCollectionFavs();
+  }, [allCollections, userCollectionFavs]);
 
   return (
     <div className="container-lg">
@@ -1482,17 +1520,17 @@ const ProfileNFTList = ({
                   </span>
                 )
               ) : userCollectionFavs &&
-                userCollectionFavs.length > 0 &&
+                userCollectionFavsUpdated.length > 0 &&
                 userCollectionArrayFinal.length === 0 ? (
-                userCollectionFavs.map((item, index) => (
+                  userCollectionFavsUpdated.map((item, index) => (
                   <div
                     className="collection-card d-flex flex-column"
                     key={index}
                   >
                     <NavLink
-                      to={`/collection/${item}/${
+                      to={`/collection/${item.item}/${
                         allCollections.find((collection) => {
-                          return collection.contractAddress === item;
+                          return collection.contractAddress.toLowerCase() === item.item.toLowerCase();
                         })?.symbol
                       }`}
                       style={{ textDecoration: "none" }}
@@ -1500,13 +1538,9 @@ const ProfileNFTList = ({
                     >
                       <img
                         src={
-                          allCollections.find((collection) => {
-                            return collection.contractAddress === item;
-                          })?.featuredBannerPicture
-                            ? `https://confluxapi.worldofdypians.com/${
-                                allCollections.find((collection) => {
-                                  return collection.contractAddress === item;
-                                })?.featuredBannerPicture
+                          item.image
+                            ? `${
+                                item.image
                               }`
                             : require(`./assets/favoritesPlaceholder1.png`)
                         }
@@ -1519,7 +1553,7 @@ const ProfileNFTList = ({
                           <h6 className="mb-0">
                             {
                               allCollections.find((collection) => {
-                                return collection.contractAddress === item;
+                                return collection.contractAddress.toLowerCase() === item.item.toLowerCase();
                               })?.collectionName
                             }
                           </h6>
@@ -1528,13 +1562,13 @@ const ProfileNFTList = ({
                           allCollections.find((obj) => {
                             return (
                               obj.contractAddress.toLowerCase() ===
-                              item.toLowerCase()
+                              item.item.toLowerCase()
                             );
                           }) ? (
                             allCollections.find((obj) => {
                               return (
                                 obj.contractAddress.toLowerCase() ===
-                                item.toLowerCase()
+                                item.item.toLowerCase()
                               );
                             }).verified === "yes" ? (
                               <img src={checkIcon} alt="" className="ms-2" />
@@ -1550,13 +1584,13 @@ const ProfileNFTList = ({
                     </NavLink>
                   </div>
                 ))
-              ) : userCollectionFavs &&
-                userCollectionFavs.length > 0 &&
+              ) : userCollectionFavsUpdated &&
+              userCollectionFavsUpdated.length > 0 &&
                 userCollectionArrayFinal.length > 0 ? (
-                userCollectionFavs
+                  userCollectionFavsUpdated
                   .filter((obj2) =>
                     userCollectionArrayFinal.some(
-                      (obj) => obj2.toLowerCase() === obj.toLowerCase()
+                      (obj) => obj2.item.toLowerCase() === obj.toLowerCase()
                     )
                   )
                   .map((item, index) => (
@@ -1565,9 +1599,9 @@ const ProfileNFTList = ({
                       key={index}
                     >
                       <NavLink
-                        to={`/collection/${item}/${
+                        to={`/collection/${item.item}/${
                           allCollections.find((collection) => {
-                            return collection.contractAddress === item;
+                            return collection.contractAddress.toLowerCase() === item.item.toLowerCase();
                           })?.symbol
                         }`}
                         style={{ textDecoration: "none" }}
@@ -1575,13 +1609,9 @@ const ProfileNFTList = ({
                       >
                         <img
                           src={
-                            allCollections.find((collection) => {
-                              return collection.contractAddress === item;
-                            })?.featuredBannerPicture
-                              ? `https://confluxapi.worldofdypians.com/${
-                                  allCollections.find((collection) => {
-                                    return collection.contractAddress === item;
-                                  })?.featuredBannerPicture
+                            item.image
+                              ? `${
+                                 item.image
                                 }`
                               : require(`./assets/favoritesPlaceholder1.png`)
                           }
@@ -1594,7 +1624,7 @@ const ProfileNFTList = ({
                             <h6 className="mb-0">
                               {
                                 allCollections.find((collection) => {
-                                  return collection.contractAddress === item;
+                                  return collection.contractAddress.toLowerCase() === item.item.toLowerCase();
                                 })?.collectionName
                               }
                             </h6>
@@ -1603,13 +1633,13 @@ const ProfileNFTList = ({
                             allCollections.find((obj) => {
                               return (
                                 obj.contractAddress.toLowerCase() ===
-                                item.contractAddress.toLowerCase()
+                                item.item.contractAddress.toLowerCase()
                               );
                             }) ? (
                               allCollections.find((obj) => {
                                 return (
                                   obj.contractAddress.toLowerCase() ===
-                                  item.contractAddress.toLowerCase()
+                                  item.item.contractAddress.toLowerCase()
                                 );
                               }).verified === "yes" ? (
                                 <img src={checkIcon} alt="" className="ms-2" />
@@ -2888,7 +2918,9 @@ const ProfileNFTList = ({
                             className="table-item col-2 d-flex align-items-center gap-1 w-100"
                             // scope="row"
                           >
-                            {!item.isVideo && item.image ? (
+                            {!item.isVideo &&
+                            item.image &&
+                            item.image !== "undefined" ? (
                               <img
                                 src={`https://cdnflux.dypius.com/${item.image}`}
                                 className="table-img nftimg2"
@@ -2896,7 +2928,9 @@ const ProfileNFTList = ({
                                 width={36}
                                 alt=""
                               />
-                            ) : item.image && item.isVideo ? (
+                            ) : item.image &&
+                              item.image !== "undefined" &&
+                              item.isVideo ? (
                               <video
                                 src={`https://cdnflux.dypius.com/${item.image}`}
                                 alt=""
@@ -3043,7 +3077,9 @@ const ProfileNFTList = ({
                               className="table-item col-2 d-flex align-items-center gap-1 w-100"
                               // scope="row"
                             >
-                              {!item.isVideo && item.image ? (
+                              {!item.isVideo &&
+                              item.image &&
+                              item.image !== "undefined" ? (
                                 <img
                                   src={`https://cdnflux.dypius.com/${item.image}`}
                                   className="table-img nftimg2"
@@ -3051,7 +3087,9 @@ const ProfileNFTList = ({
                                   width={36}
                                   alt=""
                                 />
-                              ) : item.image && item.isVideo ? (
+                              ) : item.image &&
+                                item.image !== "undefined" &&
+                                item.isVideo ? (
                                 <video
                                   src={`https://cdnflux.dypius.com/${item.image}`}
                                   alt=""
@@ -3209,7 +3247,9 @@ const ProfileNFTList = ({
                               className="table-item col-2 d-flex align-items-center gap-1 w-100"
                               // scope="row"
                             >
-                              {!item.isVideo && item.image ? (
+                              {!item.isVideo &&
+                              item.image &&
+                              item.image !== "undefined" ? (
                                 <img
                                   src={`https://cdnflux.dypius.com/${item.image}`}
                                   className="table-img nftimg2"
@@ -3217,7 +3257,9 @@ const ProfileNFTList = ({
                                   width={36}
                                   alt=""
                                 />
-                              ) : item.isVideo && item.image ? (
+                              ) : item.isVideo &&
+                                item.image &&
+                                item.image !== "undefined" ? (
                                 <video
                                   src={`https://cdnflux.dypius.com/${item.image}`}
                                   alt=""
@@ -3348,7 +3390,9 @@ const ProfileNFTList = ({
                               className="table-item col-2 d-flex align-items-center gap-1 w-100"
                               // scope="row"
                             >
-                              {!item.isVideo && item.image ? (
+                              {!item.isVideo &&
+                              item.image &&
+                              item.image !== "undefined" ? (
                                 <img
                                   src={`https://cdnflux.dypius.com/${item.image}`}
                                   className="table-img nftimg2"
@@ -3356,7 +3400,9 @@ const ProfileNFTList = ({
                                   width={36}
                                   alt=""
                                 />
-                              ) : item.isVideo && item.image ? (
+                              ) : item.isVideo &&
+                                item.image &&
+                                item.image !== "undefined" ? (
                                 <video
                                   src={`https://cdnflux.dypius.com/${item.image}`}
                                   alt=""
@@ -3488,7 +3534,9 @@ const ProfileNFTList = ({
                               className="table-item col-2 d-flex align-items-center gap-1 w-100"
                               // scope="row"
                             >
-                              {!item.isVideo && item.image ? (
+                              {!item.isVideo &&
+                              item.image &&
+                              item.image !== "undefined" ? (
                                 <img
                                   src={`https://cdnflux.dypius.com/${item.image}`}
                                   className="table-img nftimg2"
@@ -3496,7 +3544,9 @@ const ProfileNFTList = ({
                                   width={36}
                                   alt=""
                                 />
-                              ) : item.isVideo && item.image ? (
+                              ) : item.isVideo &&
+                                item.image &&
+                                item.image !== "undefined" ? (
                                 <video
                                   src={`https://cdnflux.dypius.com/${item.image}`}
                                   alt=""
@@ -3619,7 +3669,9 @@ const ProfileNFTList = ({
                               className="table-item col-2 d-flex align-items-center gap-1 w-100"
                               // scope="row"
                             >
-                              {!item.isVideo && item.image ? (
+                              {!item.isVideo &&
+                              item.image &&
+                              item.image !== "undefined" ? (
                                 <img
                                   src={`https://cdnflux.dypius.com/${item.image}`}
                                   className="table-img nftimg2"
@@ -3627,7 +3679,9 @@ const ProfileNFTList = ({
                                   width={36}
                                   alt=""
                                 />
-                              ) : item.isVideo && item.image ? (
+                              ) : item.isVideo &&
+                                item.image &&
+                                item.image !== "undefined" ? (
                                 <video
                                   src={`https://cdnflux.dypius.com/${item.image}`}
                                   alt=""
@@ -3755,13 +3809,17 @@ const ProfileNFTList = ({
                           }
                         </span>
                       ) : null}
-                      {!item.isVideo && item.image ? (
+                      {!item.isVideo &&
+                      item.image &&
+                      item.image !== "undefined" ? (
                         <img
                           src={`https://cdnflux.dypius.com/${item.image}`}
                           className="card-img card-img2"
                           alt=""
                         />
-                      ) : item.isVideo && item.image ? (
+                      ) : item.isVideo &&
+                        item.image &&
+                        item.image !== "undefined" ? (
                         <video
                           src={`https://cdnflux.dypius.com/${item.image}`}
                           alt=""
@@ -3896,13 +3954,17 @@ const ProfileNFTList = ({
                             }
                           </span>
                         ) : null}
-                        {!item.isVideo && item.image ? (
+                        {!item.isVideo &&
+                        item.image &&
+                        item.image !== "undefined" ? (
                           <img
                             src={`https://cdnflux.dypius.com/${item.image}`}
                             className="card-img card-img2"
                             alt=""
                           />
-                        ) : item.isVideo && item.image ? (
+                        ) : item.isVideo &&
+                          item.image &&
+                          item.image !== "undefined" ? (
                           <video
                             src={`https://cdnflux.dypius.com/${item.image}`}
                             alt=""
@@ -4023,13 +4085,17 @@ const ProfileNFTList = ({
                         style={{ textDecoration: "none" }}
                         className={"position-relative"}
                       >
-                        {!item.isVideo && item.image ? (
+                        {!item.isVideo &&
+                        item.image &&
+                        item.image !== "undefined" ? (
                           <img
                             src={`https://cdnflux.dypius.com/${item.image}`}
                             className="card-img card-img2"
                             alt=""
                           />
-                        ) : item.isVideo && item.image ? (
+                        ) : item.isVideo &&
+                          item.image &&
+                          item.image !== "undefined" ? (
                           <video
                             src={`https://cdnflux.dypius.com/${item.image}`}
                             alt=""
@@ -4155,13 +4221,17 @@ const ProfileNFTList = ({
                         style={{ textDecoration: "none" }}
                         className={"position-relative"}
                       >
-                        {!item.isVideo && item.image ? (
+                        {!item.isVideo &&
+                        item.image &&
+                        item.image !== "undefined" ? (
                           <img
                             src={`https://cdnflux.dypius.com/${item.image}`}
                             className="card-img card-img2"
                             alt=""
                           />
-                        ) : item.isVideo && item.image ? (
+                        ) : item.isVideo &&
+                          item.image &&
+                          item.image !== "undefined" ? (
                           <video
                             src={`https://cdnflux.dypius.com/${item.image}`}
                             alt=""
@@ -4281,13 +4351,17 @@ const ProfileNFTList = ({
                         style={{ textDecoration: "none" }}
                         className={"position-relative"}
                       >
-                        {!item.isVideo && item.image ? (
+                        {!item.isVideo &&
+                        item.image &&
+                        item.image !== "undefined" ? (
                           <img
                             src={`https://cdnflux.dypius.com/${item.image}`}
                             className="card-img card-img2"
                             alt=""
                           />
-                        ) : item.isVideo && item.image ? (
+                        ) : item.isVideo &&
+                          item.image &&
+                          item.image !== "undefined" ? (
                           <video
                             src={`https://cdnflux.dypius.com/${item.image}`}
                             alt=""
@@ -4412,13 +4486,17 @@ const ProfileNFTList = ({
                         style={{ textDecoration: "none" }}
                         className={"position-relative"}
                       >
-                        {!item.isVideo && item.image ? (
+                        {!item.isVideo &&
+                        item.image &&
+                        item.image !== "undefined" ? (
                           <img
                             src={`https://cdnflux.dypius.com/${item.image}`}
                             className="card-img card-img2"
                             alt=""
                           />
-                        ) : item.isVideo && item.image ? (
+                        ) : item.isVideo &&
+                          item.image &&
+                          item.image !== "undefined" ? (
                           <video
                             src={`https://cdnflux.dypius.com/${item.image}`}
                             alt=""
@@ -4531,13 +4609,17 @@ const ProfileNFTList = ({
                       style={{ textDecoration: "none" }}
                       className={"position-relative"}
                     >
-                      {!item.isVideo && item.image ? (
+                      {!item.isVideo &&
+                      item.image &&
+                      item.image !== "undefined" ? (
                         <img
                           src={`https://cdnflux.dypius.com/${item.image}`}
                           className="card-img card-img2"
                           alt=""
                         />
-                      ) : item.isVideo && item.image ? (
+                      ) : item.isVideo &&
+                        item.image &&
+                        item.image !== "undefined" ? (
                         <video
                           src={`https://cdnflux.dypius.com/${item.image}`}
                           alt=""
@@ -4633,13 +4715,17 @@ const ProfileNFTList = ({
                         style={{ textDecoration: "none" }}
                         className={"position-relative"}
                       >
-                        {!item.isVideo && item.image ? (
+                        {!item.isVideo &&
+                        item.image &&
+                        item.image !== "undefined" ? (
                           <img
                             src={`https://cdnflux.dypius.com/${item.image}`}
                             className="card-img card-img2"
                             alt=""
                           />
-                        ) : item.isVideo && item.image ? (
+                        ) : item.isVideo &&
+                          item.image &&
+                          item.image !== "undefined" ? (
                           <video
                             src={`https://cdnflux.dypius.com/${item.image}`}
                             alt=""
@@ -4919,27 +5005,24 @@ const ProfileNFTList = ({
         </div>
         {loadMore === true &&
           userNftsOwnedArray &&
-          userNftsOwnedArray.length >
-            0 &&(
-              <div className="d-flex justify-content-center mt-5">
-                <button
-                  className="buy-btn px-5 m-auto"
-                  onClick={handleLoadMore}
-                >
-                  {loadStatus === "loading" ? (
-                    <>
-                      Loading{" "}
-                      <div
-                        className="spinner-border spinner-border-sm text-light"
-                        role="status"
-                      ></div>
-                    </>
-                  ) : (
-                    `Load more`
-                  )}
-                </button>
-              </div>
-            )}
+          userNftsOwnedArray.length > 0 &&
+          option === "collected" && (
+            <div className="d-flex justify-content-center mt-5">
+              <button className="buy-btn px-5 m-auto" onClick={handleLoadMore}>
+                {loadStatus === "loading" ? (
+                  <>
+                    Loading{" "}
+                    <div
+                      className="spinner-border spinner-border-sm text-light"
+                      role="status"
+                    ></div>
+                  </>
+                ) : (
+                  `Load more`
+                )}
+              </button>
+            </div>
+          )}
       </div>
     </div>
   );

@@ -13,6 +13,8 @@ import { Skeleton } from "@mui/material";
 const CollectionCategories = ({ allCollections }) => {
   const [category, setCategory] = useState("all");
   const [collections, setCollections] = useState([]);
+  const [allcollectionsUpdated, setallcollectionsUpdated] = useState([]);
+
   const windowSize = useWindowSize();
   const sliderRef = useRef();
   const [loading, setLoading] = useState(false);
@@ -33,19 +35,48 @@ const CollectionCategories = ({ allCollections }) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
-  const changeCategory = (val) => {
+  const checkIfImageisValid = async (image) => {
+    const result = await fetch(
+      `https://confluxapi.worldofdypians.com/${image}`
+    ).catch((e) => {
+      console.error(e);
+    });
+    if (result && result.status === 200) {
+      return `https://confluxapi.worldofdypians.com/${image}`;
+    } else return undefined;
+  };
+
+  const updateCollections = async () => {
+    if (allCollections && allCollections.length > 0) {
+      const allData = await Promise.all(
+        allCollections.map(async (item) => {
+          return {
+            ...item,
+            image: await checkIfImageisValid(item.featuredBannerPicture),
+          };
+        })
+      );
+
+      setallcollectionsUpdated(allData);
+      setCollections(allData);
+      
+    }
+  };
+
+  const changeCategory = async (val) => {
     let filteredCollections = [];
     setLoading(true);
     setCategory(val);
+
     if (val === "all") {
-      setCollections(allCollections);
+      setCollections(allcollectionsUpdated);
     } else if (val === "virtual") {
-      filteredCollections = allCollections.filter((item) => {
+      filteredCollections = allcollectionsUpdated.filter((item) => {
         return item.tags.includes("Virtual World");
       });
       setCollections(filteredCollections);
     } else {
-      filteredCollections = allCollections.filter((item) => {
+      filteredCollections = allcollectionsUpdated.filter((item) => {
         return item.tags.includes(capitalizeFirstLetter(val));
       });
       setCollections(filteredCollections);
@@ -56,9 +87,8 @@ const CollectionCategories = ({ allCollections }) => {
   };
 
   useEffect(() => {
-    setCollections(allCollections);
-  }, [allCollections]);
-
+    updateCollections();
+  }, [allCollections]); 
   return (
     <div className="container-lg py-5">
       <div className="row">
@@ -162,7 +192,7 @@ const CollectionCategories = ({ allCollections }) => {
               </Slider>
             ) : loading === false && collections.length > 0 ? (
               <Slider ref={sliderRef} {...settings}>
-                {collections.map((item, index) => (
+                {collections.slice(collections.length - 4, collections.length).map((item, index) => (
                   <NavLink
                     to={`/collection/${item.contractAddress}/${item.symbol}`}
                     className={"text-decoration-none"}

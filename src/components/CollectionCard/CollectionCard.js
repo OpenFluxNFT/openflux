@@ -11,8 +11,8 @@ const CollectionCard = ({ data }) => {
     <div className="d-flex flex-column collection-card ">
       <img
         src={
-          data.featuredBannerPicture
-            ? `https://confluxapi.worldofdypians.com/${data.featuredBannerPicture}`
+          data.image
+            ? `${data.image}`
             : noImageCollection
         }
         className="w-100 featured-collection-pic"

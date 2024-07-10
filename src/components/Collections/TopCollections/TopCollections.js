@@ -10,7 +10,7 @@ import Slider from "react-slick";
 import { NavLink } from "react-router-dom";
 import getFormattedNumber from "../../../hooks/get-formatted-number";
 
-const TopCollections = ({ allCollections, allCollectionsOrdered }) => {
+const TopCollections = ({ allCollections, allCollectionsOrdered,newestCollections }) => {
   const windowSize = useWindowSize();
   const settings = {
     dots: true,
@@ -24,13 +24,15 @@ const TopCollections = ({ allCollections, allCollectionsOrdered }) => {
     dotsClass: "button__bar",
   };
 
+
+
   return (
     <div className="container-lg pt-0 pb-5 pt-lg-5">
       <div className="row">
         <h6 className="main-hero-title mb-3">New Collections</h6>
         {windowSize.width > 786 ? (
           <div className="top-collections-grid pe-0">
-            {allCollectionsOrdered.slice(0, 4).map((item, index) => (
+            {newestCollections.slice(0, 4).map((item, index) => (
               <div
                 className="position-relative top-collection-wrapper"
                 key={index}
@@ -40,8 +42,8 @@ const TopCollections = ({ allCollections, allCollectionsOrdered }) => {
                 >
                   <img
                     src={
-                      item.collectionBannerPicture
-                        ? `https://confluxapi.worldofdypians.com/${item.collectionBannerPicture}`
+                      item.image
+                        ? `${item.image}`
                         : collectionPlaceholder2
                     }
                     className="top-collection-image new-collection-img"
@@ -70,7 +72,7 @@ const TopCollections = ({ allCollections, allCollectionsOrdered }) => {
           </div>
         ) : (
           <Slider {...settings}>
-            {allCollectionsOrdered.slice(0, 4).map((item, index) => (
+            {newestCollections.slice(0, 4).map((item, index) => (
               <div
                 className="position-relative top-collection-wrapper"
                 key={index}
@@ -81,8 +83,8 @@ const TopCollections = ({ allCollections, allCollectionsOrdered }) => {
                 >
                   <img
                     src={
-                      item.collectionBannerPicture
-                        ? `https://confluxapi.worldofdypians.com/${item.collectionBannerPicture}`
+                      item.image
+                        ? `${item.image}`
                         : collectionPlaceholder2
                     }
                     className="top-collection-image"

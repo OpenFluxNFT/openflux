@@ -10,7 +10,7 @@ const Collections = ({
   allCollections,
   allCollectionsOrdered,
   recentlySoldNfts,
-  cfxPrice,
+  cfxPrice,newestCollections
 }) => {
   const location = useLocation();
 
@@ -30,6 +30,8 @@ const Collections = ({
       <TopCollections
         allCollections={allCollections}
         allCollectionsOrdered={allCollectionsOrdered}
+        newestCollections={newestCollections}
+
       />
       <TrendingCollections
         allCollections={allCollections}

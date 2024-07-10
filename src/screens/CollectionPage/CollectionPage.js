@@ -27,7 +27,8 @@ const CollectionPage = ({
   isNewCollection,
   onNewCollectionFetched,
   wcfxBalance,
-  userNftsOwnedArray,userNftsOwned
+  userNftsOwnedArray,
+  userNftsOwned,
 }) => {
   const [favorite, setFavorite] = useState(false);
 
@@ -90,7 +91,6 @@ const CollectionPage = ({
 
   const { collectionAddress } = useParams();
   
-
   const collectionInfo = [
     {
       title: "Total Volume",
@@ -1201,7 +1201,7 @@ const CollectionPage = ({
             ) {
               nftArray.push({
                 ...nft_data,
-                tokenId: Number(tokenByIndex),
+                tokenId: tokenByIndex,
                 owner: owner,
                 tokenName: tokenName,
                 bestOffer: bestOffer,
@@ -1209,7 +1209,7 @@ const CollectionPage = ({
               });
             } else {
               nftArray.push({
-                tokenId: Number(tokenByIndex),
+                tokenId: tokenByIndex,
                 name: `#${tokenByIndex}`,
                 owner: owner,
                 tokenName: tokenName,
@@ -1435,7 +1435,7 @@ const CollectionPage = ({
             ) {
               nftArray.push({
                 ...nft_data,
-                tokenId: Number(tokenByIndex),
+                tokenId: tokenByIndex,
                 owner: owner,
                 tokenName: tokenName,
                 bestOffer: bestOffer,
@@ -1443,7 +1443,7 @@ const CollectionPage = ({
               });
             } else {
               nftArray.push({
-                tokenId: Number(tokenByIndex),
+                tokenId: tokenByIndex,
                 owner: owner,
                 tokenName: tokenName,
                 bestOffer: bestOffer,
@@ -1493,15 +1493,39 @@ const CollectionPage = ({
   //   }
   // };
 
-  const fetchCurrentCollection = (collectionAddr) => {
-    const result = allCollections.find((item) => {
+  const checkIfImageisValid = async (image) => {
+    const result = await fetch(
+      `https://confluxapi.worldofdypians.com/${image}`
+    ).catch((e) => {
+      console.error(e);
+    });
+    if (result && result.status === 200) {
+      return `https://confluxapi.worldofdypians.com/${image}`;
+    } else return undefined;
+  };
+
+  const fetchCurrentCollection = async (collectionAddr) => {
+    const result = allCollections.filter((item) => {
       return (
         item.contractAddress.toLowerCase() === collectionAddr.toLowerCase()
       );
     });
-    if (result) {
-      setcurrentCollection(result);
-      let totalSupply = parseInt(result.totalSupply);
+    console.log("result", result);
+    if (result && result.length > 0) {
+      const result2 = await Promise.all(
+        result.map(async (item) => {
+          return {
+            ...item,
+            coll_banner: await checkIfImageisValid(
+              item.collectionBackgroundPic
+            ),
+            coll_logo: await checkIfImageisValid(item.collectionProfilePic),
+          };
+        })
+      );
+
+      setcurrentCollection(...result2);
+      let totalSupply = parseInt(result[0].totalSupply);
       settotalSupplyPerCollection(totalSupply);
       const socialsObject = [
         { title: "website", link: result.websiteLink },
@@ -2044,7 +2068,9 @@ const CollectionPage = ({
   }, [collectionAddress, userCollectionFavs]);
 
   useEffect(() => {
-    fetchCurrentCollection(collectionAddress);
+    if (allCollections && allCollections.length > 0) {
+      fetchCurrentCollection(collectionAddress);
+    }
   }, [collectionAddress, allCollections]);
 
   useEffect(() => {
@@ -2081,13 +2107,13 @@ const CollectionPage = ({
         <CollectionBanner
           title={currentCollection.collectionName}
           logo={
-            currentCollection.collectionProfilePic
-              ? `https://confluxapi.worldofdypians.com/${currentCollection.collectionProfilePic}`
+            currentCollection.coll_logo
+              ? `${currentCollection.coll_logo}`
               : collectionIcon
           }
           banner={
-            currentCollection.collectionBackgroundPic
-              ? `https://confluxapi.worldofdypians.com/${currentCollection.collectionBackgroundPic}`
+            currentCollection.coll_banner
+              ? `${currentCollection.coll_banner}`
               : banner
           }
           socials={collectionSocials}

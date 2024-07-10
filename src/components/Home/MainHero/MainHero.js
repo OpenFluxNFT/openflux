@@ -98,8 +98,8 @@ const MainHero = ({ allCollections, recentlySoldNfts,newestCollections }) => {
                                 className="single-small-collection-wrapper"
                                 key={index}
                               >
-                                { item.collectionProfilePic ?  <img
-                                  src={`https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`}
+                                { item.image ?  <img
+                                  src={`${item.image}`}
                                   alt=""
                                   className="small-collection-img"
                                 /> :
@@ -127,8 +127,8 @@ const MainHero = ({ allCollections, recentlySoldNfts,newestCollections }) => {
                                 className="single-small-collection-wrapper"
                                 key={index}
                               >
-                                { item.collectionProfilePic ?  <img
-                                  src={`https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`}
+                                { item.image ?  <img
+                                  src={`${item.image}`}
                                   alt=""
                                   className="small-collection-img"
                                 /> :
@@ -156,8 +156,8 @@ const MainHero = ({ allCollections, recentlySoldNfts,newestCollections }) => {
                                 className="single-small-collection-wrapper"
                                 key={index}
                               >
-                                { item.collectionProfilePic ?  <img
-                                  src={`https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`}
+                                { item.image ?  <img
+                                  src={`${item.image}`}
                                   alt=""
                                   className="small-collection-img"
                                 /> :

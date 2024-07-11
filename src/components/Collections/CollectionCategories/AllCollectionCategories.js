@@ -12,6 +12,7 @@ const AllCollectionCategories = ({ allCollections }) => {
   const [loading, setLoading] = useState(false);
   const [categoryLoading, setCategoryLoading] = useState(false)
   const [collections, setCollections] = useState([]);
+  const [allcollectionsUpdated, setallcollectionsUpdated] = useState([]);
 
   const collectionsPerRow = 12;
 
@@ -35,6 +36,16 @@ const AllCollectionCategories = ({ allCollections }) => {
   function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
+  const checkIfImageisValid = async (image) => {
+    const result = await fetch(
+      `https://confluxapi.worldofdypians.com/${image}`
+    ).catch((e) => {
+      console.error(e);
+    });
+    if (result && result.status === 200) {
+      return `https://confluxapi.worldofdypians.com/${image}`;
+    } else return undefined;
+  };
 
   const changeCategory = (val) => {
     let filteredCollections = [];
@@ -58,10 +69,25 @@ const AllCollectionCategories = ({ allCollections }) => {
     }, 1500);
   };
 
-  
+  const updateCollections = async () => {
+    if (allCollections && allCollections.length > 0) {
+      const allData = await Promise.all(
+        allCollections.map(async (item) => {
+          return {
+            ...item,
+            image: await checkIfImageisValid(item.featuredBannerPicture),
+          };
+        })
+      );
+
+      setallcollectionsUpdated(allData);
+      setCollections(allData);
+      
+    }
+  };
 
   useEffect(() => {
-    setCollections(allCollections);
+    updateCollections()
   }, [allCollections]);
 
 

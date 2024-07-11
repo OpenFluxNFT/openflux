@@ -1011,20 +1011,35 @@ const SingleNft = ({
     setLoading(false);
   };
 
+  const checkIfImageisValid = async (image) => {
+    const result = await fetch(
+      `https://confluxapi.worldofdypians.com/${image}`
+    ).catch((e) => {
+      console.error(e);
+    });
+    if (result && result.status === 200) {
+      return `https://confluxapi.worldofdypians.com/${image}`;
+    } else return undefined;
+  };
+
+
   const getCollectionTotalSupply = async () => {
     if (allCollections && allCollections.length > 0) {
-      const resultcollection = allCollections.find((item) => {
+      const resultcollection = allCollections.filter((item) => {
         return item.contractAddress.toLowerCase() === nftAddress.toLowerCase();
       });
 
-      if (resultcollection) {
-        let totalSupply = parseInt(resultcollection.totalSupply);
+      if (resultcollection && resultcollection.length>0) {
+        let totalSupply = parseInt(resultcollection[0].totalSupply);
         settotalSupplyPerCollection(totalSupply);
-        setcurrentCollection(resultcollection);
+        const final = await Promise.all(resultcollection.map(async (item)=>{
+          return({...item, profilepic: await checkIfImageisValid(item.collectionProfilePic)})
+        }))
+        setcurrentCollection(...final);
       }
     }
   };
-
+console.log(currentCollection, nftData)
   const fetchInitialNftsPerCollection = async (nftID) => {
     setLoading(true);
     const wallet = await window.getCoinbase().then((data) => {
@@ -1277,14 +1292,14 @@ const SingleNft = ({
             ) {
               nftArray.push({
                 ...nft_data,
-                tokenId: Number(tokenByIndex),
+                tokenId: tokenByIndex,
                 owner: owner,
                 nftAddress: nftAddress,
                 nftSymbol: nftSymbol,
               });
             } else {
               nftArray.push({
-                tokenId: Number(tokenByIndex),
+                tokenId: tokenByIndex,
                 owner: owner,
                 nftAddress: nftAddress,
                 nftSymbol: nftSymbol,

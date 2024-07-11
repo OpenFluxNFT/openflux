@@ -1497,7 +1497,7 @@ const CollectionList = ({
                         >
                           {item.tokenName +
                             " " +
-                            (item.name ? item.name : ` #${item.tokenId}`)}
+                            (item.name ? item.name : ` #${item.tokenId ? item.tokenId?.toString().slice(0,10) : ''}`)}
                         </h6>
                         {isVerified && <img src={checkIcon} alt="" />}
                       </div>

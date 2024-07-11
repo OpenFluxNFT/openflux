@@ -65,7 +65,18 @@ const Header = ({
     } else handleDisconnect();
   };
 
-  const handleFilterCollection = (collectionTitle) => {
+  const checkIfImageisValid = async (image) => {
+    const result = await fetch(
+      `https://confluxapi.worldofdypians.com/${image}`
+    ).catch((e) => {
+      console.error(e);
+    });
+    if (result && result.status === 200) {
+      return `https://confluxapi.worldofdypians.com/${image}`;
+    } else return undefined;
+  };
+
+  const handleFilterCollection = async (collectionTitle) => {
     if (collectionTitle.length >= 3) {
       const result = allCollections.filter((item) => {
         return item.collectionName
@@ -74,7 +85,15 @@ const Header = ({
       });
 
       if (result) {
-        setcurrentCollection(result);
+        const final = await Promise.all(
+          result.map(async (item) => {
+            return {
+              ...item,
+              image: await checkIfImageisValid(item.collectionProfilePic),
+            };
+          })
+        );
+        setcurrentCollection(final);
         setisopen(true);
       } else {
         setcurrentCollection();
@@ -154,9 +173,9 @@ const Header = ({
                               className="d-flex align-items-center gap-2"
                             >
                               <div className="menuitem2 w-100">
-                                {item.collectionProfilePic && (
+                                {item.image && (
                                   <img
-                                    src={`https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`}
+                                    src={`${item.image}`}
                                     className="collection-logo-small"
                                   />
                                 )}
@@ -204,7 +223,11 @@ const Header = ({
               </div>
 
               <div className="d-flex align-items-center gap-3">
-                <a href="https://swappi.io/" style={{textDecoration: "none"}} target="_blank">
+                <a
+                  href="https://swappi.io/"
+                  style={{ textDecoration: "none" }}
+                  target="_blank"
+                >
                   <button className="swappi-btn px-3 d-flex align-items-center gap-2">
                     <img src={swappiIcon} alt="" />
                     Swappi

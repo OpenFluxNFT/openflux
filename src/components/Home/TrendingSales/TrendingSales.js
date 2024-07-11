@@ -33,7 +33,6 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
   const [topSales, setTopSales] = useState([]);
   const [topSales2, setTopSales2] = useState([]);
 
-
   const [trendingCollections, setTrendingCollections] = useState([]);
   const baseURL = "https://confluxapi.worldofdypians.com";
 
@@ -171,8 +170,6 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
           currentTime - parseInt(item.blockTimestamp, 10) <= thirtyDaysInSeconds
       );
 
-
-
       if (val === "24h") {
         setRecents(items24HoursAgo);
       } else if (val === "7d") {
@@ -185,8 +182,6 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
         setLoading(false);
       }, 1500);
     } else if (option === "topSales" && topSales && topSales.length > 0) {
-     
-
       const items24HoursAgo = topSales2.filter(
         (item) =>
           currentTime - parseInt(item.lastSale.blockTimestamp, 10) <=
@@ -228,14 +223,15 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
       .catch((e) => {
         console.error(e);
       });
-      const wallet =  await window.getCoinbase().then((data) => {return data})
+    const wallet = await window.getCoinbase().then((data) => {
+      return data;
+    });
 
     const web3 = window.confluxWeb3;
     if (result && result.status === 200) {
       const topSold = await Promise.all(
         result.data.map(async (item) => {
           let isApproved = false;
-       
 
           const abi_1155 = new window.confluxWeb3.eth.Contract(
             window.BACKUP_ABI,
@@ -245,7 +241,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
             window.ERC721_ABI,
             item.nftAddress
           );
-        
+
           const is721 = await abi_721.methods
             .supportsInterface(window.config.erc721_id)
             .call()
@@ -260,49 +256,52 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
               console.error(e);
               return false;
             });
-        
+
           const abi_final = is1155
             ? window.BACKUP_ABI
             : is721
             ? window.ERC721_ABI
             : window.ERC721_ABI;
 
-          if (
-            abi_final
-          ) {
+          if (abi_final) {
             let lastSale = 0;
             const abi = abi_final;
-      const currentCollection = allCollections.filter((obj)=>{return obj.contractAddress.toLowerCase() === item.nftAddress.toLowerCase()})
+            const currentCollection = allCollections.filter((obj) => {
+              return (
+                obj.contractAddress.toLowerCase() ===
+                item.nftAddress.toLowerCase()
+              );
+            });
             const collection_contract = new web3.eth.Contract(
               abi,
               item.nftAddress
             );
             const tokenName = currentCollection?.symbol;
 
-    let seller;
-              let userBalance = 0;
-         
-              if (is721) {
-                seller = await collection_contract.methods
-                  .ownerOf(item.tokenId)
-                  .call()
-                  .catch((e) => {
-                    console.log(e);
-                  });
-                 
-              } else if (is1155) {
-                if(wallet)
-              {  userBalance = await collection_contract.methods
+            let seller;
+            let userBalance = 0;
+
+            if (is721) {
+              seller = await collection_contract.methods
+                .ownerOf(item.tokenId)
+                .call()
+                .catch((e) => {
+                  console.log(e);
+                });
+            } else if (is1155) {
+              if (wallet) {
+                userBalance = await collection_contract.methods
                   .balanceOf(wallet, item.tokenId)
                   .call()
                   .catch((e) => {
                     console.log(e);
                   });
-        
+
                 if (userBalance > 0) {
                   seller = wallet;
-                } }
+                }
               }
+            }
             const collectionName = currentCollection?.collectionName;
 
             const isApprovedresult = await window
@@ -380,7 +379,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
           }
         })
       );
-      setTopSales2(topSold)
+      setTopSales2(topSold);
       setTopSales(topSold);
     }
     setTimeout(() => {
@@ -392,31 +391,55 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
     setLoading(true);
 
     let initialArr;
-    const response = await axios.get(
-      "https://confluxapi.worldofdypians.com/api/top-collections/lifetime-volume"
-    ).catch((e) => {
-      console.error(e);
-    });
+    const response = await axios
+      .get(
+        "https://confluxapi.worldofdypians.com/api/top-collections/lifetime-volume"
+      )
+      .catch((e) => {
+        console.error(e);
+      });
 
-    if (time === "24h") {
-      initialArr = response.data.sort((a, b) => {
-        return b.volume24h > a.volume24h;
-      });
-      setTrendingCollections(initialArr);
-    } else if (time === "7d") {
-      initialArr = response.data.sort((a, b) => {
-        return b.volume7d > a.volume7d;
-      });
-      setTrendingCollections(initialArr);
-    } else if (time === "30d") {
-      initialArr = response.data.sort((a, b) => {
-        return b.volume30d > a.volume30d;
-      });
-      setTrendingCollections(initialArr);
+    if (response && response.status === 200) {
+      const allData = await Promise.all(
+        response.data.map(async (item) => {
+          return {
+            ...item,
+            image: await checkIfImageisValid(item.collectionProfilePic),
+          };
+        })
+      );
+      if (time === "24h") {
+        initialArr = allData.sort((a, b) => {
+          return b.volume24h > a.volume24h;
+        });
+        setTrendingCollections(initialArr);
+      } else if (time === "7d") {
+        initialArr = allData.sort((a, b) => {
+          return b.volume7d > a.volume7d;
+        });
+        setTrendingCollections(initialArr);
+      } else if (time === "30d") {
+        initialArr = allData.sort((a, b) => {
+          return b.volume30d > a.volume30d;
+        });
+        setTrendingCollections(initialArr);
+      }
     }
+
     setTimeout(() => {
       setLoading(false);
     }, 1500);
+  };
+
+  const checkIfImageisValid = async (image) => {
+    const result = await fetch(
+      `https://confluxapi.worldofdypians.com/${image}`
+    ).catch((e) => {
+      console.error(e);
+    });
+    if (result && result.status === 200) {
+      return `https://confluxapi.worldofdypians.com/${image}`;
+    } else return undefined;
   };
 
   useEffect(() => {
@@ -429,8 +452,6 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
     categorizeItems("30d");
     setLoading(false);
   }, [recentlySoldNfts, option]);
-
-
 
   return (
     <>
@@ -720,11 +741,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                           </div>
 
                           <img
-                            src={
-                              item.collectionProfilePic
-                                ? `https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`
-                                : noImage
-                            }
+                            src={item.image ? `${item.image}` : noImage}
                             style={{
                               height: "120px",
                               width: "120px",
@@ -786,8 +803,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                       </div>
                     );
                   })
-                ) : option === "recentSales" &&
-                  recents.length === 0 ? (
+                ) : option === "recentSales" && recents.length === 0 ? (
                   <>
                     <div></div>
                     <div
@@ -1101,11 +1117,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                           </div>
 
                           <img
-                            src={
-                              item.collectionProfilePic
-                                ? `https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`
-                                : noImage
-                            }
+                            src={item.image ? `${item.image}` : noImage}
                             style={{
                               height: "120px",
                               width: "120px",
@@ -1253,11 +1265,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                           </div>
 
                           <img
-                            src={
-                              item.collectionProfilePic
-                                ? `https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`
-                                : noImage
-                            }
+                            src={item.image ? `${item.image}` : noImage}
                             style={{
                               height: "120px",
                               width: "120px",

@@ -309,7 +309,10 @@ function App() {
       });
 
     if (response && response.status === 200) {
-      setnewestCollections(response.data);
+      const allData = await Promise.all(response.data.map(async (item)=>{
+        return({...item, image: await checkIfImageisValid(item.collectionProfilePic)})
+      }))
+      setnewestCollections(allData);
     }
   };
 
@@ -685,6 +688,19 @@ function App() {
       setrecentlySoldNfts(recentlySold);
     }
   };
+
+  const checkIfImageisValid = async (image) => {
+    const result = await fetch(
+      `https://confluxapi.worldofdypians.com/${image}`
+    ).catch((e) => {
+      console.error(e);
+    });
+    if (result && result.status === 200) {
+      return `https://confluxapi.worldofdypians.com/${image}`;
+    } else return undefined;
+  };
+
+ 
 
   const handleGetRecentlySoldNftsCache = async () => {
     const result = await axios
@@ -1384,6 +1400,7 @@ function App() {
     } else setUserNftsOwnedArray([]);
   };
 
+  
   const fetchuserCollection = async (walletAddr) => {
     if (walletAddr) {
       const result = await axios
@@ -1663,7 +1680,7 @@ function App() {
             setshowSignPopup(true);
           }, 1000);
         } else {
-          setuserData(result.data);
+          setuserData(result.data); 
           setuserCollectionFavs(result.data.collectionFavorites);
           setuserNftFavsInitial(result.data.nftFavorites);
           fetchTotalNftOwned(walletAddr);
@@ -2213,6 +2230,7 @@ function App() {
               allCollectionsOrdered={allCollectionsOrdered}
               recentlySoldNfts={recentlySoldNfts}
               cfxPrice={cfxPrice}
+              newestCollections={newestCollections}
             />
           }
         />

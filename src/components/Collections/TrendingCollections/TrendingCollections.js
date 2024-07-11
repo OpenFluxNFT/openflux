@@ -49,31 +49,53 @@ const TrendingCollections = ({
     dotsClass: "button__bar",
   };
 
+  const checkIfImageisValid = async (image) => {
+    const result = await fetch(
+      `https://confluxapi.worldofdypians.com/${image}`
+    ).catch((e) => {
+      console.error(e);
+    });
+    if (result && result.status === 200) {
+      return `https://confluxapi.worldofdypians.com/${image}`;
+    } else return undefined;
+  };
+
   const fetchNewestCollections = async () => {
     setLoading(true);
 
     let initialArr;
-    const response = await axios.get(
-      "https://confluxapi.worldofdypians.com/api/newest-collections"
-    ).catch((e) => {
-      console.error(e);
-    });
+    const response = await axios
+      .get("https://confluxapi.worldofdypians.com/api/newest-collections")
+      .catch((e) => {
+        console.error(e);
+      });
 
-    if (time === "24h") {
-      initialArr = response.data.sort((a, b) => {
-        return b.volume24h > a.volume24h;
-      });
-      setNewestCollections(initialArr);
-    } else if (time === "7d") {
-      initialArr = response.data.sort((a, b) => {
-        return b.volume7d > a.volume7d;
-      });
-      setNewestCollections(initialArr);
-    } else if (time === "30d") {
-      initialArr = response.data.sort((a, b) => {
-        return b.volume30d > a.volume30d;
-      });
-      setNewestCollections(initialArr);
+    if (response && response.status === 200) {
+      const allData = await Promise.all(
+        response.data.map(async (item) => {
+          return {
+            ...item,
+            image: await checkIfImageisValid(item.collectionProfilePic),
+          };
+        })
+      );
+
+      if (time === "24h") {
+        initialArr = allData.sort((a, b) => {
+          return b.volume24h > a.volume24h;
+        });
+        setNewestCollections(initialArr);
+      } else if (time === "7d") {
+        initialArr = allData.sort((a, b) => {
+          return b.volume7d > a.volume7d;
+        });
+        setNewestCollections(initialArr);
+      } else if (time === "30d") {
+        initialArr = allData.sort((a, b) => {
+          return b.volume30d > a.volume30d;
+        });
+        setNewestCollections(initialArr);
+      }
     }
     setTimeout(() => {
       setLoading(false);
@@ -83,28 +105,42 @@ const TrendingCollections = ({
     setLoading(true);
 
     let initialArr;
-    const response = await axios.get(
-      "https://confluxapi.worldofdypians.com/api/top-collections/lifetime-volume"
-    ).catch((e) => {
-      console.error(e);
-    });;
+    const response = await axios
+      .get(
+        "https://confluxapi.worldofdypians.com/api/top-collections/lifetime-volume"
+      )
+      .catch((e) => {
+        console.error(e);
+      });
 
-    if (time === "24h") {
-      initialArr = response.data.sort((a, b) => {
-        return b.volume24h > a.volume24h;
-      });
-      setTrendingCollections(initialArr);
-    } else if (time === "7d") {
-      initialArr = response.data.sort((a, b) => {
-        return b.volume7d > a.volume7d;
-      });
-      setTrendingCollections(initialArr);
-    } else if (time === "30d") {
-      initialArr = response.data.sort((a, b) => {
-        return b.volume30d > a.volume30d;
-      });
-      setTrendingCollections(initialArr);
+    if (response && response.status === 200) {
+      const allData = await Promise.all(
+        response.data.map(async (item) => {
+          return {
+            ...item,
+            image: await checkIfImageisValid(item.collectionProfilePic),
+          };
+        })
+      );
+
+      if (time === "24h") {
+        initialArr = allData.sort((a, b) => {
+          return b.volume24h > a.volume24h;
+        });
+        setTrendingCollections(initialArr);
+      } else if (time === "7d") {
+        initialArr = allData.sort((a, b) => {
+          return b.volume7d > a.volume7d;
+        });
+        setTrendingCollections(initialArr);
+      } else if (time === "30d") {
+        initialArr = allData.sort((a, b) => {
+          return b.volume30d > a.volume30d;
+        });
+        setTrendingCollections(initialArr);
+      }
     }
+
     setTimeout(() => {
       setLoading(false);
     }, 1500);
@@ -112,36 +148,73 @@ const TrendingCollections = ({
 
   const fetchTop24h = async () => {
     setLoading(true);
-    const response = await axios.get(
-      "https://confluxapi.worldofdypians.com/api/top-collections/24h-volume"
-    ).catch((e) => {
-            console.error(e);
-          });
-    setTopCollections(response.data);
+    const response = await axios
+      .get(
+        "https://confluxapi.worldofdypians.com/api/top-collections/24h-volume"
+      )
+      .catch((e) => {
+        console.error(e);
+      });
+    if (response && response.status === 200) {
+      const allData = await Promise.all(
+        response.data.map(async (item) => {
+          return {
+            ...item,
+            image: await checkIfImageisValid(item.collectionProfilePic),
+          };
+        })
+      );
+      setTopCollections(allData);
+    }
+
     setTimeout(() => {
       setLoading(false);
     }, 1500);
   };
   const fetchTop7d = async () => {
     setLoading(true);
-    const response = await axios.get(
-      "https://confluxapi.worldofdypians.com/api/top-collections/7d-volume"
-    ).catch((e) => {
-      console.error(e);
-    });
-    setTopCollections(response.data);
+    const response = await axios
+      .get(
+        "https://confluxapi.worldofdypians.com/api/top-collections/7d-volume"
+      )
+      .catch((e) => {
+        console.error(e);
+      });
+    if (response && response.status === 200) {
+      const allData = await Promise.all(
+        response.data.map(async (item) => {
+          return {
+            ...item,
+            image: await checkIfImageisValid(item.collectionProfilePic),
+          };
+        })
+      );
+      setTopCollections(allData);
+    }
     setTimeout(() => {
       setLoading(false);
     }, 1500);
   };
   const fetchTop30d = async () => {
     setLoading(true);
-    const response = await axios.get(
-      "https://confluxapi.worldofdypians.com/api/top-collections/30d-volume"
-    ).catch((e) => {
-      console.error(e);
-    });
-    setTopCollections(response.data);
+    const response = await axios
+      .get(
+        "https://confluxapi.worldofdypians.com/api/top-collections/30d-volume"
+      )
+      .catch((e) => {
+        console.error(e);
+      });
+    if (response && response.status === 200) {
+      const allData = await Promise.all(
+        response.data.map(async (item) => {
+          return {
+            ...item,
+            image: await checkIfImageisValid(item.collectionProfilePic),
+          };
+        })
+      );
+      setTopCollections(allData);
+    }
     setTimeout(() => {
       setLoading(false);
     }, 1500);
@@ -454,8 +527,8 @@ const TrendingCollections = ({
                     <div className="trending-collection-card d-flex align-items-center gap-2">
                       <img
                         src={
-                          item.collectionProfilePic
-                            ? `https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`
+                          item.image
+                            ? `${item.image}`
                             : noImage
                         }
                         style={{
@@ -538,8 +611,8 @@ const TrendingCollections = ({
                     <div className="trending-collection-card d-flex align-items-center gap-2">
                       <img
                         src={
-                          item.collectionProfilePic
-                            ? `https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`
+                          item.image
+                            ? `${item.image}`
                             : noImage
                         }
                         style={{
@@ -622,8 +695,8 @@ const TrendingCollections = ({
                     <div className="trending-collection-card d-flex align-items-center gap-2">
                       <img
                         src={
-                          item.collectionProfilePic
-                            ? `https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`
+                          item.image
+                            ? `${item.image}`
                             : noImage
                         }
                         style={{

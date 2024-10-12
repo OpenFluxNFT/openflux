@@ -380,7 +380,7 @@ const MoreFromCollection = ({
                           />
                         ) : (
                           <img
-                            src={require(`../../CollectionPage/CollectionList/assets/noImageNftCard.png`)}
+                            src={require(`../../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
                             className="card-img"
                             alt=""
                           />

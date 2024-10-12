@@ -285,7 +285,9 @@ const RecentlyListed = ({
                         item.image && item.image !== "undefined"
                           ? `https://cdnflux.dypius.com/${item.image}`
                           : item.image === "undefined"
-                            ? require(`./assets/noImage2.png`)
+                            // ? require(`./assets/noImage2.png`)
+                            ? require(`./assets/collectionCardPlaceholder2.png`)
+
                             : require(`./assets/nftPlaceholder${index + 1}.png`)
                       }
                       className="card-img"
@@ -478,7 +480,8 @@ const RecentlyListed = ({
                         item.image && item.image !== "undefined"
                           ? `https://cdnflux.dypius.com/${item.image}`
                           : item.image === "undefined"
-                            ? require(`./assets/noImage2.png`)
+                          // ? require(`./assets/noImage2.png`)
+                          ? require(`./assets/collectionCardPlaceholder2.png`)
                             : require(`./assets/nftPlaceholder${index + 1}.png`)
                       }
                       className="card-img"

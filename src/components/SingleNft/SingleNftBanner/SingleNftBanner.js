@@ -422,7 +422,7 @@ const SingleNftBanner = ({
               ) : (
                 <div className="col-12 col-lg-6 mb-3 position-relative">
                   <img
-                    src={require(`../../CollectionPage/CollectionList/assets/noImageNftCard.png`)}
+                    src={require(`../../CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png`)}
                     className="nft-image"
                     alt=""
                   />

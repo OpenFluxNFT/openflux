@@ -13,7 +13,7 @@ const CollectionCard = ({ data }) => {
         src={
           data.image
             ? `${data.image}`
-            : noImageCollection
+            : collectionCardPlaceholder1
         }
         className="w-100 featured-collection-pic"
         alt=""

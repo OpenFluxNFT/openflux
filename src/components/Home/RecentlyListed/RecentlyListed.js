@@ -287,8 +287,7 @@ const RecentlyListed = ({
                           : item.image === "undefined"
                             // ? require(`./assets/noImage2.png`)
                             ? require(`./assets/collectionCardPlaceholder2.png`)
-
-                            : require(`./assets/nftPlaceholder${index + 1}.png`)
+                            : require(`./assets/collectionCardPlaceholder2.png`)
                       }
                       className="card-img"
                       alt=""
@@ -482,7 +481,7 @@ const RecentlyListed = ({
                           : item.image === "undefined"
                           // ? require(`./assets/noImage2.png`)
                           ? require(`./assets/collectionCardPlaceholder2.png`)
-                            : require(`./assets/nftPlaceholder${index + 1}.png`)
+                            : require(`./assets/collectionCardPlaceholder2.png`)
                       }
                       className="card-img"
                       alt=""

@@ -1189,11 +1189,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                           </div>
 
                           <img
-                            src={
-                              item.collectionProfilePic
-                                ? `https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`
-                                : collectionCardPlaceholder1
-                            }
+                             src={item.image ? `${item.image}` : collectionCardPlaceholder1}
                             style={{
                               height: "120px",
                               width: "120px",

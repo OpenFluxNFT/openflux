@@ -1180,7 +1180,7 @@ const CollectionList = ({
                                 ></video>
                               ) : (
                                 <img
-                                  src={require(`./assets/noImageNftCard.png`)}
+                                  src={require(`./assets/collectionCardPlaceholder2.png`)}
                                   className="table-img nftimg2"
                                   alt=""
                                   height={36}
@@ -1423,7 +1423,7 @@ const CollectionList = ({
                       )}
                       {!item.image && (
                         <img
-                          src={require(`./assets/noImageNftCard.png`)}
+                          src={require(`./assets/collectionCardPlaceholder2.png`)}
                           className="card-img"
                           alt=""
                         />
@@ -1614,7 +1614,7 @@ const CollectionList = ({
                               src={
                                 currentCollection.collectionProfilePic
                                   ? `https://confluxapi.worldofdypians.com/${currentCollection.collectionProfilePic}`
-                                  : require(`./assets/noImageNftCard.png`)
+                                  : require(`./assets/collectionCardPlaceholder2.png`)
                               }
                               className="table-img nftimg2"
                               height={36}

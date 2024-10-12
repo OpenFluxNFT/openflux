@@ -1039,7 +1039,7 @@ const SingleNft = ({
       }
     }
   };
-console.log(currentCollection, nftData)
+  
   const fetchInitialNftsPerCollection = async (nftID) => {
     setLoading(true);
     const wallet = await window.getCoinbase().then((data) => {

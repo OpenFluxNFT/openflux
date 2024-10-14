@@ -160,7 +160,7 @@ const ListingsTable = ({
                                       ? handleUpdateListing(
                                           nftPrice,
                                           item.nftAddress,
-                                          item.listingIndex
+                                          index
                                         )
                                       : handleConfluxChain();
                                   }}
@@ -193,7 +193,7 @@ const ListingsTable = ({
                                     chainId === 1030
                                       ? handlecancelListNft(
                                           item.nftAddress,
-                                          item.listingIndex
+                                          index
                                         )
                                       : handleConfluxChain();
                                   }}
@@ -240,7 +240,7 @@ const ListingsTable = ({
                                   onClick={() => {
                                     setSelectedNftId(index);
                                     chainId === 1030
-                                      ? handleBuyNft(item.nftAddress, item)
+                                      ? handleBuyNft(item.nftAddress, item, index)
                                       : handleConfluxChain();
                                   }}
                                 >

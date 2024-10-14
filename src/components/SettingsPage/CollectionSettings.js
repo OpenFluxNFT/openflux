@@ -1095,7 +1095,7 @@ const CollectionSettings = ({
                    />
                    :
                    <img
-                   src={require('../../components/CollectionCard/noImageCollection.png')}
+                   src={require('../../components/CollectionPage/CollectionList/assets/collectionCardPlaceholder2.png')}
                    className="w-100 featured-collection-pic"
                    alt=""
                  /> 

@@ -585,7 +585,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                               src={
                                 item.image
                                   ? `https://cdnflux.dypius.com/${item.image}`
-                                  : require(`../RecentlyListed/assets/noImageHomeCard.png`)
+                                  : collectionCardPlaceholder1
                               }
                               className="card-img2"
                               width={100}
@@ -664,7 +664,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                               src={
                                 item.image
                                   ? `https://cdnflux.dypius.com/${item.image}`
-                                  : require(`../RecentlyListed/assets/noImageHomeCard.png`)
+                                  : collectionCardPlaceholder1
                               }
                               className="card-img2"
                               width={100}
@@ -741,7 +741,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                           </div>
 
                           <img
-                            src={item.image ? `${item.image}` : noImage}
+                            src={item.image ? `${item.image}` : collectionCardPlaceholder1}
                             style={{
                               height: "120px",
                               width: "120px",
@@ -883,7 +883,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                               src={
                                 item.image
                                   ? `https://cdnflux.dypius.com/${item.image}`
-                                  : require(`../RecentlyListed/assets/noImageHomeCard.png`)
+                                  : collectionCardPlaceholder1
                               }
                               className="card-img2"
                               width={100}
@@ -961,7 +961,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                               src={
                                 item.image
                                   ? `https://cdnflux.dypius.com/${item.image}`
-                                  : require(`../RecentlyListed/assets/noImageHomeCard.png`)
+                                  : collectionCardPlaceholder1
                               }
                               className="card-img2"
                               width={100}
@@ -1039,7 +1039,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                               src={
                                 item.image
                                   ? `https://cdnflux.dypius.com/${item.image}`
-                                  : require(`../RecentlyListed/assets/noImageHomeCard.png`)
+                                  : collectionCardPlaceholder1
                               }
                               className="card-img2"
                               width={100}
@@ -1117,7 +1117,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                           </div>
 
                           <img
-                            src={item.image ? `${item.image}` : noImage}
+                            src={item.image ? `${item.image}` : collectionCardPlaceholder1}
                             style={{
                               height: "120px",
                               width: "120px",
@@ -1189,11 +1189,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                           </div>
 
                           <img
-                            src={
-                              item.collectionProfilePic
-                                ? `https://confluxapi.worldofdypians.com/${item.collectionProfilePic}`
-                                : noImage
-                            }
+                             src={item.image ? `${item.image}` : collectionCardPlaceholder1}
                             style={{
                               height: "120px",
                               width: "120px",
@@ -1265,7 +1261,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                           </div>
 
                           <img
-                            src={item.image ? `${item.image}` : noImage}
+                            src={item.image ? `${item.image}` : collectionCardPlaceholder1}
                             style={{
                               height: "120px",
                               width: "120px",
@@ -1343,7 +1339,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                               src={
                                 item.image
                                   ? `https://cdnflux.dypius.com/${item.image}`
-                                  : require(`../RecentlyListed/assets/noImageHomeCard.png`)
+                                  : collectionCardPlaceholder1
                               }
                               className="card-img2"
                               width={100}
@@ -1423,7 +1419,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                               src={
                                 item.image
                                   ? `https://cdnflux.dypius.com/${item.image}`
-                                  : require(`../RecentlyListed/assets/noImageHomeCard.png`)
+                                  : collectionCardPlaceholder1
                               }
                               className="card-img2"
                               width={100}
@@ -1503,7 +1499,7 @@ const TrendingSales = ({ recentlySoldNfts, cfxPrice, allCollections }) => {
                               src={
                                 item.image
                                   ? `https://cdnflux.dypius.com/${item.image}`
-                                  : require(`../RecentlyListed/assets/noImageHomeCard.png`)
+                                  : collectionCardPlaceholder1
                               }
                               className="card-img2"
                               width={100}

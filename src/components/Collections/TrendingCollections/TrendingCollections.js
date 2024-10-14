@@ -529,7 +529,7 @@ const TrendingCollections = ({
                         src={
                           item.image
                             ? `${item.image}`
-                            : noImage
+                            : collectionCardPlaceholder1
                         }
                         style={{
                           height: "120px",
@@ -613,7 +613,7 @@ const TrendingCollections = ({
                         src={
                           item.image
                             ? `${item.image}`
-                            : noImage
+                            : collectionCardPlaceholder1
                         }
                         style={{
                           height: "120px",
@@ -697,7 +697,7 @@ const TrendingCollections = ({
                         src={
                           item.image
                             ? `${item.image}`
-                            : noImage
+                            : collectionCardPlaceholder1
                         }
                         style={{
                           height: "120px",

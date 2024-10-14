@@ -171,18 +171,39 @@ const ProfileBanner = ({
       bannerPicture: "",
     });
   };
-  useEffect(() => {
-    if (banner) {
-      setBannerImage(`https://confluxapi.worldofdypians.com/${banner}`);
-    } else {
+
+  const checkIfImageisValid = async (image) => {
+    if (image) {
+      const result = await fetch(
+        `https://confluxapi.worldofdypians.com/${image}`
+      ).catch((e) => {
+        console.error(e);
+      });
+      if (result && result.status === 200) {
+        return `https://confluxapi.worldofdypians.com/${image}`;
+      } else return undefined;
+    } else return undefined;
+  };
+
+  const checkDataImageOfUser = async (userbanner, userlogo) => {
+    const resultBanner = await checkIfImageisValid(userbanner);
+    const resultLogo = await checkIfImageisValid(userlogo);
+console.log(resultBanner, 'resultBanner')
+    if (resultBanner) {
+      setBannerImage(resultBanner);
+    } else if (!resultBanner) {
       setBannerImage();
     }
 
-    if (logo) {
-      setProfileImage(`https://confluxapi.worldofdypians.com/${logo}`);
-    } else {
+    if (resultLogo) {
+      setProfileImage(resultLogo);
+    } else if (!resultLogo) {
       setProfileImage();
     }
+  };
+
+  useEffect(() => {
+    checkDataImageOfUser(banner, logo);
   }, [banner, logo]);
 
   return (
@@ -210,13 +231,17 @@ const ProfileBanner = ({
                 ) : (
                   <></>
                 )}
-                {bannerImage && (
+                {bannerImage ? (
                   <img
                     src={bannerImage}
                     className="w-100 d-flex user-banner-img "
                     alt=""
                   />
-                )}
+                ) :  <img
+                src={bannerPlaceholder}
+                className="w-100 d-flex user-banner-img "
+                alt=""
+              />}
                 {coinbase && coinbase === id ? (
                   <img
                     src={editIcon}

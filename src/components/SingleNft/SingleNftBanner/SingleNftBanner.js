@@ -122,7 +122,7 @@ const SingleNftBanner = ({
       setbuyStatus("buy");
       setPurchaseStatus("Buying NFT in progress..");
       await window
-        .buyNFT(nftAddress, nftData.listingIndex, nftData.price)
+        .buyNFT(nftAddress, nftData.listedObject[0].listingIndex, nftData.price)
         .then((result) => {
           setbuyLoading(false);
           setbuyStatus("success");
@@ -281,7 +281,7 @@ const SingleNftBanner = ({
     setPurchaseColor("#00FECF");
     setPurchaseStatus("Unlisting your nft...");
     return window
-      .cancelListNFT(nftAddress, nftData.listingIndex)
+      .cancelListNFT(nftAddress, nftData.listedObject[0].listingIndex)
       .then(() => {
         setTimeout(() => {
           setcancelStatus("");
@@ -322,7 +322,7 @@ const SingleNftBanner = ({
       setupdateStatus("update");
 
       return await window
-        .updateListingNFT(nftAddress, nftData.listingIndex, newPrice)
+        .updateListingNFT(nftAddress, nftData.listedObject[0].listingIndex, newPrice)
         .then((result) => {
           setTimeout(() => {
             setPurchaseColor("#00FECF");
@@ -773,7 +773,7 @@ const SingleNftBanner = ({
                         </div>
                         <div
                           className={`duration-tab ${
-                            duration === 5 && "duration-tab-active"
+                            duration === 4 && "duration-tab-active"
                           } d-flex align-items-center justify-content-center`}
                           onClick={() => setDuration(4)}
                         >
@@ -781,7 +781,7 @@ const SingleNftBanner = ({
                         </div>
                         <div
                           className={`duration-tab ${
-                            duration === 6 && "duration-tab-active"
+                            duration === 5 && "duration-tab-active"
                           } d-flex align-items-center justify-content-center`}
                           onClick={() => setDuration(5)}
                         >

@@ -387,11 +387,11 @@ const SingleNft = ({
     }
   };
 
-  const buySeparateNft = async (nftAddress, nftData) => {
+  const buySeparateNft = async (nftAddress, nftData, index) => {
     setbuyLoading(true);
     setbuyStatus("buy");
     await window
-      .buyNFT(nftAddress, nftData.listingIndex, nftData.price)
+      .buyNFT(nftAddress, index, nftData.price)
       .then((result) => {
         setbuyLoading(false);
         setbuyStatus("success");
@@ -419,14 +419,14 @@ const SingleNft = ({
         console.error(e);
       });
   };
-  const handleBuySeparateNft = async (nftAddress, nftData) => {
+  const handleBuySeparateNft = async (nftAddress, nftData, index) => {
     const isApproved = await checkNftApprovalForBuying(nftData.price).then(
       (data) => {
         return data;
       }
     );
     if (isApproved) {
-      buySeparateNft(nftAddress, nftData);
+      buySeparateNft(nftAddress, nftData, index);
     } else {
       setbuyStatus("approve");
       setbuyLoading(true);

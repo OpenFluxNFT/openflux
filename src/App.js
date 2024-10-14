@@ -351,6 +351,7 @@ function App() {
       allCollections.status === 200
     ) {
       const regularCollection = allCollections.data;
+      console.log('result.data',result.data)
       const recentlyListed = await Promise.all(
         result.data.map(async (item) => {
           let isApproved = false;
@@ -502,7 +503,7 @@ function App() {
           }
         })
       );
-
+      
       setrecentlyListedNfts(recentlyListed.reverse());
       setloadingListed(false);
     }

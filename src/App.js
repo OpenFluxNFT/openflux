@@ -68,7 +68,7 @@ function App() {
   const [balance, setUserBalance] = useState(0);
   const [wcfxBalance, setwcfxBalance] = useState(0);
   const [loadMore, setloadMore] = useState(false);
-  const [loadStatus, setLoadStatus] = useState('');
+  const [loadStatus, setLoadStatus] = useState("");
 
   const [objectsToLoad, setobjectsToLoad] = useState([]);
 
@@ -309,9 +309,14 @@ function App() {
       });
 
     if (response && response.status === 200) {
-      const allData = await Promise.all(response.data.map(async (item)=>{
-        return({...item, image: await checkIfImageisValid(item.collectionProfilePic)})
-      }))
+      const allData = await Promise.all(
+        response.data.map(async (item) => {
+          return {
+            ...item,
+            image: await checkIfImageisValid(item.collectionProfilePic),
+          };
+        })
+      );
       setnewestCollections(allData);
     }
   };
@@ -351,7 +356,6 @@ function App() {
       allCollections.status === 200
     ) {
       const regularCollection = allCollections.data;
-      console.log('result.data',result.data)
       const recentlyListed = await Promise.all(
         result.data.map(async (item) => {
           let isApproved = false;
@@ -503,7 +507,7 @@ function App() {
           }
         })
       );
-      
+
       setrecentlyListedNfts(recentlyListed.reverse());
       setloadingListed(false);
     }
@@ -701,8 +705,6 @@ function App() {
     } else return undefined;
   };
 
- 
-
   const handleGetRecentlySoldNftsCache = async () => {
     const result = await axios
       .get(`${baseURL}/api/refresh-recent-sales`, {
@@ -761,7 +763,7 @@ function App() {
     const checkLoadmore = objectsToLoad.find((collection) => {
       return collection.amount > slice;
     });
-    setLoadStatus('loading')
+    setLoadStatus("loading");
     if (checkLoadmore) {
       let tokens = [];
       let nftArray = [];
@@ -835,7 +837,7 @@ function App() {
           await Promise.all(tokenpromises);
         })
       );
-     
+
       
       if (
         tokens &&
@@ -933,21 +935,19 @@ function App() {
         if (recentlylisted && recentlylisted.length > 0) {
           const finalArray = [...userNftsOwnedArray, ...nftArray];
 
-
           let uniqueArray = finalArray.filter(
             (value, index, self) =>
               self.findIndex((v) => v.tokenId === value.tokenId) === index
           );
 
-
           setUserNftsOwnedArray([...uniqueArray]);
-          setLoadStatus('done')
+          setLoadStatus("done");
         }
         // }
       }
     } else {
       setloadMore(false);
-      setLoadStatus('nodata')
+      setLoadStatus("nodata");
     }
   };
 
@@ -989,13 +989,12 @@ function App() {
 
       const recentlylisted = recentlyListedNfts;
       const checkLoadmore = nftsOwned.filter((collection) => {
-        return collection.amount > 50;
+        return Number(collection.amount) > 50;
       });
 
       const collections_ordered = nftsOwned.sort((a, b) => {
-        return a.amount - b.amount;
+        return Number(a.amount) - Number(b.amount);
       });
-      
       if (checkLoadmore !== undefined) {
         setloadMore(true);
         setobjectsToLoad(checkLoadmore);
@@ -1014,29 +1013,8 @@ function App() {
             );
           });
 
-          const abi_1155 = new window.confluxWeb3.eth.Contract(
-            window.BACKUP_ABI,
-            collections_ordered[i].contract
-          );
-          const abi_721 = new window.confluxWeb3.eth.Contract(
-            window.ERC721_ABI,
-            collections_ordered[i].contract
-          );
-
-          const is721 = await abi_721.methods
-            .supportsInterface(window.config.erc721_id)
-            .call()
-            .catch((e) => {
-              console.error(e);
-              return false;
-            });
-          const is1155 = await abi_1155.methods
-            .supportsInterface(window.config.erc1155_id)
-            .call()
-            .catch((e) => {
-              console.error(e);
-              return false;
-            });
+          const is721 = collections_ordered[i].type === 'ERC721';
+          const is1155 = collections_ordered[i].type === 'ERC1155';
 
           const abi_final = is1155
             ? window.BACKUP_ABI
@@ -1065,41 +1043,39 @@ function App() {
 
             // if (collection_contract.methods.tokenOfOwnerByIndex) {
             if (is1155) {
-              othertokensArray = await Promise.all(
-                window.range(0, limit - 1).map(async (j) => {
-                  nextTokenIdToMint = await collection_contract.methods
-                    .nextTokenIdToMint()
-                    .call()
-                    .catch((e) => {
-                      console.error(e); 
-                      return 0;
-                    });
+              tokens = [];
+              nextTokenIdToMint = await collection_contract.methods
+                .nextTokenIdToMint()
+                .call()
+                .catch((e) => {
+                  console.error(e);
+                  return 0;
+                });
 
-                  return await Promise.all(
-                    window.range(0, nextTokenIdToMint - 1).map((k) => {
-                      return collection_contract.methods
-                        .balanceOf(wallet, k)
-                        .call()
-                        .then((data) => {
-                          if (data && data > 0) {
-                            return k;
-                          }
-                          return null; // Return null if data is not greater than 0
-                        })
-                        .catch((e) => {
-                          console.log(e);
-                          return null; // Return null if there's an error
-                        });
+              othertokensArray = await Promise.all(
+                window.range(0, nextTokenIdToMint - 1).map((k) => {
+                  return collection_contract.methods
+                    .balanceOf(wallet, k)
+                    .call()
+                    .then((data) => {
+                      if (data && data > 0) {
+                        return k;
+                      }
+                      return null;
                     })
-                  );
+                    .catch((e) => {
+                      console.log(e);
+                      return null; // Return null if there's an error
+                    });
                 })
               );
+              // })
+              // );
 
-              othertokensArray = othertokensArray.filter(
-                (value) => value !== null
-              );
-            }
-            if (is721) {
+              othertokensArray = othertokensArray.filter((value) => {
+                return value !== null;
+              });
+            } else if (is721) {
               tokens = await Promise.all(
                 window.range(0, limit - 1).map(async (j) => {
                   return collection_contract.methods
@@ -1350,17 +1326,16 @@ function App() {
                 })
               );
             }
- 
             if (nftArray.length > 0) {
               let uniqueArray_listed = [];
               let uniqueArray_listed_owner = [];
               if (recentlylisted && recentlylisted.length > 0) {
                 uniqueArray_listed = recentlylisted.filter(
-                  ({ tokenId: id1, nftAddress: nftAddr1}) =>
+                  ({ tokenId: id1, nftAddress: nftAddr1 }) =>
                     nftArray.some(
                       ({ tokenId: id2, nftAddress: nftAddr2 }) =>
                         id1.toString() == id2.toString() &&
-                        nftAddr1.toLowerCase() === nftAddr2.toLowerCase()  
+                        nftAddr1.toLowerCase() === nftAddr2.toLowerCase()
                     )
                 );
 
@@ -1376,13 +1351,17 @@ function App() {
                 const uniqueArray_regular = nftArray.filter(
                   ({ tokenId: id1, nftAddress: nftAddr1, owner: owner1 }) =>
                     !recentlylisted.some(
-                      ({ tokenId: id2, nftAddress: nftAddr2, seller: owner2 }) =>
+                      ({
+                        tokenId: id2,
+                        nftAddress: nftAddr2,
+                        seller: owner2,
+                      }) =>
                         id1.toString() === id2.toString() &&
                         nftAddr1.toLowerCase() === nftAddr2.toLowerCase() &&
                         owner1.toLowerCase() === owner2.toLowerCase()
                     )
                 );
-                
+
                 const final =
                   uniqueArray_listed_owner2.length == 0 &&
                   uniqueArray_regular.length === 0
@@ -1397,11 +1376,11 @@ function App() {
           }
         })
       );
+      // console.log("allUserCollections", allUserCollections);
       setuserCollectionArray(allUserCollections);
     } else setUserNftsOwnedArray([]);
   };
 
-  
   const fetchuserCollection = async (walletAddr) => {
     if (walletAddr) {
       const result = await axios
@@ -1681,7 +1660,7 @@ function App() {
             setshowSignPopup(true);
           }, 1000);
         } else {
-          setuserData(result.data); 
+          setuserData(result.data);
           setuserCollectionFavs(result.data.collectionFavorites);
           setuserNftFavsInitial(result.data.nftFavorites);
           fetchTotalNftOwned(walletAddr);

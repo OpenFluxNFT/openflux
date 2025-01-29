@@ -187,8 +187,7 @@ const ProfileBanner = ({
 
   const checkDataImageOfUser = async (userbanner, userlogo) => {
     const resultBanner = await checkIfImageisValid(userbanner);
-    const resultLogo = await checkIfImageisValid(userlogo);
-console.log(resultBanner, 'resultBanner')
+    const resultLogo = await checkIfImageisValid(userlogo); 
     if (resultBanner) {
       setBannerImage(resultBanner);
     } else if (!resultBanner) {

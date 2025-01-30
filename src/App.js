@@ -695,6 +695,7 @@ function App() {
   };
 
   const checkIfImageisValid = async (image) => {
+    if(image) {
     const result = await fetch(
       `https://confluxapi.worldofdypians.com/${image}`
     ).catch((e) => {
@@ -703,6 +704,7 @@ function App() {
     if (result && result.status === 200) {
       return `https://confluxapi.worldofdypians.com/${image}`;
     } else return undefined;
+  }else return undefined;
   };
 
   const handleGetRecentlySoldNftsCache = async () => {
@@ -851,7 +853,7 @@ function App() {
       ) {
         await Promise.all(
           window.range(0, tokens.length - 1).map(async (l) => {
-            if (tokens[l]) {
+            if (tokens[l]!==undefined) {
               let tokenByIndex = tokens[l];
 
               let owner;
@@ -1043,7 +1045,6 @@ function App() {
 
             // if (collection_contract.methods.tokenOfOwnerByIndex) {
             if (is1155) {
-              tokens = [];
               nextTokenIdToMint = await collection_contract.methods
                 .nextTokenIdToMint()
                 .call()
@@ -1102,9 +1103,10 @@ function App() {
                 return obj !== undefined;
               }) !== undefined
             ) {
+           
               await Promise.all(
                 window.range(0, tokens.length - 1).map(async (l) => {
-                  if (tokens[l]) {
+                  if (tokens[l]!==undefined) {
                     let tokenByIndex = tokens[l];
 
                     let owner;
@@ -1112,24 +1114,24 @@ function App() {
 
                     if (is721) {
                       owner = wallet;
-                    } else if (is1155) {
-                      if (wallet) {
-                        userBalance = await collection_contract.methods
-                          .balanceOf(wallet, tokenByIndex)
-                          .call()
-                          .catch((e) => {
-                            console.log(e);
-                          });
-
-                        if (userBalance > 0) {
-                          owner = wallet;
-                        }
-                      }
                     }
+                    //  else if (is1155) {
+                    //   if (wallet) {
+                    //     userBalance = await collection_contract.methods
+                    //       .balanceOf(wallet, tokenByIndex)
+                    //       .call()
+                    //       .catch((e) => {
+                    //         console.log(e);
+                    //       });
+
+                    //     if (userBalance > 0) {
+                    //       owner = wallet;
+                    //     }
+                    //   }
+                    // }
                     const tokenName = currentCollection[0].symbol;
 
                     const collectionName = currentCollection[0].collectionName;
-
                     const lastSaleResult = await axios
                       .get(
                         `${baseURL}/api/nft-sale-history/${collections_ordered[
@@ -1376,7 +1378,7 @@ function App() {
           }
         })
       );
-      // console.log("allUserCollections", allUserCollections);
+      
       setuserCollectionArray(allUserCollections);
     } else setUserNftsOwnedArray([]);
   };

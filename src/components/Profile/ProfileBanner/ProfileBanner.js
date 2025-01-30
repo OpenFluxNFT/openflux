@@ -173,16 +173,16 @@ const ProfileBanner = ({
   };
 
   const checkIfImageisValid = async (image) => {
-    if (image) {
-      const result = await fetch(
-        `https://confluxapi.worldofdypians.com/${image}`
-      ).catch((e) => {
-        console.error(e);
-      });
-      if (result && result.status === 200) {
-        return `https://confluxapi.worldofdypians.com/${image}`;
-      } else return undefined;
+    if(image) {
+    const result = await fetch(
+      `https://confluxapi.worldofdypians.com/${image}`
+    ).catch((e) => {
+      console.error(e);
+    });
+    if (result && result.status === 200) {
+      return `https://confluxapi.worldofdypians.com/${image}`;
     } else return undefined;
+  } else return undefined;
   };
 
   const checkDataImageOfUser = async (userbanner, userlogo) => {

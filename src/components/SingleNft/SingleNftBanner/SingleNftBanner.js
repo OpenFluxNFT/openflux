@@ -442,7 +442,7 @@ const SingleNftBanner = ({
                     />
                     <NavLink
                       className="collection-name"
-                      to={`/collection/${nftAddress}/${currentCollection.nftSymbol}`}
+                      to={`/collection/${nftAddress}/${currentCollection.nftSymbol ?? currentCollection.symbol}`}
                     >
                       {currentCollection.collectionName ?? "..."}
                     </NavLink>
@@ -455,7 +455,7 @@ const SingleNftBanner = ({
                   <div className="collection-info-owner-wrapper">
                     <div className="d-flex flex-column gap-1 px-3 py-2">
                       <span className="nft-collection-name">
-                        {currentCollection.nftSymbol}{" "}
+                        {currentCollection.nftSymbol ?? currentCollection.symbol}{" "}
                         {nftData.name
                           ? nftData.name
                           : nftData.collectionName

@@ -37,6 +37,7 @@ const AllCollectionCategories = ({ allCollections }) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
   const checkIfImageisValid = async (image) => {
+    if(image) {
     const result = await fetch(
       `https://confluxapi.worldofdypians.com/${image}`
     ).catch((e) => {
@@ -45,6 +46,7 @@ const AllCollectionCategories = ({ allCollections }) => {
     if (result && result.status === 200) {
       return `https://confluxapi.worldofdypians.com/${image}`;
     } else return undefined;
+  } else return undefined;
   };
 
   const changeCategory = (val) => {

@@ -201,6 +201,7 @@ const ProfileNFTList = ({
   ];
 
   const checkIfImageisValid = async (image) => {
+    if(image) {
     const result = await fetch(
       `https://confluxapi.worldofdypians.com/${image}`
     ).catch((e) => {
@@ -209,6 +210,7 @@ const ProfileNFTList = ({
     if (result && result.status === 200) {
       return `https://confluxapi.worldofdypians.com/${image}`;
     } else return undefined;
+  } else return undefined;
   };
 
   const updateUserCollectionFavs = async () => {
@@ -492,7 +494,7 @@ const ProfileNFTList = ({
     let uniqueObjects = [];
     let seenNames = new Set();
     if (usersCollectionOffers && usersCollectionOffers.length > 0) {
-      console.log("usersCollectionOffers", usersCollectionOffers);
+   
       usersCollectionOffers.forEach((obj) => {
         let lowercaseName = obj.nftAddress?.toLowerCase();
         if (!seenNames.has(lowercaseName)) {

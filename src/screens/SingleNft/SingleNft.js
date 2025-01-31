@@ -292,6 +292,9 @@ const SingleNft = ({
               .call()
               .then((data) => {
                 return window.confluxWeb3.utils.fromWei(data, "ether");
+              }).catch((e) => {
+                console.error(e);
+                return 0
               });
 
             const allowance = await contract.methods
@@ -302,6 +305,9 @@ const SingleNft = ({
               .call()
               .then((data) => {
                 return window.confluxWeb3.utils.fromWei(data, "ether");
+              }).catch((e) => {
+                console.error(e);
+                return 0
               });
 
             const priceFormatted = finalResult[i].amount / 1e18;
@@ -572,7 +578,6 @@ const SingleNft = ({
             .catch((e) => {
               console.log(e);
             });
-          console.log("userBalance", userBalance);
           // setuserNftBalance(userBalance);
           if (userBalance > 0) {
             owner = userwallet;
@@ -608,7 +613,7 @@ const SingleNft = ({
       let totalfilteredResult = [];
       let totalfilteredResultOwner = [];
 
-      if (listednftsArray !== "none" && listednftsArray.length > 0) {
+      if (listednftsArray !== "none" && listednftsArray!==undefined && listednftsArray.length > 0) {
         totalfilteredResult = listednftsArray.filter((item) => {
           return (
             item.tokenId === nftID &&
@@ -622,7 +627,7 @@ const SingleNft = ({
             item.nftAddress.toLowerCase() === nftAddress.toLowerCase() &&
             item.seller.toLowerCase() === userwallet.toLowerCase()
           );
-        });
+        }) ?? [];
 
         if (totalfilteredResult) {
           totalfilteredResult.forEach((result, index) => {
@@ -883,7 +888,7 @@ const SingleNft = ({
             item.nftAddress.toLowerCase() === nftAddress.toLowerCase() &&
             item.seller.toLowerCase() === wallet.toLowerCase()
           );
-        });
+        }) ?? [];
 
         if (totalfilteredResult) {
           totalfilteredResult.forEach((result, index) => {
@@ -1012,14 +1017,15 @@ const SingleNft = ({
   };
 
   const checkIfImageisValid = async (image) => {
-    const result = await fetch(
+    if(image)
+  {  const result = await fetch(
       `https://confluxapi.worldofdypians.com/${image}`
     ).catch((e) => {
       console.error(e);
     });
     if (result && result.status === 200) {
       return `https://confluxapi.worldofdypians.com/${image}`;
-    } else return undefined;
+    } else return undefined;}else return undefined;
   };
 
 
@@ -1039,7 +1045,6 @@ const SingleNft = ({
       }
     }
   };
-  
   const fetchInitialNftsPerCollection = async (nftID) => {
     setLoading(true);
     const wallet = await window.getCoinbase().then((data) => {
@@ -1090,7 +1095,6 @@ const SingleNft = ({
       let nftArray = [];
       let nftListedArray = [];
       let totalSupply = totalSupplyPerCollection;
-
       const abi = abi_final;
       const listednftsArray = listednfts.data.listings;
 
@@ -1214,16 +1218,20 @@ const SingleNft = ({
                     .call()
                     .catch((e) => {
                       console.log(e);
+                      // return Number(i);
                     });
-                  if (bal && bal > 0) {
-                    tokenByIndex = i;
-                  }
+
+
+                  // if (bal !==undefined && bal > 0) {
+                    tokenByIndex = Number(i);
+                  // }
                 } else if (is721) {
                   tokenByIndex = await collection_contract.methods
                     .tokenByIndex(i)
                     .call()
                     .catch((e) => {
                       console.error(e, i);
+                      return Number(i)
                     });
                 }
 
@@ -1232,13 +1240,13 @@ const SingleNft = ({
                 //   .call();
               } catch (e) {
                 console.error(e);
-                tokenByIndex = i;
+                tokenByIndex = Number(i);
               }
             } else {
               console.warn(
                 "tokenByIndex method does not exist in the contract ABI"
               );
-              tokenByIndex = i;
+              tokenByIndex = Number(i);
             }
 
             let owner;

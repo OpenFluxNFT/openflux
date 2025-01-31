@@ -50,6 +50,7 @@ const TrendingCollections = ({
   };
 
   const checkIfImageisValid = async (image) => {
+    if(image) {
     const result = await fetch(
       `https://confluxapi.worldofdypians.com/${image}`
     ).catch((e) => {
@@ -58,6 +59,7 @@ const TrendingCollections = ({
     if (result && result.status === 200) {
       return `https://confluxapi.worldofdypians.com/${image}`;
     } else return undefined;
+  } else return undefined;
   };
 
   const fetchNewestCollections = async () => {
